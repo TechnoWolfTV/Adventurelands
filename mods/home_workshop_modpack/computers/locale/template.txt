@@ -1,0 +1,24 @@
+# textdomain: computers
+SheFriendSOO=
+Pony Vanio=
+SX Specter=
+Snapple Piepad=
+Admiral64=
+Admiral128=
+Monitor and keyboard=
+WIFI Router=
+Computer Tower=
+Rack Server=
+Not enough vertical space to place a server!=
+Printer-Scanner Combo=
+Pony SlayStation=
+Pony SlayStation 2=
+Nientiendo Wee=
+HUEG Box=
+L=
+R=
+New Game=
+Next...=
+Score: =
+Tetris Arcade=
+No room for place the Arcade!=

@@ -1,0 +1,10 @@
+Woodpiles
+---For Minetest---
+
+Adds the following items:
+
+Wood Pile
+Acaica Wood Pile
+Aspen Wood Pile
+Junglewood Wood Pile
+Pine Wood Pile

@@ -1,0 +1,15 @@
+Adds an axe, pick, shovel and sword at high strength and speed made from the "blazing" block.
+
+Crafting
+
+* A blazing block can be crafted from one lump of coal, one regular stick, one
+  gold ingot and one bucket of lava. Empty buckets are returned upon crafting.
+  Blazing blocks emit light.
+
+* Blazing tools can be crafted using the same standard recipes used by other
+  tools, substituting blazing blocks for the tool heads.
+
+Mod Compatibility
+
+* Blazing tools emit light if the wielded_light mod is also installed.
+* Blazing tools can be enchanted if the x_enchanting mod is also installed.

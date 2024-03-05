@@ -1,0 +1,10 @@
+# Bottom realm limit
+caverealms.ymin (Realm bottom limit) int -27000
+# Top realm limit
+caverealms.ymax (Realm top limit) int -1500
+# dungeon master's lair upper limit
+caverealms.dm_top (DM's Lair upper limit) int -14000
+# dungeon master's lair bottom limit
+caverealms.dm_bot (DM's Lair bottom limit) int -16000
+# deep cave level
+caverealms.deep_cave (Deep cave level) int -7000

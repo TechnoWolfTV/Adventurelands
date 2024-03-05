@@ -1,0 +1,4 @@
+# textdomain: castle_storage
+Crate=
+Ironbound Chest=
+Ironbound Chest (owned by @1)=
