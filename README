@@ -1,0 +1,103 @@
+Adventurelands
+By TechnoWolfTV
+
+An exploration, mining, crafting and building sandbox game with monsters and animals.
+Adventurelands game is packed with carefully selected mods for an optimal balance between form and function, some are custom.
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Custom modifications made to third-party mods:
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+====================================================================
+
+CLIMATE MODPACK:
+
+Three third-party mods were used to create a new modpack:
+lightning
+moon_phase
+weather_pack
+
+Changes to the weather_pack mod:
+
+To reduce each weather by 75%, modify each file at weather_pack\weathers with the following:
+
+local heavy_rain_chance = 0.015
+heavy_rain_chance = 0.1
+light_rain.chance = 0.0375
+rain.chance = 0.025
+snow.chance = 0.05
+snowstorm.chance = 0.0125
+thunder.chance = 0.2
+
+====================================================================
+
+ONTIME CLOCKS MODPACK:
+
+Uses two mods, ontime_clocks and it's dependancy display_api from the display_modpack by mt-mods
+to create a new modpack. The new modpack provides clocks that display real ingame time.
+
+====================================================================
+
+CURRENCY:
+
+\mods\currency\crafting.lua
+
+Change lines 5-10 FROM:
+{"default:steel_ingot", "default:steel_ingot",
+	"default:steel_ingot"},
+{"default:steel_ingot", "default:mese_crystal",
+	"default:steel_ingot"},
+{"default:steel_ingot", "default:steel_ingot",
+	"default:steel_ingot"},
+TO:
+{"default:steelblock", "default:steelblock",
+	"default:steelblock"},
+{"default:steelblock", "default:mese_crystal",
+	"default:steelblock"},
+{"default:steelblock", "default:steelblock",
+	"default:steelblock"},
+
+====================================================================
+
+HUDBARS:
+
+\mods\hudbars\default_settings.lua
+
+Change line 15 FROM:
+hb.settings.bar_type = hb.load_setting("hudbars_bar_type", "string", "progress_bar", {"progress_bar", "statbar_classic", "statbar_modern"})
+TO:
+hb.settings.bar_type = hb.load_setting("hudbars_bar_type", "string", "statbar_classic", {"progress_bar", "statbar_classic", "statbar_modern"})
+
+Change lines 46, 47 FROM:
+hb.settings.sorting = { ["health"] = 0, ["breath"] = 1 }
+hb.settings.sorting_reverse = { [0] = "health", [1] = "breath" }
+TO:
+hb.settings.sorting = { ["health"] = 0, ["armor"] = 1, ["stamina"] = 2, ["breath"] = 3 }
+hb.settings.sorting_reverse = { [0] = "health", [1] = "armor", [2] = "stamina", [3] = "breath" }
+
+====================================================================
+
+ITEM DROP:
+
+\mods\item_drop\init.lua at line 46:
+FROM:
+"item_pickup_gain", 0.2)
+TO:
+"item_pickup_gain", 0.05)
+
+====================================================================
+
+MINETEST GAME:
+
+All mods within minetest_game\mods\ with the exception of farming and weather were copied into
+a modpack folder format for isolation and ease of future updating.
+
+====================================================================
+
+PLANTLIFE MODPACK:
+
+Delete the Poison Ivy mod within.
+
+====================================================================
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
