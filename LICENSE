@@ -43,6 +43,9 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Awards
   - Location: ./mods/awards/
   - License file: ./mods/awards/LICENSE.txt
+- Backrooms Test Nodes
+  - Location: ./mods/backroomtest_nodes/
+  - License file: ./mods/backroomtest_nodes/LICENSE
 - Basic Materials
   - Location: ./mods/basic_materials/
   - License file: ./mods/basic_materials/LICENSE
