@@ -19,6 +19,15 @@ if minetest.get_modpath("backroomtest_nodes") then
 			{"default:sandstone", "default:sandstone", "default:sandstone"},
 		},
 	})
+	
+	minetest.register_craft({
+		output = "backroomtest_nodes:ceiling_light 3",
+		recipe = {
+			{"default:glass", "default:glass", "default:glass"},
+			{"default:torch", "default:torch", "default:torch"},
+			{"default:glass", "default:glass", "default:glass"},
+		},
+	})
 
 	minetest.register_craft({
 		output = "backroomtest_nodes:wallpaper 9",
@@ -26,6 +35,15 @@ if minetest.get_modpath("backroomtest_nodes") then
 			{"default:paper", "default:paper", "default:paper"},
 			{"default:wood", "dye:yellow", "default:wood"},
 			{"default:paper", "default:paper", "default:paper"},
+		},
+	})
+	
+	minetest.register_craft({
+		output = "backroomtest_nodes:wallpaper_baseboard 9",
+		recipe = {
+			{"default:paper", "default:paper", "default:paper"},
+			{"default:wood", "dye:yellow", "default:wood"},
+			{"default:silver_sandstone", "default:silver_sandstone", "default:silver_sandstone"},
 		},
 	})
 end

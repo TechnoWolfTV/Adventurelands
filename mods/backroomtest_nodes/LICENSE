@@ -1,7 +1,7 @@
 License of code: MIT
 Textures by TechnoWolfTV (CC-by-SA 4.0) unless listed below...
 
-Based on textures by SumianVoice Copyright (c) 2022 Sumi, SumianVoice <info[at]sumianvoice.com> <https://codeberg.org/SumianVoice/backroomtest>
+Some textures by SumianVoice Copyright (c) 2022 Sumi, SumianVoice <info[at]sumianvoice.com> <https://codeberg.org/SumianVoice/backroomtest>
 Permission to use, copy, modify, and/or distribute this work for any purpose with or without fee is hereby granted.
 
 THE WORK IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD
@@ -14,8 +14,14 @@ ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS WORK
 List of files under this license:
 
 br_carpet_0.png
+br_ceiling_light_1.png
 br_ceiling_tiles_0.png
 br_wallpaper_0.png
+
+Based on br_wallpaper_0.png texture by SumianVoice Copyright (c) 2022 Sumi, SumianVoice <info[at]sumianvoice.com> <https://codeberg.org/SumianVoice/backroomtest>
+Permission to use, copy, modify, and/or distribute this work for any purpose with or without fee is hereby granted.
+	
+	br_wallpaper_baseboard.png
 
 ###############################################################################
 
