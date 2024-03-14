@@ -4,11 +4,27 @@ By TechnoWolfTV
 An exploration, mining, crafting and building sandbox game with monsters and animals.
 Adventurelands game is packed with carefully selected mods for an optimal balance between form and function, some are custom.
 
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-Custom modifications made to third-party mods:
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+==============================================
+CUSTOM MODIFICATIONS MADE TO THIRD-PARTY MODS:
+==============================================
 
-====================================================================
+3D ARMOR:
+
+Delete the armor_crystal and armor_nether mods within.
+
+==============================================
+
+BACKROOMS TEST NODES:
+
+Some textures from the "Backrooms Test" Game by Sumianvoice were forked and used to create this new mod.
+
+==============================================
+
+BOWS EPIC:
+
+The Bows Mod by AiTechEye which was forked and tweaked by TenPlus1 and Nathan Salapat was further forked and tweaked.
+
+==============================================
 
 CLIMATE MODPACK:
 
@@ -29,14 +45,7 @@ snow.chance = 0.05
 snowstorm.chance = 0.0125
 thunder.chance = 0.2
 
-====================================================================
-
-ONTIME CLOCKS MODPACK:
-
-Uses two mods, ontime_clocks and it's dependancy display_api from the display_modpack by mt-mods
-to create a new modpack. The new modpack provides clocks that display real ingame time.
-
-====================================================================
+==============================================
 
 CURRENCY:
 
@@ -57,7 +66,7 @@ TO:
 {"default:steelblock", "default:steelblock",
 	"default:steelblock"},
 
-====================================================================
+==============================================
 
 HUDBARS:
 
@@ -75,7 +84,13 @@ TO:
 hb.settings.sorting = { ["health"] = 0, ["armor"] = 1, ["stamina"] = 2, ["breath"] = 3 }
 hb.settings.sorting_reverse = { [0] = "health", [1] = "armor", [2] = "stamina", [3] = "breath" }
 
-====================================================================
+==============================================
+
+INDUSTRIOUS CONCRETE:
+
+The Industrious mod by StarNinjas was forked and used to create this new mod.
+
+==============================================
 
 ITEM DROP:
 
@@ -85,19 +100,30 @@ FROM:
 TO:
 "item_pickup_gain", 0.05)
 
-====================================================================
+==============================================
 
 MINETEST GAME:
 
 All mods within minetest_game\mods\ with the exception of farming and weather were copied into
 a modpack folder format for isolation and ease of future updating.
 
-====================================================================
+==============================================
+
+ONTIME CLOCKS MODPACK:
+
+Uses two mods, ontime_clocks and it's dependancy display_api from the display_modpack by mt-mods
+to create a new modpack. The new modpack provides clocks that display real ingame time.
+
+==============================================
 
 PLANTLIFE MODPACK:
 
 Delete the Poison Ivy mod within.
 
-====================================================================
+==============================================
 
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+WOODPILES:
+
+Woodpiles from the Your Dad's BBQ Mod by Grizzly Adam were forked and used to create this new mod.
+
+==============================================
