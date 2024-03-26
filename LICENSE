@@ -44,9 +44,9 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Awards
   - Location: ./mods/awards/
   - License file: ./mods/awards/LICENSE.txt
-- Backrooms Test Nodes
-  - Location: ./mods/backroomtest_nodes/
-  - License file: ./mods/backroomtest_nodes/LICENSE
+- Backrooms Nodes
+  - Location: ./mods/backrooms_nodes/
+  - License file: ./mods/backrooms_nodes/LICENSE
   - Changes were made to this work
 - Basic Materials
   - Location: ./mods/basic_materials/
@@ -112,9 +112,6 @@ made to the below listed works are officially made on or after 5 March 2024.
 	- Weather Pack
     - License file: ./mods/climate_modpack/weather_pack/LICENSE
   - Changes were made to this work
-- Cool Trees
-  - Location: ./mods/cool_trees/
-  - License file: ./mods/cool_trees/LICENSE.md
 - Count Registered Nodes
   - Location: ./mods/countregisterednodes/
   - License file: ./mods/countregisterednodes/LICENSE.txt
