@@ -1,8 +1,8 @@
-local S = minetest.get_translator("backroomtest_nodes")
+local S = minetest.get_translator("backrooms_nodes")
 
 -- Nodes
 
-minetest.register_node("backroomtest_nodes:carpet", {
+minetest.register_node("backrooms_nodes:carpet", {
 	description = S("Backrooms Carpet"),
 	tiles = {"br_carpet_0.png"},
 	is_ground_content = false,
@@ -11,7 +11,7 @@ minetest.register_node("backroomtest_nodes:carpet", {
 	sounds = default.node_sound_defaults(),
 })
 
-minetest.register_node("backroomtest_nodes:ceiling", {
+minetest.register_node("backrooms_nodes:ceiling", {
 	description = S("Backrooms Ceiling Tiles"),
 	tiles = {"br_ceiling_tiles_0.png"},
 	is_ground_content = false,
@@ -19,7 +19,7 @@ minetest.register_node("backroomtest_nodes:ceiling", {
 	sounds = default.node_sound_defaults(),
 })
 
-minetest.register_node("backroomtest_nodes:wallpaper", {
+minetest.register_node("backrooms_nodes:wallpaper", {
 	description = S("Backrooms Wallpaper"),
 	tiles = {"br_wallpaper_0.png"},
 	is_ground_content = false,
@@ -27,7 +27,7 @@ minetest.register_node("backroomtest_nodes:wallpaper", {
 	sounds = default.node_sound_wood_defaults(),
 })
 
-minetest.register_node("backroomtest_nodes:wallpaper_baseboard", {
+minetest.register_node("backrooms_nodes:wallpaper_baseboard", {
 	description = S("Backrooms Wallpaper Baseboard"),
 	tiles = {"br_wallpaper_baseboard.png"},
 	is_ground_content = false,
@@ -35,7 +35,7 @@ minetest.register_node("backroomtest_nodes:wallpaper_baseboard", {
 	sounds = default.node_sound_wood_defaults(),
 })
 
-minetest.register_node("backroomtest_nodes:ceiling_light", {
+minetest.register_node("backrooms_nodes:ceiling_light", {
     description = S("Backrooms Ceiling Light"),
     tiles = {"br_ceiling_light_1.png"},
     paramtype = "light",
@@ -47,7 +47,7 @@ minetest.register_node("backroomtest_nodes:ceiling_light", {
 
 -- Doors
 
-doors.register("backroomtest_nodes:br_door_grey", {
+doors.register("backrooms_nodes:br_door_grey", {
 	tiles = { { name = "br_door_grey.png", backface_culling = true } },
 	description = "Backrooms Grey Door",
 	inventory_image = "br_door_item_grey.png",
@@ -65,7 +65,7 @@ doors.register("backroomtest_nodes:br_door_grey", {
 	}
 })
 
-doors.register("backroomtest_nodes:br_door_purple", {
+doors.register("backrooms_nodes:br_door_purple", {
 	tiles = { { name = "br_door_purple.png", backface_culling = true } },
 	description = "Backrooms Purple Door",
 	inventory_image = "br_door_item_purple.png",
@@ -83,7 +83,7 @@ doors.register("backroomtest_nodes:br_door_purple", {
 	}
 })
 
-doors.register("backroomtest_nodes:br_door_red", {
+doors.register("backrooms_nodes:br_door_red", {
 	tiles = { { name = "br_door_red.png", backface_culling = true } },
 	description = "Backrooms Red Door",
 	inventory_image = "br_door_item_red.png",
@@ -101,7 +101,7 @@ doors.register("backroomtest_nodes:br_door_red", {
 	}
 })
 
-doors.register("backroomtest_nodes:br_door_teal", {
+doors.register("backrooms_nodes:br_door_teal", {
 	tiles = { { name = "br_door_teal.png", backface_culling = true } },
 	description = "Backrooms Teal Door",
 	inventory_image = "br_door_item_teal.png",
@@ -119,7 +119,7 @@ doors.register("backroomtest_nodes:br_door_teal", {
 	}
 })
 
-doors.register("backroomtest_nodes:br_door_rusty", {
+doors.register("backrooms_nodes:br_door_rusty", {
 	tiles = { { name = "br_door_rusty.png", backface_culling = true } },
 	description = "Backrooms Rusty Door",
 	inventory_image = "br_door_item_rusty.png",

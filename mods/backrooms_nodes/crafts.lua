@@ -1,9 +1,9 @@
 -- Crafting Recipes
 
-if minetest.get_modpath("backroomtest_nodes") then
+if minetest.get_modpath("backrooms_nodes") then
 
 	minetest.register_craft({
-		output = "backroomtest_nodes:carpet 9",
+		output = "backrooms_nodes:carpet 9",
 		recipe = {
 			{"wool:white", "wool:white", "wool:white"},
 			{"wool:white", "dye:brown", "wool:white"},
@@ -12,7 +12,7 @@ if minetest.get_modpath("backroomtest_nodes") then
 	})
 
 	minetest.register_craft({
-		output = "backroomtest_nodes:ceiling 9",
+		output = "backrooms_nodes:ceiling 9",
 		recipe = {
 			{"default:sandstone", "default:sandstone", "default:sandstone"},
 			{"default:sandstone", "dye:white", "default:sandstone"},
@@ -21,7 +21,7 @@ if minetest.get_modpath("backroomtest_nodes") then
 	})
 	
 	minetest.register_craft({
-		output = "backroomtest_nodes:ceiling_light 3",
+		output = "backrooms_nodes:ceiling_light 3",
 		recipe = {
 			{"default:glass", "default:glass", "default:glass"},
 			{"default:torch", "default:torch", "default:torch"},
@@ -30,7 +30,7 @@ if minetest.get_modpath("backroomtest_nodes") then
 	})
 
 	minetest.register_craft({
-		output = "backroomtest_nodes:wallpaper 9",
+		output = "backrooms_nodes:wallpaper 9",
 		recipe = {
 			{"default:paper", "default:paper", "default:paper"},
 			{"default:wood", "dye:yellow", "default:wood"},
@@ -39,7 +39,7 @@ if minetest.get_modpath("backroomtest_nodes") then
 	})
 	
 	minetest.register_craft({
-		output = "backroomtest_nodes:wallpaper_baseboard 9",
+		output = "backrooms_nodes:wallpaper_baseboard 9",
 		recipe = {
 			{"default:paper", "default:paper", "default:paper"},
 			{"default:wood", "dye:yellow", "default:wood"},
