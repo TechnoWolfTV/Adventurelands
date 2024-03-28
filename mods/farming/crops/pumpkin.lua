@@ -43,6 +43,7 @@ minetest.register_node("farming:jackolantern", {
 	groups = {
 		handy = 1, snappy = 2, choppy = 2, oddly_breakable_by_hand = 2, flammable = 2
 	},
+	is_ground_content = false,
 	sounds = farming.sounds.node_sound_wood_defaults(),
 	on_punch = function(pos, node, puncher)
 		local name = puncher:get_player_name() or ""
@@ -69,6 +70,7 @@ minetest.register_node("farming:jackolantern_on", {
 		handy = 1, snappy = 2, choppy = 2, oddly_breakable_by_hand = 2, flammable = 2,
 		not_in_creative_inventory = 1
 	},
+	is_ground_content = false,
 	sounds = farming.sounds.node_sound_wood_defaults(),
 	drop = "farming:jackolantern",
 	on_punch = function(pos, node, puncher)
@@ -105,6 +107,7 @@ minetest.register_node("farming:scarecrow_bottom", {
 		}
 	},
 	groups = {axey = 1, handy = 1, snappy = 3, flammable = 2},
+	is_ground_content = false,
 	_mcl_hardness = 0.8,
 	_mcl_blast_resistance = 1
 })
@@ -160,6 +163,7 @@ local def = {
 		handy = 1, snappy = 3, flammable = 2, plant = 1, attached_node = 1,
 		not_in_creative_inventory = 1, growing = 1
 	},
+	is_ground_content = false,
 	sounds = farming.sounds.node_sound_leaves_defaults()
 }
 
@@ -202,6 +206,7 @@ minetest.register_node("farming:pumpkin_8", {
 		food_pumpkin = 1, snappy = 3, choppy = 3, oddly_breakable_by_hand = 2,
 		flammable = 2, plant = 1, handy = 1
 	},
+	is_ground_content = false,
 	drop = "farming:pumpkin_8",
 	sounds = farming.sounds.node_sound_wood_defaults(),
 	paramtype2 = "facedir",

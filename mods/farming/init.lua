@@ -7,7 +7,7 @@
 
 farming = {
 	mod = "redo",
-	version = "20231206",
+	version = "20240312",
 	path = minetest.get_modpath("farming"),
 	select = {
 		type = "fixed",
@@ -589,6 +589,7 @@ farming.register_plant = function(name, def)
 			seed = 1, snappy = 3, attached_node = 1, flammable = 2, growing = 1,
 			compostability = 65, handy = 1
 		},
+		is_ground_content = false,
 		paramtype = "light",
 		paramtype2 = "wallmounted",
 		walkable = false,
@@ -674,6 +675,7 @@ farming.register_plant = function(name, def)
 			drop = drop,
 			selection_box = sel,
 			groups = g,
+			is_ground_content = false,
 			sounds = farming.sounds.node_sound_leaves_defaults(),
 			minlight = def.minlight,
 			maxlight = def.maxlight,
@@ -732,7 +734,7 @@ farming.artichoke = 0.001
 farming.parsley = 0.002
 farming.sunflower = 0.001
 farming.ginger = 0.002
-farming.strawberry = not minetest.get_modpath("ethereal") and 0.002
+farming.strawberry = 0.002
 farming.grains = true
 farming.rice = true
 

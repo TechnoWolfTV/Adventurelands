@@ -13,6 +13,7 @@ minetest.register_node("farming:seed_mint", {
 		compostability = 48, seed = 1, snappy = 3, attached_node = 1, growing = 1,
 		handy = 1, flammable = 2
 	},
+	is_ground_content = false,
 	paramtype = "light",
 	paramtype2 = "wallmounted",
 	walkable = false,
@@ -68,6 +69,7 @@ local def = {
 		handy = 1, snappy = 3, flammable = 2, plant = 1, attached_node = 1,
 		not_in_creative_inventory = 1, growing = 1
 	},
+	is_ground_content = false,
 	sounds = farming.sounds.node_sound_leaves_defaults()
 }
 

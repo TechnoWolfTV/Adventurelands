@@ -32,6 +32,7 @@ minetest.register_node("farming:soy_sauce", {
 		vessel = 1, food_soy_sauce = 1, dig_immediate = 3, attached_node = 1,
 		compostability = 65
 	},
+	is_ground_content = false,
 	sounds = farming.sounds.node_sound_glass_defaults()
 })
 
@@ -66,6 +67,7 @@ minetest.register_node("farming:soy_milk", {
 		vessel = 1, food_milk_glass = 1, dig_immediate = 3,
 		attached_node = 1, drink = 1, compostability = 65
 	},
+	is_ground_content = false,
 	sounds = farming.sounds.node_sound_glass_defaults()
 })
 
@@ -131,6 +133,7 @@ local def = {
 		handy = 1, snappy = 3, flammable = 2, plant = 1, attached_node = 1,
 		not_in_creative_inventory = 1, growing = 1
 	},
+	is_ground_content = false,
 	sounds = farming.sounds.node_sound_leaves_defaults()
 }
 

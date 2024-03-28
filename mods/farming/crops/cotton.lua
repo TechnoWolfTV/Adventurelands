@@ -17,6 +17,7 @@ minetest.register_node("farming:cotton_wild", {
 	groups = {
 		handy = 1, snappy = 3, attached_node = 1, flammable = 4, compostability = 60
 	},
+	is_ground_content = false,
 	drop = {
 		items = {
 			{items = {"farming:cotton"}, rarity = 2},
@@ -41,6 +42,7 @@ minetest.register_node("farming:seed_cotton", {
 		compostability = 48, seed = 1, snappy = 3, attached_node = 1,
 		flammable = 4, growing = 1
 	},
+	is_ground_content = false,
 	paramtype = "light",
 	paramtype2 = "wallmounted",
 	walkable = false,
@@ -118,6 +120,7 @@ local def = {
 		handy = 1, snappy = 3, flammable = 4, plant = 1, attached_node = 1,
 		not_in_creative_inventory = 1, growing = 1
 	},
+	is_ground_content = false,
 	sounds = farming.sounds.node_sound_leaves_defaults()
 }
 

@@ -283,6 +283,7 @@ minetest.register_node(":mobs:cobweb", {
 	liquid_range = 0,
 	walkable = false,
 	groups = {snappy = 1, disable_jump = 1},
+	is_ground_content = false,
 	drop = "farming:string",
 	sounds = default and default.node_sound_leaves_defaults()
 })

@@ -1,4 +1,5 @@
 local S = minetest.get_translator("findbiome")
+local NS = function(s) return s end
 
 findbiome = {}
 
@@ -250,6 +251,35 @@ minetest.register_on_mods_loaded(function()
 	mods_loaded = true
 end)
 
+function findbiome.list_biomes(param)
+	local biomes = {}
+	local b = 0
+	if not mods_loaded then
+		table.insert(biomes, NS("Wait until all mods have loaded!"))
+		return false, biomes
+	end
+	if mg_name == "v6" then
+		if not mod_biomeinfo then
+			table.insert(biomes, NS("Not supported. The “biomeinfo” mod is required for v6 mapgen support!"))
+			return false, biomes
+		end
+		biomes = biomeinfo.get_active_v6_biomes()
+		b = #biomes
+	else
+		biomes = {}
+		for k,v in pairs(minetest.registered_biomes) do
+			table.insert(biomes, k)
+			b = b + 1
+		end
+	end
+	if b == 0 then
+		return true, biomes
+	else
+		table.sort(biomes)
+		return true, biomes
+	end
+end
+
 -- Register chat commands
 do
 	minetest.register_chatcommand("findbiome", {
@@ -310,30 +340,20 @@ do
 		params = "",
 		privs = { debug = true },
 		func = function(name, param)
-			if not mods_loaded then
+			local success, biomes = findbiome.list_biomes()
+			-- Error checking before sending them in chat
+			if success == false then -- send error message
+				minetest.chat_send_player(name, S(biomes[1]))
 				return false
-			end
-			local biomes
-			local b = 0
-			if mg_name == "v6" then
-				if not mod_biomeinfo then
-					return false, S("Not supported. The “biomeinfo” mod is required for v6 mapgen support!")
-				end
-				biomes = biomeinfo.get_active_v6_biomes()
-				b = #biomes
-			else
-				biomes = {}
-				for k,v in pairs(minetest.registered_biomes) do
-					table.insert(biomes, k)
-					b = b + 1
-				end
-			end
-			if b == 0 then
-				return true, S("No biomes.")
-			else
-				table.sort(biomes)
-				for b=1, #biomes do
-					minetest.chat_send_player(name, biomes[b])
+			else -- it worked, send all biomes
+				if #biomes == 0 then
+					minetest.chat_send_player(name, S("No biomes."))
+					return true
+				else
+					table.sort(biomes)
+					for b=1, #biomes do
+						minetest.chat_send_player(name, biomes[b])
+					end
 				end
 				return true
 			end

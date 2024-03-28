@@ -13,6 +13,7 @@ minetest.register_node("farming:seed_hemp", {
 		handy = 1, compostability = 38, seed = 1, snappy = 3, attached_node = 1,
 		growing = 1
 	},
+	is_ground_content = false,
 	paramtype = "light",
 	paramtype2 = "wallmounted",
 	walkable = false,
@@ -118,6 +119,7 @@ minetest.register_node("farming:hemp_block", {
 		axey = 1, handy = 1, snappy = 2, oddly_breakable_by_hand = 1, flammable = 2,
 		compostability = 85
 	},
+	is_ground_content = false,
 	sounds =  farming.sounds.node_sound_leaves_defaults(),
 	_mcl_hardness = 0.8,
 	_mcl_blast_resistance = 1
@@ -186,6 +188,7 @@ minetest.register_node("farming:hemp_rope", {
 		handy = 1, axey = 1, swordy = 1, flammable = 2, choppy = 3,
 		oddly_breakable_by_hand = 3, compostability = 55
 	},
+	is_ground_content = false,
 	sounds =  farming.sounds.node_sound_leaves_defaults(),
 	selection_box = {
 		type = "fixed",
@@ -220,6 +223,7 @@ local def = {
 		handy = 1, snappy = 3, flammable = 2, plant = 1, attached_node = 1,
 		not_in_creative_inventory = 1, growing = 1
 	},
+	is_ground_content = false,
 	sounds = farming.sounds.node_sound_leaves_defaults()
 }
 

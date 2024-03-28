@@ -89,6 +89,7 @@ minetest.register_node("bees:extractor", {
 		choppy = 2, oddly_breakable_by_hand = 2, tubedevice = 1,
 		tubedevice_receiver = 1
 	},
+	is_ground_content = false,
 
 	on_construct = function(pos)
 
@@ -326,6 +327,7 @@ minetest.register_node("bees:hive_wild", {
 		}
 	},
 	groups = {choppy = 2, oddly_breakable_by_hand = 2, flammable = 3},
+	is_ground_content = false,
 	node_box = { -- VanessaE's wild hive nodebox contribution
 		type = "fixed",
 		fixed = {
@@ -517,6 +519,7 @@ minetest.register_node("bees:hive_artificial", {
 		snappy = 1, choppy = 2, oddly_breakable_by_hand = 2,
 		flammable = 3, wood = 1
 	},
+	is_ground_content = false,
 	sounds = default.node_sound_wood_defaults(),
 	node_box = {
 		type = "fixed",
@@ -1047,6 +1050,7 @@ if minetest.get_modpath("pipeworks") then
 			snappy = 1, choppy = 2, oddly_breakable_by_hand = 2,
 			tubedevice = 1, tubedevice_receiver = 1
 		},
+		is_ground_content = false,
 		sounds = default.node_sound_wood_defaults(),
 
 		tube = {

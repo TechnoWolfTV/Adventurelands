@@ -136,6 +136,7 @@ minetest.register_node("farming:sugar_cube", {
 	description = S("Sugar Cube"),
 	tiles = {"farming_sugar_cube.png"},
 	groups = {shovely = 1, handy = 1, crumbly = 2},
+	is_ground_content = false,
 	floodable = true,
 	sounds = farming.sounds.node_sound_gravel_defaults(),
 	_mcl_hardness = 0.8,
@@ -183,6 +184,7 @@ minetest.register_node("farming:salt", {
 	tiles = {"farming_salt.png"},
 	groups = {food_salt = 1, vessel = 1, dig_immediate = 3,
 			attached_node = 1},
+	is_ground_content = false,
 	sounds = farming.sounds.node_sound_defaults(),
 	selection_box = {
 		type = "fixed",
@@ -251,6 +253,7 @@ minetest.register_node("farming:salt_crystal", {
 	light_source = 1,
 	tiles = {"farming_salt_crystal.png"},
 	groups = {dig_immediate = 3, attached_node = 1},
+	is_ground_content = false,
 	sounds = farming.sounds.node_sound_defaults(),
 	selection_box = {
 		type = "fixed",
@@ -322,6 +325,7 @@ minetest.register_node("farming:rose_water", {
 	groups = {
 		food_rose_water = 1, vessel = 1, dig_immediate = 3, attached_node = 1
 	},
+	is_ground_content = false,
 	sounds = farming.sounds.node_sound_defaults(),
 	selection_box = {
 		type = "fixed",

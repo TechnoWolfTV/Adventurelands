@@ -32,7 +32,6 @@ local function fire_particles_on(pos) -- 3 layers of fire
 		vertical = true,
 		texture = "new_campfire_anim_fire.png",
 		animation = {type="vertical_frames", aspect_w=16, aspect_h=16, length = 0.8,},
---      playername = "singleplayer"
 	})
 	meta:set_int("layer_1", id)
 
@@ -53,7 +52,6 @@ local function fire_particles_on(pos) -- 3 layers of fire
 		vertical = true,
 		texture = "new_campfire_anim_fire.png",
 		animation = {type="vertical_frames", aspect_w=16, aspect_h=16, length = 0.7,},
-	 -- playername = "singleplayer"
 	})
 	meta:set_int("layer_2", id)
 
@@ -74,7 +72,6 @@ local function fire_particles_on(pos) -- 3 layers of fire
 		vertical = true,
 		texture = "new_campfire_anim_smoke.png",
 		animation = {type="vertical_frames", aspect_w=16, aspect_h=16, length = 0.9,},
-		-- playername = "singleplayer"
 	})
 	meta:set_int("layer_3", id)
 end
@@ -257,6 +254,7 @@ minetest.register_node('new_campfire:fireplace', {
 	sunlight_propagates = false,
 	paramtype = 'light',
 	groups = {dig_immediate=3, flammable=0, not_in_creative_inventory=1},
+	is_ground_content = false,
 	selection_box = sbox,
 	sounds = default.node_sound_stone_defaults(),
 	drop = {max_items = 3, items = {{items = {"stairs:slab_cobble 3"}}}},
@@ -295,6 +293,7 @@ minetest.register_node('new_campfire:campfire', {
 	buildable_to = false,
 	sunlight_propagates = true,
 	groups = {dig_immediate=3, flammable=0},
+	is_ground_content = false,
 	paramtype = 'light',
 	selection_box = sbox,
 	sounds = default.node_sound_stone_defaults(),
@@ -321,7 +320,6 @@ minetest.register_node('new_campfire:campfire', {
 				vertical = true,
 				texture = "new_campfire_anim_smoke.png",
 				animation = {type="vertical_frames", aspect_w=16, aspect_h=16, length = 2.5,},
---               playername = "singleplayer"
 			})
 		elseif itemname == "new_campfire:grille" then
 			itemstack:take_item()
@@ -345,6 +343,7 @@ minetest.register_node('new_campfire:campfire_active', {
 	buildable_to = false,
 	sunlight_propagates = true,
 	groups = {oddly_breakable_by_hand=3, flammable=0, not_in_creative_inventory=1, igniter=1},
+	is_ground_content = false,
 	paramtype = 'none',
 	light_source = 13,
 	damage_per_second = 3,
@@ -402,6 +401,7 @@ minetest.register_node('new_campfire:fireplace_with_embers', {
 	paramtype = 'light',
 	light_source = 5,
 	groups = {dig_immediate=3, flammable=0, not_in_creative_inventory=1},
+	is_ground_content = false,
 	selection_box = sbox,
 	sounds = default.node_sound_stone_defaults(),
 	drop = {max_items = 3, items = {{items = {"stairs:slab_cobble 3"}}}},
@@ -454,6 +454,7 @@ minetest.register_node('new_campfire:fireplace_with_embers_with_grille', {
 	paramtype = 'light',
 	light_source = 5,
 	groups = {dig_immediate=3, flammable=0, not_in_creative_inventory=1},
+	is_ground_content = false,
 	selection_box = grille_sbox,
 	node_box = grille_cbox,
 	sounds = default.node_sound_stone_defaults(),
@@ -501,6 +502,7 @@ minetest.register_node('new_campfire:fireplace_with_grille', {
 	sunlight_propagates = false,
 	paramtype = 'light',
 	groups = {dig_immediate=3, flammable=0, not_in_creative_inventory=1},
+	is_ground_content = false,
 	selection_box = grille_sbox,
 	node_box = grille_cbox,
 	sounds = default.node_sound_stone_defaults(),
@@ -542,6 +544,7 @@ minetest.register_node('new_campfire:campfire_with_grille', {
 	buildable_to = false,
 	sunlight_propagates = true,
 	groups = {dig_immediate=3, flammable=0, not_in_creative_inventory=1},
+	is_ground_content = false,
 	paramtype = 'light',
 	selection_box = grille_sbox,
 	node_box = grille_cbox,
@@ -568,7 +571,6 @@ minetest.register_node('new_campfire:campfire_with_grille', {
 				vertical = true,
 				texture = "new_campfire_anim_smoke.png",
 				animation = {type="vertical_frames", aspect_w=16, aspect_h=16, length = 2.5,},
---               playername = "singleplayer"
 			})
 		end
 	end,
@@ -597,6 +599,7 @@ minetest.register_node('new_campfire:campfire_active_with_grille', {
 	buildable_to = false,
 	sunlight_propagates = true,
 	groups = {oddly_breakable_by_hand=3, flammable=0, not_in_creative_inventory=1, igniter=1},
+	is_ground_content = false,
 	paramtype = 'none',
 	light_source = 13,
 	damage_per_second = 3,

@@ -26,6 +26,7 @@ minetest.register_node("farming:coffee_cup", {
 		fixed = {-0.25, -0.5, -0.25, 0.25, 0.25, 0.25}
 	},
 	groups = {vessel = 1, dig_immediate = 3, attached_node = 1, drink = 1},
+	is_ground_content = false,
 	on_use = minetest.item_eat(2, "vessels:drinking_glass"),
 	sounds = farming.sounds.node_sound_glass_defaults()
 })
@@ -59,6 +60,7 @@ local def = {
 		handy = 1, snappy = 3, flammable = 2, plant = 1, attached_node = 1,
 		not_in_creative_inventory = 1, growing = 1
 	},
+	is_ground_content = false,
 	sounds = farming.sounds.node_sound_leaves_defaults()
 }
 

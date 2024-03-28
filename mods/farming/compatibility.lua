@@ -30,6 +30,7 @@ else
 			fixed = {-0.2, -0.5, -0.2, 0.2, 0.2, 0.2}
 		},
 		groups = {food_banana = 1, fleshy = 3, dig_immediate = 3, flammable = 2},
+		is_ground_content = false,
 		on_use = minetest.item_eat(2),
 		sounds = farming.sounds.node_sound_leaves_defaults()
 	})
@@ -42,6 +43,7 @@ else
 		paramtype = "light",
 		waving = 1,
 		groups = {snappy = 3, leafdecay = 3, leaves = 1, flammable = 2},
+		is_ground_content = false,
 		sounds = farming.sounds.node_sound_leaves_defaults()
 	})
 
@@ -88,6 +90,7 @@ else
 			fixed = {-0.2, -0.3, -0.2, 0.2, 0.2, 0.2}
 		},
 		groups = {food_orange = 1, fleshy = 3, dig_immediate = 3, flammable = 2},
+		is_ground_content = false,
 		on_use = minetest.item_eat(4),
 		sounds = farming.sounds.node_sound_leaves_defaults()
 	})

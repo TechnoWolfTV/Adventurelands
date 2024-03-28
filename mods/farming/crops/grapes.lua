@@ -94,6 +94,7 @@ minetest.register_node("farming:trellis", {
 	drop = "farming:trellis",
 	selection_box = farming.select,
 	groups = {handy = 1, snappy = 3, flammable = 2, attached_node = 1},
+	is_ground_content = false,
 	sounds = farming.sounds.node_sound_leaves_defaults(),
 
 	on_place = function(itemstack, placer, pointed_thing)
@@ -185,6 +186,7 @@ local def = {
 		handy = 1, snappy = 3, flammable = 3, not_in_creative_inventory = 1,
 		attached_node = 1, growing = 1, plant = 1
 	},
+	is_ground_content = false,
 	sounds = farming.sounds.node_sound_leaves_defaults()
 }
 
@@ -260,6 +262,7 @@ minetest.register_node("farming:grapebush", {
 		handy = 1, snappy = 3, flammable = 2, plant = 1, attached_node = 1,
 		not_in_creative_inventory = 1, compostability = 35
 	},
+	is_ground_content = false,
 	sounds = farming.sounds.node_sound_leaves_defaults()
 })
 

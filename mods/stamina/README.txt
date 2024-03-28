@@ -56,3 +56,4 @@ TenPlus1 Additions:
  - Added 60 second drunk effect when foods have {alcohol=1} group (eat 4 or more)
  - Moved exhaustion and hud_id to player table instead of player attributes
  - Added 4 lucky block effects
+

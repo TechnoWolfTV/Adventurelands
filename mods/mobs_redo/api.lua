@@ -14,7 +14,7 @@ local use_vh1 = minetest.get_modpath("visual_harm_1ndicators")
 -- Global
 mobs = {
 	mod = "redo",
-	version = "20240223",
+	version = "20240312",
 	translate = S,
 	invis = minetest.global_exists("invisibility") and invisibility or {},
 	node_snow = minetest.registered_aliases["mapgen_snow"]
@@ -130,6 +130,7 @@ local creatura = minetest.get_modpath("creatura") and
 
 
 mobs.mob_class = {
+	state = "stand",
 	fly_in = "air",
 	owner = "",
 	order = "",
@@ -191,6 +192,7 @@ mobs.mob_class = {
 	attack_animals = false,
 	attack_players = true,
 	attack_npcs = true,
+	attack_ignore = nil,
 	friendly_fire = true,
 	facing_fence = false,
 	_breed_countdown = nil,
@@ -271,7 +273,7 @@ function mob_class:collision()
 
 		pos2 = player:get_pos()
 
-		if pos2:distance(pos) < width then
+		if get_distance(pos2, pos) < width then
 
 			vec  = {x = pos.x - pos2.x, z = pos.z - pos2.z}
 			force = (width + 0.5) - vector.distance(
@@ -715,6 +717,7 @@ function mob_class:update_tag(newname)
 
 	self.infotext = "Health: " .. self.health .. " / " .. prop.hp_max
 		.. (self.owner == "" and "" or "\nOwner: " .. self.owner)
+		.. ("\nEntity: " .. self.name)
 		.. text
 
 	-- set infotext changes
@@ -1908,8 +1911,9 @@ function mob_class:general_attack()
 		-- or are we a mob?
 		elseif ent and ent._cmi_is_mob then
 
-			-- remove mobs not to attack
+			-- remove mobs to not attack
 			if self.name == ent.name
+			or check_for(ent.name, self.attack_ignore)
 			or (not self.attack_animals and ent.type == "animal")
 			or (not self.attack_monsters and ent.type == "monster")
 			or (not self.attack_npcs and ent.type == "npc")
@@ -2251,7 +2255,7 @@ function mob_class:do_states(dtime)
 
 				local player_pos = player:get_pos()
 
-				if player_pos:distance(s) <= 3 then
+				if get_distance(player_pos, s) <= 3 then
 					lp = player_pos
 					break
 				end
@@ -3340,7 +3344,7 @@ function mob_class:mob_expire(pos, dtime)
 			-- only despawn away from player
 			for _,player in pairs(minetest.get_connected_players()) do
 
-				if player:get_pos():distance(pos) <= 15 then
+				if get_distance(player:get_pos(), pos) <= 15 then
 					self.lifetimer = 20
 					return
 				end
@@ -3688,6 +3692,7 @@ minetest.register_entity(":" .. name, setmetatable({
 	attack_animals = def.attack_animals,
 	attack_players = def.attack_players,
 	attack_npcs = def.attack_npcs,
+	attack_ignore = def.attack_ignore,
 	specific_attack = def.specific_attack,
 	friendly_fire = def.friendly_fire,
 	runaway_from = def.runaway_from,
@@ -4066,7 +4071,7 @@ function mobs:spawn_specific(name, nodes, neighbors, min_light, max_light, inter
 		-- only spawn a set distance away from player
 		for _,player in pairs(minetest.get_connected_players()) do
 
-			if player:get_pos():distance(pos) <= mob_nospawn_range then
+			if get_distance(player:get_pos(), pos) <= mob_nospawn_range then
 --print("--- player too close", name)
 				return
 			end

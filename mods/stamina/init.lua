@@ -45,6 +45,7 @@ local function is_player(player)
 	end
 end
 
+
 local function get_int_attribute(player)
 
 	-- pipeworks fake player check
@@ -643,10 +644,9 @@ if damage_enabled and minetest.settings:get_bool("enable_stamina") ~= false then
 		end
 
 		local name = player:get_player_name()
-
-		local id = player:hud_add({
+		local hud_style = minetest.has_feature("hud_def_type_field")
+		local hud_tab = {
 			name = "stamina",
-			hud_elem_type = "statbar",
 			position = {x = 0.5, y = 1},
 			size = {x = 24, y = 24},
 			text = "stamina_hud_fg.png",
@@ -654,7 +654,15 @@ if damage_enabled and minetest.settings:get_bool("enable_stamina") ~= false then
 			alignment = {x = -1, y = -1},
 			offset = {x = -266, y = -110},
 			max = 0
-		})
+		}
+
+		if hud_style then
+			hud_tab["type"] = "statbar"
+		else
+			hud_tab["hud_elem_type"] = "statbar"
+		end
+
+		local id = player:hud_add(hud_tab)
 
 		stamina.players[name] = {
 			hud_id = id,
@@ -732,3 +740,4 @@ end
 
 
 print("[MOD] Stamina loaded")
+

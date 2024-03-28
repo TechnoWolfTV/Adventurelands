@@ -41,6 +41,7 @@ local def = {
 		handy = 1, snappy = 3, flammable = 2, plant = 1, attached_node = 1,
 		not_in_creative_inventory = 1, growing = 1
 	},
+	is_ground_content = false,
 	sounds = farming.sounds.node_sound_leaves_defaults()
 }
 
@@ -83,6 +84,7 @@ minetest.register_node("farming:melon_8", {
 		food_melon = 1, handy = 1, snappy = 3, choppy = 3, oddly_breakable_by_hand = 2,
 		flammable = 2, plant = 1, compostability = 65
 	},
+	is_ground_content = false,
 	drop = "farming:melon_8",
 	sounds = farming.sounds.node_sound_wood_defaults(),
 	paramtype2 = "facedir",
