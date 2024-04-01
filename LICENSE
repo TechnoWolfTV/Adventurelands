@@ -288,6 +288,9 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Unified Dyes
   - Location: ./mods/unifieddyes/
   - License file: ./mods/unifieddyes/LICENSE
+- Void Chest
+  - Location: ./mods/void_chest/
+  - License file: ./mods/void_chest/LICENSE.txt
 - Waffles
   - Location: ./mods/waffles/
   - License file: ./mods/waffles/LICENSE.txt
