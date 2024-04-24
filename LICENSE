@@ -185,6 +185,9 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Leads
   - Location: ./mods/hangglider/
   - License file: ./mods/hangglider/LICENCE.md
+- Mapfix
+  - Location: ./mods/mapfix/
+  - License file: ./mods/mapfix/LICENSE
 - Mesecons
   - Location: ./mods/mesecons/
   - License file: ./mods/mesecons/LICENSE.txt
