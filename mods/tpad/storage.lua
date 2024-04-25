@@ -23,6 +23,9 @@ function tpad._get_stored_pads(ownername)
 end
 
 function tpad._set_stored_pads(ownername, pads)
+	if ownername == nil or ownername == "" then
+		return
+	end
 	storage:set_string("pads:" .. ownername, minetest.serialize(pads))
 end
 

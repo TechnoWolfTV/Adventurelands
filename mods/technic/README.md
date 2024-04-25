@@ -131,7 +131,6 @@ Recommended mods that build on the `technic mod`:
 | enable_mining_laser                          |                                                                                                                       |
 | enable_flashlight                            |                                                                                                                       |
 | enable_wind_mill                             |                                                                                                                       |
-| enable_frames                                |                                                                                                                       |
 | enable_corium_griefing                       |                                                                                                                       |
 | enable_radiation_protection                  |                                                                                                                       |
 | enable_radiation_throttling                  | enable lag- and per-second-throttling of radiation damage                                                             |
@@ -141,7 +140,6 @@ Recommended mods that build on the `technic mod`:
 | admin_priv                                   | Privileges required to use administrative chat commands like cache flushing and enabling/disabling machines globally. |
 | quarry_max_depth                             | max depth of the quarry.                                                                                              |
 | quarry_time_limit                            | max cpu time in μs allowed per quarry step.                                                                           |
-| quarry_dig_above_nodes                       | begin digging this many nodes above quarry node.                                                                      |
 | quarry_dig_particles                         | Enables particle effect with the quarry digs a node.                                                                  |
 | network_overload_reset_time                  | After network conflict wait this many seconds before attempting to activate conflicting networks again.               |
 | switch_off_delay_seconds                     | switching station off delay.                                                                                          |
