@@ -4,6 +4,15 @@ By TechnoWolfTV
 An exploration, mining, crafting, building and survival sandbox game with monsters and animals.
 Adventurelands game includes carefully selected mods for an optimal balance between form and function.
 
+
+==============================================
+INSTALLATION:
+==============================================
+
+The Adventurelands game may be installed directly through the Minetest client via Content > Browse online content.
+To install manually, download the .zip package and extract the folder inside. Rename the extracted folder to, "adventurelands"
+and move it to the games folder under your Minetest installation as Minetest/games/adventurelands.
+
 ==============================================
 CUSTOM MODIFICATIONS MADE TO THIRD-PARTY MODS:
 ==============================================
