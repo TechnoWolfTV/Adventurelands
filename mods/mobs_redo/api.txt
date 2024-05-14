@@ -336,6 +336,8 @@ enhance mob functionality and have them do many interesting things:
                     is returned normal attack function continued.
    'on_die'         a function that is called when mob is killed (self, pos), also
                     has access to self.cause_of_death table.
+   'on_death'       Official engine version of above when mob killed (self, killer),
+                    'killer' is only returned if player killed the mob.
    'on_flop'        function called when flying or swimmimng mob is no longer in
                     air/water, (self) paramater and return true to skip the built
                     in api flop feature.

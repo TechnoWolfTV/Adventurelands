@@ -1,0 +1,17 @@
+# Every session/launch of world/server, mod will be checking for updates
+#
+# NOTE: Sometimes check for updates feature doesnt work for unknown reasons.
+essentials_check_for_updates (Check for updates) bool false
+
+# Allows EVERYONE to see "seed" of the world through the "/seed" command
+# Otherwise, the command will be available only to administrators
+essentials_seed (Seed command) bool false
+
+# Enables sending a message to the killed player with content of who killed him with command "/kill"
+essentials_killed_by ("You has been killed by" message) bool true
+
+# Enables sending a message whose name has been changed by the player with rename menu
+essentials_changed_by ("Your name changed by" message) bool true
+
+# Enables watermark on the screen
+essentials_watermark (Watermark) bool true

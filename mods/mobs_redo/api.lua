@@ -14,7 +14,7 @@ local use_vh1 = minetest.get_modpath("visual_harm_1ndicators")
 -- Global
 mobs = {
 	mod = "redo",
-	version = "20240425",
+	version = "20240505",
 	translate = S,
 	invis = minetest.global_exists("invisibility") and invisibility or {},
 	node_snow = minetest.registered_aliases["mapgen_snow"]
@@ -878,6 +878,23 @@ function mob_class:check_for_death(cmi_cause)
 	self:mob_sound(self.sounds.death)
 
 	local pos = self.object:get_pos()
+
+	-- execute official engine on_death function if found
+	if self.on_death then
+
+		-- only return killer if punched by player
+		if cmi_cause.type == "punch" and is_player(cmi_cause.puncher) then
+			cmi_cause = cmi_cause.puncher
+		else
+			cmi_cause = nil
+		end
+
+		self:on_death(cmi_cause)
+
+		remove_mob(self, true)
+
+		return true
+	end
 
 	-- execute custom death function
 	if pos and self.on_die then
@@ -3713,6 +3730,7 @@ minetest.register_entity(":" .. name, setmetatable({
 
 	on_rightclick = def.on_rightclick,
 	on_die = def.on_die,
+	on_death = def.on_death, -- engine function for entity death
 	on_flop = def.on_flop,
 	do_custom = def.do_custom,
 	on_replace = def.on_replace,
@@ -4445,7 +4463,7 @@ function mobs:register_egg(mob, desc, background, addegg, no_creative)
 	-- these are only created for animals and npc mobs, not monsters
 if is_mob.type ~= "monster" then
 
-	minetest.register_craftitem(mob .. "_set", {
+	minetest.register_craftitem(":" .. mob .. "_set", {
 
 		description = S("@1 (Tamed)", desc),
 		inventory_image = invimg,
@@ -4502,7 +4520,7 @@ if is_mob.type ~= "monster" then
 end
 
 	-- register old stackable mob egg
-	minetest.register_craftitem(mob, {
+	minetest.register_craftitem(":" .. mob, {
 
 		description = desc,
 		inventory_image = invimg,
