@@ -316,6 +316,10 @@ made to the below listed works are officially made on or after 5 March 2024.
 - WorldEdit
   - Location: ./mods/WorldEdit/
   - License file: ./mods/WorldEdit/LICENSE.txt
+- Wrench
+  - Location: ./mods/wrench/
+  - License file: ./mods/wrench/LICENSE
+  - License file: ./mods/wrench/LICENSE-MEDIA
 - Enchanting Table and API [x_enchanting]
   - Location: ./mods/x_enchanting/
   - License file: ./mods/x_enchanting/LICENSE.txt
