@@ -137,6 +137,9 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Facade
   - Location: ./mods/facade/
   - License file: ./mods/facade/license.txt
+- FakeLib
+  - Location: ./mods/fakelib/
+  - License file: ./mods/fakelib/LICENSE
 - Farming Redo
   - Location: ./mods/farming/
   - License file: ./mods/farming/license.txt
