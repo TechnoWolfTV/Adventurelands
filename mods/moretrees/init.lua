@@ -15,29 +15,31 @@
 
 moretrees = {}
 
-minetest.override_item("default:sapling", {
-	description = "Sapling"
-})
+if minetest.get_modpath("default") then
+	minetest.override_item("default:sapling", {
+		description = "Sapling"
+	})
 
-minetest.override_item("default:tree", {
-	description = "Tree"
-})
+	minetest.override_item("default:tree", {
+		description = "Tree"
+	})
 
-minetest.override_item("default:wood", {
-	description = "Wooden Planks"
-})
+	minetest.override_item("default:wood", {
+		description = "Wooden Planks"
+	})
 
-minetest.override_item("default:leaves", {
-	description = "Leaves"
-})
+	minetest.override_item("default:leaves", {
+		description = "Leaves"
+	})
 
-minetest.override_item("default:fence_wood", {
-	description = "Wooden Fence"
-})
+	minetest.override_item("default:fence_wood", {
+		description = "Wooden Fence"
+	})
 
-minetest.override_item("default:fence_rail_wood", {
-	description = "Wooden Fence Rail"
-})
+	minetest.override_item("default:fence_rail_wood", {
+		description = "Wooden Fence Rail"
+	})
+end
 
 if minetest.get_modpath("doors") then
 	minetest.override_item("doors:gate_wood_closed", {
@@ -89,10 +91,10 @@ end
 -- tables, load other files
 
 moretrees.cutting_tools = {
-	"default:axe_bronze",
-	"default:axe_diamond",
 	"default:axe_mese",
-	"default:axe_steel",
+	xcompat.materials.axe_steel,
+	xcompat.materials.axe_diamond,
+	xcompat.materials.axe_bronze,
 	"glooptest:axe_alatro",
 	"glooptest:axe_arol",
 	"moreores:axe_mithril",
@@ -149,69 +151,28 @@ function translate_biome_defs(def, treename, index)
 	return deco_def
 end
 
-if moretrees.enable_beech then
-	minetest.register_decoration(translate_biome_defs(moretrees.beech_biome, "beech"))
+minetest.register_decoration(translate_biome_defs(moretrees.beech_biome, "beech"))
+minetest.register_decoration(translate_biome_defs(moretrees.apple_tree_biome, "apple_tree"))
+minetest.register_decoration(translate_biome_defs(moretrees.oak_biome, "oak"))
+minetest.register_decoration(translate_biome_defs(moretrees.sequoia_biome, "sequoia"))
+minetest.register_decoration(translate_biome_defs(moretrees.palm_biome, "palm"))
+minetest.register_decoration(translate_biome_defs(moretrees.date_palm_biome, "date_palm", 1))
+minetest.register_decoration(translate_biome_defs(moretrees.date_palm_biome_2, "date_palm", 2))
+minetest.register_decoration(translate_biome_defs(moretrees.cedar_biome, "cedar"))
+minetest.register_decoration(translate_biome_defs(moretrees.rubber_tree_biome, "rubber_tree"))
+minetest.register_decoration(translate_biome_defs(moretrees.willow_biome, "willow"))
+minetest.register_decoration(translate_biome_defs(moretrees.birch_biome, "birch"))
+minetest.register_decoration(translate_biome_defs(moretrees.spruce_biome, "spruce"))
+minetest.register_decoration(translate_biome_defs(moretrees.jungletree_biome, "jungletree"))
+minetest.register_decoration(translate_biome_defs(moretrees.fir_biome, "fir", 1))
+if minetest.get_modpath("snow") then
+	minetest.register_decoration(translate_biome_defs(moretrees.fir_biome_snow, "fir", 2))
 end
-
-if moretrees.enable_apple_tree then
-	minetest.register_decoration(translate_biome_defs(moretrees.apple_tree_biome, "apple_tree"))
-end
-
-if moretrees.enable_oak then
-	minetest.register_decoration(translate_biome_defs(moretrees.oak_biome, "oak"))
-end
-
-if moretrees.enable_sequoia then
-	minetest.register_decoration(translate_biome_defs(moretrees.sequoia_biome, "sequoia"))
-end
-
-if moretrees.enable_palm then
-	minetest.register_decoration(translate_biome_defs(moretrees.palm_biome, "palm"))
-end
-
-if moretrees.enable_date_palm then
-	minetest.register_decoration(translate_biome_defs(moretrees.date_palm_biome, "date_palm", 1))
-	minetest.register_decoration(translate_biome_defs(moretrees.date_palm_biome_2, "date_palm", 2))
-end
-
-if moretrees.enable_cedar then
-	minetest.register_decoration(translate_biome_defs(moretrees.cedar_biome, "cedar"))
-end
-
-if moretrees.enable_rubber_tree then
-	minetest.register_decoration(translate_biome_defs(moretrees.rubber_tree_biome, "rubber_tree"))
-end
-
-if moretrees.enable_willow then
-	minetest.register_decoration(translate_biome_defs(moretrees.willow_biome, "willow"))
-end
-
-if moretrees.enable_birch then
-	minetest.register_decoration(translate_biome_defs(moretrees.birch_biome, "birch"))
-end
-
-if moretrees.enable_spruce then
-	minetest.register_decoration(translate_biome_defs(moretrees.spruce_biome, "spruce"))
-end
-
-if moretrees.enable_jungle_tree then
-	minetest.register_decoration(translate_biome_defs(moretrees.jungletree_biome, "jungletree"))
-end
-
-if moretrees.enable_fir then
-	minetest.register_decoration(translate_biome_defs(moretrees.fir_biome, "fir", 1))
-	if minetest.get_modpath("snow") then
-		minetest.register_decoration(translate_biome_defs(moretrees.fir_biome_snow, "fir", 2))
-	end
-end
-
-if moretrees.enable_poplar then
-	minetest.register_decoration(translate_biome_defs(moretrees.poplar_biome, "poplar", 1))
-	minetest.register_decoration(translate_biome_defs(moretrees.poplar_biome_2, "poplar", 2))
-	minetest.register_decoration(translate_biome_defs(moretrees.poplar_biome_3, "poplar", 3))
-	minetest.register_decoration(translate_biome_defs(moretrees.poplar_small_biome, "poplar_small", 4))
-	minetest.register_decoration(translate_biome_defs(moretrees.poplar_small_biome_2, "poplar_small", 5))
-end
+minetest.register_decoration(translate_biome_defs(moretrees.poplar_biome, "poplar", 1))
+minetest.register_decoration(translate_biome_defs(moretrees.poplar_biome_2, "poplar", 2))
+minetest.register_decoration(translate_biome_defs(moretrees.poplar_biome_3, "poplar", 3))
+minetest.register_decoration(translate_biome_defs(moretrees.poplar_small_biome, "poplar_small", 4))
+minetest.register_decoration(translate_biome_defs(moretrees.poplar_small_biome_2, "poplar_small", 5))
 
 --[[
 	this is purposefully wrapped in a on mods loaded callback to that it gets the proper ids
@@ -313,7 +274,7 @@ function moretrees.grow_jungletree(pos)
 	minetest.swap_node(pos, {name = "air"})
 	local leaves = minetest.find_nodes_in_area(
 		{x = pos.x-1, y = pos.y, z = pos.z-1}, {x = pos.x+1, y = pos.y+10, z = pos.z+1},
-		"default:leaves"
+		xcompat.materials.apple_leaves
 	)
 	for leaf in ipairs(leaves) do
 			minetest.swap_node(leaves[leaf], {name = "air"})
@@ -344,7 +305,7 @@ function moretrees.grow_fir(pos)
 	local leaves = minetest.find_nodes_in_area(
 		{x = pos.x, y = pos.y, z = pos.z},
 		{x = pos.x, y = pos.y+5, z = pos.z},
-		"default:leaves"
+		xcompat.materials.apple_leaves
 	)
 	for leaf in ipairs(leaves) do
 		minetest.swap_node(leaves[leaf], {name = "air"})
@@ -375,7 +336,7 @@ function moretrees.grow_fir_snow(pos)
 	local leaves = minetest.find_nodes_in_area(
 		{x = pos.x, y = pos.y, z = pos.z},
 		{x = pos.x, y = pos.y+5, z = pos.z},
-		"default:leaves"
+		xcompat.materials.apple_leaves
 	)
 	for leaf in ipairs(leaves) do
 			minetest.swap_node(leaves[leaf], {name = "air"})

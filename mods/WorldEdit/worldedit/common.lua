@@ -1,12 +1,21 @@
 --- Common functions [INTERNAL].  All of these functions are internal!
 -- @module worldedit.common
 
+-- Polyfill for vector.copy (added in 5.5.0)
+if not vector.copy then
+	local vnew = vector.new
+	vector.copy = function(v)
+		return vnew(v.x, v.y, v.z)
+	end
+end
+
+
 --- Copies and modifies positions `pos1` and `pos2` so that each component of
 -- `pos1` is less than or equal to the corresponding component of `pos2`.
 -- Returns the new positions.
 function worldedit.sort_pos(pos1, pos2)
-	pos1 = vector.new(pos1.x, pos1.y, pos1.z)
-	pos2 = vector.new(pos2.x, pos2.y, pos2.z)
+	pos1 = vector.copy(pos1)
+	pos2 = vector.copy(pos2)
 	if pos1.x > pos2.x then
 		pos2.x, pos1.x = pos1.x, pos2.x
 	end
@@ -45,10 +54,15 @@ function worldedit.get_axis_others(axis)
 end
 
 
+-- Create a vmanip and read the area from map, this causes all
+-- MapBlocks to be loaded into memory synchronously.
+-- This doesn't actually *keep* them loaded, unlike the name implies.
 function worldedit.keep_loaded(pos1, pos2)
-	-- Create a vmanip and read the area from map, this
-	-- causes all MapBlocks to be loaded into memory synchronously.
-	-- This doesn't actually *keep* them loaded, unlike the name implies.
+	-- rough estimate, a MapNode is 4 bytes in the engine
+	if worldedit.volume(pos1, pos2) > 268400000 then
+		print("[WorldEdit] Requested to load an area bigger than 1GB, refusing. The subsequent operation may fail.")
+		return
+	end
 	if minetest.load_area then
 		-- same effect but without unnecessary data copying
 		minetest.load_area(pos1, pos2)
@@ -70,7 +84,7 @@ function mh.get_empty_data(area)
 	-- only partially modified aren't overwriten.
 	local data = {}
 	local c_ignore = minetest.get_content_id("ignore")
-	for i = 1, worldedit.volume(area.MinEdge, area.MaxEdge) do
+	for i = 1, area:getVolume() do
 		data[i] = c_ignore
 	end
 	return data

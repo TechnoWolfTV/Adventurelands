@@ -14,7 +14,7 @@ local use_vh1 = minetest.get_modpath("visual_harm_1ndicators")
 -- Global
 mobs = {
 	mod = "redo",
-	version = "20240505",
+	version = "20240525",
 	translate = S,
 	invis = minetest.global_exists("invisibility") and invisibility or {},
 	node_snow = minetest.registered_aliases["mapgen_snow"]
@@ -225,9 +225,9 @@ end
 
 
 -- attack player/mob
-function mob_class:do_attack(player)
+function mob_class:do_attack(player, force)
 
-	if self.state == "attack" then
+	if self.state == "attack" and not force then
 		return
 	end
 
@@ -1862,6 +1862,34 @@ function mob_class:smart_mobs(s, p, dist, dtime)
 			-- follow path now that it has it
 			self.path.following = true
 		end
+	end
+end
+
+
+-- temp entity for go_to() function
+minetest.register_entity("mobs:_pos", {
+	initial_properties = {
+		visual = "sprite", texture = "", hp_max = 1, physical = false,
+		static_save = false, pointable = false, is_visible = false
+	}, health = 1, _cmi_is_mob = true,
+
+	on_step = function(self, dtime)
+
+		self.counter = (self.counter or 0) + dtime
+
+		if self.counter > 20 then
+			self.object:remove()
+		end
+	end
+})
+
+-- add temp entity and make mob go to that entity position
+function mob_class:go_to(pos)
+
+	local obj = minetest.add_entity(pos, "mobs:_pos")
+
+	if obj and obj:get_luaentity() then
+		self:do_attack(obj, true)
 	end
 end
 
