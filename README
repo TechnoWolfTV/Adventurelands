@@ -9,8 +9,7 @@ Adventurelands game includes carefully selected mods for an optimal balance betw
 INSTALLATION:
 ==============================================
 
-The Adventurelands game may be installed directly through the Minetest client via Content > Browse online content.
-To install manually, download the .zip package and extract the folder inside. Rename the extracted folder to, "adventurelands"
+Download the .zip package and extract the folder inside. Rename the extracted folder to, "adventurelands"
 and move it to the games folder under your Minetest installation as Minetest/games/adventurelands.
 
 ==============================================
