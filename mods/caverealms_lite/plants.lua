@@ -118,7 +118,7 @@ end
 local path = minetest.get_modpath("caverealms") .. "/schematics/"
 
 -- grow tree function
-function grow_caverealms_mushroom(pos)
+local function grow_caverealms_mushroom(pos)
 	add_tree(pos, 5, 0, 5, path .. "shroom.mts")
 end
 

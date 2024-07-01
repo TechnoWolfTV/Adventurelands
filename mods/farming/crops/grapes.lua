@@ -186,6 +186,7 @@ local def = {
 		handy = 1, snappy = 3, flammable = 3, not_in_creative_inventory = 1,
 		attached_node = 1, growing = 1, plant = 1
 	},
+	_mcl_hardness = farming.mcl_hardness,
 	is_ground_content = false,
 	sounds = farming.sounds.node_sound_leaves_defaults()
 }

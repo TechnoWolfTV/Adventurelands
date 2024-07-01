@@ -1,0 +1,94 @@
+# textdomain: painting
+
+## Unique
+Canvas 16x16=Холст 16x16
+Canvas 32x32=Холст 32x32
+Canvas 64x64=Холст 64x64
+Brush=Кисть
+Canvas=Холст
+Easel=Мольберт
+Picture=Картина
+Painted Canvas=Раскрашенный холст
+
+## Brushes
+Dark_green brush=Тёмно-зелёная кисть
+Grey brush=Серая кисть
+Red brush=Красная кисть
+Brown brush=Коричневая кисть
+Cyan brush=Голубая кисть
+Orange brush=Оранжевая кисть
+Violet brush=Фиолетовая кисть
+Dark_grey brush=Тёмно-серая кисть
+Pink brush=Розовая кисть
+Green brush=Зелёная кисть
+Magenta brush=Пурпурная кисть
+Yellow brush=Жёлтая кисть
+Black brush=Чёрная кисть
+White brush=Белая кисть
+Blue brush=Синяя кисть
+### Oil Brushes
+Brush with White Oil Color=Кисть с белым масляным цветом
+Brush with Red Oil Color=Кисть с красным масляным цветом
+Brush with Violet Oil Color=Кисть с фиолетовым масляным цветом
+Brush with Green Oil Color=Кисть с зелёным масляным цветом
+Brush with Cyan Oil Color=Кисть с голубым масляным цветом
+Brush with Dark_green Oil Color=Кисть с тёмно-зелёным масляным цветом
+Brush with Brown Oil Color=Кисть с коричневым масляным цветом
+Brush with Yellow Oil Color=Кисть с жёлтым масляным цветом
+Brush with Black Oil Color=Кисть с чёрным масляным цветом
+Brush with Grey Oil Color=Кисть с серым масляным цветом
+Brush with Dark_grey Oil Color=Кисть с тёмно-серым масляным цветом
+Brush with Magenta Oil Color=Кисть с пурпурным масляным цветом
+Brush with Orange Oil Color=Кисть с оранжевым масляным цветом
+Brush with Blue Oil Color=Кисть с синим масляным цветом
+Brush with Pink Oil Color=Кисть с розовым масляным цветом
+### Water Brushes
+Brush with White Water Color=Кисть с белым водянистым цветом
+Brush with Violet Water Color=Кисть с фиолетовым водянистым цветом
+Brush with Yellow Water Color=Кисть с жёлтым водянистым цветом
+Brush with Red Water Color=Кисть с красным водянистым цветом
+Brush with Black Water Color=Кисть с чёрным водянистым цветом
+Brush with Grey Water Color=Кисть с серым водянистым цветом
+Brush with Dark_grey Water Color=Кисть с тёмно-серым водянистым цветом
+Brush with Magenta Water Color=Кисть с пурпурным водянистым цветом
+Brush with Dark_green Water Color=Кисть с тёмно-зелёным водянистым цветом
+Brush with Orange Water Color=Кисть с оранжевым водянистым цветом
+Brush with Blue Water Color=Кисть с синим водянистым цветом
+Brush with Pink Water Color=Кисть с розовым водянистым цветом
+Brush with Brown Water Color=Кисть с коричневым водянистым цветом
+Brush with Cyan Water Color=Кисть с голубым водянистым цветом
+Brush with Green Water Color=Кисть с зелёным водянистым цветом
+
+## Glasses
+### Oil Glasses
+Glass with Violet Oil Color=Баночка с фиолетовым масляным цветом
+Glass with Cyan Oil Color=Баночка с голубым масляным цветом
+Glass with Yellow Oil Color=Баночка с жёлтым масляным цветом
+Glass with Red Oil Color=Баночка с красным масляным цветом
+Glass with Black Oil Color=Баночка с чёрным масляным цветом
+Glass with Grey Oil Color=Баночка с серым масляным цветом
+Glass with Dark_grey Oil Color=Баночка с тёмно-серым масляным цветом
+Glass with Magenta Oil Color=Баночка с пурпурным масляным цветом
+Glass with Dark_green Oil Color=Баночка с тёмно-зелёным масляным цветом
+Glass with Orange Oil Color=Баночка с оранжевым масляным цветом
+Glass with White Oil Color=Баночка с белым масляным цветом
+Glass with Blue Oil Color=Баночка с синим масляным цветом
+Glass with Green Oil Color=Баночка с зелёным масляным цветом
+Glass with Pink Oil Color=Баночка с розовым масляным цветом
+Glass with Brown Oil Color=Баночка с коричневым масляным цветом
+### Water Glasses
+Glass with White Water Color=Баночка с белым водянистым цветом
+Glass with Black Water Color=Баночка с черным водянистым цветом
+Glass with Dark_green Water Color=Баночка с тёмно-зелёным водянистым цветом
+Glass with Pink Water Color=Баночка с розовым водянистым цветом
+Glass with Brown Water Color=Баночка с коричневым водянистым цветом
+Glass with Cyan Water Color=Баночка голубым водянистым цветом
+Glass with Green Water Color=Баночка с зелёным водянистым цветом
+Glass with Violet Water Color=Баночка с фиолетовым водянистым цветом
+Glass with Blue Water Color=Баночка с синим водянистым цветом
+Glass with Yellow Water Color=Баночка с жёлтым водянистым цветом
+Glass with Dark_grey Water Color=Баночка с тёмно-серым водянистым цветом
+Glass with Red Water Color=Баночка с красным водянистым цветом
+Glass with Magenta Water Color=Баночка с пурпурным водянистым цветом
+Glass with Orange Water Color=Баночка с оранжевым водянистым цветом
+Glass with Grey Water Color=Баночка с серым водянистым цветом

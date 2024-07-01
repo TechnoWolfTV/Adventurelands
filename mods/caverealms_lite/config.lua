@@ -1,27 +1,20 @@
+local config = {}
 
-local CONFIG_FILE_PREFIX = "caverealms."
-
-caverealms.config = {}
-
--- This function based on kaeza/minetest-irc/config.lua and used under the
--- terms of BSD 2-clause license.
 local function setting(stype, name, default)
 
 	local value
 
 	if stype == "bool" then
-		value = minetest.settings:get_bool(CONFIG_FILE_PREFIX..name)
-	elseif stype == "string" then
-		value = minetest.settings:get(CONFIG_FILE_PREFIX..name)
+		value = minetest.settings:get_bool("caverealms." .. name)
 	elseif stype == "number" then
-		value = tonumber(minetest.settings:get(CONFIG_FILE_PREFIX..name))
+		value = tonumber(minetest.settings:get("caverealms." .. name))
 	end
 
 	if value == nil then
 		value = default
 	end
 
-	caverealms.config[name] = value
+	config[name] = value
 end
 
 --generation settings
@@ -56,3 +49,5 @@ setting("bool", "dm_spawn", true)
 
 --Deep cave settings
 setting("number", "deep_cave", -7000) -- upper limit
+
+return config

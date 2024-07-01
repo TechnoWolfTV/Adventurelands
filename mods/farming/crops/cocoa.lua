@@ -158,8 +158,11 @@ local def = {
 		handy = 1, snappy = 3, flammable = 2, plant = 1, growing = 1,
 		not_in_creative_inventory = 1, leafdecay = 1, leafdecay_drop = 1
 	},
+	_mcl_hardness = farming.mcl_hardness,
 	is_ground_content = false,
 	sounds = farming.sounds.node_sound_leaves_defaults(),
+
+	-- custom function to check for growing conditions, returning True when found
 	growth_check = function(pos, node_name)
 
 		if minetest.find_node_near(pos, 1,
@@ -210,46 +213,9 @@ farming.registered_plants["farming:cocoa_beans"] = {
 	steps = 4
 }
 
--- localize math.random for speed
-local random = math.random
-
--- add random cocoa pods to jungle tree's
-minetest.register_on_generated(function(minp, maxp)
-
-	if maxp.y < 0 then
-		return
-	end
-
-	local pos, dir
-	local cocoa = minetest.find_nodes_in_area(minp, maxp,
-			{"default:jungletree", "mcl_core:jungletree"})
-
-	for n = 1, #cocoa do
-
-		pos = cocoa[n]
-
-		if minetest.find_node_near(pos, 1,
-			{"default:jungleleaves", "moretrees:jungletree_leaves_green",
-			"mcl_core:jungleleaves"}) then
-
-			dir = random(80)
-
-			    if dir == 1 then pos.x = pos.x + 1
-			elseif dir == 2 then pos.x = pos.x - 1
-			elseif dir == 3 then pos.z = pos.z + 1
-			elseif dir == 4 then pos.z = pos.z -1
-			end
-
-			if dir < 5
-			and minetest.get_node(pos).name == "air"
-			and minetest.get_node_light(pos) > 12 then
-
---print ("Cocoa Pod added at " .. minetest.pos_to_string(pos))
-
-				minetest.swap_node(pos, {
-					name = "farming:cocoa_" .. tostring(random(4))
-				})
-			end
-		end
-	end
-end)
+-- register async mapgen script
+if minetest.register_mapgen_script then
+	minetest.register_mapgen_script(farming.path .. "/crops/cocoa_mapgen.lua")
+else
+	dofile(farming.path .. "/crops/cocoa_mapgen.lua")
+end

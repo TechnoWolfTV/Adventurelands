@@ -7,7 +7,7 @@
 
 farming = {
 	mod = "redo",
-	version = "20240312",
+	version = "20240625",
 	path = minetest.get_modpath("farming"),
 	select = {
 		type = "fixed",
@@ -24,7 +24,8 @@ farming = {
 	use_utensils = minetest.settings:get_bool("farming_use_utensils") ~= false,
 	mtg = minetest.get_modpath("default"),
 	mcl = minetest.get_modpath("mcl_core"),
-	sounds = {}
+	sounds = {},
+	mcl_hardness = 0.01
 }
 
 -- default sound functions just incase
@@ -360,6 +361,12 @@ minetest.register_abm({
 })
 
 
+-- check if on wet soil
+farming.can_grow = function(pos)
+	local below = minetest.get_node({x = pos.x, y = pos.y -1, z = pos.z})
+	return minetest.get_item_group(below.name, "soil") >= 3
+end
+
 -- Plant timer function that grows plants under the right conditions.
 function farming.plant_growth_timer(pos, elapsed, node_name)
 
@@ -375,22 +382,26 @@ function farming.plant_growth_timer(pos, elapsed, node_name)
 		return false
 	end
 
-	-- custom growth check
-	local chk = minetest.registered_nodes[node_name].growth_check
+	local chk1 = minetest.registered_nodes[node_name].growth_check -- old
+	local chk2 = minetest.registered_nodes[node_name].can_grow -- new
 
-	if chk then
+	-- custom farming redo growth_check function
+	if chk1 then
 
-		if not chk(pos, node_name) then
+		if not chk1(pos, node_name) then
 			return true
 		end
 
-	-- otherwise check for wet soil beneath crop
-	else
-		local under = minetest.get_node({x = pos.x, y = pos.y - 1, z = pos.z})
+	-- custom mt 5.9x farming can_grow function
+	elseif chk2 then
 
-		if minetest.get_item_group(under.name, "soil") < 3 then
+		if not chk2(pos) then
 			return true
 		end
+
+	-- default mt 5.9x farming.can_grow function
+	elseif not farming.can_grow(pos) then
+		return true
 	end
 
 	local growth
@@ -487,7 +498,7 @@ function farming.place_seed(itemstack, placer, pointed_thing, plantname)
 	local pt = pointed_thing
 
 	-- check if pointing at a node
-	if not pt or pt.type ~= "node" then
+	if not itemstack or not pt or pt.type ~= "node" then
 		return
 	end
 
@@ -589,6 +600,7 @@ farming.register_plant = function(name, def)
 			seed = 1, snappy = 3, attached_node = 1, flammable = 2, growing = 1,
 			compostability = 65, handy = 1
 		},
+		_mcl_hardness = farming.mcl_hardness,
 		is_ground_content = false,
 		paramtype = "light",
 		paramtype2 = "wallmounted",
@@ -675,6 +687,7 @@ farming.register_plant = function(name, def)
 			drop = drop,
 			selection_box = sel,
 			groups = g,
+			_mcl_hardness = farming.mcl_hardness,
 			is_ground_content = false,
 			sounds = farming.sounds.node_sound_leaves_defaults(),
 			minlight = def.minlight,

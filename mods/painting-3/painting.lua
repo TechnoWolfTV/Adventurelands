@@ -89,9 +89,11 @@ minetest.register_node("painting:pic", {
 
 -- picture texture entity
 minetest.register_entity("painting:picent", {
-	collisionbox = { 0, 0, 0, 0, 0, 0 },
-	visual = "upright_sprite",
-	textures = { "painting_white.png" },
+	initial_properties = {
+		collisionbox = { 0, 0, 0, 0, 0, 0 },
+		visual = "upright_sprite",
+		textures = { "painting_white.png" },
+	},
 
 	on_activate = function(self, staticdata)
 		local pos = self.object:get_pos()
@@ -226,9 +228,11 @@ local paintbox = {
 
 -- Painting as being painted.
 minetest.register_entity("painting:paintent", {
-	collisionbox = { 0, 0, 0, 0, 0, 0 },
-	visual = "upright_sprite",
-	textures = { "painting_white.png" },
+	initial_properties = {
+		collisionbox = { 0, 0, 0, 0, 0, 0 },
+		visual = "upright_sprite",
+		textures = { "painting_white.png" },
+	},
 
 	on_punch = function(self, puncher)
 		--check for brush.
@@ -306,6 +310,11 @@ minetest.register_craftitem("painting:paintedcanvas", {
 			return
 		end
 
+		local node = minetest.get_node(pos)
+		if not minetest.registered_nodes[node.name].buildable_to then
+			return
+		end
+
 		local under = pointed_thing.under
 
 		local wm = minetest.dir_to_wallmounted(vector.subtract(under, pos))
@@ -331,12 +340,14 @@ minetest.register_craftitem("painting:paintedcanvas", {
 				minetest.log("info", "[painting] Painting data fix failed.")
 				return itemstack
 			end
+		else
+			data.grid = minetest.deserialize(painting.decompress(data.grid))
 		end
 		legacy.fix_grid(data.grid, data.version)
-    data.version = current_version
+		data.version = current_version
 		node_meta:set_int("resolution", data.res)
 		node_meta:set_string("version", data.version)
-		node_meta:set_string("grid", data.grid)
+		node_meta:set_string("grid", painting.compress(minetest.serialize(data.grid)))
 
 		--add entity
 		local dir = dirs[fd]
@@ -344,8 +355,6 @@ minetest.register_craftitem("painting:paintedcanvas", {
 
 		pos.x = pos.x + dir.x * off
 		pos.z = pos.z + dir.z * off
-		
-		data.grid = minetest.deserialize(painting.decompress(data.grid))
 
 		local obj = minetest.add_entity(pos, "painting:picent")
 		obj:set_properties{ textures = { painting.to_imagestring(data.grid, data.res) }}
@@ -357,11 +366,12 @@ minetest.register_craftitem("painting:paintedcanvas", {
 
 --canvas inventory items
 for i = 4,6 do
-	minetest.register_craftitem("painting:canvas_"..2^i, {
-		description = S("Canvas").." "..(2^i).."x"..(2^i),
-		inventory_image = "default_paper.png",
+	local res = 2^i
+	minetest.register_craftitem("painting:canvas_"..res, {
+		description = S("Canvas").." "..res.."x"..res,
+		inventory_image = "default_paper.png^painting_canvas_"..res.."_overlay.png",
 		stack_max = 99,
-		_painting_canvas_resolution = 2^i,
+		_painting_canvas_resolution = res,
 	})
 end
 
@@ -522,30 +532,35 @@ local brush = {
 }
 
 local textures = {
-	white = "white.png", yellow = "yellow.png",
-	orange = "orange.png", red = "red.png",
-	violet = "violet.png", blue = "blue.png",
-	green = "green.png", magenta = "magenta.png",
-	cyan = "cyan.png", grey = "grey.png",
-	dark_grey = "darkgrey.png", black = "black.png",
-	dark_green = "darkgreen.png", brown="brown.png",
-	pink = "pink.png"
+	[1] = "white",
+	[2] = "dark_green",
+	[3] = "grey",
+	[4] = "red",
+	[5] = "brown",
+	[6] = "cyan",
+	[7] = "orange",
+	[8] = "violet",
+	[9] = "dark_grey",
+	[10] = "pink",
+	[11] = "green",
+	[12] = "magenta",
+	[13] = "yellow",
+	[14] = "black",
+	[15] = "blue",
 }
+local vage_revcolours = textures
 
 minetest.register_craftitem("painting:brush", {
-		description = "Brush",
+		description = S("Brush"),
 		inventory_image = "painting_brush_stem.png^(painting_brush_head.png^[colorize:#FFFFFF:128)^painting_brush_head.png",
 	})
 
-local vage_revcolours = {} -- ← colours in pairs order
-for color, _ in pairs(textures) do
+for _, color in pairs(textures) do
 	local brush_new = table.copy(brush)
-	brush_new.description = color:gsub("^%l", string.upper).." brush"
+	brush_new.description = S(color:gsub("^%l", string.upper).." brush")
 	brush_new.inventory_image = "painting_brush_stem.png^(painting_brush_head.png^[colorize:#"..hexcolors[color]..":255)^painting_brush_head.png"
 	brush_new._painting_brush.color = hexcolors[color]
 	minetest.register_tool("painting:brush_"..color, brush_new)
-
-	vage_revcolours[#vage_revcolours+1] = color
 end
 
 if minetest.get_modpath("unifieddyes") then

@@ -13,6 +13,7 @@ minetest.register_node("farming:seed_rice", {
 		handy = 1, compostability = 48, seed = 1, snappy = 3, attached_node = 1,
 		flammable = 4, growing = 1
 	},
+	_mcl_hardness = farming.mcl_hardness,
 	is_ground_content = false,
 	paramtype = "light",
 	paramtype2 = "wallmounted",
@@ -90,6 +91,7 @@ local def = {
 		handy = 1, snappy = 3, flammable = 4, plant = 1, attached_node = 1,
 		not_in_creative_inventory = 1, growing = 1
 	},
+	_mcl_hardness = farming.mcl_hardness,
 	is_ground_content = false,
 	sounds = farming.sounds.node_sound_leaves_defaults()
 }

@@ -1,0 +1,94 @@
+# textdomain: painting
+
+## Unique
+Canvas 16x16=
+Canvas 32x32=
+Canvas 64x64=
+Brush=
+Canvas=
+Easel=
+Picture=
+Painted Canvas=
+
+## Brushes
+Dark_green brush=
+Grey brush=
+Red brush=
+Brown brush=
+Cyan brush=
+Orange brush=
+Violet brush=
+Dark_grey brush=
+Pink brush=
+Green brush=
+Magenta brush=
+Yellow brush=
+Black brush=
+White brush=
+Blue brush=
+### Oil Brushes
+Brush with White Oil Color=
+Brush with Red Oil Color=
+Brush with Violet Oil Color=
+Brush with Green Oil Color=
+Brush with Cyan Oil Color=
+Brush with Dark_green Oil Color=
+Brush with Brown Oil Color=
+Brush with Yellow Oil Color=
+Brush with Black Oil Color=
+Brush with Grey Oil Color=
+Brush with Dark_grey Oil Color=
+Brush with Magenta Oil Color=
+Brush with Orange Oil Color=
+Brush with Blue Oil Color=
+Brush with Pink Oil Color=
+### Water Brushes
+Brush with White Water Color=
+Brush with Violet Water Color=
+Brush with Yellow Water Color=
+Brush with Red Water Color=
+Brush with Black Water Color=
+Brush with Grey Water Color=
+Brush with Dark_grey Water Color=
+Brush with Magenta Water Color=
+Brush with Dark_green Water Color=
+Brush with Orange Water Color=
+Brush with Blue Water Color=
+Brush with Pink Water Color=
+Brush with Brown Water Color=
+Brush with Cyan Water Color=
+Brush with Green Water Color=
+
+## Glasses
+### Oil Glasses
+Glass with Violet Oil Color=
+Glass with Cyan Oil Color=
+Glass with Yellow Oil Color=
+Glass with Red Oil Color=
+Glass with Black Oil Color=
+Glass with Grey Oil Color=
+Glass with Dark_grey Oil Color=
+Glass with Magenta Oil Color=
+Glass with Dark_green Oil Color=
+Glass with Orange Oil Color=
+Glass with White Oil Color=
+Glass with Blue Oil Color=
+Glass with Green Oil Color=
+Glass with Pink Oil Color=
+Glass with Brown Oil Color=
+### Water Glasses
+Glass with White Water Color=
+Glass with Black Water Color=
+Glass with Dark_green Water Color=
+Glass with Pink Water Color=
+Glass with Brown Water Color=
+Glass with Cyan Water Color=
+Glass with Green Water Color=
+Glass with Violet Water Color=
+Glass with Blue Water Color=
+Glass with Yellow Water Color=
+Glass with Dark_grey Water Color=
+Glass with Red Water Color=
+Glass with Magenta Water Color=
+Glass with Orange Water Color=
+Glass with Grey Water Color=

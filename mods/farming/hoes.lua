@@ -168,8 +168,9 @@ farming.register_hoe(":farming:hoe_steel", {
 farming.register_hoe(":farming:hoe_bronze", {
 	description = S("Bronze Hoe"),
 	inventory_image = "farming_tool_bronzehoe.png",
-	max_uses = 500,
-	groups = {not_in_creative_inventory = 1}
+	max_uses = 250,
+	groups = {not_in_creative_inventory = 1},
+	material = "default:bronze_ingot"
 })
 
 farming.register_hoe(":farming:hoe_mese", {
