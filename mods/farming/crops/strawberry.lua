@@ -6,13 +6,15 @@ minetest.register_craftitem(":ethereal:strawberry", {
 	description = S("Strawberry"),
 	inventory_image = "ethereal_strawberry.png",
 	groups = {
-		compostability = 48, seed = 2, food_strawberry = 1, food_berry = 1, flammable = 2
+		compostability = 48, seed = 2, food_strawberry = 1, food_berry = 1
 	},
 	on_place = function(itemstack, placer, pointed_thing)
 		return farming.place_seed(itemstack, placer, pointed_thing, "ethereal:strawberry_1")
 	end,
 	on_use = minetest.item_eat(1)
 })
+
+farming.add_eatable("ethereal:strawberry", 1)
 
 -- Define Strawberry Bush growth stages
 local def = {

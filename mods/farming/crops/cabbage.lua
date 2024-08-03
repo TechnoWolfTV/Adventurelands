@@ -5,12 +5,16 @@ local S = farming.translate
 minetest.register_craftitem("farming:cabbage", {
 	description = S("Cabbage"),
 	inventory_image = "farming_cabbage.png",
-	groups = {compostability = 48, seed = 2, food_cabbage = 1, flammable = 2},
+	groups = {
+		compostability = 48, seed = 2, food_cabbage = 1
+	},
 	on_place = function(itemstack, placer, pointed_thing)
 		return farming.place_seed(itemstack, placer, pointed_thing, "farming:cabbage_1")
 	end,
 	on_use = minetest.item_eat(1)
 })
+
+farming.add_eatable("farming:cabbage", 1)
 
 local def = {
 	drawtype = "plantlike",

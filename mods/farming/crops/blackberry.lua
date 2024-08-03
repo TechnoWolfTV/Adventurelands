@@ -7,13 +7,15 @@ minetest.register_craftitem("farming:blackberry", {
 	inventory_image = "farming_blackberry.png",
 	groups = {
 		compostability = 48, seed = 2, food_blackberries = 1, food_blackberry = 1,
-		food_berry = 1, flammable = 2
+		food_berry = 1
 	},
 	on_place = function(itemstack, placer, pointed_thing)
 		return farming.place_seed(itemstack, placer, pointed_thing, "farming:blackberry_1")
 	end,
 	on_use = minetest.item_eat(1)
 })
+
+farming.add_eatable("farming:blackberry", 1)
 
 local def = {
 	drawtype = "plantlike",

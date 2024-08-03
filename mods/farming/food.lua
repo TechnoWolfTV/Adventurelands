@@ -8,8 +8,10 @@ minetest.register_craftitem("farming:bread_slice", {
 	description = S("Sliced Bread"),
 	inventory_image = "farming_bread_slice.png",
 	on_use = minetest.item_eat(1),
-	groups = {food_bread_slice = 1, flammable = 2, compostability = 65}
+	groups = {food_bread_slice = 1, compostability = 65}
 })
+
+farming.add_eatable("farming:bread_slice", 1)
 
 minetest.register_craft({
 	output = "farming:bread_slice 5",
@@ -23,8 +25,10 @@ minetest.register_craftitem("farming:toast", {
 	description = S("Toast"),
 	inventory_image = "farming_toast.png",
 	on_use = minetest.item_eat(1),
-	groups = {food_toast = 1, flammable = 2, compostability = 65}
+	groups = {food_toast = 1, compostability = 65}
 })
+
+farming.add_eatable("farming:toast", 1)
 
 minetest.register_craft({
 	type = "cooking",
@@ -39,8 +43,10 @@ minetest.register_craftitem("farming:toast_sandwich", {
 	description = S("Toast Sandwich"),
 	inventory_image = "farming_toast_sandwich.png",
 	on_use = minetest.item_eat(4),
-	groups = {flammable = 2, compostability = 85}
+	groups = {compostability = 85}
 })
+
+farming.add_eatable("farming:toast_sandwich", 4)
 
 minetest.register_craft({
 	output = "farming:toast_sandwich",
@@ -182,8 +188,7 @@ minetest.register_node("farming:salt", {
 	visual_scale = 0.8,
 	paramtype = "light",
 	tiles = {"farming_salt.png"},
-	groups = {food_salt = 1, vessel = 1, dig_immediate = 3,
-			attached_node = 1},
+	groups = {food_salt = 1, vessel = 1, dig_immediate = 3, attached_node = 1},
 	is_ground_content = false,
 	sounds = farming.sounds.node_sound_defaults(),
 	selection_box = {
@@ -303,6 +308,8 @@ minetest.register_node("farming:mayonnaise", {
 	sounds = farming.sounds.node_sound_glass_defaults()
 })
 
+farming.add_eatable("farming:mayonnaise", 3)
+
 minetest.register_craft({
 	output = "farming:mayonnaise",
 	recipe = {
@@ -351,9 +358,11 @@ minetest.register_craft({
 minetest.register_craftitem("farming:turkish_delight", {
 	description = S("Turkish Delight"),
 	inventory_image = "farming_turkish_delight.png",
-	groups = {flammable = 3, compostability = 85},
+	groups = {compostability = 85},
 	on_use = minetest.item_eat(2)
 })
+
+farming.add_eatable("farming:turkish_delight", 2)
 
 minetest.register_craft({
 	output = "farming:turkish_delight 4",
@@ -374,9 +383,11 @@ minetest.register_craft({
 minetest.register_craftitem("farming:garlic_bread", {
 	description = S("Garlic Bread"),
 	inventory_image = "farming_garlic_bread.png",
-	groups = {flammable = 3, compostability = 65},
+	groups = {compostability = 65},
 	on_use = minetest.item_eat(2)
 })
+
+farming.add_eatable("farming:garlic_bread", 2)
 
 minetest.register_craft({
 	output = "farming:garlic_bread",
@@ -394,6 +405,8 @@ minetest.register_craftitem("farming:donut", {
 	groups = {compostability = 65}
 })
 
+farming.add_eatable("farming:donut", 4)
+
 minetest.register_craft({
 	output = "farming:donut 3",
 	recipe = {
@@ -410,6 +423,8 @@ minetest.register_craftitem("farming:donut_chocolate", {
 	groups = {compostability = 65}
 })
 
+farming.add_eatable("farming:donut_chocolate", 6)
+
 minetest.register_craft({
 	output = "farming:donut_chocolate",
 	recipe = {
@@ -424,6 +439,8 @@ minetest.register_craftitem("farming:donut_apple", {
 	on_use = minetest.item_eat(6),
 	groups = {compostability = 65}
 })
+
+farming.add_eatable("farming:donut_apple", 6)
 
 minetest.register_craft({
 	output = "farming:donut_apple",
@@ -441,6 +458,8 @@ minetest.register_craftitem("farming:porridge", {
 	on_use = minetest.item_eat(6, a.bowl),
 	groups = {compostability = 65}
 })
+
+farming.add_eatable("farming:porridge", 6)
 
 minetest.register_craft({
 	output = "farming:porridge",
@@ -462,6 +481,8 @@ minetest.register_craftitem("farming:jaffa_cake", {
 	on_use = minetest.item_eat(6),
 	groups = {compostability = 65}
 })
+
+farming.add_eatable("farming:jaffa_cake", 6)
 
 minetest.register_craft({
 	output = "farming:jaffa_cake 3",
@@ -486,6 +507,8 @@ minetest.register_craftitem("farming:apple_pie", {
 	on_use = minetest.item_eat(6),
 	groups = {compostability = 75}
 })
+
+farming.add_eatable("farming:apple_pie", 6)
 
 minetest.register_craft({
 	output = "farming:apple_pie",
@@ -514,6 +537,8 @@ minetest.register_craftitem("farming:cactus_juice", {
 		end
 	end
 })
+
+farming.add_eatable("farming:cactus_juice", 1)
 
 minetest.register_craft({
 	output = "farming:cactus_juice",
@@ -563,6 +588,8 @@ minetest.register_craftitem("farming:mac_and_cheese", {
 	groups = {compostability = 65}
 })
 
+farming.add_eatable("farming:mac_and_cheese", 6)
+
 minetest.register_craft({
 	output = "farming:mac_and_cheese",
 	recipe = {
@@ -578,6 +605,8 @@ minetest.register_craftitem("farming:spaghetti", {
 	on_use = minetest.item_eat(8),
 	groups = {compostability = 65}
 })
+
+farming.add_eatable("farming:spaghetti", 8)
 
 minetest.register_craft({
 	output = "farming:spaghetti",
@@ -596,6 +625,8 @@ minetest.register_craftitem("farming:bibimbap", {
 	on_use = minetest.item_eat(8, a.bowl),
 	groups = {compostability = 65}
 })
+
+farming.add_eatable("farming:bibimbap", 8)
 
 minetest.register_craft({
 	output = "farming:bibimbap",
@@ -627,6 +658,8 @@ minetest.register_craftitem("farming:burger", {
 	groups = {compostability = 95}
 })
 
+farming.add_eatable("farming:burger", 16)
+
 minetest.register_craft({
 	output = "farming:burger",
 	recipe = {
@@ -645,6 +678,8 @@ minetest.register_craftitem("farming:salad", {
 	groups = {compostability = 45}
 })
 
+farming.add_eatable("farming:salad", 8)
+
 minetest.register_craft({
 	output = "farming:salad",
 	type = "shapeless",
@@ -662,6 +697,8 @@ minetest.register_craftitem("farming:smoothie_berry", {
 	on_use = minetest.item_eat(6, "vessels:drinking_glass"),
 	groups = {vessel = 1, drink = 1, compostability = 65}
 })
+
+farming.add_eatable("farming:smoothie_berry", 6)
 
 minetest.register_craft({
 	output = "farming:smoothie_berry",
@@ -682,6 +719,8 @@ minetest.register_craftitem("farming:spanish_potatoes", {
 	groups = {compostability = 65}
 })
 
+farming.add_eatable("farming:spanish_potatoes", 8)
+
 minetest.register_craft({
 	output = "farming:spanish_potatoes",
 	recipe = {
@@ -695,11 +734,13 @@ minetest.register_craft({
 -- Potato omelet
 
 minetest.register_craftitem("farming:potato_omelet", {
-	description = S("Potato omelet"),
+	description = S("Potato omelette"),
 	inventory_image = "farming_potato_omelet.png",
 	on_use = minetest.item_eat(6, a.bowl),
 	groups = {compostability = 65}
 })
+
+farming.add_eatable("farming:potato_omelet", 6)
 
 minetest.register_craft({
 	output = "farming:potato_omelet",
@@ -719,6 +760,8 @@ minetest.register_craftitem("farming:paella", {
 	groups = {compostability = 65}
 })
 
+farming.add_eatable("farming:paella", 8)
+
 minetest.register_craft({
 	output = "farming:paella",
 	recipe = {
@@ -737,6 +780,8 @@ minetest.register_craftitem("farming:flan", {
 	on_use = minetest.item_eat(6),
 	groups = {compostability = 65}
 })
+
+farming.add_eatable("farming:flan", 6)
 
 minetest.register_craft({
 	output = "farming:flan",
@@ -758,8 +803,10 @@ minetest.register_craftitem("farming:cheese_vegan", {
 	description = S("Vegan Cheese"),
 	inventory_image = "farming_cheese_vegan.png",
 	on_use = minetest.item_eat(2),
-	groups = {compostability = 65, food_cheese = 1, flammable = 2}
+	groups = {compostability = 65, food_cheese = 1}
 })
+
+farming.add_eatable("farming:cheese_vegan", 2)
 
 minetest.register_craft({
 	output = "farming:cheese_vegan",
@@ -794,8 +841,10 @@ minetest.register_craftitem("farming:onigiri", {
 	description = S("Onigiri"),
 	inventory_image = "farming_onigiri.png",
 	on_use = minetest.item_eat(2),
-	groups = {flammable = 2, compostability = 65}
+	groups = {compostability = 65}
 })
+
+farming.add_eatable("farming:onigiri", 2)
 
 minetest.register_craft({
 	output = "farming:onigiri",
@@ -811,8 +860,10 @@ minetest.register_craftitem("farming:gyoza", {
 	description = S("Gyoza"),
 	inventory_image = "farming_gyoza.png",
 	on_use = minetest.item_eat(4),
-	groups = {flammable = 2, compostability = 65}
+	groups = {compostability = 65}
 })
+
+farming.add_eatable("farming:gyoza", 4)
 
 minetest.register_craft({
 	output = "farming:gyoza 4",
@@ -833,8 +884,10 @@ minetest.register_craftitem("farming:mochi", {
 	description = S("Mochi"),
 	inventory_image = "farming_mochi.png",
 	on_use = minetest.item_eat(3),
-	groups = {flammable = 2, compostability = 65}
+	groups = {compostability = 65}
 })
+
+farming.add_eatable("farming:mochi", 3)
 
 minetest.register_craft({
 	output = "farming:mochi",
@@ -857,6 +910,8 @@ minetest.register_craftitem("farming:gingerbread_man", {
 	on_use = minetest.item_eat(2),
 	groups = {compostability = 85}
 })
+
+farming.add_eatable("farming:gingerbread_man", 2)
 
 minetest.register_craft({
 	output = "farming:gingerbread_man 3",

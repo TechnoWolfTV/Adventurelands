@@ -10,7 +10,7 @@ local S = farming.translate
 minetest.register_craftitem("farming:potato", {
 	description = S("Potato"),
 	inventory_image = "farming_potato.png",
-	groups = {compostability = 48, seed = 2, food_potato = 1, flammable = 2},
+	groups = {compostability = 48, seed = 2, food_potato = 1},
 	on_place = function(itemstack, placer, pointed_thing)
 		return farming.place_seed(itemstack, placer, pointed_thing, "farming:potato_1")
 	end,
@@ -26,12 +26,16 @@ minetest.register_craftitem("farming:potato", {
 	end
 })
 
+farming.add_eatable("farming:potato", 1)
+
 -- baked potato
 minetest.register_craftitem("farming:baked_potato", {
 	description = S("Baked Potato"),
 	inventory_image = "farming_baked_potato.png",
 	on_use = minetest.item_eat(6)
 })
+
+farming.add_eatable("farming:baked_potato", 6)
 
 minetest.register_craft({
 	type = "cooking",
@@ -46,6 +50,8 @@ minetest.register_craftitem("farming:potato_salad", {
 	inventory_image = "farming_potato_salad.png",
 	on_use = minetest.item_eat(10, "farming:bowl")
 })
+
+farming.add_eatable("farming:potato_salad", 10)
 
 minetest.register_craft({
 	output = "farming:potato_salad",

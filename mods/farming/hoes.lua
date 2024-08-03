@@ -350,13 +350,29 @@ minetest.register_craftitem("farming:hoe_bomb", {
 	end,
 })
 
--- Mithril Scythe (special item)
+-- helper function
+
+local function node_not_num(nodename)
+
+	local num = #nodename:split("_")
+	local str = ""
+
+	if not num or num == 1 then return end
+
+	for v = 1, (num - 1) do
+		str = str .. nodename:split("_")[v] .. "_"
+	end
+
+	return str
+end
 
 farming.scythe_not_drops = {"farming:trellis", "farming:beanpole"}
 
 farming.add_to_scythe_not_drops = function(item)
 	table.insert(farming.scythe_not_drops, item)
 end
+
+-- Mithril Scythe (special item)
 
 minetest.register_tool("farming:scythe_mithril", {
 	description = S("Mithril Scythe (Use to harvest and replant crops)"),
@@ -396,12 +412,9 @@ minetest.register_tool("farming:scythe_mithril", {
 
 		-- get crop name
 		local mname = node.name:split(":")[1]
-		local pname = node.name:split(":")[2]
-		local sname = tonumber(pname:split("_")[2])
+		local pname = node_not_num(node.name:split(":")[2])
 
-		pname = pname:split("_")[1]
-
-		if not sname then
+		if not pname then
 			return
 		end
 
@@ -439,7 +452,8 @@ minetest.register_tool("farming:scythe_mithril", {
 		-- play sound
 		minetest.sound_play("default_grass_footstep", {pos = pos, gain = 1.0}, true)
 
-		local replace = mname .. ":" .. pname .. "_1"
+		-- replace with seed or crop_1
+		local replace = mname .. ":" .. pname .. "1"
 
 		if minetest.registered_nodes[replace] then
 

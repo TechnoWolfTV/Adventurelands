@@ -99,6 +99,8 @@ minetest.register_craftitem("farming:cookie", {
 	on_use = minetest.item_eat(2)
 })
 
+farming.add_eatable("farming:cookie", 2)
+
 minetest.register_craft( {
 	output = "farming:cookie 8",
 	recipe = {
@@ -112,6 +114,8 @@ minetest.register_craftitem("farming:chocolate_dark", {
 	inventory_image = "farming_chocolate_dark.png",
 	on_use = minetest.item_eat(3)
 })
+
+farming.add_eatable("farming:chocolate_dark", 3)
 
 minetest.register_craft( {
 	output = "farming:chocolate_dark",

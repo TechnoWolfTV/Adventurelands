@@ -8,6 +8,13 @@ local alias = function(orig, new)
 	minetest.register_alias(orig, new)
 end
 
+--= Add {eatable} group to default food items if found
+
+farming.add_eatable("default:apple", 2)
+farming.add_eatable("default:blueberries", 1)
+farming.add_eatable("flowers:mushroom_brown", 1)
+farming.add_eatable("flowers:mushroom_red", -5)
+
 --= Aliases
 
 -- Banana
@@ -29,11 +36,15 @@ else
 			type = "fixed",
 			fixed = {-0.2, -0.5, -0.2, 0.2, 0.2, 0.2}
 		},
-		groups = {food_banana = 1, fleshy = 3, dig_immediate = 3, flammable = 2},
+		groups = {
+			food_banana = 1, fleshy = 3, dig_immediate = 3
+		},
 		is_ground_content = false,
 		on_use = minetest.item_eat(2),
 		sounds = farming.sounds.node_sound_leaves_defaults()
 	})
+
+	farming.add_eatable("ethereal:banana", 2)
 
 	minetest.register_node(":ethereal:bananaleaves", {
 		description = S("Banana Leaves"),
@@ -89,11 +100,15 @@ else
 			type = "fixed",
 			fixed = {-0.2, -0.3, -0.2, 0.2, 0.2, 0.2}
 		},
-		groups = {food_orange = 1, fleshy = 3, dig_immediate = 3, flammable = 2},
+		groups = {
+			food_orange = 1, fleshy = 3, dig_immediate = 3, flammable = 2
+		},
 		is_ground_content = false,
 		on_use = minetest.item_eat(4),
 		sounds = farming.sounds.node_sound_leaves_defaults()
 	})
+
+	farming.add_eatable("ethereal:orange", 4)
 
 	alias("farming_plus:orange_item", "ethereal:orange")
 	alias("farming_plus:orange", "ethereal:orange")

@@ -1,40 +1,54 @@
-
-stamina = {players = {}, mod = "redo"}
-
-STAMINA_TICK = tonumber(minetest.settings:get("stamina_tick")) or 800
-							-- time in seconds after that 1 stamina point is taken
-STAMINA_TICK_MIN = 4		-- stamina ticks won't reduce stamina below this level
-STAMINA_HEALTH_TICK = 4		-- time in seconds after player gets healed/damaged
-STAMINA_MOVE_TICK = 0.5		-- time in seconds after the movement is checked
-STAMINA_POISON_TICK = 1.25	-- time in seconds after player is poisoned
-
-STAMINA_EXHAUST_DIG = 2		-- exhaustion increased this value after digged node
-STAMINA_EXHAUST_PLACE = 1	-- .. after digging node
-STAMINA_EXHAUST_MOVE = 1.5	-- .. if player movement detected
-STAMINA_EXHAUST_JUMP = 5	-- .. if jumping
-STAMINA_EXHAUST_CRAFT = 2	-- .. if player crafts
-STAMINA_EXHAUST_PUNCH = 40	-- .. if player punches another player
-STAMINA_EXHAUST_LVL = 160	-- at what exhaustion player saturation gets lowered
-
-STAMINA_HEAL = 1			-- number of HP player gets healed after STAMINA_HEALTH_TICK
-STAMINA_HEAL_LVL = 5		-- lower level of saturation needed to get healed
-STAMINA_STARVE = 1			-- number of HP player gets damaged by stamina after
-							-- STAMINA_HEALTH_TICK
-STAMINA_STARVE_LVL = 3		-- level of staturation that causes starving
-
-STAMINA_VISUAL_MAX = 20		-- hud bar extends only to 20
-
+stamina = {
+	players = {}, mod = "redo",
+	-- time in seconds after that 1 stamina point is taken
+	TICK = tonumber(minetest.settings:get("stamina_tick")) or 800,
+	-- stamina ticks won't reduce stamina below this level
+	TICK_MIN = 4,
+	-- time in seconds after player gets healed/damaged
+	HEALTH_TICK = 4,
+	-- time in seconds after the movement is checked
+	MOVE_TICK = 0.5,
+	-- time in seconds after player is poisoned
+	POISON_TICK = 1.25,
+	-- exhaustion increased this value after digged node
+	EXHAUST_DIG = 2,
+	-- .. after digging node
+	EXHAUST_PLACE = 1,
+	-- .. if player movement detected
+	EXHAUST_MOVE = 1.5,
+	-- .. if jumping
+	EXHAUST_JUMP = 5,
+	-- .. if player crafts
+	EXHAUST_CRAFT = 2,
+	-- .. if player punches another player
+	EXHAUST_PUNCH = 40,
+	-- at what exhaustion player saturation gets lowered
+	EXHAUST_LVL = 160,
+	-- number of HP player gets healed after stamina.HEALTH_TICK
+	HEAL = 1,
+	-- lower level of saturation needed to get healed
+	HEAL_LVL = 5,
+	-- number of HP player gets damaged by stamina after stamina.HEALTH_TICK
+	STARVE = 1,
+	-- level of staturation that causes starving
+	STARVE_LVL = 3,
+	-- hud bar extends only to 20
+	VISUAL_MAX = 20
+}
 
 local function clamp(val, minval, maxval)
 	return math.max(math.min(val, maxval), minval)
 end
 
 -- how much faster players can run if satiated.
-SPRINT_SPEED = clamp(tonumber(minetest.settings:get("stamina_sprint_speed")) or 0.3, 0.0, 1.0)
+local SPRINT_SPEED = clamp(tonumber(
+		minetest.settings:get("stamina_sprint_speed")) or 0.3, 0.0, 1.0)
 -- how much higher player can jump if satiated
-SPRINT_JUMP  = clamp(tonumber(minetest.settings:get("stamina_sprint_jump")) or 0.1, 0.0, 1.0)
+local SPRINT_JUMP  = clamp(tonumber(
+		minetest.settings:get("stamina_sprint_jump")) or 0.1, 0.0, 1.0)
 -- how fast to drain satation while sprinting (0-1)
-SPRINT_DRAIN  = clamp(tonumber(minetest.settings:get("stamina_sprint_drain")) or 0.35, 0.0, 1.0)
+local SPRINT_DRAIN  = clamp(tonumber(
+		minetest.settings:get("stamina_sprint_drain")) or 0.35, 0.0, 1.0)
 
 
 -- are we a real player ?
@@ -93,7 +107,7 @@ local function stamina_update_level(player, level)
 	player:hud_change(
 		stamina.players[player:get_player_name()].hud_id,
 		"number",
-		math.min(STAMINA_VISUAL_MAX, level)
+		math.min(stamina.VISUAL_MAX, level)
 	)
 end
 
@@ -109,7 +123,7 @@ stamina.change = function(player, change)
 
 	local level = get_int_attribute(player) + change
 
-	level = clamp(level, 0, STAMINA_VISUAL_MAX)
+	level = clamp(level, 0, stamina.VISUAL_MAX)
 
 	stamina_update_level(player, level)
 
@@ -132,7 +146,7 @@ local function exhaust_player(player, v)
 
 	local exhaustion = stamina.players[name].exhaustion + v
 
-	if exhaustion > STAMINA_EXHAUST_LVL then
+	if exhaustion > stamina.EXHAUST_LVL then
 
 		exhaustion = 0
 
@@ -252,9 +266,7 @@ local function drunk_tick()
 
 		local name = is_player(player) and player:get_player_name()
 
-		if name
-		and stamina.players[name]
-		and stamina.players[name].drunk then
+		if name and stamina.players[name] and stamina.players[name].drunk then
 
 			-- play burp sound every 20 seconds when drunk
 			local num = stamina.players[name].drunk
@@ -306,19 +318,16 @@ local function health_tick()
 			local h = get_int_attribute(player)
 
 			-- damage player by 1 hp if saturation is < 2
-			if h and h < STAMINA_STARVE_LVL
-			and hp > 0 then
-				player:set_hp(hp - STAMINA_STARVE, {hunger = true})
+			if h and h < stamina.STARVE_LVL and hp > 0 then
+				player:set_hp(hp - stamina.STARVE, {hunger = true})
 			end
 
 			-- don't heal if drowning or dead or poisoned
-			if h and h >= STAMINA_HEAL_LVL
-			and h >= hp
-			and hp > 0
-			and air > 0
+			if h and h >= stamina.HEAL_LVL
+			and h >= hp and hp > 0 and air > 0
 			and not stamina.players[name].poisoned then
 
-				player:set_hp(hp + STAMINA_HEAL)
+				player:set_hp(hp + stamina.HEAL)
 
 				stamina_update_level(player, h - 1)
 			end
@@ -337,13 +346,10 @@ local function action_tick()
 		if controls then
 
 			if controls.jump then
-				exhaust_player(player, STAMINA_EXHAUST_JUMP)
+				exhaust_player(player, stamina.EXHAUST_JUMP)
 
-			elseif controls.up
-			or controls.down
-			or controls.left
-			or controls.right then
-				exhaust_player(player, STAMINA_EXHAUST_MOVE)
+			elseif controls.up or controls.down or controls.left or controls.right then
+				exhaust_player(player, stamina.EXHAUST_MOVE)
 			end
 		end
 
@@ -392,7 +398,6 @@ local function action_tick()
 							collisiondetection = false,
 							texture = "default_dirt.png"
 						})
-
 					end
 				end
 
@@ -400,7 +405,7 @@ local function action_tick()
 				local level = get_int_attribute(player)
 
 				stamina_update_level(player,
-						level - (SPRINT_DRAIN * STAMINA_MOVE_TICK))
+						level - (SPRINT_DRAIN * stamina.MOVE_TICK))
 
 			elseif name then
 				set_sprinting(name, false)
@@ -455,7 +460,7 @@ local function stamina_tick()
 
 		local h = is_player(player) and get_int_attribute(player)
 
-		if h and h > STAMINA_TICK_MIN then
+		if h and h > stamina.TICK_MIN then
 			stamina_update_level(player, h - 1)
 		end
 	end
@@ -479,22 +484,22 @@ local function stamina_globaltimer(dtime)
 	end
 
 	-- hurt player when poisoned
-	if poison_timer > STAMINA_POISON_TICK then
+	if poison_timer > stamina.POISON_TICK then
 		poison_tick() ; poison_timer = 0
 	end
 
 		-- sprint control and particle animation
-	if action_timer > STAMINA_MOVE_TICK then
+	if action_timer > stamina.MOVE_TICK then
 		action_tick() ; action_timer = 0
 	end
 
-	-- lower saturation by 1 point after STAMINA_TICK
-	if stamina_timer > STAMINA_TICK then
+	-- lower saturation by 1 point after stamina.TICK
+	if stamina_timer > stamina.TICK then
 		stamina_tick() ; stamina_timer = 0
 	end
 
 	-- heal or damage player, depending on saturation
-	if health_timer > STAMINA_HEALTH_TICK then
+	if health_timer > stamina.HEALTH_TICK then
 		health_tick() ; health_timer = 0
 	end
 end
@@ -537,7 +542,7 @@ if damage_enabled and minetest.settings:get_bool("enable_stamina") ~= false then
 
 		local level = get_int_attribute(user) or 0
 
-		if level >= STAMINA_VISUAL_MAX then
+		if level >= stamina.VISUAL_MAX then
 			return itemstack
 		end
 
@@ -631,10 +636,10 @@ if damage_enabled and minetest.settings:get_bool("enable_stamina") ~= false then
 
 		if not player then return end
 
-		local level = STAMINA_VISUAL_MAX -- TODO
+		local level = stamina.VISUAL_MAX -- TODO
 
 		if get_int_attribute(player) then
-			level = math.min(get_int_attribute(player), STAMINA_VISUAL_MAX)
+			level = math.min(get_int_attribute(player), stamina.VISUAL_MAX)
 		end
 
 		local meta = player:get_meta()
@@ -687,32 +692,33 @@ if damage_enabled and minetest.settings:get_bool("enable_stamina") ~= false then
 		stamina.players[name].drunk = nil
 		stamina.players[name].sprint = nil
 
-		stamina_update_level(player, STAMINA_VISUAL_MAX)
+		stamina_update_level(player, stamina.VISUAL_MAX)
 	end)
 
 	minetest.register_globalstep(stamina_globaltimer)
 
 	minetest.register_on_placenode(function(pos, oldnode, player, ext)
-		exhaust_player(player, STAMINA_EXHAUST_PLACE)
+		exhaust_player(player, stamina.EXHAUST_PLACE)
 	end)
 
 	minetest.register_on_dignode(function(pos, oldnode, player, ext)
-		exhaust_player(player, STAMINA_EXHAUST_DIG)
+		exhaust_player(player, stamina.EXHAUST_DIG)
 	end)
 
 	minetest.register_on_craft(function(itemstack, player, old_craft_grid, craft_inv)
-		exhaust_player(player, STAMINA_EXHAUST_CRAFT)
+		exhaust_player(player, stamina.EXHAUST_CRAFT)
 	end)
 
 	minetest.register_on_punchplayer(function(player, hitter, time_from_last_punch,
 			tool_capabilities, dir, damage)
-		exhaust_player(hitter, STAMINA_EXHAUST_PUNCH)
+		exhaust_player(hitter, stamina.EXHAUST_PUNCH)
 	end)
 
 else
 
 	-- create player table on join
 	minetest.register_on_joinplayer(function(player)
+
 		if player then
 			stamina.players[player:get_player_name()] = {
 				poisoned = nil, sprint = nil, drunk = nil, exhaustion = 0}
@@ -722,6 +728,7 @@ end
 
 -- clear when player leaves
 minetest.register_on_leaveplayer(function(player)
+
 	if player then
 		stamina.players[player:get_player_name()] = nil
 	end

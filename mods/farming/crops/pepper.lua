@@ -23,24 +23,30 @@ minetest.register_craftitem("farming:pepper", {
 	description = S("Green Pepper"),
 	inventory_image = "crops_pepper.png",
 	on_use = minetest.item_eat(2),
-	groups = {food_pepper = 1, flammable = 3, compostability = 55}
+	groups = {food_pepper = 1, compostability = 55}
 })
+
+farming.add_eatable("farming:pepper", 2)
 
 -- yellow pepper
 minetest.register_craftitem("farming:pepper_yellow", {
 	description = S("Yellow Pepper"),
 	inventory_image = "crops_pepper_yellow.png",
 	on_use = minetest.item_eat(3),
-	groups = {food_pepper = 1, flammable = 3, compostability = 55}
+	groups = {food_pepper = 1, compostability = 55}
 })
+
+farming.add_eatable("farming:pepper_yellow", 3)
 
 -- red pepper
 minetest.register_craftitem("farming:pepper_red", {
 	description = S("Red Pepper"),
 	inventory_image = "crops_pepper_red.png",
 	on_use = minetest.item_eat(4),
-	groups = {food_pepper = 1, flammable = 3, compostability = 55}
+	groups = {food_pepper = 1, compostability = 55}
 })
+
+farming.add_eatable("farming:pepper_red", 4)
 
 minetest.register_craft({
 	output = "farming:peppercorn",

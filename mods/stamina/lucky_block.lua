@@ -1,7 +1,11 @@
+
+-- colour helpers
+
 local green = minetest.get_color_escape_sequence("#bada55")
 local green2 = minetest.get_color_escape_sequence("#33ff55")
 
 -- poison and drunk effects function
+
 local effect_me = function(pos, player, def)
 
 	local name = player:get_player_name() ; if not name then return end
@@ -25,8 +29,8 @@ local effect_me = function(pos, player, def)
 	end
 end
 
-
 -- restore stamina function
+
 local full_stamina = function(pos, player, def)
 
 	local name = player:get_player_name() ; if not name then return end
@@ -36,8 +40,8 @@ local full_stamina = function(pos, player, def)
 	minetest.chat_send_player(name, green2 .. "You suddenly feel full!")
 end
 
-
 -- add lucky blocks
+
 lucky_block:add_blocks({
 	{"cus", effect_me, {poison = 5}},
 	{"cus", effect_me, {poison = 10}},

@@ -6,12 +6,16 @@ local a = farming.recipe_items
 minetest.register_craftitem("farming:rhubarb", {
 	description = S("Rhubarb"),
 	inventory_image = "farming_rhubarb.png",
-	groups = {compostability = 48, seed = 2, food_rhubarb = 1, flammable = 2},
+	groups = {
+		compostability = 48, seed = 2, food_rhubarb = 1
+	},
 	on_place = function(itemstack, placer, pointed_thing)
 		return farming.place_seed(itemstack, placer, pointed_thing, "farming:rhubarb_1")
 	end,
 	on_use = minetest.item_eat(1)
 })
+
+farming.add_eatable("farming:rhubarb", 1)
 
 -- rhubarb pie
 minetest.register_craftitem("farming:rhubarb_pie", {
@@ -20,6 +24,8 @@ minetest.register_craftitem("farming:rhubarb_pie", {
 	on_use = minetest.item_eat(6),
 	groups = {compostability = 65}
 })
+
+farming.add_eatable("farming:rhubarb_pie", 6)
 
 minetest.register_craft({
 	output = "farming:rhubarb_pie",

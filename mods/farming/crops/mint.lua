@@ -40,9 +40,10 @@ minetest.register_craftitem("farming:mint_leaf", {
 minetest.register_craftitem("farming:mint_tea", {
 	description = S("Mint Tea"),
 	inventory_image = "farming_mint_tea.png",
-	on_use = minetest.item_eat(2, a.drinking_glass),
-	groups = {flammable = 4}
+	on_use = minetest.item_eat(2, a.drinking_glass)
 })
+
+farming.add_eatable("farming:mint_tea", 2)
 
 minetest.register_craft({
 	output = "farming:mint_tea",

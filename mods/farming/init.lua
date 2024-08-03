@@ -7,7 +7,7 @@
 
 farming = {
 	mod = "redo",
-	version = "20240625",
+	version = "20240727",
 	path = minetest.get_modpath("farming"),
 	select = {
 		type = "fixed",
@@ -765,6 +765,29 @@ input = io.open(worldpath .. "/farming.conf", "r")
 if input then
 	dofile(worldpath .. "/farming.conf")
 	input:close()
+end
+
+-- helper function to add {eatable} group to food items
+local mod_tt_base = minetest.get_modpath("tt_base") -- mod does similar to infotext
+
+function farming.add_eatable(item, hp)
+
+	local def = minetest.registered_items[item]
+
+	if def then
+
+		local groups = table.copy(def.groups) or {}
+		local txt = " (" ; if hp > 0 then txt = txt .. "+" end
+		txt = txt .. hp .. " HP)"
+
+		groups.eatable = hp ; groups.flammable = 2
+
+		if mod_tt_base == nil then
+			def.description = def.description .. txt
+		end
+
+		minetest.override_item(item, {description = def.description, groups = groups})
+	end
 end
 
 -- recipe items

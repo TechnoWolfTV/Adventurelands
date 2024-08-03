@@ -19,36 +19,14 @@ if mcl then
 	glass_item = "mcl_core:glass"
 end
 
-
 -- check for Unified Inventory
 local is_uninv = minetest.global_exists("unified_inventory") or false
-
 
 -- is thirsty mod active
 local thirsty_mod = minetest.get_modpath("thirsty")
 
-
 -- translation support
-local S
-if minetest.get_translator then
-	S = minetest.get_translator("wine")
-else
-	S = function(s, a, ...)
-		if a == nil then
-			return s
-		end
-		a = {a, ...}
-		return s:gsub("(@?)@(%(?)(%d+)(%)?)", function(e, o, n, c)
-			if e == ""then
-				return a[tonumber(n)] .. (o == "" and c or "")
-			else
-				return "@" .. o .. n .. c
-			end
-		end)
-	end
-end
-wine.S = S
-
+local S = minetest.get_translator("wine") ; wine.S = S
 
 -- Unified Inventory hints
 if is_uninv then
@@ -60,7 +38,6 @@ if is_uninv then
 		height = 2
 	})
 end
-
 
 -- fermentation list (drinks added in drinks.lua)
 local ferment = {}
@@ -92,6 +69,28 @@ function wine:add_item(list)
 	end
 end
 
+-- helper function
+local mod_tt_base = minetest.get_modpath("tt_base") -- mod does similar to infotext
+
+function wine.add_eatable(item, hp)
+
+	local def = minetest.registered_items[item]
+
+	if def then
+
+		local groups = table.copy(def.groups) or {}
+		local txt = " (" ; if hp > 0 then txt = txt .. "+" end
+		txt = txt .. hp .. " HP)"
+
+		groups.eatable = hp ; groups.flammable = 2
+
+		if mod_tt_base == nil then
+			def.description = def.description .. txt
+		end
+
+		minetest.override_item(item, {description = def.description, groups = groups})
+	end
+end
 
 -- add drink with bottle
 function wine:add_drink(name, desc, has_bottle, num_hunger, num_thirst, alcoholic)
@@ -131,6 +130,8 @@ function wine:add_drink(name, desc, has_bottle, num_hunger, num_thirst, alcoholi
 			end
 		end
 	})
+
+	wine.add_eatable("wine:glass_" .. name, num_hunger)
 
 	-- bottle
 	if has_bottle then

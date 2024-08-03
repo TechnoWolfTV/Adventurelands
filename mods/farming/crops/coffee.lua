@@ -31,6 +31,8 @@ minetest.register_node("farming:coffee_cup", {
 	sounds = farming.sounds.node_sound_glass_defaults()
 })
 
+farming.add_eatable("farming:coffee_cup", 2)
+
 minetest.register_alias("farming:coffee_cup_hot", "farming:coffee_cup")
 minetest.register_alias("farming:drinking_cup", "vessels:drinking_glass")
 

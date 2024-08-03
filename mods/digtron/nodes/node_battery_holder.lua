@@ -30,7 +30,7 @@ if not minetest.get_modpath("technic") then
 	holder_groups.not_in_creative_inventory = 1
 end
 
-minetest.register_node("digtron:battery_holder", {
+local def = {
 	description = S("Digtron Battery Holder"),
 	_doc_items_longdesc = digtron.doc.battery_holder_longdesc,
 	_doc_items_usagehelp = digtron.doc.battery_holder_usagehelp,
@@ -67,6 +67,10 @@ minetest.register_node("digtron:battery_holder", {
 	-- Allow all items with energy storage to be placed in the inventory
 	allow_metadata_inventory_put = function(_, listname, _, stack)
 		if listname == "batteries" then
+			if not minetest.global_exists("technic") then
+				return 0
+			end
+
 			local node_name = stack:get_name()
 
 			-- Allow all items with energy storage from technic mod
@@ -123,4 +127,8 @@ minetest.register_node("digtron:battery_holder", {
 
 	after_place_node = (function() if minetest.get_modpath("pipeworks") then return pipeworks.after_place end end)(),
 	after_dig_node = (function() if minetest.get_modpath("pipeworks")then return pipeworks.after_dig end end)()
-})
+}
+
+default.set_inventory_action_loggers(def, "digtron battery holder")
+
+minetest.register_node("digtron:battery_holder", def)

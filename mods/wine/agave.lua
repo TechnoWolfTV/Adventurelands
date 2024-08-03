@@ -73,6 +73,7 @@ minetest.register_node("wine:blue_agave", {
 	end
 })
 
+wine.add_eatable("wine:blue_agave", 2)
 
 -- blue agave into cyan dye
 if minetest.get_modpath("mcl_dye") then

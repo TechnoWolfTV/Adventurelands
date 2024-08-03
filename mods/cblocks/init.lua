@@ -57,7 +57,8 @@ local function cblocks_stairs(nodename, def)
 				def.groups,
 				def.tiles,
 				def.description,
-				def.sounds
+				def.sounds,
+				def.walign
 			)
 
 		elseif stairs_mod and not stairs.mod then
@@ -67,7 +68,8 @@ local function cblocks_stairs(nodename, def)
 				def.tiles,
 				("%s Stair"):format(def.description),
 				("%s Slab"):format(def.description),
-				def.sounds
+				def.sounds,
+				def.walign
 			)
 		end
 	end
@@ -106,7 +108,8 @@ for i = 1, #colours do
 		groups = {cracky = 2, stone = 1},
 		sounds = default.node_sound_stone_defaults(),
 		paramtype2 = "facedir",
-		on_place = minetest.rotate_node
+		place_param2 = 0,
+		walign = true
 	})
 
 	minetest.register_craft({
@@ -173,7 +176,8 @@ for i = 1, #colours do
 		groups = {choppy = 2, oddly_breakable_by_hand = 2, flammable = 3, wood = 1},
 		sounds = default.node_sound_wood_defaults(),
 		paramtype2 = "facedir",
-		on_place = minetest.rotate_node
+		place_param2 = 0,
+		walign = true
 	})
 
 	set_alias(colours[i][1], "wood")

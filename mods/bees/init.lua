@@ -814,6 +814,31 @@ minetest.register_abm({
 	end
 })
 
+--
+-- Helper Function
+--
+
+local mod_tt_base = minetest.get_modpath("tt_base")
+
+local function add_eatable(item, hp)
+
+	local def = minetest.registered_items[item]
+
+	if def then
+
+		local groups = table.copy(def.groups) or {}
+		local txt = " (" ; if hp > 0 then txt = txt .. "+" end
+		txt = txt .. hp .. " HP)"
+
+		groups.eatable = hp ; groups.flammable = 2
+
+		if mod_tt_base == nil then
+			def.description = def.description .. txt
+		end
+
+		minetest.override_item(item, {description = def.description, groups = groups})
+	end
+end
 
 --
 -- ITEMS
@@ -839,6 +864,8 @@ minetest.register_craftitem("bees:bottle_honey", {
 	groups = {vessel = 1}
 })
 
+add_eatable("bees:bottle_honey", 3)
+
 minetest.register_craftitem("bees:wax", {
 	description = S("Bees Wax"),
 	inventory_image = "bees_wax.png",
@@ -851,6 +878,8 @@ minetest.register_craftitem("bees:honey_comb", {
 	on_use = minetest.item_eat(2),
 	stack_max = 8
 })
+
+add_eatable("bees:honey_comb", 2)
 
 minetest.register_craftitem("bees:queen", {
 	description = S("Queen Bee"),
