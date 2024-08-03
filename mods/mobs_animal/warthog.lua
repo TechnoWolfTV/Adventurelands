@@ -107,20 +107,16 @@ minetest.register_craftitem(":mobs:pork_raw", {
 	description = S("Raw Porkchop"),
 	inventory_image = "mobs_pork_raw.png",
 	on_use = minetest.item_eat(4),
-	groups = {food_meat_raw = 1, food_pork_raw = 1}
+	groups = {food_meat_raw = 1, food_pork_raw = 1, flammable = 2}
 })
-
-mobs.add_eatable("mobs:pork_raw", 4)
 
 -- cooked porkchop
 minetest.register_craftitem(":mobs:pork_cooked", {
 	description = S("Cooked Porkchop"),
 	inventory_image = "mobs_pork_cooked.png",
 	on_use = minetest.item_eat(8),
-	groups = {food_meat = 1, food_pork = 1}
+	groups = {food_meat = 1, food_pork = 1, flammable = 2}
 })
-
-mobs.add_eatable("mobs:pork_cooked", 8)
 
 minetest.register_craft({
 	type = "cooking",

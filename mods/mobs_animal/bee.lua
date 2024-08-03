@@ -76,10 +76,9 @@ minetest.register_craftitem(":mobs:honey", {
 	description = S("Honey"),
 	inventory_image = "mobs_honey_inv.png",
 	on_use = minetest.item_eat(4),
-	groups = {food_honey = 1, food_sugar = 1}
+	groups = {food_honey = 1, food_sugar = 1, flammable = 1}
 })
 
-mobs.add_eatable("mobs:honey", 4)
 
 -- beehive (when placed spawns bee)
 minetest.register_node(":mobs:beehive", {

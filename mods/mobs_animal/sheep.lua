@@ -339,11 +339,9 @@ for _, col in ipairs(all_colours) do
 
 							if ent then
 
-								local prop = self.object:get_properties()
-
 								-- add old sheep attributes
 								ent.attribute_horns = self.attribute_horns
-								ent._nametag = prop.nametag
+								ent.nametag = self.nametag
 								ent.owner = name
 								ent.tamed = true
 								ent.protected = self.protected
@@ -356,7 +354,8 @@ for _, col in ipairs(all_colours) do
 
 								ent.base_texture = {textures}
 								ent.object:set_properties({
-									textures = {textures}
+									textures = {textures},
+									nametag = self.nametag
 								})
 
 								-- remove old sheep
@@ -518,20 +517,16 @@ minetest.register_craftitem(":mobs:mutton_raw", {
 	description = S("Raw Mutton"),
 	inventory_image = "mobs_mutton_raw.png",
 	on_use = minetest.item_eat(2),
-	groups = {food_meat_raw = 1, food_mutton_raw = 1}
+	groups = {food_meat_raw = 1, food_mutton_raw = 1, flammable = 2}
 })
-
-mobs.add_eatable("mobs:mutton_raw", 2)
 
 -- cooked mutton
 minetest.register_craftitem(":mobs:mutton_cooked", {
 	description = S("Cooked Mutton"),
 	inventory_image = "mobs_mutton_cooked.png",
 	on_use = minetest.item_eat(6),
-	groups = {food_meat = 1, food_mutton = 1}
+	groups = {food_meat = 1, food_mutton = 1, flammable = 2}
 })
-
-mobs.add_eatable("mobs:mutton_cooked", 6)
 
 minetest.register_craft({
 	type = "cooking",

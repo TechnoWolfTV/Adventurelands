@@ -177,20 +177,16 @@ minetest.register_craftitem(":mobs:bucket_milk", {
 	inventory_image = "mobs_bucket_milk.png",
 	stack_max = 1,
 	on_use = minetest.item_eat(8, "bucket:bucket_empty"),
-	groups = {food_milk = 1, drink = 1}
+	groups = {food_milk = 1, flammable = 3, drink = 1}
 })
-
-mobs.add_eatable("mobs:bucket_milk", 8)
 
 -- glass of milk
 minetest.register_craftitem(":mobs:glass_milk", {
 	description = S("Glass of Milk"),
 	inventory_image = "mobs_glass_milk.png",
 	on_use = minetest.item_eat(2, "vessels:drinking_glass"),
-	groups = {food_milk_glass = 1, vessel = 1, drink = 1}
+	groups = {food_milk_glass = 1, flammable = 3, vessel = 1, drink = 1}
 })
-
-mobs.add_eatable("mobs:glass_milk", 2)
 
 minetest.register_craft({
 	output = "mobs:glass_milk 4",
@@ -220,10 +216,8 @@ minetest.register_craftitem(":mobs:butter", {
 	description = S("Butter"),
 	inventory_image = "mobs_butter.png",
 	on_use = minetest.item_eat(1),
-	groups = {food_butter = 1}
+	groups = {food_butter = 1, flammable = 2}
 })
-
-mobs.add_eatable("mobs:butter", 1)
 
 local salt_item = "default:sapling" -- some saplings are high in sodium
 
@@ -242,10 +236,8 @@ minetest.register_craftitem(":mobs:cheese", {
 	description = S("Cheese"),
 	inventory_image = "mobs_cheese.png",
 	on_use = minetest.item_eat(4),
-	groups = {food_cheese = 1}
+	groups = {food_cheese = 1, flammable = 2}
 })
-
-mobs.add_eatable("mobs:cheese", 4)
 
 minetest.register_craft({
 	type = "cooking",
