@@ -818,8 +818,6 @@ minetest.register_abm({
 -- Helper Function
 --
 
-local mod_tt_base = minetest.get_modpath("tt_base")
-
 local function add_eatable(item, hp)
 
 	local def = minetest.registered_items[item]
@@ -827,16 +825,10 @@ local function add_eatable(item, hp)
 	if def then
 
 		local groups = table.copy(def.groups) or {}
-		local txt = " (" ; if hp > 0 then txt = txt .. "+" end
-		txt = txt .. hp .. " HP)"
 
 		groups.eatable = hp ; groups.flammable = 2
 
-		if mod_tt_base == nil then
-			def.description = def.description .. txt
-		end
-
-		minetest.override_item(item, {description = def.description, groups = groups})
+		minetest.override_item(item, {groups = groups})
 	end
 end
 

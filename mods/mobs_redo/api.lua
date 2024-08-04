@@ -21,7 +21,7 @@ end
 -- Global
 mobs = {
 	mod = "redo",
-	version = "20240701",
+	version = "20240804",
 	translate = S,
 	invis = minetest.global_exists("invisibility") and invisibility or {},
 	node_snow = has(minetest.registered_aliases["mapgen_snow"])
@@ -2666,11 +2666,12 @@ function mob_class:do_states(dtime)
 
 				if self.timer > 1 then
 
+					self.timer = 0
+
 					-- no custom attack or custom attack returns true to continue
 					if not self.custom_attack
 					or self:custom_attack(self, p) == true then
 
-						self.timer = 0
 						self:set_animation("punch")
 
 						local p2 = p
@@ -3785,6 +3786,7 @@ minetest.register_entity(":" .. name, setmetatable({
 	do_punch = def.do_punch,
 	on_breed = def.on_breed,
 	on_grown = def.on_grown,
+	on_sound = def.on_sound,
 
 	on_activate = function(self, staticdata, dtime)
 		return self:mob_activate(staticdata, def, dtime)
@@ -5044,3 +5046,77 @@ minetest.register_chatcommand("clear_mobs", {
 		minetest.chat_send_player(name, S("@1 mobs removed.", count))
 	end
 })
+
+
+-- Is mob hearing enabled, if so override minetest.sound_play with custom function
+if settings:get_bool("mobs_can_hear") ~= false then
+
+local old_sound_play = minetest.sound_play
+
+minetest.sound_play = function(spec, param, eph)
+
+	local def = {} ; param = param or {}
+
+	-- store sound position
+	if param.pos then
+		def.pos = param.pos
+	elseif param.object then
+		def.pos = param.object:get_pos()
+	elseif param.to_player then
+		def.pos = minetest.get_player_by_name(param.to_player):get_pos()
+	end
+
+	-- if no position found use default function
+	if not def.pos then
+		return old_sound_play(spec, param, eph)
+	end
+
+	-- store sound name and gain
+	if type(spec) == "string" then
+		def.sound = spec
+		def.gain = param.gain or 1.0
+	elseif type(spec) == "table" then
+		def.sound = spec.name
+		def.gain = spec.gain or param.gain or 1.0
+	end
+
+	-- store player name or object reference
+	if param.to_player then
+		def.player = param.to_player
+	elseif param.object then
+		def.object = param.object
+	end
+
+	def.max_hear_distance = param.max_hear_distance or 32
+
+	-- find mobs within sounds hearing range
+	local objs = minetest.get_objects_inside_radius(def.pos, def.max_hear_distance)
+
+	for n = 1, #objs do
+
+		local obj = objs[n]
+
+		if not obj:is_player() then
+
+			local ent = obj:get_luaentity()
+
+			if ent and ent._cmi_is_mob and ent.on_sound then
+
+				-- calculate loudness of sound to mob
+				def.distance = get_distance(def.pos, obj:get_pos())
+
+				local bit = def.gain / def.max_hear_distance
+				local rem = def.max_hear_distance - def.distance
+
+				-- loudness ranges from 0 (cannot hear) to 1.0 (close to source)
+				def.loudness = (bit * rem) / def.gain
+
+				-- run custom on_sound function
+				ent.on_sound(ent, def)
+			end
+		end
+	end
+
+	return old_sound_play(spec, param, eph)
+end
+end
