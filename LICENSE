@@ -60,10 +60,9 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Bonemeal
   - Location: ./mods/bonemeal/
   - License file: ./mods/bonemeal/license.txt
-- Bows Epic
-  - Location: ./mods/bows_epic/
-  - License file: ./mods/bows_epic/license.txt
-  - Changes were made to this work
+- Bows
+  - Location: ./mods/bows/
+  - License file: ./mods/bows/license.txt
 - Builtin Item (item_entity.lua replacement)
   - Location: ./mods/builtin_item/
   - License file: ./mods/builtin_item/license.txt
