@@ -1,3 +1,6 @@
+
+-- global
+
 stamina = {
 	players = {}, mod = "redo",
 	-- time in seconds after that 1 stamina point is taken
@@ -36,22 +39,29 @@ stamina = {
 	VISUAL_MAX = 20
 }
 
+-- clamp values helper
+
 local function clamp(val, minval, maxval)
 	return math.max(math.min(val, maxval), minval)
 end
 
 -- how much faster players can run if satiated.
+
 local SPRINT_SPEED = clamp(tonumber(
 		minetest.settings:get("stamina_sprint_speed")) or 0.3, 0.0, 1.0)
+
 -- how much higher player can jump if satiated
+
 local SPRINT_JUMP  = clamp(tonumber(
 		minetest.settings:get("stamina_sprint_jump")) or 0.1, 0.0, 1.0)
+
 -- how fast to drain satation while sprinting (0-1)
+
 local SPRINT_DRAIN  = clamp(tonumber(
 		minetest.settings:get("stamina_sprint_drain")) or 0.35, 0.0, 1.0)
 
-
 -- are we a real player ?
+
 local function is_player(player)
 
 	if player and type(player) == "userdata" and minetest.is_player(player) then
@@ -59,6 +69,7 @@ local function is_player(player)
 	end
 end
 
+-- grab stamina level
 
 local function get_int_attribute(player)
 
@@ -77,28 +88,24 @@ local function get_int_attribute(player)
 	return nil
 end
 
+-- is player stamina & damage enabled
 
 local stamina_enabled = minetest.settings:get_bool("enable_stamina") ~= false
 local damage_enabled = minetest.settings:get_bool("enable_damage")
 
+-- update stamina level
 
 local function stamina_update_level(player, level)
 
 	-- pipeworks fake player check
-	if not is_player(player) then
-		return nil
-	end
+	if not is_player(player) then return nil end
 
 	local old = get_int_attribute(player)
 
-	if level == old then -- To suppress HUD update
-		return
-	end
+	if level == old then return end -- To suppress HUD update
 
 	-- players without interact priv cannot eat
-	if not minetest.check_player_privs(player, {interact = true}) then
-		return
-	end
+	if not minetest.check_player_privs(player, {interact = true}) then return end
 
 	local meta = player and player:get_meta() ; if not meta then return end
 
@@ -111,8 +118,8 @@ local function stamina_update_level(player, level)
 	)
 end
 
-
 -- global function for mods to amend stamina level
+
 stamina.change = function(player, change)
 
 	local name = player:get_player_name()
@@ -130,19 +137,13 @@ stamina.change = function(player, change)
 	return true
 end
 
+-- reduce stamina level
 
 local function exhaust_player(player, v)
 
-	if not is_player(player)
-	or not player.set_attribute then
-		return
-	end
+	if not is_player(player) or not player.set_attribute then return end
 
-	local name = player:get_player_name()
-
-	if not name then
-		return
-	end
+	local name = player:get_player_name() ; if not name then return end
 
 	local exhaustion = stamina.players[name].exhaustion + v
 
@@ -152,21 +153,20 @@ local function exhaust_player(player, v)
 
 		local h = get_int_attribute(player)
 
-		if h > 0 then
-			stamina_update_level(player, h - 1)
-		end
+		if h > 0 then stamina_update_level(player, h - 1) end
 	end
 
 	stamina.players[name].exhaustion = exhaustion
 end
 
+-- Sprint settings
 
--- Sprint settings and function
 local enable_sprint = minetest.settings:get_bool("sprint") ~= false
 local enable_sprint_particles = minetest.settings:get_bool("sprint_particles") ~= false
 local monoids = minetest.get_modpath("player_monoids")
 local pova_mod = minetest.get_modpath("pova")
 
+-- turn sprint on/off
 
 local function set_sprinting(name, sprinting)
 
@@ -233,15 +233,13 @@ local function set_sprinting(name, sprinting)
 	end
 end
 
+-- particle effect when eating
 
 local function head_particle(player, texture)
 
-	if not player then return end
-
-	local prop = player:get_properties()
+	local prop = player and player:get_properties() ; if not prop then return end
 	local pos = player:get_pos() ; pos.y = pos.y + (prop.eye_height or 1.23) -- mouth level
 	local dir = player:get_look_dir()
-
 
 	minetest.add_particlespawner({
 		amount = 5,
@@ -259,6 +257,8 @@ local function head_particle(player, texture)
 		texture = texture
 	})
 end
+
+-- drunk check
 
 local function drunk_tick()
 
@@ -304,6 +304,7 @@ local function drunk_tick()
 	end
 end
 
+-- health check
 
 local function health_tick()
 
@@ -323,8 +324,7 @@ local function health_tick()
 			end
 
 			-- don't heal if drowning or dead or poisoned
-			if h and h >= stamina.HEAL_LVL
-			and h >= hp and hp > 0 and air > 0
+			if h and h >= stamina.HEAL_LVL and h >= hp and hp > 0 and air > 0
 			and not stamina.players[name].poisoned then
 
 				player:set_hp(hp + stamina.HEAL)
@@ -335,6 +335,7 @@ local function health_tick()
 	end
 end
 
+-- movement check
 
 local function action_tick()
 
@@ -383,19 +384,20 @@ local function action_tick()
 
 						minetest.add_particlespawner({
 							amount = 5,
-							time = 0.01,
-							minpos = {x = pos.x - 0.25, y = pos.y + 0.1, z = pos.z - 0.25},
-							maxpos = {x = pos.x + 0.25, y = pos.y + 0.1, z = pos.z + 0.25},
-							minvel = {x = -0.5, y = 1, z = -0.5},
-							maxvel = {x = 0.5, y = 2, z = 0.5},
-							minacc = {x = 0, y = -5, z = 0},
-							maxacc = {x = 0, y = -12, z = 0},
-							minexptime = 0.25,
-							maxexptime = 0.5,
+							time = 0.5,
+							minpos = {x = -0.5, y = 0.1, z = -0.5},
+							maxpos = {x = 0.5, y = 0.1, z = 0.5},
+							minvel = {x = 0, y = 5, z = 0},
+							maxvel = {x = 0, y = 5, z = 0},
+							minacc = {x = 0, y = -13, z = 0},
+							maxacc = {x = 0, y = -13, z = 0},
+							minexptime = 0.1,
+							maxexptime = 1,
 							minsize = 0.5,
-							maxsize = 1.0,
+							maxsize = 1.5,
 							vertical = false,
 							collisiondetection = false,
+							attached = player,
 							texture = "default_dirt.png"
 						})
 					end
@@ -415,6 +417,7 @@ local function action_tick()
 	end
 end
 
+-- poisoned check
 
 local function poison_tick()
 
@@ -427,8 +430,7 @@ local function poison_tick()
 		and stamina.players[name].poisoned
 		and stamina.players[name].poisoned > 0 then
 
-			stamina.players[name].poisoned =
-				stamina.players[name].poisoned - 1
+			stamina.players[name].poisoned = stamina.players[name].poisoned - 1
 
 			local hp = player:get_hp() - 1
 
@@ -438,9 +440,7 @@ local function poison_tick()
 				player:set_hp(hp, {poison = true})
 			end
 
-		elseif name
-		and stamina.players[name]
-		and stamina.players[name].poisoned then
+		elseif name and stamina.players[name] and stamina.players[name].poisoned then
 
 			if not stamina.players[name].drunk then
 
@@ -453,6 +453,7 @@ local function poison_tick()
 	end
 end
 
+-- stamina check
 
 local function stamina_tick()
 
@@ -466,8 +467,8 @@ local function stamina_tick()
 	end
 end
 
-
 -- Time based stamina functions
+
 local stamina_timer, health_timer, action_timer, poison_timer, drunk_timer = 0,0,0,0,0
 
 local function stamina_globaltimer(dtime)
@@ -479,41 +480,29 @@ local function stamina_globaltimer(dtime)
 	drunk_timer = drunk_timer + dtime
 
 	-- simulate drunk walking (thanks LumberJ)
-	if drunk_timer > 1.0 then
-		drunk_tick() ; drunk_timer = 0
-	end
+	if drunk_timer > 1.0 then drunk_tick() ; drunk_timer = 0 end
 
 	-- hurt player when poisoned
-	if poison_timer > stamina.POISON_TICK then
-		poison_tick() ; poison_timer = 0
-	end
+	if poison_timer > stamina.POISON_TICK then poison_tick() ; poison_timer = 0 end
 
 		-- sprint control and particle animation
-	if action_timer > stamina.MOVE_TICK then
-		action_tick() ; action_timer = 0
-	end
+	if action_timer > stamina.MOVE_TICK then action_tick() ; action_timer = 0 end
 
 	-- lower saturation by 1 point after stamina.TICK
-	if stamina_timer > stamina.TICK then
-		stamina_tick() ; stamina_timer = 0
-	end
+	if stamina_timer > stamina.TICK then stamina_tick() ; stamina_timer = 0 end
 
 	-- heal or damage player, depending on saturation
-	if health_timer > stamina.HEALTH_TICK then
-		health_tick() ; health_timer = 0
-	end
+	if health_timer > stamina.HEALTH_TICK then health_tick() ; health_timer = 0 end
 end
 
-
 -- stamina and eating functions disabled if damage is disabled
+
 if damage_enabled and minetest.settings:get_bool("enable_stamina") ~= false then
 
 	-- override core.do_item_eat() so we can redirect hp_change to stamina
 	core.do_item_eat = function(hp_change, replace_with_item, itemstack, user, pointed_thing)
 
-		if not is_player(user) then
-			return -- abort if called by fake player (eg. pipeworks-wielder)
-		end
+		if not is_player(user) then return end -- abort if called by fake player
 
 		local old_itemstack = itemstack
 
@@ -525,9 +514,7 @@ if damage_enabled and minetest.settings:get_bool("enable_stamina") ~= false then
 			local result = callback(hp_change, replace_with_item, itemstack, user,
 					pointed_thing, old_itemstack)
 
-			if result then
-				return result
-			end
+			if result then return result end
 		end
 
 		return itemstack
@@ -536,15 +523,11 @@ if damage_enabled and minetest.settings:get_bool("enable_stamina") ~= false then
 	-- not local since it's called from within core context
 	function stamina.eat(hp_change, replace_with_item, itemstack, user, pointed_thing)
 
-		if not itemstack or not user then
-			return itemstack
-		end
+		if not itemstack or not user then return itemstack end
 
 		local level = get_int_attribute(user) or 0
 
-		if level >= stamina.VISUAL_MAX then
-			return itemstack
-		end
+		if level >= stamina.VISUAL_MAX then return itemstack end
 
 		local name = user:get_player_name()
 
@@ -580,6 +563,7 @@ if damage_enabled and minetest.settings:get_bool("enable_stamina") ~= false then
 
 		-- if player drinks milk then stop poison and being drunk
 		local item_name = itemstack:get_name() or ""
+
 		if item_name == "mobs:bucket_milk"
 		or item_name == "mobs:glass_milk"
 		or item_name == "farming:soy_milk" then
@@ -644,9 +628,7 @@ if damage_enabled and minetest.settings:get_bool("enable_stamina") ~= false then
 
 		local meta = player:get_meta()
 
-		if meta then
-			meta:set_string("stamina:level", level)
-		end
+		if meta then meta:set_string("stamina:level", level) end
 
 		local name = player:get_player_name()
 		local hud_style = minetest.has_feature("hud_def_type_field")
@@ -714,9 +696,7 @@ if damage_enabled and minetest.settings:get_bool("enable_stamina") ~= false then
 		exhaust_player(hitter, stamina.EXHAUST_PUNCH)
 	end)
 
-else
-
-	-- create player table on join
+else -- create player table on join
 	minetest.register_on_joinplayer(function(player)
 
 		if player then
@@ -727,6 +707,7 @@ else
 end
 
 -- clear when player leaves
+
 minetest.register_on_leaveplayer(function(player)
 
 	if player then
@@ -734,8 +715,8 @@ minetest.register_on_leaveplayer(function(player)
 	end
 end)
 
-
 -- add lucky blocks (if damage and stamina active)
+
 if minetest.get_modpath("lucky_block")
 and minetest.settings:get_bool("enable_damage")
 and minetest.settings:get_bool("enable_stamina") ~= false then
@@ -745,6 +726,4 @@ and minetest.settings:get_bool("enable_stamina") ~= false then
 	dofile(MP .. "/lucky_block.lua")
 end
 
-
 print("[MOD] Stamina loaded")
-

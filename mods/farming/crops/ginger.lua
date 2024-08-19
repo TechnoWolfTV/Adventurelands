@@ -1,22 +1,23 @@
 
-local S = farming.translate
+local S = minetest.get_translator("farming")
 
--- ginger
+-- item/seed
+
 minetest.register_craftitem("farming:ginger", {
 	description = S("Ginger"),
 	inventory_image = "farming_ginger.png",
-	groups = {
-		compostability = 48, seed = 2, food_ginger = 1
-	},
+	groups = {compostability = 48, seed = 2, food_ginger = 1},
+	on_use = minetest.item_eat(1),
+
 	on_place = function(itemstack, placer, pointed_thing)
 		return farming.place_seed(itemstack, placer, pointed_thing, "farming:ginger_1")
-	end,
-	on_use = minetest.item_eat(1)
+	end
 })
 
 farming.add_eatable("farming:ginger", 1)
 
--- ginger definition
+-- crop definition
+
 local def = {
 	drawtype = "plantlike",
 	tiles = {"farming_ginger_1.png"},
@@ -33,17 +34,20 @@ local def = {
 	},
 	_mcl_hardness = farming.mcl_hardness,
 	is_ground_content = false,
-	sounds = farming.sounds.node_sound_leaves_defaults()
+	sounds = farming.node_sound_leaves_defaults()
 }
 
 -- stage 1
+
 minetest.register_node("farming:ginger_1", table.copy(def))
 
 -- stage 2
+
 def.tiles = {"farming_ginger_2.png"}
 minetest.register_node("farming:ginger_2", table.copy(def))
 
 -- stage 3
+
 def.tiles = {"farming_ginger_3.png"}
 def.drop = {
 	items = {
@@ -54,6 +58,7 @@ def.drop = {
 minetest.register_node("farming:ginger_3", table.copy(def))
 
 -- stage 4 (final)
+
 def.tiles = {"farming_ginger_4.png"}
 def.groups.growing = nil
 def.selection_box = farming.select_final
@@ -66,6 +71,7 @@ def.drop = {
 minetest.register_node("farming:ginger_4", table.copy(def))
 
 -- add to registered_plants
+
 farming.registered_plants["farming:ginger"] = {
 	crop = "farming:ginger",
 	seed = "farming:ginger",
@@ -75,6 +81,7 @@ farming.registered_plants["farming:ginger"] = {
 }
 
 -- mapgen
+
 minetest.register_decoration({
 	name = "farming:ginger_4",
 	deco_type = "simple",

@@ -1,5 +1,5 @@
 
--- Override grasses to drop seeds
+-- Override grass to drop wheat and oat seeds
 
 local rarity_lookup = {[1] = 50, [2] = 50, [3] = 50, [4] = 5, [5] = 5}
 
@@ -20,6 +20,8 @@ if minetest.registered_nodes["default:grass_1"] then
 	end
 end
 
+-- override dry grass to drop barley and rye seeds
+
 if minetest.registered_nodes["default:dry_grass_1"] then
 
 	for i = 1, 5 do
@@ -37,6 +39,8 @@ if minetest.registered_nodes["default:dry_grass_1"] then
 	end
 end
 
+-- override jungle grass to drop cotton and rice seeds
+
 if minetest.registered_nodes["default:junglegrass"] then
 
 	minetest.override_item("default:junglegrass", {
@@ -50,6 +54,8 @@ if minetest.registered_nodes["default:junglegrass"] then
 		}
 	})
 end
+
+-- override mineclone tallgrass to drop all sof the above seeds
 
 if farming.mcl then
 

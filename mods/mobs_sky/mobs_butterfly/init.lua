@@ -1,3 +1,6 @@
+
+-- mod check and settings
+
 local butterfly_mod = minetest.get_modpath("butterflies")
 
 local l_skins = {
@@ -35,7 +38,8 @@ local l_skins = {
 local l_spawnnear	= {"group:flower"}
 local l_spawnchance	= 20000
 
--- Butterfly
+-- Butterfly definition
+
 mobs:register_mob("mobs_butterfly:butterfly", {
 	type = "animal",
 	passive = true,
@@ -56,14 +60,10 @@ mobs:register_mob("mobs_butterfly:butterfly", {
 	fall_damage = 0,
 	view_range = 10,
 	animation = {
-		speed_normal = 15,
-		speed_run = 30,
-		stand_start = 0,
-		stand_end = 90,
-		walk_start = 0,
-		walk_end = 90,
-		fly_start = 0,
-		fly_end = 90
+		speed_normal = 15, speed_run = 30,
+		stand_start = 0, stand_end = 90,
+		walk_start = 0, walk_end = 90,
+		fly_start = 0, fly_end = 90
 	},
 
 	after_activate = function(self, staticdata, def, dtime)
@@ -72,7 +72,7 @@ mobs:register_mob("mobs_butterfly:butterfly", {
 
 			local pos = self.object:get_pos()
 			local butter = {"white", "red", "violet"}
-			local replace = "butterflies:butterfly_" .. butter[math.random(1, #butter)]
+			local replace = "butterflies:butterfly_" .. butter[math.random(#butter)]
 
 			minetest.set_node(pos, {name = replace})
 
@@ -90,11 +90,14 @@ mobs:register_mob("mobs_butterfly:butterfly", {
 
 if not butterfly_mod then
 
+	-- spawn in world
+
 	mobs:spawn_specific("mobs_butterfly:butterfly", {"air"},
 			l_spawnnear, 5, 20, 30, l_spawnchance, 1, 0, 31000)
 
+	-- spawn egg
+
 	mobs:register_egg("mobs_butterfly:butterfly", "Butterfly", "default_cloud.png", 1)
 end
-
 
 print("[MOD] Mobs Redo Butterfly loaded")

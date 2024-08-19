@@ -1,15 +1,16 @@
+
 -- Localize things for speed
+
 local random = math.random
 local jungletree_nodes = {"default:jungletree", "mcl_core:jungletree"}
 local jungletree_leaves = {
 	"default:jungleleaves", "moretrees:jungletree_leaves_green", "mcl_core:jungleleaves"}
 
--- Add random cocoa pods to jungle tree's
+-- check area to place cocoa pods near jungle trees
+
 local function generate(vmanip, minp, maxp)
 
-	if maxp.y < 0 then
-		return
-	end
+	if maxp.y < 0 then return end
 
 	local min, max = vmanip:get_emerged_area()
 	local area = VoxelArea:new({MinEdge = min, MaxEdge = max})
@@ -43,6 +44,8 @@ local function generate(vmanip, minp, maxp)
 		end
 	end
 end
+
+-- mapgen
 
 if minetest.save_gen_notify then -- async env (5.9+)
 	minetest.register_on_generated(function(vmanip, minp, maxp, blockseed)

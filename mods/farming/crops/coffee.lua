@@ -1,53 +1,20 @@
 
-local S = farming.translate
-local a = farming.recipe_items
+local S = minetest.get_translator("farming")
 
--- coffee
+-- item/seed
+
 minetest.register_craftitem("farming:coffee_beans", {
 	description = S("Coffee Beans"),
 	inventory_image = "farming_coffee_beans.png",
 	groups = {compostability = 48, seed = 2, food_coffee = 1, flammable = 2},
+
 	on_place = function(itemstack, placer, pointed_thing)
 		return farming.place_seed(itemstack, placer, pointed_thing, "farming:coffee_1")
 	end
 })
 
--- cup of coffee
-minetest.register_node("farming:coffee_cup", {
-	description = S("Cup of Coffee"),
-	drawtype = "torchlike",
-	tiles = {"farming_coffee_cup.png"},
-	inventory_image = "farming_coffee_cup.png",
-	wield_image = "farming_coffee_cup.png",
-	paramtype = "light",
-	walkable = false,
-	selection_box = {
-		type = "fixed",
-		fixed = {-0.25, -0.5, -0.25, 0.25, 0.25, 0.25}
-	},
-	groups = {vessel = 1, dig_immediate = 3, attached_node = 1, drink = 1},
-	is_ground_content = false,
-	on_use = minetest.item_eat(2, "vessels:drinking_glass"),
-	sounds = farming.sounds.node_sound_glass_defaults()
-})
+-- crop definition
 
-farming.add_eatable("farming:coffee_cup", 2)
-
-minetest.register_alias("farming:coffee_cup_hot", "farming:coffee_cup")
-minetest.register_alias("farming:drinking_cup", "vessels:drinking_glass")
-
-minetest.register_craft( {
-	output = "farming:coffee_cup",
-	recipe = {
-		{"group:food_coffee", "group:food_glass_water", a.saucepan}
-	},
-	replacements = {
-		{"group:food_saucepan", "farming:saucepan"}
-	}
-})
-
-
--- coffee definition
 local def = {
 	drawtype = "plantlike",
 	tiles = {"farming_coffee_1.png"},
@@ -64,25 +31,30 @@ local def = {
 	},
 	_mcl_hardness = farming.mcl_hardness,
 	is_ground_content = false,
-	sounds = farming.sounds.node_sound_leaves_defaults()
+	sounds = farming.node_sound_leaves_defaults()
 }
 
 -- stage 1
+
 minetest.register_node("farming:coffee_1", table.copy(def))
 
 -- stage 2
+
 def.tiles = {"farming_coffee_2.png"}
 minetest.register_node("farming:coffee_2", table.copy(def))
 
 -- stage 3
+
 def.tiles = {"farming_coffee_3.png"}
 minetest.register_node("farming:coffee_3", table.copy(def))
 
 -- stage 4
+
 def.tiles = {"farming_coffee_4.png"}
 minetest.register_node("farming:coffee_4", table.copy(def))
 
 -- stage 5 (final)
+
 def.tiles = {"farming_coffee_5.png"}
 def.groups.growing = nil
 def.selection_box = farming.select_final
@@ -96,6 +68,7 @@ def.drop = {
 minetest.register_node("farming:coffee_5", table.copy(def))
 
 -- add to registered_plants
+
 farming.registered_plants["farming:coffee"] = {
 	crop = "farming:coffee",
 	seed = "farming:coffee_beans",
@@ -105,6 +78,7 @@ farming.registered_plants["farming:coffee"] = {
 }
 
 -- mapgen
+
 local mg = farming.mapgen == "v6"
 
 def = {

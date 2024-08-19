@@ -4,24 +4,25 @@
 	https://forum.minetest.net/viewtopic.php?id=3948
 ]]
 
-local S = farming.translate
+local S = minetest.get_translator("farming")
 
--- cucumber
+-- item/seed
+
 minetest.register_craftitem("farming:cucumber", {
 	description = S("Cucumber"),
 	inventory_image = "farming_cucumber.png",
-	groups = {
-		compostability = 48, seed = 2, food_cucumber = 1
-	},
+	groups = {compostability = 48, seed = 2, food_cucumber = 1},
+	on_use = minetest.item_eat(4),
+
 	on_place = function(itemstack, placer, pointed_thing)
 		return farming.place_seed(itemstack, placer, pointed_thing, "farming:cucumber_1")
-	end,
-	on_use = minetest.item_eat(4)
+	end
 })
 
 farming.add_eatable("farming:cucumber", 4)
 
--- cucumber definition
+-- crop definition
+
 local def = {
 	drawtype = "plantlike",
 	tiles = {"farming_cucumber_1.png"},
@@ -36,21 +37,25 @@ local def = {
 	},
 	_mcl_hardness = farming.mcl_hardness,
 	is_ground_content = false,
-	sounds = farming.sounds.node_sound_leaves_defaults()
+	sounds = farming.node_sound_leaves_defaults()
 }
 
 -- stage 1
+
 minetest.register_node("farming:cucumber_1", table.copy(def))
 
 -- stage 2
+
 def.tiles = {"farming_cucumber_2.png"}
 minetest.register_node("farming:cucumber_2", table.copy(def))
 
 -- stage 3
+
 def.tiles = {"farming_cucumber_3.png"}
 minetest.register_node("farming:cucumber_3", table.copy(def))
 
 -- stage 4 (final)
+
 def.tiles = {"farming_cucumber_4.png"}
 def.groups.growing = nil
 def.selection_box = farming.select_final
@@ -63,6 +68,7 @@ def.drop = {
 minetest.register_node("farming:cucumber_4", table.copy(def))
 
 -- add to registered_plants
+
 farming.registered_plants["farming:cucumber"] = {
 	crop = "farming:cucumber",
 	seed = "farming:cucumber",
@@ -72,6 +78,7 @@ farming.registered_plants["farming:cucumber"] = {
 }
 
 -- mapgen
+
 local mg = farming.mapgen == "v6"
 
 def = {

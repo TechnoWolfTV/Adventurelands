@@ -2,6 +2,7 @@
 local SPRITE_VERSION = false -- set to true to use upright sprites instead of meshes
 
 -- local variables
+
 local l_spawn_chance = 10000
 local l_water_level = minetest.settings:get("water_level") - 1
 local l_visual = "mesh"
@@ -27,8 +28,11 @@ if SPRITE_VERSION then
 	l_trop_textures = {{"animal_fish_blue_white_fish_blue_white_item.png"}}
 end
 
+-- Mineclone check
+local mod_mcl = minetest.get_modpath("mcl_core")
 
 -- Clownfish
+
 mobs:register_mob("mobs_fish:clownfish", {
 	type = "animal",
 	passive = true,
@@ -44,7 +48,7 @@ mobs:register_mob("mobs_fish:clownfish", {
 	makes_footstep_sound = false,
 	stepheight = 0,
 	fly = true,
-	fly_in = "default:water_source",
+	fly_in = (mod_mcl and "mcl_core:water_source" or "default:water_source"),
 	fall_speed = 0,
 	view_range = 8,
 	water_damage = 0,
@@ -52,16 +56,11 @@ mobs:register_mob("mobs_fish:clownfish", {
 	lava_damage = 5,
 	light_damage = 0,
 	animation = {
-		speed_normal = 24,
-		speed_run = 24,
-		stand_start = 1,
-		stand_end = 80,
-		walk_start = 81,
-		walk_end = 155,
-		fly_start = 81,
-		fly_end = 155,
-		run_start = 81,
-		run_end = 155
+		speed_normal = 24, speed_run = 24,
+		stand_start = 1, stand_end = 80,
+		walk_start = 81, walk_end = 155,
+		fly_start = 81, fly_end = 155,
+		run_start = 81, run_end = 155
 	},
 
 	on_rightclick = function(self, clicker)
@@ -85,27 +84,12 @@ mobs:register_mob("mobs_fish:clownfish", {
 	end
 })
 
+-- spawn egg
 
-mobs:spawn({
-	name = "mobs_fish:clownfish",
-	nodes = {
-		"default:water_source", "default:water_flowing",
-		"default:river_water_source", "default:river_water_flowing"
-	},
-	neighbors =  {"default:sand","default:dirt","group:seaplants","group:seacoral"},
-	min_light = 5,
-	interval = 30,
-	chance = l_spawn_chance,
-	max_height = l_water_level,
-	active_object_count = 5
-})
-
-
-mobs:register_egg("mobs_fish:clownfish", "Clownfish",
-		"animal_clownfish_clownfish_item.png", 0)
-
+mobs:register_egg("mobs_fish:clownfish", "Clownfish", "animal_clownfish_clownfish_item.png", 0)
 
 -- Tropical fish
+
 mobs:register_mob("mobs_fish:tropical", {
 	type = "animal",
 	passive = true,
@@ -121,7 +105,7 @@ mobs:register_mob("mobs_fish:tropical", {
 	makes_footstep_sound = false,
 	stepheight = 0,
 	fly = true,
-	fly_in = "default:water_source",
+	fly_in = (mod_mcl and "mcl_core:water_source" or "default:water_source"),
 	fall_speed = 0,
 	view_range = 8,
 	water_damage = 0,
@@ -129,14 +113,10 @@ mobs:register_mob("mobs_fish:tropical", {
 	light_damage = 0,
 	air_damage = 0,
 	animation = {
-		speed_normal = 24,
-		speed_run = 24,
-		stand_start = 1,
-		stand_end = 80,
-		walk_start = 81,
-		walk_end = 155,
-		run_start = 81,
-		run_end = 155
+		speed_normal = 24, speed_run = 24,
+		stand_start = 1, stand_end = 80,
+		walk_start = 81, walk_end = 155,
+		run_start = 81, run_end = 155
 	},
 
 	on_rightclick = function(self, clicker)
@@ -160,30 +140,56 @@ mobs:register_mob("mobs_fish:tropical", {
 	end
 })
 
-
-mobs:spawn({
-	name = "mobs_fish:tropical",
-	nodes = {
-		"default:water_source", "default:water_flowing",
-		"default:river_water_source", "default:river_water_flowing"
-	},
-	neighbors =  {"default:sand","default:dirt","group:seaplants","group:seacoral"},
-	min_light = 5,
-	interval = 30,
-	chance = l_spawn_chance,
-	max_height = l_water_level,
-	active_object_count = 5
-})
-
+-- spawn egg
 
 mobs:register_egg("mobs_fish:tropical", "Tropical fish",
 		"animal_fish_blue_white_fish_blue_white_item.png", 0)
 
+-- Check for custom spawn.lua
+
+local MP = minetest.get_modpath(minetest.get_current_modname()) .. "/"
+local input = io.open(MP .. "spawn.lua", "r")
+
+if input then
+	input:close() ; input = nil ; dofile(MP .. "spawn.lua")
+else
+	-- clownfish
+	mobs:spawn({
+		name = "mobs_fish:clownfish",
+		nodes = {"group:water"},
+		neighbors =  {
+			(mod_mcl and "group:shovely" or "group:crumbly"),
+			"group:seaplants", "group:seacoral"
+		},
+		min_light = 5,
+		interval = 30,
+		chance = l_spawn_chance,
+		max_height = l_water_level,
+		active_object_count = 5
+	})
+
+	-- tropical fish
+	mobs:spawn({
+		name = "mobs_fish:tropical",
+		nodes = {"group:water"},
+		neighbors =  {
+			(mod_mcl and "group:shovely" or "group:crumbly"),
+			"group:seaplants", "group:seacoral"
+		},
+		min_light = 5,
+		interval = 30,
+		chance = l_spawn_chance,
+		max_height = l_water_level,
+		active_object_count = 5
+	})
+end
+
+-- helper function
 
 local function add_food_group(item)
 
 	local def = minetest.registered_items[item]
-	local grp = def.groups
+	local grp = table.copy(def.groups)
 
 	grp.food_fish_raw = 1
 
