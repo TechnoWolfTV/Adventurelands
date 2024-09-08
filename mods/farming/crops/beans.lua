@@ -139,6 +139,7 @@ minetest.register_node("farming:beanpole", {
 -- crop definition
 
 local def = {
+	description = S("Green Beans") .. S(" Crop"),
 	drawtype = "plantlike",
 	tiles = {"farming_beanpole_1.png"},
 	visual_scale = 1.90,

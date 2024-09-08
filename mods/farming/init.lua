@@ -5,13 +5,14 @@
 ]]
 
 -- Translation support
+
 local S = minetest.get_translator("farming")
 
 -- global
 
 farming = {
 	mod = "redo",
-	version = "20240812",
+	version = "20240907",
 	path = minetest.get_modpath("farming"),
 	select = {type = "fixed", fixed = {-0.5, -0.5, -0.5, 0.5, -5/16, 0.5}},
 	select_final = {type = "fixed", fixed = {-0.5, -0.5, -0.5, 0.5, -2.5/16, 0.5}},
@@ -481,6 +482,12 @@ function farming.place_seed(itemstack, placer, pointed_thing, plantname)
 
 		minetest.sound_play("default_place_node", {pos = pt.above, gain = 1.0})
 
+		minetest.log("action", string.format(
+			"%s planted %s at %s",
+			placer:is_player() and placer:get_player_name() or "A mod",
+			itemstack:get_name(), minetest.pos_to_string(pt.above)
+		))
+
 		if placer and itemstack
 		and not farming.is_creative(placer:get_player_name()) then
 
@@ -599,7 +606,10 @@ farming.register_plant = function(name, def)
 			next_plant = mname .. ":" .. pname .. "_" .. (i + 1)
 		end
 
+		local desc = pname:gsub("^%l", string.upper)
+
 		minetest.register_node(node_name, {
+			description = S(desc) .. S(" Crop"),
 			drawtype = "plantlike",
 			waving = 1,
 			tiles = {mname .. "_" .. pname .. "_" .. i .. ".png"},

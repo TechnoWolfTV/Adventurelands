@@ -464,6 +464,7 @@ minetest.register_node("painting:easel", {
 		end
 		
 		local wield_item = player:get_wielded_item()
+		local wield_item_idx = player:get_wield_index()
 		local wield_meta = wield_item:get_meta()
 		local def = wield_item:get_definition()
 		if (not def) or ((not def._painting_canvas_resolution) and (wield_meta:get_int("resolution")==0)) then	-- Can only put the canvas on there.
@@ -506,7 +507,7 @@ minetest.register_node("painting:easel", {
 		ent.fd = fd
 
 		meta:set_int("has_canvas", 1)
-		player:get_inventory():remove_item("main", wield_item:take_item())
+		player:get_inventory():set_stack("main", wield_item_idx, ItemStack(""))
 	end,
 
 	can_dig = function(pos)

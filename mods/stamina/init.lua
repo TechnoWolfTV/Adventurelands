@@ -48,7 +48,7 @@ end
 -- how much faster players can run if satiated.
 
 local SPRINT_SPEED = clamp(tonumber(
-		minetest.settings:get("stamina_sprint_speed")) or 0.3, 0.0, 1.0)
+		minetest.settings:get("stamina_sprint_speed")) or 0.5, 0.0, 1.0)
 
 -- how much higher player can jump if satiated
 
@@ -179,22 +179,21 @@ local function set_sprinting(name, sprinting)
 
 	if sprinting == true and not stamina.players[name].sprint then
 
-		if monoids then
+		if pova_mod then
+
+			pova.add_override(name, "sprint", {speed = SPRINT_SPEED, jump = SPRINT_JUMP})
+
+			pova.do_override(player)
+
+			stamina.players[name].sprint = true
+
+		elseif monoids then
 
 			stamina.players[name].sprint = player_monoids.speed:add_change(
 					player, def.speed + SPRINT_SPEED)
 
 			stamina.players[name].jump = player_monoids.jump:add_change(
 					player, def.jump + SPRINT_JUMP)
-
-		elseif pova_mod then
-
-			pova.add_override(name, "sprint",
-					{speed = SPRINT_SPEED, jump = SPRINT_JUMP})
-
-			pova.do_override(player)
-
-			stamina.players[name].sprint = true
 		else
 			player:set_physics_override({
 				speed = def.speed + SPRINT_SPEED,
@@ -205,10 +204,16 @@ local function set_sprinting(name, sprinting)
 		end
 
 	elseif sprinting == false
-	and stamina.players[name]
-	and stamina.players[name].sprint then
+	and stamina.players[name] and stamina.players[name].sprint then
 
-		if monoids then
+		if pova_mod then
+
+			pova.del_override(name, "sprint")
+			pova.do_override(player)
+
+			stamina.players[name].sprint = nil
+
+		elseif monoids then
 
 			player_monoids.speed:del_change(player, stamina.players[name].sprint)
 			player_monoids.jump:del_change(player, stamina.players[name].jump)
@@ -216,12 +221,6 @@ local function set_sprinting(name, sprinting)
 			stamina.players[name].sprint = nil
 			stamina.players[name].jump = nil
 
-		elseif pova_mod then
-
-			pova.del_override(name, "sprint")
-			pova.do_override(player)
-
-			stamina.players[name].sprint = nil
 		else
 			player:set_physics_override({
 				speed = def.speed - SPRINT_SPEED,

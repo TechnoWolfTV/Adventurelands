@@ -606,6 +606,14 @@ minetest.register_craftitem("farming:cheese_vegan", {
 
 farming.add_eatable("farming:cheese_vegan", 2)
 
+-- Vegan Butter
+
+minetest.register_craftitem("farming:butter_vegan", {
+	description = S("Vegan Butter"),
+	inventory_image = "farming_vegan_butter.png",
+	groups = {food_butter = 1}
+})
+
 -- Onigiri
 
 minetest.register_craftitem("farming:onigiri", {
@@ -941,6 +949,16 @@ minetest.register_node("farming:vanilla_extract", {
 	groups = {vessel = 1, dig_immediate = 3, attached_node = 1, handy = 1},
 	sounds = farming.node_sound_glass_defaults(),
 })
+
+-- Jerusalem Artichokes with miso butter
+
+minetest.register_craftitem("farming:jerusalem_artichokes", {
+	description = S("Jerusalem Artichokes"),
+	inventory_image = "farming_jerusalem_artichokes.png",
+	on_use = minetest.item_eat(11, a.bowl)
+})
+
+farming.add_eatable("ethereal:jerusalem_artichokes", 11)
 
 --= Foods we shouldn't add when using Mineclonia/VoxeLibre
 

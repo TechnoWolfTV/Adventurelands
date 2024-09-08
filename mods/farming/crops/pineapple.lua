@@ -38,6 +38,7 @@ minetest.register_node("farming:pineapple", {
 -- crop definition
 
 local def = {
+	description = S("Pineapple") .. S(" Crop"),
 	drawtype = "plantlike",
 	visual_scale = 1.5,
 	tiles = {"farming_pineapple_1.png"},

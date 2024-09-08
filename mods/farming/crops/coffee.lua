@@ -16,6 +16,7 @@ minetest.register_craftitem("farming:coffee_beans", {
 -- crop definition
 
 local def = {
+	description = S("Coffee") .. S(" Crop"),
 	drawtype = "plantlike",
 	tiles = {"farming_coffee_1.png"},
 	paramtype = "light",

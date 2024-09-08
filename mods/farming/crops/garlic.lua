@@ -16,6 +16,7 @@ minetest.register_craftitem("farming:garlic_clove", {
 -- crop definition
 
 local def = {
+	description = S("Garlic") .. S(" Crop"),
 	drawtype = "plantlike",
 	tiles = {"crops_garlic_plant_1.png"},
 	paramtype = "light",

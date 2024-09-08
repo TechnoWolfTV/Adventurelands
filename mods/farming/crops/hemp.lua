@@ -42,6 +42,7 @@ minetest.register_craftitem("farming:hemp_leaf", {
 -- crop definition
 
 local def = {
+	description = S("Hemp") .. S(" Crop"),
 	drawtype = "plantlike",
 	tiles = {"farming_hemp_1.png"},
 	paramtype = "light",

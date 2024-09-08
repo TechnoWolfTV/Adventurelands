@@ -321,15 +321,18 @@ digtron.damage_creatures = function(player, source_pos, target_pos, amount, item
 		}
 		for _, obj in ipairs(objects) do
 			if obj:is_player() then
-				-- See issue #2960 for status of a "set player velocity" method
-				-- instead, knock the player back
-				local newpos = {
-					x = target_pos.x + velocity.x,
-					y = target_pos.y + velocity.y,
-					z = target_pos.z + velocity.z,
-				}
-				obj:set_pos(newpos)
-				obj:punch(player, 1.0, damage_def, nil)
+				-- Digtron moving logic handles owner movement
+				if obj:get_player_name() ~= player:get_player_name() then
+					-- See issue #2960 for status of a "set player velocity" method
+					-- instead, knock the player back
+					local newpos = {
+						x = target_pos.x + velocity.x,
+						y = target_pos.y + velocity.y,
+						z = target_pos.z + velocity.z,
+					}
+					obj:set_pos(newpos)
+					obj:punch(player, 1.0, damage_def, nil)
+				end
 			else
 				local lua_entity = obj:get_luaentity()
 				if lua_entity ~= nil then
@@ -427,4 +430,25 @@ digtron.show_offset_markers = function(pos, offset, period)
 		entity = safe_add_entity({x=buildpos.x, y=buildpos.y, z=z_pos + period}, "digtron:marker")
 		if entity ~= nil then entity:set_yaw(1.5708) end
 	end
+end
+
+digtron.check_protected_and_record = function(pos, player)
+	local name = player:get_player_name()
+	if minetest.is_protected(pos, name) then
+		minetest.record_protection_violation(pos, name)
+		return true
+	end
+	return false
+end
+
+digtron.protected_allow_metadata_inventory_put = function(pos, _, _, stack, player)
+	return digtron.check_protected_and_record(pos, player) and 0 or stack:get_count()
+end
+
+digtron.protected_allow_metadata_inventory_move = function(pos, _, _, _, _, count, player)
+	return digtron.check_protected_and_record(pos, player) and 0 or count
+end
+
+digtron.protected_allow_metadata_inventory_take = function(pos, _, _, stack, player)
+	return digtron.check_protected_and_record(pos, player) and 0 or stack:get_count()
 end

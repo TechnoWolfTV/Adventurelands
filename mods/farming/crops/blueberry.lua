@@ -21,6 +21,7 @@ farming.add_eatable("farming:blueberries", 1)
 
 -- ctop definition
 local def = {
+	description = S("Blueberry") .. S(" Crop"),
 	drawtype = "plantlike",
 	tiles = {"farming_blueberry_1.png"},
 	paramtype = "light",

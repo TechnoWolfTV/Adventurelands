@@ -193,11 +193,11 @@ else
 
 		mobs:spawn({
 			name = "mobs_sharks:shark_sm",
-			nodes = {"group:water"},
+			nodes = {"mcl_core:water_source", "default:water_source"},
 			neighbors = {"group:water", "seawrecks:woodship", "seawrecks:uboot"},
 			interval = 30,
 			chance = l_spawn_chance,
-			max_height = 0
+			max_height = -1
 		})
 	end
 
@@ -205,11 +205,11 @@ else
 
 		mobs:spawn({
 			name = "mobs_sharks:shark_md",
-			nodes = {"group:water"},
+			nodes = {"mcl_core:water_source", "default:water_source"},
 			neighbors = {"group:water", "seawrecks:woodship", "seawrecks:uboot"},
 			interval = 30,
 			chance = l_spawn_chance,
-			max_height = 0
+			max_height = -1
 		})
 	end
 
@@ -217,11 +217,11 @@ else
 
 		mobs:spawn({
 			name = "mobs_sharks:shark_lg",
-			nodes = {"group:water"},
+			nodes = {"mcl_core:water_source", "default:water_source"},
 			neighbors = {"group:water", "seawrecks:woodship", "seawrecks:uboot"},
 			interval = 30,
 			chance = l_spawn_chance,
-			max_height = 0
+			max_height = -1
 		})
 	end
 end

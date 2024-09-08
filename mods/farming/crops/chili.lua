@@ -20,6 +20,7 @@ farming.add_eatable("farming:chili_pepper", 2)
 -- crop definition
 
 local def = {
+	description = S("Chili Pepper") .. S(" Crop"),
 	drawtype = "plantlike",
 	tiles = {"farming_chili_1.png"},
 	paramtype = "light",

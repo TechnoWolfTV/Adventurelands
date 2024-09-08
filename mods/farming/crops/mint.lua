@@ -42,6 +42,7 @@ minetest.register_craftitem("farming:mint_leaf", {
 -- crop definition
 
 local def = {
+	description = S("Mint") .. S(" Crop"),
 	drawtype = "plantlike",
 	tiles = {"farming_mint_1.png"},
 	paramtype = "light",

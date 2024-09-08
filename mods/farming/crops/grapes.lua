@@ -137,6 +137,7 @@ minetest.register_node("farming:trellis", {
 -- crop definition
 
 local def = {
+	description = S("Grapes") .. S(" Crop"),
 	drawtype = "plantlike",
 	tiles = {"farming_grapes_1.png"},
 	visual_scale = 1.9,

@@ -19,6 +19,7 @@ farming.add_eatable("farming:asparagus", 1)
 -- crop definition
 
 local def = {
+	description = S("Asparagus") .. S(" Crop"),
 	drawtype = "plantlike",
 	tiles = {"farming_asparagus_1.png"},
 	paramtype = "light",

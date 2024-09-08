@@ -25,6 +25,7 @@ minetest.register_alias("farming:peas", "farming:pea_pod")
 -- crop definition
 
 local def = {
+	description = S("Pea") .. S(" Crop"),
 	drawtype = "plantlike",
 	tiles = {"farming_pea_1.png"},
 	paramtype = "light",
