@@ -1,9 +1,12 @@
-# version 1.2.0
+# textdomain: whitelist
 # author(s): Wuzzy
 # reviewer(s):
-# textdomain: whitelist
 
-# api.lua
+##[ init.lua ]##
+Whitelist=
+Manage who can and who can't enter in your server=
+
+##[ src/api.lua ]##
 [!] The whitelist is already enabled!=[!] Die weiße Liste ist bereits aktiviert!
 Whitelist successfully enabled=Die weiße Liste wurde erfolgreich aktiviert
 [!] The whitelist is already disabled!=[!] Die weiße Liste ist bereits deaktiviert!
@@ -14,11 +17,9 @@ Whitelist successfully disabled=Die weiße Liste wurde erfolgreich deaktiviert
 [!] Whitelist can't be empty when enabled!=[!] Die weiße Liste darf nicht leer sein, wenn sie aktiviert ist!
 Whitelisted players: =Spieler auf der weißen Liste: 
 
-# commands.lua
+##[ src/commands.lua ]##
 Whitelist commands. <player> is only needed for 'add' and 'remove'=Befehle für die weiße Liste. <Spieler> wird nur für „add“ und „remove“ benötigt
 player=Spieler
 
-#player_manager.lua
+##[ src/player_manager.lua ]##
 You're not whitelisted!=Sie sind nicht auf der weißen Liste!
-
-

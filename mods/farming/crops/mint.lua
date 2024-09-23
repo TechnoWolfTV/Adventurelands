@@ -101,6 +101,7 @@ farming.registered_plants["farming:mint"] = {
 
 -- mapgen
 
+if not farming.eth then
 minetest.register_decoration({
 	deco_type = "simple",
 	place_on = {
@@ -122,3 +123,4 @@ minetest.register_decoration({
 	spawn_by = {"group:water", "group:sand"},
 	num_spawn_by = 1
 })
+end

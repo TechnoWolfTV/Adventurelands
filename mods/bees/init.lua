@@ -1,19 +1,18 @@
+
 -- Mod:     BEES
 -- Author:  Bas080 (Updated by TenPlus1)
 -- License: MIT
 
-
 -- Translation support
+
 local S = minetest.get_translator("bees")
 
---
--- FUNCTIONS
---
+-- Functions and Formspecs
 
-local floor = math.floor
-local random = math.random
+local floor, random = math.floor, math.random
 
-local hive_wild = function(pos, grafting)
+
+local function hive_wild(pos, grafting)
 
 	local spos = pos.x .. "," .. pos.y .. "," ..pos.z
 	local formspec = "size[8,9]"
@@ -31,7 +30,7 @@ local hive_wild = function(pos, grafting)
 end
 
 
-local hive_artificial = function(pos)
+local function hive_artificial(pos)
 
 	local spos = pos.x .. "," .. pos.y .. "," .. pos.z
 	local formspec = "size[8,9]"
@@ -73,10 +72,7 @@ local sting_player = function(player, damage)
 	end)
 end
 
-
---
--- NODES
---
+-- Nodes
 
 minetest.register_node("bees:extractor", {
 	description = S("Honey Extractor"),
@@ -301,8 +297,8 @@ minetest.register_node("bees:bees", {
 
 		timer:start(25)
 
-		minetest.sound_play("bees", {
-			pos = pos, gain = 1.0, max_hear_distance = 10}, true)
+		minetest.sound_play("bees",
+				{pos = pos, gain = 1.0, max_hear_distance = 10}, true)
 	end,
 
 	on_punch = function(_, _, puncher)
@@ -412,8 +408,8 @@ minetest.register_node("bees:hive_wild", {
 			sting_player(puncher, 4)
 		end
 
-		minetest.sound_play("bees", {
-			pos = pos, gain = 1.0, max_hear_distance = 10}, true)
+		minetest.sound_play("bees",
+				{pos = pos, gain = 1.0, max_hear_distance = 10}, true)
 	end,
 
 	on_metadata_inventory_take = function(pos, listname, _, _, taker)
@@ -464,8 +460,8 @@ minetest.register_node("bees:hive_wild", {
 		if meta:get_int("agressive") == 1
 		and inv:contains_item("queen", "bees:queen") then
 
-			minetest.sound_play("bees", {
-				pos = pos, gain = 1.0, max_hear_distance = 10}, true)
+			minetest.sound_play("bees",
+					{pos = pos, gain = 1.0, max_hear_distance = 10}, true)
 
 			sting_player(clicker, 4)
 		else
@@ -676,7 +672,8 @@ minetest.register_node("bees:hive_artificial", {
 
 	allow_metadata_inventory_put = function(pos, listname, index, stack)
 
-		if not minetest.get_meta(pos):get_inventory():get_stack(listname, index):is_empty() then return 0 end
+		if not minetest.get_meta(pos):get_inventory():get_stack(
+				listname, index):is_empty() then return 0 end
 
 		if listname == "queen" then
 
@@ -707,10 +704,7 @@ minetest.register_node("bees:hive_artificial", {
 	end
 })
 
-
---
 -- ABMs
---
 
 minetest.register_abm({
 	label = "spawn bee particles",
@@ -733,22 +727,21 @@ minetest.register_abm({
 				y = random() - 0.5,
 				z = random() - 0.5
 			},
-			expirationtime = random(2.5),
+			expirationtime = random(2, 5),
 			size = random(3),
 			collisiondetection = true,
 			texture = "bees_particle_bee.png",
 		})
 
-		minetest.sound_play("bees", {
-			pos = pos, gain = 0.6, max_hear_distance = 5}, true)
+		minetest.sound_play("bees",
+				{pos = pos, gain = 0.6, max_hear_distance = 5}, true)
 
 		-- floating hive check and removal
 		if node.name == "bees:hive_wild" then
 
 			local num = #minetest.find_nodes_in_area(
 				{x = pos.x - 1, y = pos.y - 1, z = pos.z - 1},
-				{x = pos.x + 1, y = pos.y + 1, z = pos.z + 1},
-				{"air"})
+				{x = pos.x + 1, y = pos.y + 1, z = pos.z + 1}, {"air"})
 
 			if num and num > 25 then
 				minetest.remove_node(pos)
@@ -757,8 +750,8 @@ minetest.register_abm({
 	end
 })
 
+-- Hive spawn ABM. This should be changed to a more realistic type of spawning
 
--- spawn ABM. This should be changed to a more realistic type of spawning
 minetest.register_abm({
 	label = "spawn bee hives",
 	nodenames = {"group:leaves"},
@@ -791,8 +784,8 @@ minetest.register_abm({
 	end
 })
 
+-- Spawning bees around bee hive
 
--- spawning bees around bee hive
 minetest.register_abm({
 	label = "spawn bees around bee hives",
 	nodenames = {"bees:hive_wild", "bees:hive_artificial", "bees:hive_industrial"},
@@ -814,9 +807,7 @@ minetest.register_abm({
 	end
 })
 
---
--- Helper Function
---
+-- Helper function
 
 local function add_eatable(item, hp)
 
@@ -832,9 +823,7 @@ local function add_eatable(item, hp)
 	end
 end
 
---
--- ITEMS
---
+-- Items
 
 minetest.register_craftitem("bees:frame_empty", {
 	description = S("Empty Hive Frame"),
@@ -879,10 +868,7 @@ minetest.register_craftitem("bees:queen", {
 	stack_max = 1
 })
 
-
---
--- CRAFTS
---
+-- Crafts
 
 minetest.register_craft({
 	output = "bees:extractor",
@@ -939,10 +925,7 @@ if minetest.get_modpath("bushes_classic") then
 	})
 end
 
-
---
--- TOOLS
---
+-- Tools
 
 minetest.register_tool("bees:smoker", {
 	description = S("Smoker"),
@@ -955,9 +938,7 @@ minetest.register_tool("bees:smoker", {
 
 	on_use = function(itemstack, _, pointed_thing)
 
-		if pointed_thing.type ~= "node" then
-			return
-		end
+		if pointed_thing.type ~= "node" then return end
 
 		local pos = pointed_thing.under
 
@@ -1003,17 +984,14 @@ minetest.register_tool("bees:grafting_tool", {
 	}
 })
 
-
---
 -- COMPATIBILTY
--- remove after all has been updated
---
 
--- ALIASES
+-- Aliases
+
 minetest.register_alias("bees:honey_extractor", "bees:extractor")
-
--- BACKWARDS COMPATIBILITY WITH OLDER VERSION
 minetest.register_alias("bees:honey_bottle", "bees:bottle_honey")
+
+-- Start hive timers on map load
 
 minetest.register_lbm({
 	nodenames = {"bees:hive", "bees:hive_artificial_inhabited", "bees:bees"},
@@ -1056,10 +1034,7 @@ minetest.register_lbm({
 	end
 })
 
-
---
--- PIPEWORKS
---
+-- Pipeworks
 
 if minetest.get_modpath("pipeworks") then
 
@@ -1322,10 +1297,7 @@ if minetest.get_modpath("pipeworks") then
 	})
 end
 
-
---
--- LUCKY BLOCKS
---
+-- Lucky Blocks
 
 if minetest.get_modpath("lucky_block") then
 
@@ -1334,7 +1306,7 @@ if minetest.get_modpath("lucky_block") then
 		local objs = minetest.get_objects_inside_radius(pos, 15)
 
 		minetest.chat_send_player(player:get_player_name(),
-			minetest.colorize("violet", S("Bees! Bees for all!")))
+				minetest.colorize("violet", S("Bees! Bees for all!")))
 
 		for n = 1, #objs do
 

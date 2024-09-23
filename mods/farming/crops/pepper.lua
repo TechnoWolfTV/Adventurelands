@@ -159,6 +159,7 @@ def = {
 			"default:dirt_with_rainforest_litter", "mcl_core:dirt_with_grass"}
 }
 
+if not farming.eth then
 minetest.register_decoration({
 	deco_type = "simple",
 	place_on = def.grow_on,
@@ -177,3 +178,4 @@ minetest.register_decoration({
 	spawn_by = "group:tree",
 	num_spawn_by = 1
 })
+end

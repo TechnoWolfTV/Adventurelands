@@ -98,6 +98,7 @@ farming.registered_plants["farming:chili_pepper"] = {
 
 -- mapgen
 
+if not farming.eth then
 minetest.register_decoration({
 	deco_type = "simple",
 	place_on = {
@@ -115,7 +116,8 @@ minetest.register_decoration({
 	},
 	y_min = 5,
 	y_max = 35,
-	decoration = {"farming:chili_8"},
+	decoration = "farming:chili_8",
 	spawn_by = "group:tree",
 	num_spawn_by = 1
 })
+end

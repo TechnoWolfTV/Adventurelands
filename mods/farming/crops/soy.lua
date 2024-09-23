@@ -118,6 +118,7 @@ def = {
 			"mcl_core:dirt_with_grass"}
 }
 
+if not farming.eth then
 minetest.register_decoration({
 	deco_type = "simple",
 	place_on = def.spawn_on,
@@ -134,3 +135,4 @@ minetest.register_decoration({
 	y_max = 50,
 	decoration = "farming:soy_6"
 })
+end

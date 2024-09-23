@@ -130,6 +130,7 @@ farming.registered_plants["farming:sunflower"] = {
 
 -- mapgen
 
+if not farming.eth then
 minetest.register_decoration({
 	deco_type = "simple",
 	place_on = {"default:dirt_with_grass", "mcl_core:dirt_with_grass"},
@@ -146,3 +147,4 @@ minetest.register_decoration({
 	y_max = 40,
 	decoration = "farming:sunflower_8"
 })
+end

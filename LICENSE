@@ -99,6 +99,9 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Charcoal
   - Location: ./mods/charcoal/
   - License file: ./mods/charcoal/LICENSE.txt
+- ChatCmdBuilder
+  - Location: ./mods/ChatCmdBuilder/
+  - License file: ./mods/ChatCmdBuilder/LICENSE
 - Cleaner
   - Location: ./mods/cleaner/
   - License file: ./mods/cleaner/LICENSE.txt

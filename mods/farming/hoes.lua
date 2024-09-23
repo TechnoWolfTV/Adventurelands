@@ -251,7 +251,6 @@ local function hoe_area(pos, player)
 	end
 
 	-- replace dirt with tilled soil
-	res = nil
 	res = minetest.find_nodes_in_area_under_air(
 		{x = pos.x - r, y = pos.y - 1, z = pos.z - r},
 		{x = pos.x + r, y = pos.y + 2, z = pos.z + r},
@@ -318,13 +317,10 @@ minetest.register_entity("farming:hoebomb_entity", {
 
 local function throw_potion(itemstack, player)
 
-	local playerpos = player:get_pos()
+	local pos = player:get_pos()
 
 	local obj = minetest.add_entity({
-		x = playerpos.x,
-		y = playerpos.y + 1.5,
-		z = playerpos.z
-	}, "farming:hoebomb_entity")
+			x = pos.x, y = pos.y + 1.5, z = pos.z}, "farming:hoebomb_entity")
 
 	if not obj then return end
 
@@ -440,10 +436,7 @@ minetest.register_tool("farming:scythe_mithril", {
 				if obj then
 
 					obj:set_velocity({
-						x = math.random(-10, 10) / 9,
-						y = 3,
-						z = math.random(-10, 10) / 9
-					})
+							x = math.random() - 0.5, y = 3, z = math.random() - 0.5})
 				end
 			end
 		end

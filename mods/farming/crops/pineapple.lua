@@ -126,6 +126,7 @@ def = {
 	num = mg and 1 or -1
 }
 
+if not farming.eth then
 minetest.register_decoration({
 	deco_type = "simple",
 	place_on = def.grow_on,
@@ -140,7 +141,8 @@ minetest.register_decoration({
 	},
 	y_min = 11,
 	y_max = 30,
-	decoration = {"farming:pineapple_8"},
+	decoration = "farming:pineapple_8",
 	spawn_by = def.grow_near,
 	num_spawn_by = def.num
 })
+end

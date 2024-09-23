@@ -180,6 +180,7 @@ def = {
 	biome = mg and {"jungle"} or {"savanna"}
 }
 
+if not farming.eth then
 minetest.register_decoration({
 	name = "farming:cotton_wild",
 	deco_type = "simple",
@@ -198,7 +199,7 @@ minetest.register_decoration({
 	y_min = 1,
 	decoration = "farming:cotton_wild"
 })
-
+end
 
 --[[ Cotton using api
 farming.register_plant("farming:cotton", {

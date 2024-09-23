@@ -83,6 +83,7 @@ farming.registered_plants["farming:ginger"] = {
 
 -- mapgen
 
+if not farming.eth then
 minetest.register_decoration({
 	name = "farming:ginger_4",
 	deco_type = "simple",
@@ -101,3 +102,4 @@ minetest.register_decoration({
 	decoration = "farming:ginger_3",
 	param2 = 3
 })
+end

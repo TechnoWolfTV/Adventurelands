@@ -79,7 +79,7 @@ hb.settings.bar_type = hb.load_setting("hudbars_bar_type", "string", "progress_b
 TO:
 hb.settings.bar_type = hb.load_setting("hudbars_bar_type", "string", "statbar_classic", {"progress_bar", "statbar_classic", "statbar_modern"})
 
-Change lines 46, 47 FROM:
+Change lines 47, 48 FROM:
 hb.settings.sorting = { ["health"] = 0, ["breath"] = 1 }
 hb.settings.sorting_reverse = { [0] = "health", [1] = "breath" }
 TO:

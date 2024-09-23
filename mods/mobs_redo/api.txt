@@ -560,7 +560,9 @@ This function registers a arrow for mobs with the attack type shoot.
        'textures'     same is in minetest.register_entity()
        'collide_with_objects'       same as above
        'velocity'     the velocity of the arrow
-       'drop'         if set to true any arrows hitting a node will drop as item
+       'drop'         if set to true any arrows hitting a node will drop as item,
+                      if number given then chance (1/num) of item dropping will
+                      be used.  arrow "mymob:myarrow" will use item of same name.
        'hit_player'   a function that is called when the arrow hits a player;
                       this function should hurt the player, the parameters are
                       (self, player)

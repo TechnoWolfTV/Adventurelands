@@ -84,6 +84,7 @@ farming.registered_plants["farming:eggplant"] = {
 
 -- mapgen
 
+if not farming.eth then
 minetest.register_decoration({
 	deco_type = "simple",
 	place_on = {"default:dirt_with_grass", "mcl_core:dirt_with_grass"},
@@ -102,3 +103,4 @@ minetest.register_decoration({
 	decoration = "farming:eggplant_4",
 	param2 = 3
 })
+end

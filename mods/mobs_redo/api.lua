@@ -18,7 +18,7 @@ end
 
 mobs = {
 	mod = "redo",
-	version = "20240823",
+	version = "20240917",
 	spawning_mobs = {},
 	translate = S,
 	invis = minetest.global_exists("invisibility") and invisibility or {},
@@ -276,15 +276,13 @@ function mob_class:collision()
 	local width = -prop.collisionbox[1] + prop.collisionbox[4] + 0.5
 	local pos2, vec, force
 
-	for _,player in pairs(minetest.get_connected_players()) do
+	for _,object in pairs(minetest.get_objects_inside_radius(pos, width)) do
 
-		pos2 = player:get_pos()
+		if object:is_player() then
 
-		if get_distance(pos2, pos) < width then
-
+			pos2 = object:get_pos()
 			vec  = {x = pos.x - pos2.x, z = pos.z - pos2.z}
-
-			force = (width + 0.5) - vector.distance(
+			force = width - vector.distance(
 					{x = pos.x, y = 0, z = pos.z}, {x = pos2.x, y = 0, z = pos2.z})
 
 			x = x + (vec.x * force)
@@ -583,14 +581,7 @@ local function effect(
 
 	radius = radius or 2
 	gravity = gravity or -10
-
-	if fall == true then
-		fall = 0
-	elseif fall == false then
-		fall = radius
-	else
-		fall = -radius
-	end
+	fall = fall == true and 0 or fall == false and radius or -radius
 
 	minetest.add_particlespawner({
 		amount = amount,
@@ -976,7 +967,7 @@ function mob_class:is_at_cliff()
 	return (not def and def.walkable)
 end
 
--- check for nodes or groups inside mob
+-- check for nodes or groups inside mob collision area
 
 function mob_class:is_inside(itemtable)
 
@@ -1124,7 +1115,7 @@ function mob_class:do_jump()
 	local vel = self.object:get_velocity() ; if not vel then return false end
 
 	-- don't jump if ordered to stand or already in mid-air or moving forwards
-	if self.state == "stand" or vel.y ~= 0 or self:get_velocity() > 0.2 then
+	if self.state == "stand" or vel.y ~= 0 then --or self:get_velocity() > 0.2 then
 		return false
 	end
 
@@ -2140,7 +2131,7 @@ function mob_class:do_states(dtime)
 			if lp then
 				yaw = self:yaw_to_pos(lp)
 			else
-				yaw = yaw + random(-0.5, 0.5)
+				yaw = yaw + random() - 0.5
 			end
 
 			self:set_yaw(yaw, 8)
@@ -2164,7 +2155,7 @@ function mob_class:do_states(dtime)
 
 		if self.randomly_turn and random(100) <= 30 then
 
-			yaw = yaw + random(-0.5, 0.5)
+			yaw = yaw + random() - 0.5
 
 			self:set_yaw(yaw, 8)
 
@@ -2581,11 +2572,18 @@ function mob_class:falling(pos)
 		-- fall damage onto solid ground
 		if self.fall_damage and self.object:get_velocity().y == 0 then
 
-			local d = (self.old_y or 0) - self.object:get_pos().y
+			local d = (self.old_y or self.object:get_pos().y) - self.object:get_pos().y
 
 			if d > 5 then
 
-				self.health = self.health - floor(d - 5)
+				local add = minetest.get_item_group(self.standing_on, "fall_damage_add_percent")
+				local damage = d - 5
+
+				if add ~= 0 then
+					damage = damage + damage * (add / 100)
+				end
+
+				self.health = self.health - floor(damage)
 
 				effect(pos, 5, "tnt_smoke.png", 1, 2, 2, nil)
 
@@ -3122,6 +3120,7 @@ function mob_class:mob_activate(staticdata, def, dtime)
 	self.textures = textures
 	self.standing_in = "air"
 	self.standing_on = "air"
+	self.state = self.state or "stand"
 
 	-- set anything changed above
 	self:set_yaw((random(0, 360) - 180) / 180 * pi, 6)
@@ -4002,7 +4001,7 @@ function mobs:register_arrow(name, def)
 		hit_node = def.hit_node,
 		hit_mob = def.hit_mob,
 		hit_object = def.hit_object,
-		drop = def.drop or false, -- drops arrow as registered item when true
+		drop = def.drop, -- chance of dropping arrow as registered item
 		timer = 0,
 		lifetime = def.lifetime or 4.5,
 		owner_id = def.owner_id,
@@ -4119,7 +4118,8 @@ function mobs:register_arrow(name, def)
 
 						self:hit_node(pos, node)
 
-						if self.drop == true then
+						if (type(self.drop) == "boolean" and self.drop == true)
+						or (type(self.drop) == "number" and random(self.drop) == 1) then
 
 							pos.y = pos.y + 1
 
@@ -4749,7 +4749,8 @@ if settings:get_bool("mobs_can_hear") ~= false then
 		elseif param.object then
 			def.pos = param.object:get_pos()
 		elseif param.to_player then
-			def.pos = minetest.get_player_by_name(param.to_player):get_pos()
+			local player = minetest.get_player_by_name(param.to_player)
+			def.pos = player and player:get_pos()
 		end
 
 		-- if no position found use default function

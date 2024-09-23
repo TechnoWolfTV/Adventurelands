@@ -521,6 +521,9 @@ local function giant_shroom(x, y, z, area, data)
 end
 
 -- Generator
+
+local data = {} -- localized data buffer to reduce waste of RAM
+
 local function generate(vm, minp, maxp)
 
 	--if out of range of caverealms limits
@@ -540,16 +543,15 @@ local function generate(vm, minp, maxp)
 
 	local pos1, pos2 = vm:get_emerged_area()
 	local area = VoxelArea:new{MinEdge = pos1, MaxEdge = pos2}
-	local data = vm:get_data()
+
+	vm:get_data(data)
 
 	--mandatory values
 	local sidelen = x1 - x0 + 1 --length of a mapblock
 	local chulens2D = {x = sidelen, y = sidelen, z = 1}
 
 	--2D noise for biomes (will be 3D humidity/temp later)
-	local nvals_biome
-
-	nvals_biome = minetest.get_perlin_map(np_biome, chulens2D):get_2d_map_flat(
+	local nvals_biome = minetest.get_perlin_map(np_biome, chulens2D):get_2d_map_flat(
 			{x = x0 + 150, y = z0 + 50})
 
 	local nixyz = 1 --3D node index
@@ -827,6 +829,7 @@ local function generate(vm, minp, maxp)
 	print("[caverealms] Took "..chugent.." ms generating "
 		.. minetest.pos_to_string(minp) .. " to "
 		.. minetest.pos_to_string(maxp)) --tell people how long
+	print("caverealms-mem: " .. collectgarbage("count") / 1024 .. " MiB")
 ]]
 end
 
