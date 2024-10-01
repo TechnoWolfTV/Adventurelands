@@ -107,10 +107,11 @@ farming.registered_plants["farming:vanilla"] = {
 
 -- mapgen
 
-if not farming.eth then
 minetest.register_decoration({
 	deco_type = "simple",
-	place_on = {"default:dirt_with_grass", "mcl_core:dirt_with_grass"},
+	place_on = {
+		"default:dirt_with_grass", "mcl_core:dirt_with_grass", "ethereal:grove_dirt"
+	},
 	sidelen = 16,
 	noise_params = {
 		offset = 0,
@@ -120,8 +121,6 @@ minetest.register_decoration({
 		octaves = 3,
 		persist = 0.6
 	},
-	y_min = 5,
-	y_max = 35,
+	y_min = 5, y_max = 35,
 	decoration = "farming:vanilla_7"
 })
-end

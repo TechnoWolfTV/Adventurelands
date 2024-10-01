@@ -1,6 +1,6 @@
 --[[
     Leads — Adds leads for transporting animals to Minetest.
-    Copyright © 2023, Silver Sandstone <@SilverSandstone@craftodon.social>
+    Copyright © 2023‒2024, Silver Sandstone <@SilverSandstone@craftodon.social>
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),
@@ -82,7 +82,7 @@ end;
 --- Handles the knot being punched.
 function leads.KnotEntity:on_punch(puncher, time_from_last_punch, tool_capabilities, dir, damage)
     -- Check protection:
-    if leads.settings.respect_protection and not minetest.check_player_privs(puncher, 'protection_bypass') then
+    if leads.settings.respect_protection and minetest.is_player(puncher) and not minetest.check_player_privs(puncher, 'protection_bypass') then
         local pos = self.object:get_pos():round();
         local name = puncher and puncher:get_player_name() or '';
         if minetest.is_protected(pos, name) then

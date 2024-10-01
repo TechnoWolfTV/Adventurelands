@@ -348,13 +348,12 @@ enhance mob functionality and have them do many interesting things:
    'on_sound'       (self, def) called when mob is inside the hearing distance of
                     a sound, passes a def table containing:
       'sound'       the sound being played,
-      'pos'         position the sound originated,
+      'pos'         position the sound originated (only sounds with pos detected),
       'gain'        original gain of sound,
       'distance'    distance of mob from sound source,
-      'loudness'    how loud sound is to mob (0 = cant hear, 1.0 = near sound), this
-                    would be used as the main value inside on_sound function,
-      'player'      player name sound originated,
-      'object'      object reference sound originated,
+      'loudness'    how loud sound is to mob (percentage of gain heard at distance)
+      'player'      player name sound originated, [NOT IN USE]
+      'object'      object reference sound originated, [NOT IN USE]
       'max_hear_distance' max distance sound can be heard from source.
 
 

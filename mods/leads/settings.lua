@@ -1,6 +1,6 @@
 --[[
     Leads — Adds leads for transporting animals to Minetest.
-    Copyright © 2023, Silver Sandstone <@SilverSandstone@craftodon.social>
+    Copyright © 2023‒2024, Silver Sandstone <@SilverSandstone@craftodon.social>
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),

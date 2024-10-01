@@ -248,10 +248,11 @@ minetest.register_node("farming:grapebush", {
 
 -- mapgen
 
-if not farming.eth then
 minetest.register_decoration({
 	deco_type = "simple",
-	place_on = {"default:dirt_with_grass", "mcl_core:dirt_with_grass"},
+	place_on = {
+		"default:dirt_with_grass", "mcl_core:dirt_with_grass", "ethereal:prairie_dirt"
+	},
 	sidelen = 16,
 	noise_params = {
 		offset = 0,
@@ -261,8 +262,6 @@ minetest.register_decoration({
 		octaves = 3,
 		persist = 0.6
 	},
-	y_min = 25,
-	y_max = 50,
+	y_min = 25, y_max = 50,
 	decoration = "farming:grapebush"
 })
-end

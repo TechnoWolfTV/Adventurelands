@@ -89,7 +89,6 @@ farming.registered_plants["farming:asparagus"] = {
 
 -- mapgen
 
-if not farming.eth then
 minetest.register_decoration({
 	name = "farming:asparagus_5",
 	deco_type = "simple",
@@ -103,9 +102,7 @@ minetest.register_decoration({
 		octaves = 3,
 		persist = 0.6
 	},
-	y_min = 8,
-	y_max = 32,
+	y_min = 8, y_max = 32,
 	decoration = "farming:asparagus_5",
 	param2 = 3
 })
-end

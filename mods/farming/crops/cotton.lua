@@ -172,34 +172,31 @@ minetest.register_node("farming:cotton_wild", {
 
 -- mapgen
 
-local mg = farming.mapgen == "v6"
-
-def = {
-	grow_on = mg and {"default:dirt_with_grass"} or {"default:dry_dirt_with_dry_grass",
-			"mcl_core:dirt_with_grass"},
-	biome = mg and {"jungle"} or {"savanna"}
+local spawn_on = {
+	"default:dry_dirt_with_dry_grass", "default:dirt_with_dry_grass",
+	"mcl_core:dirt_with_grass"
 }
 
-if not farming.eth then
+if farming.mapgen == "v6" then
+	spawn_on = {"default:dirt_with_grass"}
+end
+
 minetest.register_decoration({
 	name = "farming:cotton_wild",
 	deco_type = "simple",
-	place_on = def.grow_on,
+	place_on = spawn_on,
 	sidelen = 16,
 	noise_params = {
-		offset = -0.1,
-		scale = 0.1,
-		spread = {x = 50, y = 50, z = 50},
+		offset = 0,
+		scale = farming.cotton,
+		spread = {x = 100, y = 100, z = 100},
 		seed = 4242,
 		octaves = 3,
-		persist = 0.7
+		persist = 0.6
 	},
-	biomes = def.biome,
-	y_max = 31000,
-	y_min = 1,
+	y_min = 1, y_max = 120,
 	decoration = "farming:cotton_wild"
 })
-end
 
 --[[ Cotton using api
 farming.register_plant("farming:cotton", {

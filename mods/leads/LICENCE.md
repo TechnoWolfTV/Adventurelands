@@ -4,7 +4,7 @@ Leads Licence
 Licence of Code
 ---------------
 
-Copyright © 2023, Silver Sandstone <@SilverSandstone@craftodon.social>
+Copyright © 2023‒2024, Silver Sandstone <@SilverSandstone@craftodon.social>
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -87,6 +87,14 @@ Licence of Assets
       dedicated to the public domain via [Creative Commons Zero][CC0 1.0].
 
 (* Excluding embedded textures, which are listed above.)
+
+
+Translation Credits
+-------------------
+
+- Kyoushi (German)
+
+Translation files are dedicated to the public domain via [Creative Commons Zero][CC0 1.0].
 
 
 [Pixel Perfection]:             https://www.planetminecraft.com/texture-pack/131pixel-perfection/           "Pixel Perfection on Planet Minecraft"

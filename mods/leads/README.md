@@ -28,7 +28,7 @@ You can customise this in the settings.
 Compatibility
 -------------
 
-This mod supports Mobs Redo, Creatura, MineClone2, Mineclonia, Repixture, and Exile.
+This mod supports Mobs Redo, Creatura, VoxeLibre, Mineclonia, Repixture, and Exile.
 Other games and mob frameworks may also work.
 
 Minetest 5.5.0+ server required, Minetest 5.7.0+ client recommended.

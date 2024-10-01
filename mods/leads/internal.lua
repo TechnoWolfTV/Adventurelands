@@ -1,6 +1,6 @@
 --[[
     Leads — Adds leads for transporting animals to Minetest.
-    Copyright © 2023, Silver Sandstone <@SilverSandstone@craftodon.social>
+    Copyright © 2023‒2024, Silver Sandstone <@SilverSandstone@craftodon.social>
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),
@@ -29,7 +29,7 @@
 leads.interaction_blockers = {};
 
 
-function leads._after_register_item(name, def)
+function leads._apply_item_patches(name, def)
     local old_on_place = def.on_place;
     local old_on_secondary_use = def.on_secondary_use;
 
@@ -93,12 +93,9 @@ function minetest.is_protected(pos, name)
 end;
 
 
-for name, def in pairs(minetest.registered_items) do
-    leads._after_register_item(name, def);
-end;
-
-local old_register_item = minetest.register_item;
-function minetest.register_item(name, def)
-    old_register_item(name, def);
-    leads._after_register_item(string.gsub(name, '^:+', ''), def);
-end;
+minetest.register_on_mods_loaded(
+function()
+    for name, def in pairs(minetest.registered_items) do
+        leads._apply_item_patches(name, def);
+    end;
+end);

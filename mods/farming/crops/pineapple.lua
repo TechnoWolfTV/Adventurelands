@@ -117,19 +117,18 @@ farming.registered_plants["farming:pineapple"] = {
 
 -- mapgen
 
-local mg = farming.mapgen == "v6"
-
-def = {
-	grow_on = mg and {"default:dirt_with_grass"} or {"default:dirt_with_dry_grass",
-			"default:dry_dirt_with_dry_grass", "mcl_core:dirt_with_grass"},
-	grow_near = mg and "group:sand" or nil,
-	num = mg and 1 or -1
+local spawn_on = {
+	"default:dirt_with_dry_grass", "default:dry_dirt_with_dry_grass",
+	"mcl_core:dirt_with_grass"
 }
 
-if not farming.eth then
+if farming.mapgen == "v6" then
+	spawn_on = {"default:dirt_with_grass"}
+end
+
 minetest.register_decoration({
 	deco_type = "simple",
-	place_on = def.grow_on,
+	place_on = spawn_on,
 	sidelen = 16,
 	noise_params = {
 		offset = 0,
@@ -139,10 +138,6 @@ minetest.register_decoration({
 		octaves = 3,
 		persist = 0.6
 	},
-	y_min = 11,
-	y_max = 30,
-	decoration = "farming:pineapple_8",
-	spawn_by = def.grow_near,
-	num_spawn_by = def.num
+	y_min = 11, y_max = 30,
+	decoration = "farming:pineapple_8"
 })
-end

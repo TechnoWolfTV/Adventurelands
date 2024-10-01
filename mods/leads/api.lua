@@ -1,6 +1,6 @@
 --[[
     Leads — Adds leads for transporting animals to Minetest.
-    Copyright © 2023, Silver Sandstone <@SilverSandstone@craftodon.social>
+    Copyright © 2023‒2024, Silver Sandstone <@SilverSandstone@craftodon.social>
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),
@@ -74,15 +74,17 @@ leads.custom_attach_offsets =
     ['mobs_animal:chicken'] = -0.4;
     ['mobs_animal:kitten']  =  0.0;
     ['mobs_animal:rat']     = -0.9;
+    ['mobs_mc:axolotl']     =  0.1;
+    ['mobs_mc:cat']         =  0.2;
 };
 
 --- A table of sound effects for lead events.
 leads.sounds =
 {
-    attach  = {name = 'leads_attach',  gain = 0.5,  pitch = 0.75};
-    remove  = {name = 'leads_remove',  gain = 0.5,  pitch = 0.75};
-    stretch = {name = 'leads_stretch', gain = 0.25, pitch = 1.25, duration = 2.5};
-    snap    = {name = 'leads_break',   gain = 0.75};
+    attach  = {name = 'leads_attach',  gain = 0.5,  pitch = 0.75, description = S'Lead attached'};
+    remove  = {name = 'leads_remove',  gain = 0.5,  pitch = 0.75, description = S'Lead removed'};
+    stretch = {name = 'leads_stretch', gain = 0.25, pitch = 1.25, description = S'Lead stretches', duration = 2.5};
+    snap    = {name = 'leads_break',   gain = 0.75,               description = S'Lead snaps'};
 };
 
 
@@ -105,7 +107,7 @@ leads.leads_by_connector = setmetatable({}, leads_by_connector_mt);
 -- @param item     [string|ItemStack|nil] The lead item, if any.
 -- @return         [ObjectRef|nil]        The lead object, or nil on failure.
 -- @return         [string|nil]           A string describing the error, or nil on success.
-function leads.connect_objects(leader, follower, item)
+function leads.add_lead(leader, follower, item)
     if leads.util.is_same_object(leader, follower) then
         return nil, S'You cannot leash something to itself.';
     end;
@@ -139,6 +141,8 @@ function leads.connect_objects(leader, follower, item)
     return object, nil;
 end;
 
+leads.connect_objects = leads.add_lead; -- Deprecated alias.
+
 
 --- Checks if the object can be attached to a lead.
 -- @param object [ObjectRef] The object to check.
@@ -149,7 +153,7 @@ function leads.is_leashable(object)
         return true;
     end;
 
-    -- Check settings:
+    -- Check setting for type:
     local obj_type = leads.util.get_object_type(object);
     if not leads.settings['allow_leash_' .. obj_type] then
         return false;
@@ -420,7 +424,7 @@ function leads.on_lead_interact(itemstack, user, pointed_thing, is_punch)
         end;
 
         -- Create the lead:
-        local lead, message = leads.connect_objects(user, pointed_thing.ref, itemstack:peek_item());
+        local lead, message = leads.add_lead(user, pointed_thing.ref, itemstack:peek_item());
         if not lead then
             _message(message);
             return nil;

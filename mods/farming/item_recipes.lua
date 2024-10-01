@@ -1118,8 +1118,8 @@ minetest.register_craft({
 minetest.register_craft({
 	output = "farming:mortar_pestle",
 	recipe = {
-		{a.stone, "group:stick", a.stone},
-		{"", a.stone, ""}
+		{"group:stone", "group:stick", "group:stone"},
+		{"", "group:stone", ""}
 	}
 })
 
@@ -1139,8 +1139,8 @@ minetest.register_craft({
 minetest.register_craft({
 	output = "farming:juicer",
 	recipe = {
-		{"", a.stone, ""},
-		{a.stone, "", a.stone}
+		{"", "group:stone", ""},
+		{"group:stone", "", "group:stone"}
 	}
 })
 

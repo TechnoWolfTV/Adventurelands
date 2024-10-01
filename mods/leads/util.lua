@@ -1,6 +1,6 @@
 --[[
     Leads — Adds leads for transporting animals to Minetest.
-    Copyright © 2023, Silver Sandstone <@SilverSandstone@craftodon.social>
+    Copyright © 2023‒2024, Silver Sandstone <@SilverSandstone@craftodon.social>
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),
@@ -28,7 +28,7 @@
 
 leads.util = {};
 
-leads.util.rng = PseudoRandom(0x4C656164);
+leads.util.rng = PcgRandom(0x4C656164);
 
 local has_objectuuids = minetest.get_modpath('objectuuids') ~= nil;
 

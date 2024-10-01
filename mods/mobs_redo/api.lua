@@ -18,7 +18,7 @@ end
 
 mobs = {
 	mod = "redo",
-	version = "20240917",
+	version = "20241001",
 	spawning_mobs = {},
 	translate = S,
 	invis = minetest.global_exists("invisibility") and invisibility or {},
@@ -4743,14 +4743,16 @@ if settings:get_bool("mobs_can_hear") ~= false then
 
 		local def = {} ; param = param or {}
 
-		-- store sound position
+		-- store sound position (ignore player and object positioning as background)
 		if param.pos then
 			def.pos = param.pos
-		elseif param.object then
-			def.pos = param.object:get_pos()
-		elseif param.to_player then
-			local player = minetest.get_player_by_name(param.to_player)
-			def.pos = player and player:get_pos()
+--		elseif param.object then
+--			def.pos = param.object:get_pos()
+--			def.object = param.object
+--		elseif param.to_player then
+--			local player = minetest.get_player_by_name(param.to_player)
+--			def.pos = player and player:get_pos()
+--			def.player = param.to_player
 		end
 
 		-- if no position found use default function
@@ -4767,12 +4769,7 @@ if settings:get_bool("mobs_can_hear") ~= false then
 			def.gain = spec.gain or param.gain or 1.0
 		end
 
-		-- store player name or object reference
-		if param.to_player then
-			def.player = param.to_player
-		elseif param.object then
-			def.object = param.object
-		end
+--print("==", def.sound)
 
 		def.max_hear_distance = param.max_hear_distance or 32
 
@@ -4793,13 +4790,13 @@ if settings:get_bool("mobs_can_hear") ~= false then
 					def.distance = get_distance(def.pos, obj:get_pos())
 
 					local bit = def.gain / def.max_hear_distance
-					local rem = def.max_hear_distance - def.distance
 
-					-- loudness ranges from 0 (cannot hear) to 1.0 (close to source)
-					def.loudness = (bit * rem) / def.gain
+					def.loudness = def.gain - (bit * def.distance)
 
-					-- run custom on_sound function
-					ent.on_sound(ent, def)
+					-- run custom on_sound function if heard
+					if def.loudness > 0 then
+						ent.on_sound(ent, def)
+					end
 				end
 			end
 		end

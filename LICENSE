@@ -120,6 +120,9 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Crafting Bench
   - Location: ./mods/crafting_bench/
   - License file: ./mods/crafting_bench/LICENSE
+- Create your path
+  - Location: ./mods/atl_path/
+  - License file: ./mods/atl_path/license.txt
 - Currency
   - Location: ./mods/currency/
   - License file: ./mods/currency/LICENSE
@@ -331,6 +334,9 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Enchanting Table and API [x_enchanting]
   - Location: ./mods/x_enchanting/
   - License file: ./mods/x_enchanting/LICENSE.txt
+- xban2
+  - Location: ./mods/xban2/
+  - License file: ./mods/xban2/LICENSE
 - Xcompat
   - Location: ./mods/xcompat/
   - License file: ./mods/xcompat/LICENSE

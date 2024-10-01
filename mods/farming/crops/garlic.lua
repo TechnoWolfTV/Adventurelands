@@ -82,10 +82,12 @@ farming.registered_plants["farming:garlic"] = {
 
 -- mapgen
 
-if not farming.eth then
 minetest.register_decoration({
 	deco_type = "simple",
-	place_on = {"default:dirt_with_grass", "mcl_core:dirt_with_grass"},
+	place_on = {
+		"default:dirt_with_grass", "mcl_core:dirt_with_grass", "ethereal:prairie_dirt",
+		"default:dirt_with_rainforest_litter"
+	},
 	sidelen = 16,
 	noise_params = {
 		offset = 0,
@@ -95,10 +97,7 @@ minetest.register_decoration({
 		octaves = 3,
 		persist = 0.6
 	},
-	y_min = 3,
-	y_max = 35,
+	y_min = 3, y_max = 45,
 	decoration = "farming:garlic_5",
-	spawn_by = "group:tree",
-	num_spawn_by = 1
+	spawn_by = "group:tree", num_spawn_by = 1
 })
-end

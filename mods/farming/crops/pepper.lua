@@ -152,17 +152,12 @@ farming.registered_plants["farming:pepper"] = {
 
 -- mapgen
 
-local mg = farming.mapgen == "v6"
-
-def = {
-	grow_on = mg and {"default:dirt_with_grass"} or {
-			"default:dirt_with_rainforest_litter", "mcl_core:dirt_with_grass"}
-}
-
-if not farming.eth then
 minetest.register_decoration({
 	deco_type = "simple",
-	place_on = def.grow_on,
+	place_on = {
+		"default:dirt_with_grass", "default:dirt_with_rainforest_litter",
+		"mcl_core:dirt_with_grass", "ethereal:prairie_dirt"
+	},
 	sidelen = 16,
 	noise_params = {
 		offset = 0,
@@ -172,10 +167,7 @@ minetest.register_decoration({
 		octaves = 3,
 		persist = 0.6
 	},
-	y_min = 5,
-	y_max = 35,
+	y_min = 5, y_max = 35,
 	decoration = {"farming:pepper_5", "farming:pepper_6", "farming:pepper_7"},
-	spawn_by = "group:tree",
-	num_spawn_by = 1
+	spawn_by = "group:tree", num_spawn_by = 1
 })
-end

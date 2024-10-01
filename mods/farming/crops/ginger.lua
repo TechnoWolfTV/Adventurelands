@@ -83,11 +83,13 @@ farming.registered_plants["farming:ginger"] = {
 
 -- mapgen
 
-if not farming.eth then
 minetest.register_decoration({
 	name = "farming:ginger_4",
 	deco_type = "simple",
-	place_on = {"default:dirt_with_rainforest_litter", "mcl_core:dirt_with_grass"},
+	place_on = {
+		"default:dirt_with_rainforest_litter", "mcl_core:dirt_with_grass",
+		"ethereal:prairie_dirt"
+	},
 	sidelen = 16,
 	noise_params = {
 		offset = 0,
@@ -97,9 +99,7 @@ minetest.register_decoration({
 		octaves = 3,
 		persist = 0.6
 	},
-	y_max = 80,
-	y_min = 1,
+	y_min = 1, y_max = 80,
 	decoration = "farming:ginger_3",
 	param2 = 3
 })
-end

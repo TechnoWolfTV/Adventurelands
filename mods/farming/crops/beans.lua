@@ -235,7 +235,6 @@ minetest.register_node("farming:beanbush", {
 
 -- mapgen
 
-if not farming.eth then
 minetest.register_decoration({
 	deco_type = "simple",
 	place_on = {"default:dirt_with_grass", "mcl_core:dirt_with_grass"},
@@ -248,8 +247,6 @@ minetest.register_decoration({
 		octaves = 3,
 		persist = 0.6
 	},
-	y_min = 18,
-	y_max = 38,
+	y_min = 18, y_max = 38,
 	decoration = "farming:beanbush"
 })
-end

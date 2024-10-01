@@ -136,12 +136,11 @@ farming.registered_plants["farming:hemp"] = {
 
 -- mapgen
 
-if not farming.eth then
 minetest.register_decoration({
 	deco_type = "simple",
 	place_on = {
 		"default:dirt_with_grass", "default:dirt_with_rainforest_litter",
-		"mcl_core:dirt_with_grass"
+		"mcl_core:dirt_with_grass", "ethereal:prairie_dirt"
 	},
 	sidelen = 16,
 	noise_params = {
@@ -152,10 +151,7 @@ minetest.register_decoration({
 		octaves = 3,
 		persist = 0.6
 	},
-	y_min = 3,
-	y_max = 45,
+	y_min = 3, y_max = 45,
 	decoration = "farming:hemp_7",
-	spawn_by = "group:tree",
-	num_spawn_by = 1
+	spawn_by = "group:tree", num_spawn_by = 1
 })
-end
