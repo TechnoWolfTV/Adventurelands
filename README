@@ -1,7 +1,7 @@
 Adventurelands
 By TechnoWolfTV
 
-A Minetest game featuting exploration, mining, crafting, building and survival with monsters and animals.
+A Luanti (previously "Minetest") game featuring exploration, mining, crafting, building and survival with monsters and animals.
 Adventurelands includes carefully selected mods for an optimal balance between form and function.
 
 
@@ -10,7 +10,7 @@ INSTALLATION:
 ==============================================
 
 Download the .zip package and extract the folder inside. Rename the extracted folder to, "adventurelands"
-and move it to the games folder under your Minetest installation as Minetest/games/adventurelands.
+and move it to the games folder under your Luanti installation as Luanti/games/adventurelands.
 
 ==============================================
 CUSTOM MODIFICATIONS MADE TO THIRD-PARTY MODS:
