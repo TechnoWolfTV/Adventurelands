@@ -1,7 +1,7 @@
 local S = minetest.get_translator("whitelist")
 
 local cmd = chatcmdbuilder.register("whitelist", {
-  description = S("Whitelist commands. <player> is only needed for 'add' and 'remove'"),
+  description = S("Whitelist commands. <player> is only needed for `add` and `remove`"),
   params = "<off | on | who | add | remove> [<" .. S("player") .. ">]",
   privs = {server = true}
 })

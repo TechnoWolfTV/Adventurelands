@@ -543,15 +543,15 @@ if damage_enabled and minetest.settings:get_bool("enable_stamina") ~= false then
 		end
 
 		-- if {drink=1} group set then use sip sound instead of default eat
-		local snd = "stamina_eat"
+		local snd, gain = "stamina_eat", 0.7
 		local itemname = itemstack:get_name()
 		local def = minetest.registered_items[itemname]
 
 		if def and def.groups and def.groups.drink then
-			snd = "stamina_sip"
+			snd = "stamina_sip" ; gain = 1.0
 		end
 
-		minetest.sound_play(snd, {to_player = name, gain = 0.7}, true)
+		minetest.sound_play(snd, {to_player = name, gain = gain}, true)
 
 		-- particle effect when eating
 		local texture  = minetest.registered_items[itemname].inventory_image

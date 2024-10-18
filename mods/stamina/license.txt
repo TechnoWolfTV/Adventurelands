@@ -25,4 +25,7 @@ Sounds (CC-BY-3.0):
 - stamina_burp.ogg - https://www.freesfx.co.uk/sfx/burp (small burp)
 
 Sounds (Attribution 3.0):
-- stamina_sip.ogg - https://freesound.org/people/Stevious42/sounds/259640/
+- stamina_sip.1.ogg - https://freesound.org/people/Stevious42/sounds/259640/
+
+Sound (Creative Commons 0):
+- stamina_sip.2.ogg - https://freesound.org/people/SeanPorio/sounds/519268/

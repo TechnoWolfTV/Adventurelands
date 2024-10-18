@@ -137,11 +137,18 @@ bows.shoot = function(itemstack, user, pointed_thing)
 	local prop = user:get_properties()
 	local pos = user:get_pos() ; pos.y = pos.y + (prop.eye_height or 1.23)
 	local dir = user:get_look_dir()
-	local e = minetest.add_entity({
-		x = pos.x,
-		y = pos.y,
-		z = pos.z
-	}, "bows:arrow")
+	local is_attached = user:get_attach()
+
+	-- if player riding a mob then increase arrow height so you dont hit mob
+	if is_attached then
+
+		local prop = is_attached:get_properties()
+		local height = prop and (-prop.collisionbox[2] + prop.collisionbox[5]) or 1
+
+		pos.y = pos.y + height
+	end
+
+	local e = minetest.add_entity({ x = pos.x, y = pos.y, z = pos.z }, "bows:arrow")
 
 	e:set_velocity({x = dir.x * level, y = dir.y * level, z = dir.z * level})
 	e:set_acceleration({x = dir.x * -3, y = -10, z = dir.z * -3})
@@ -151,7 +158,7 @@ bows.shoot = function(itemstack, user, pointed_thing)
 		itemstack:add_wear(65535 / wear)
 	end
 
-	minetest.sound_play("bows_shoot", {pos = pos}, true)
+	minetest.sound_play("bows_shoot", {pos = pos, max_hear_distance = 10}, true)
 
 	return itemstack
 end

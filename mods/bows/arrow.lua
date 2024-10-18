@@ -101,7 +101,9 @@ minetest.register_entity("bows:arrow",{
 			if thing.type == "object" and thing.ref ~= self.object then
 
 				-- add entity name to thing table (if not player)
-				thing.name = not thing.ref:is_player() and thing.ref:get_luaentity().name
+				if not thing.ref:is_player() then
+					thing.name = thing.ref:get_luaentity() and thing.ref:get_luaentity().name
+				end
 
 				-- check if dropped item or yourself
 				if thing.name == "__builtin:item"

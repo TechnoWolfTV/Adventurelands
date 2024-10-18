@@ -3,8 +3,8 @@
 # reviewer(s):
 
 ##[ init.lua ]##
-Whitelist=
-Manage who can and who can't enter in your server=
+Whitelist=Weiße Liste
+Manage who can and who can't enter in your server=Verwalten, wer den Server betreten kann und wer nicht
 
 ##[ src/api.lua ]##
 [!] The whitelist is already enabled!=[!] Die weiße Liste ist bereits aktiviert!
@@ -15,10 +15,10 @@ Whitelist successfully disabled=Die weiße Liste wurde erfolgreich deaktiviert
 [!] There is no player whitelisted with that name...=[!] Es gibt keinen Spieler auf der weißen Liste mit diesem Namen …
 [!] You can't remove yourself!=[!] Sie können sich nicht selbst entfernen!
 [!] Whitelist can't be empty when enabled!=[!] Die weiße Liste darf nicht leer sein, wenn sie aktiviert ist!
-Whitelisted players: =Spieler auf der weißen Liste: 
+Whitelisted players: @1=Spieler auf der weißen Liste: @1
 
 ##[ src/commands.lua ]##
-Whitelist commands. <player> is only needed for 'add' and 'remove'=Befehle für die weiße Liste. <Spieler> wird nur für „add“ und „remove“ benötigt
+Whitelist commands. <player> is only needed for `add` and `remove`=Befehle für die weiße Liste. <Spieler> wird nur für „add“ und „remove“ benötigt
 player=Spieler
 
 ##[ src/player_manager.lua ]##

@@ -18,7 +18,7 @@ end
 
 mobs = {
 	mod = "redo",
-	version = "20241001",
+	version = "20241012",
 	spawning_mobs = {},
 	translate = S,
 	invis = minetest.global_exists("invisibility") and invisibility or {},
@@ -3148,6 +3148,8 @@ function mob_class:mob_activate(staticdata, def, dtime)
 		self._cmi_components = cmi.activate_components(self.serialized_cmi_components)
 		cmi.notify_activate(self.object, dtime)
 	end
+
+	if use_vh1 then VH1.update_bar(self.object, self.health) end
 end
 
 -- handle mob lifetimer and expiration
@@ -3318,7 +3320,7 @@ function mob_class:on_step(dtime, moveresult)
 
 		self.pause_timer = self.pause_timer - dtime
 
-		if self.pause_timer < 0 and self.order == "stand" then
+		if self.pause_timer <= 0 and (self.order == "stand" or self.state == "stand") then
 
 			self.pause_timer = 0
 			self:set_velocity(0)
@@ -4737,6 +4739,7 @@ minetest.register_chatcommand("clear_mobs", {
 
 if settings:get_bool("mobs_can_hear") ~= false then
 
+	local node_hear = settings:get_bool("mobs_can_hear_node")
 	local old_sound_play = minetest.sound_play
 
 	minetest.sound_play = function(spec, param, eph)
@@ -4771,10 +4774,12 @@ if settings:get_bool("mobs_can_hear") ~= false then
 
 --print("==", def.sound)
 
+		def.gain = def.gain or 1.0
 		def.max_hear_distance = param.max_hear_distance or 32
 
 		-- find mobs within sounds hearing range
 		local objs = minetest.get_objects_inside_radius(def.pos, def.max_hear_distance)
+		local bit = def.gain / def.max_hear_distance
 
 		for n = 1, #objs do
 
@@ -4788,14 +4793,33 @@ if settings:get_bool("mobs_can_hear") ~= false then
 
 					-- calculate loudness of sound to mob
 					def.distance = get_distance(def.pos, obj:get_pos())
-
-					local bit = def.gain / def.max_hear_distance
-
 					def.loudness = def.gain - (bit * def.distance)
 
 					-- run custom on_sound function if heard
-					if def.loudness > 0 then
-						ent.on_sound(ent, def)
+					if def.loudness > 0 then ent.on_sound(ent, def) end
+				end
+			end
+		end
+
+		-- find nodes that can hear up to 8 blocks away
+		if node_hear then
+
+			local dist = min(def.max_hear_distance, 8)
+			local ps = minetest.find_nodes_in_area(
+					vector.subtract(def.pos, dist),
+					vector.add(def.pos, dist), {"group:on_sound"})
+
+			if #ps > 0 then
+
+				for n = 1, #ps do
+
+					local ndef = minetest.registered_nodes[minetest.get_node(ps[n]).name]
+
+					def.distance = get_distance(def.pos, ps[n])
+					def.loudness = def.gain - (bit * def.distance)
+
+					if def.loudness > 0 and ndef and ndef.on_sound then
+						ndef.on_sound(ps[n], def)
 					end
 				end
 			end

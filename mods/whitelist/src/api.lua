@@ -121,7 +121,7 @@ function whitelist.print_list(sender)
     msg = msg .. p_name .. ", "
   end
 
-  minetest.chat_send_player(sender, "[WHITELIST] " .. minetest.colorize("#eea160", S("Whitelisted players: ")) .. minetest.colorize("#cfc6b8", msg:sub(1, -3)))
+  minetest.chat_send_player(sender, "[WHITELIST] " .. minetest.colorize("#eea160", S("Whitelisted players: @1", minetest.colorize("#cfc6b8", msg:sub(1, -3)))))
 end
 
 

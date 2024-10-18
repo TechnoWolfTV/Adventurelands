@@ -15,10 +15,10 @@ Whitelist successfully disabled=A tiltólista le lett tiltva
 [!] There is no player whitelisted with that name...=[!] Nincs ezzel a névvel játékos kitiltva …
 [!] You can't remove yourself!=[!] nemtudod magadat kitörölni!
 [!] Whitelist can't be empty when enabled!=[!] A tiltólista nem lehet üres az engedélyezésekor!
-Whitelisted players: =Kitiltott játékosok: 
+Whitelisted players: @1=Kitiltott játékosok: @1
 
 ##[ src/commands.lua ]##
-Whitelist commands. <player> is only needed for 'add' and 'remove'=Parancsok engedélyezési listája. A <Játékos> csak az "add" és "Remove" műveletekhez szükséges
+Whitelist commands. <player> is only needed for `add` and `remove`=Parancsok engedélyezési listája. A <Játékos> csak az "add" és "remove" műveletekhez szükséges
 player=Játékos
 
 ##[ src/player_manager.lua ]##
