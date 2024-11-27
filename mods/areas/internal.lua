@@ -4,26 +4,38 @@ function areas:player_exists(name)
 	return minetest.get_auth_handler().get_auth(name) ~= nil
 end
 
-local safe_file_write = minetest.safe_file_write
-if safe_file_write == nil then
-	function safe_file_write(path, content)
-		local file, err = io.open(path, "w")
-		if err then
-			return err
-		end
-		file:write(content)
-		file:close()
-	end
-end
+-- When saving is done in an async thread, the function will not be present in this global namespace.
+if not areas._internal_do_save then
+	local saving_requested = false
+	local saving_locked = false
 
--- Save the areas table to a file
-function areas:save()
-	local datastr = minetest.write_json(self.areas)
-	if not datastr then
-		minetest.log("error", "[areas] Failed to serialize area data!")
-		return
+	-- Required cuz we are referring to _G.areas._internal_do_save *inside*
+	-- async env (it does not exist in the main thread)
+	local function async_func(...)
+		return areas._internal_do_save(...)
 	end
-	return safe_file_write(self.config.filename, datastr)
+
+	local function done_callback()
+		saving_locked = false
+		if saving_requested == true then
+			saving_requested = false
+			return areas:save()
+		end
+	end
+
+	function areas:save()
+		if saving_locked == true then
+			saving_requested = true
+		else
+			saving_locked = true
+			return core.handle_async(async_func, done_callback, self.areas, self.config.filename)
+		end
+	end
+else
+	-- Save the areas table to a file
+	function areas:save()
+		return areas._internal_do_save(self.areas, self.config.filename)
+	end
 end
 
 -- Load the areas table from the save file
@@ -83,19 +95,19 @@ function areas:populateStore()
 	self.store_ids = store_ids
 end
 
--- Finds the first usable index in a table
--- Eg: {[1]=false,[4]=true} -> 2
-local function findFirstUnusedIndex(t)
-	local i = 0
-	repeat i = i + 1
-	until t[i] == nil
-	return i
+-- Guarentees returning an unused index in areas.areas
+local index_cache = 0
+local function findFirstUnusedIndex()
+	local t = areas.areas
+	repeat index_cache = index_cache + 1
+	until t[index_cache] == nil
+	return index_cache
 end
 
 --- Add an area.
 -- @return The new area's ID.
 function areas:add(owner, name, pos1, pos2, parent)
-	local id = findFirstUnusedIndex(self.areas)
+	local id = findFirstUnusedIndex()
 	self.areas[id] = {
 		name = name,
 		pos1 = pos1,

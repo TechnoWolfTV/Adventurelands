@@ -41,52 +41,57 @@ function asrs.count_inventory(pos)
    return count
 end
 
-function asrs.sort_inventory(pos)  -- Copied from the Technic_chests mod.
+function asrs.sort_inventory(pos)  -- Mostly copied from the Technic_chests mod.
    local meta = minetest.get_meta(pos)
    local inv = meta:get_inventory()
-   local inlist = inv:get_list('storage')
-   if inlist then
-      local typecnt = {}
-      local typekeys = {}
-      for _, st in ipairs(inlist) do
-         if not st:is_empty() then
-            local n = st:get_name()
-            local w = st:get_wear()
-            local m = st:get_metadata()
-            local k = string.format("%s %05d %s", n, w, m)
-            if not typecnt[k] then
-               typecnt[k] = {
-                  name = n,
-                  wear = w,
-                  metadata = m,
-                  stack_max = st:get_stack_max(),
-                  count = 0,
+   local inv_list = inv:get_list('storage')
+   local unique_items = {}
+   if inv_list then
+      local items = {}
+      for _,stack in pairs(inv_list) do
+         if not stack:is_empty() then
+            local name = stack:get_name()
+            local wear = stack:get_wear()
+            local meta = stack:get_meta():get_string('')
+            local count = stack:get_count()
+            local def = minetest.registered_items[name]
+            local key = string.format("%s %05d %s", name, wear, meta)
+            if not items[key] then
+               items[key] = {
+                  stacks = {stack},
+                  wear = wear,
+                  count = count,
+                  key = key,
                }
-               table.insert(typekeys, k)
+            else
+               items[key].count = items[key].count + count
+               table.insert(items[key].stacks, stack)
             end
-            typecnt[k].count = typecnt[k].count + st:get_count()
          end
       end
-      table.sort(typekeys)
-      local outlist = {}
-      for _, k in ipairs(typekeys) do
-         local tc = typecnt[k]
-         while tc.count > 0 do
-            local c = math.min(tc.count, tc.stack_max)
-            table.insert(outlist, ItemStack({
-               name = tc.name,
-               wear = tc.wear,
-               metadata = tc.metadata,
-               count = c,
-            }))
-            tc.count = tc.count - c
-         end
+      for k,v in pairs(items) do
+         table.insert(unique_items, v)
       end
-      if #outlist > #inlist then return end
-      while #outlist < #inlist do
-         table.insert(outlist, ItemStack(nil))
+      local function padnum(value)
+         local dec, n = string.match(value, "(%.?)0*(.+)")
+         return #dec > 0 and ("%.12f"):format(value) or ("%s%03d%s"):format(dec, #n, n)
       end
-      inv:set_list('storage', outlist)
+      table.sort(unique_items, function(a, b)
+         local sort_a = ("%s%3d"):format(tostring(a.key):gsub("%.?%d+", padnum), #b.key)
+         local sort_b = ("%s%3d"):format(tostring(b.key):gsub("%.?%d+", padnum), #a.key)
+         return sort_a < sort_b
+      end)
+   else
+      -- Item
+      table.sort(unique_items, function(a, b)
+         return a.key < b.key
+      end)
+   end
+   inv:set_list('storage', {})
+   for _,item in ipairs(unique_items) do
+      for _,stack in ipairs(item.stacks) do
+         inv:add_item('storage', stack)
+      end
    end
 end
 
