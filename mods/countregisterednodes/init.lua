@@ -10,7 +10,7 @@ minetest.register_chatcommand("count_registered_nodes", {
 		for name in pairs(minetest.registered_nodes) do
 		cnt = math.max(cnt, minetest.get_content_id(name))
 		end
-		minetest.log("Registered nodes = "..cnt)
+		minetest.log("Registered nodes (32,768 max) = "..cnt)
 		end)
 end
 })
