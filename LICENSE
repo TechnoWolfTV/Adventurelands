@@ -45,6 +45,9 @@ made to the below listed works are officially made on or after 5 March 2024.
   - Location: ./mods/backrooms_nodes/
   - License file: ./mods/backrooms_nodes/LICENSE
   - Changes were made to this work
+- Baked Clay
+  - Location: ./mods/bakedclay/
+  - License file: ./mods/bakedclay/license.txt
 - Basic Materials
   - Location: ./mods/basic_materials/
   - License file: ./mods/basic_materials/LICENSE
@@ -293,9 +296,6 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Unified Inventory
   - Location: ./mods/unified_inventory/
   - License file: ./mods/unified_inventory/LICENSE.txt
-- Unified Bricks
-  - Location: ./mods/unifiedbricks/
-  - License file: ./mods/unifiedbricks/README.txt
 - Unified Dyes
   - Location: ./mods/unifieddyes/
   - License file: ./mods/unifieddyes/LICENSE
