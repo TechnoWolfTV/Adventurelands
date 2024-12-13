@@ -1,7 +1,8 @@
 
+-- detect feather item to use
+
 local feather = "default:leaves"
 
--- detect feather item to use
 if minetest.get_modpath("animalia") then
 	feather = "animalia:feather"
 elseif minetest.get_modpath("mobs_animal") then
@@ -11,6 +12,7 @@ elseif minetest.get_modpath("xanadu") then
 end
 
 -- helpful recipes
+
 minetest.register_craft({
 	output = "default:flint",
 	recipe = {{"default:gravel"}}
@@ -22,6 +24,7 @@ minetest.register_craft({
 })
 
 -- wooden bow
+
 bows.register_bow("bow_wood",{
 	description = "Wooden bow",
 	texture = "bows_bow.png",
@@ -42,47 +45,51 @@ minetest.register_craft({
 })
 
 -- steel bow
+
 bows.register_bow("bow_steel",{
 	description = "Steel bow",
 	texture = "bows_bow_steel.png",
 	texture_loaded = "bows_bow_loaded_steel.png",
-	uses = 280, --140,
-	level = 5, --8,
+	uses = 280,
+	level = 5,
 	craft = {
 		{"", "default:steel_ingot", "farming:string"},
 		{"default:steel_ingot", "", "farming:string"},
 		{"", "default:steel_ingot", "farming:string"}
-	},
+	}
 })
 
 -- bronze bow
+
 bows.register_bow("bow_bronze",{
 	description = "Bronze bow",
 	texture = "bows_bow_bronze.png",
 	texture_loaded = "bows_bow_loaded_bronze.png",
-	uses = 140, --280,
-	level = 3, --10,
+	uses = 140,
+	level = 3,
 	craft = {
 		{"", "default:bronze_ingot", "farming:string"},
 		{"default:bronze_ingot", "", "farming:string"},
 		{"", "default:bronze_ingot", "farming:string"}
-	},
+	}
 })
 
 -- special David BOWie (lucky block drop)
+
 bows.register_bow("bow_bowie",{
 	description = "David BOWie",
 	texture = "bows_bow_bowie.png",
 	texture_loaded = "bows_bow_loaded_bowie.png",
 	uses = 500,
-	level = 7,
+	level = 7
 })
 
 -- wooden arrow
+
 bows.register_arrow("arrow",{
 	description = "Arrow",
 	texture = "bows_arrow_wood.png",
-	damage = 5,
+	damage = 2,
 	craft_count = 4,
 	drop_chance = 10,
 	craft = {
@@ -108,16 +115,17 @@ bows.register_arrow("arrow",{
 minetest.register_craft({
 	type = "fuel",
 	recipe = "bows:arrow",
-	burntime = 1,
+	burntime = 1
 })
 
 -- steel arrow
+
 bows.register_arrow("arrow_steel",{
 	description = "Steel arrow",
 	texture = "bows_arrow_wood.png^[colorize:#FFFFFFcc",
-	damage = 8,
+	damage = 6,
 	craft_count = 4,
-	drop_chance = 8,
+	drop_chance = 9,
 	craft = {
 		{"default:steel_ingot", "group:stick", feather}
 	},
@@ -136,12 +144,13 @@ bows.register_arrow("arrow_steel",{
 })
 
 -- mese arrow (enables node mesecons when hit)
+
 bows.register_arrow("arrow_mese",{
 	description = "Mese arrow",
 	texture = "bows_arrow_wood.png^[colorize:#e3ff00cc",
-	damage = 12,
+	damage = 7,
 	craft_count = 4,
-	drop_chance = 6,
+	drop_chance = 8,
 	craft = {
 		{"default:mese_crystal", "group:stick", feather}
 	},
@@ -162,12 +171,13 @@ bows.register_arrow("arrow_mese",{
 })
 
 -- diamond arrow (breaks glass node when hit)
+
 bows.register_arrow("arrow_diamond",{
 	description = "Diamond arrow",
 	texture = "bows_arrow_wood.png^[colorize:#15d7c2cc",
-	damage = 15,
+	damage = 8,
 	craft_count = 4,
-	drop_chance = 4,
+	drop_chance = 7,
 	craft = {
 		{"default:diamond", "group:stick", feather}
 	},
@@ -180,5 +190,5 @@ bows.register_arrow("arrow_diamond",{
 			minetest.remove_node(pos)
 			minetest.add_item(pos, "vessels:glass_fragments")
 		end
-	end,
+	end
 })

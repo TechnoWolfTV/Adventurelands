@@ -1,5 +1,9 @@
 
-local on_hit_remove = function(self)
+local math_random = math.random
+
+-- helper to remove or maybe drop arrow item
+
+local function on_hit_remove(self)
 
 	minetest.sound_play(
 		bows.registered_arrows[self.name].on_hit_sound, {
@@ -12,7 +16,7 @@ local on_hit_remove = function(self)
 	local chance = minetest.registered_items[self.name].drop_chance or 10
 	local pos = self.object:get_pos()
 
-	if pos and math.random(chance) == 1 then
+	if pos and math_random(chance) == 1 then
 
 		pos.y = pos.y + 0.5
 
@@ -24,18 +28,19 @@ local on_hit_remove = function(self)
 	return self
 end
 
+-- when arrow hits an entity
 
-local on_hit_object = function(self, target, hp, user, lastpos)
+local function on_hit_object(self, target, hp, user, lastpos)
 
-	target:punch(user, 0.1, {
-		full_punch_interval = 0.1,
+	target:punch(user, 1.0, {
+		--full_punch_interval = 1.0,
 		damage_groups = {fleshy = hp},
 	}, nil)
 
 	if bows.registered_arrows[self.name].on_hit_object then
 
 		bows.registered_arrows[self.name].on_hit_object(
-			self, target, hp, user, lastpos)
+				self, target, hp, user, lastpos)
 	end
 
 	on_hit_remove(self)
@@ -43,6 +48,7 @@ local on_hit_object = function(self, target, hp, user, lastpos)
 	return self
 end
 
+-- arrow entity
 
 minetest.register_entity("bows:arrow",{
 
@@ -61,8 +67,7 @@ minetest.register_entity("bows:arrow",{
 	on_activate = function(self, staticdata)
 
 		if not self then
-			self.object:remove()
-			return
+			self.object:remove() ; return
 		end
 
 		if bows.tmp and bows.tmp.arrow ~= nil then
@@ -85,8 +90,7 @@ minetest.register_entity("bows:arrow",{
 		self.timer = self.timer - dtime
 
 		if self.timer < 0 then
-			self.object:remove()
-			return
+			self.object:remove() ; return
 		end
 
 		local pos = self.object:get_pos() ; self.oldpos = self.oldpos or pos

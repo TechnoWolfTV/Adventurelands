@@ -1,5 +1,5 @@
 
--- Bows Mod by UjEdwin
+-- Bows Mod by UjEdwin (edited by TenPlus1)
 
 bows = {
 	pvp = minetest.settings:get_bool("enable_pvp"),
@@ -7,6 +7,7 @@ bows = {
 	registered_bows = {}
 }
 
+-- creative check
 
 local creative_mode_cache = minetest.settings:get_bool("creative_mode")
 
@@ -14,8 +15,9 @@ function bows.is_creative(name)
 	return creative_mode_cache or minetest.check_player_privs(name, {creative = true})
 end
 
+-- register arrow
 
-bows.register_arrow = function(name, def)
+function bows.register_arrow(name, def)
 
 	if name == nil or name == "" then
 		return false
@@ -46,8 +48,9 @@ bows.register_arrow = function(name, def)
 	end
 end
 
+-- register bow
 
-bows.register_bow = function(name, def)
+function bows.register_bow(name, def)
 
 	if name == nil or name == "" then
 		return false
@@ -63,14 +66,14 @@ bows.register_bow = function(name, def)
 		description = def.description or name,
 		inventory_image = def.texture or "bows_bow.png",
 		on_use = bows.load,
-		groups = {bow = 1},
+		groups = {bow = 1}
 	})
 
 	minetest.register_tool(":" .. def.replace, {
 		description = def.description or name,
 		inventory_image = def.texture_loaded or "bows_bow_loaded.png",
 		on_use = bows.shoot,
-		groups = {bow = 1, not_in_creative_inventory = 1},
+		groups = {bow = 1, not_in_creative_inventory = 1}
 	})
 
 	if def.craft then
@@ -78,8 +81,9 @@ bows.register_bow = function(name, def)
 	end
 end
 
+-- load bow
 
-bows.load = function(itemstack, user, pointed_thing)
+function bows.load(itemstack, user, pointed_thing)
 
 	local inv = user:get_inventory()
 	local index = user:get_wield_index() - 1
@@ -107,8 +111,9 @@ bows.load = function(itemstack, user, pointed_thing)
 	return itemstack
 end
 
+-- shoot bow
 
-bows.shoot = function(itemstack, user, pointed_thing)
+function bows.shoot(itemstack, user, pointed_thing)
 
 	local item = itemstack:to_table()
 	local meta = minetest.deserialize(item.metadata)
@@ -148,7 +153,7 @@ bows.shoot = function(itemstack, user, pointed_thing)
 		pos.y = pos.y + height
 	end
 
-	local e = minetest.add_entity({ x = pos.x, y = pos.y, z = pos.z }, "bows:arrow")
+	local e = minetest.add_entity({x = pos.x, y = pos.y, z = pos.z}, "bows:arrow")
 
 	e:set_velocity({x = dir.x * level, y = dir.y * level, z = dir.z * level})
 	e:set_acceleration({x = dir.x * -3, y = -10, z = dir.z * -3})
@@ -163,11 +168,14 @@ bows.shoot = function(itemstack, user, pointed_thing)
 	return itemstack
 end
 
+-- register items
 
 local path = minetest.get_modpath("bows")
 
 dofile(path .. "/arrow.lua")
 dofile(path .. "/items.lua")
+
+-- add lucky blocks
 
 if minetest.get_modpath("lucky_block") then
 	dofile(path .. "/lucky_block.lua")

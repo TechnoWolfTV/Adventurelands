@@ -1,11 +1,14 @@
+
+-- add lucky blocks
+
 lucky_block:add_blocks({
 	{"dro", {"bows:bow_wood"}},
 	{"dro", {"bows:bow_steel"}},
 	{"dro", {"bows:bow_bronze"}},
-	{"dro", {"bows:arrow"}, 5},
-	{"dro", {"bows:arrow_steel"}, 5},
-	{"dro", {"bows:arrow_mese"}, 5},
-	{"dro", {"bows:arrow_diamond"}, 5},
+	{"dro", {"bows:arrow"}, 10},
+	{"dro", {"bows:arrow_steel"}, 8},
+	{"dro", {"bows:arrow_mese"}, 7},
+	{"dro", {"bows:arrow_diamond"}, 6},
 	{"nod", "default:chest", 0, {
 		{name = "default:stick", max = 5},
 		{name = "default:flint", max = 5},
