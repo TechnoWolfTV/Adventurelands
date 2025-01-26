@@ -28,6 +28,8 @@ local function cblocks_stairs(nodename, def)
 
 	if stairs_mod or stairsplus_mod then
 
+		def.groups.wood = nil ; def.groups.stone = nil
+
 		local mod, name = nodename:match("(.*):(.*)")
 
 		for groupname, value in pairs(def.groups) do

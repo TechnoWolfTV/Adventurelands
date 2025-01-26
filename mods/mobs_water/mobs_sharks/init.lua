@@ -54,7 +54,7 @@ if ENABLE_LARGE then
 		reach = 3,
 		hp_min = 20,
 		hp_max = 25,
-		armor = 150,
+		armor = 100,
 		collisionbox = {-0.75, -0.5, -0.75, 0.75, 0.5, 0.75},
 		visual = "mesh",
 		mesh = "mob_shark.b3d",

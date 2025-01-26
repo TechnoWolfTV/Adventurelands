@@ -331,8 +331,9 @@ enhance mob functionality and have them do many interesting things:
    'on_grown'       is called when a child mob has grown up, only paramater is
                     (self).
    'do_punch'       called when mob is punched with paramaters (self, hitter,
-                    time_from_last_punch, tool_capabilities, direction), return
-                    false to stop punch damage and knockback from taking place.
+                    time_from_last_punch, tool_capabilities, direction, damage),
+                    return false to stop punch damage and knockback from taking
+                    place.
    'custom_attack'  when set this function is called instead of the normal mob
                     melee attack, parameters are (self, to_attack) and if true
                     is returned normal attack function continued.
@@ -566,6 +567,7 @@ This function registers a arrow for mobs with the attack type shoot.
     'definition'      is a table with the following values:
        'visual'       same is in minetest.register_entity()
        'visual_size'  same is in minetest.register_entity()
+       'mesh'         same is in minetest.register_entity()
        'textures'     same is in minetest.register_entity()
        'collide_with_objects'       same as above
        'velocity'     the velocity of the arrow
@@ -849,8 +851,8 @@ External Settings for "minetest.conf"
                             mob for obstructions before spawning, otherwise it
                             defaults to checking the height of the mob only.
    'mob_smooth_rotate'      Enables smooth rotation when mobs turn by default.
-   'mob_height_fix'         Enabled by default, increases smaller mob heights so they wont
-                            glitch through certain nodes.
+   'mob_height_fix'         Disabled by default, increases smaller mob heights so they
+                            cannot glitch through certain nodes.
    'mob_pathfinding_enable'     Enable pathfinding.
    'mob_pathfinding_stuck_timeout'      How long before stuck mobs start searching. (default 3.0)
    'mob_pathfinding_stuck_path_timeout'     How long will mob follow path before giving up. (default 5.0)

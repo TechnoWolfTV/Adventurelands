@@ -1,0 +1,11 @@
+# textdomain: bows
+
+Wooden bow=
+Steel bow=
+Bronze bow=
+David BOWie=
+Wooden arrow=
+Steel arrow=
+Mese arrow=
+Diamond arrow=
+You took an arrow to the knee!

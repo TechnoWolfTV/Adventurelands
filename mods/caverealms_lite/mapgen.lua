@@ -534,12 +534,8 @@ local function generate(vm, minp, maxp)
 	local t1 = os.clock()
 
 	--easy reference to commonly used values
-	local x1 = maxp.x
-	local y1 = maxp.y
-	local z1 = maxp.z
-	local x0 = minp.x
-	local y0 = minp.y
-	local z0 = minp.z
+	local x1, y1, z1 = maxp.x, maxp.y, maxp.z
+	local x0, y0, z0 = minp.x, minp.y, minp.z
 
 	local pos1, pos2 = vm:get_emerged_area()
 	local area = VoxelArea:new{MinEdge = pos1, MaxEdge = pos2}
@@ -625,7 +621,7 @@ local function generate(vm, minp, maxp)
 					end
 				end
 
-				--print(biome)
+--print(biome)
 
 				if biome > 0 then
 
@@ -824,12 +820,16 @@ local function generate(vm, minp, maxp)
 		vm:write_to_map(data)
 	end
 
-	local chugent = math.ceil((os.clock() - t1) * 1000) --grab how long it took
+	data = {} -- blank data
+
+	collectgarbage("collect") -- Gargabge collection doesn't run automatically in mapgen env
 --[[
+	local chugent = math.ceil((os.clock() - t1) * 1000) --grab how long it took
+
 	print("[caverealms] Took "..chugent.." ms generating "
 		.. minetest.pos_to_string(minp) .. " to "
 		.. minetest.pos_to_string(maxp)) --tell people how long
-	print("caverealms-mem: " .. collectgarbage("count") / 1024 .. " MiB")
+		print("[caverealms] Used memory: " .. collectgarbage("count") / 1024 .. " MiB")
 ]]
 end
 

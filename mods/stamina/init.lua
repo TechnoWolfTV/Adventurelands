@@ -39,10 +39,16 @@ stamina = {
 	VISUAL_MAX = 20
 }
 
+-- Translation support & localize math functions
+
+local S = minetest.get_translator("stamina")
+local math_max, math_min = math.max, math.min
+local math_floor, math_random = math.floor, math.random
+
 -- clamp values helper
 
 local function clamp(val, minval, maxval)
-	return math.max(math.min(val, maxval), minval)
+	return math_max(math_min(val, maxval), minval)
 end
 
 -- how much faster players can run if satiated.
@@ -114,13 +120,13 @@ local function stamina_update_level(player, level)
 	player:hud_change(
 		stamina.players[player:get_player_name()].hud_id,
 		"number",
-		math.min(stamina.VISUAL_MAX, level)
+		math_min(stamina.VISUAL_MAX, level)
 	)
 end
 
 -- global function for mods to amend stamina level
 
-stamina.change = function(player, change)
+function stamina.change(player, change)
 
 	local name = player:get_player_name()
 
@@ -261,16 +267,16 @@ end
 
 local function drunk_tick()
 
-	for _,player in ipairs(minetest.get_connected_players()) do
+	for _,player in pairs(minetest.get_connected_players()) do
 
-		local name = is_player(player) and player:get_player_name()
+		local name = player and player:get_player_name()
 
 		if name and stamina.players[name] and stamina.players[name].drunk then
 
 			-- play burp sound every 20 seconds when drunk
 			local num = stamina.players[name].drunk
 
-			if num and num > 0 and math.floor(num / 20) == num / 20 then
+			if num and num > 0 and math_floor(num / 20) == num / 20 then
 
 				head_particle(player, "bubble.png")
 
@@ -295,7 +301,7 @@ local function drunk_tick()
 			-- effect only works when not riding boat/cart/horse etc.
 			if not player:get_attach() then
 
-				local yaw = player:get_look_horizontal() + math.random(-0.5, 0.5)
+				local yaw = player:get_look_horizontal() + math_random(-0.5, 0.5)
 
 				player:set_look_horizontal(yaw)
 			end
@@ -307,9 +313,9 @@ end
 
 local function health_tick()
 
-	for _,player in ipairs(minetest.get_connected_players()) do
+	for _,player in pairs(minetest.get_connected_players()) do
 
-		local name = is_player(player) and player:get_player_name()
+		local name = player and player:get_player_name()
 
 		if name then
 
@@ -338,9 +344,9 @@ end
 
 local function action_tick()
 
-	for _,player in ipairs(minetest.get_connected_players()) do
+	for _,player in pairs(minetest.get_connected_players()) do
 
-		local controls = is_player(player) and player:get_player_control()
+		local controls = player and player:get_player_control()
 
 		-- Determine if the player is walking or jumping
 		if controls then
@@ -420,9 +426,9 @@ end
 
 local function poison_tick()
 
-	for _,player in ipairs(minetest.get_connected_players()) do
+	for _,player in pairs(minetest.get_connected_players()) do
 
-		local name = is_player(player) and player:get_player_name()
+		local name = player and player:get_player_name()
 
 		if name
 		and stamina.players[name]
@@ -456,9 +462,9 @@ end
 
 local function stamina_tick()
 
-	for _,player in ipairs(minetest.get_connected_players()) do
+	for _,player in pairs(minetest.get_connected_players()) do
 
-		local h = is_player(player) and get_int_attribute(player)
+		local h = player and get_int_attribute(player)
 
 		if h and h > stamina.TICK_MIN then
 			stamina_update_level(player, h - 1)
@@ -608,7 +614,7 @@ if damage_enabled and minetest.settings:get_bool("enable_stamina") ~= false then
 
 				minetest.chat_send_player(name,
 						minetest.get_color_escape_sequence("#1eff00")
-						.. "You suddenly feel tipsy!")
+						.. S("You suddenly feel tipsy!"))
 			end
 		end
 
@@ -622,7 +628,7 @@ if damage_enabled and minetest.settings:get_bool("enable_stamina") ~= false then
 		local level = stamina.VISUAL_MAX -- TODO
 
 		if get_int_attribute(player) then
-			level = math.min(get_int_attribute(player), stamina.VISUAL_MAX)
+			level = math_min(get_int_attribute(player), stamina.VISUAL_MAX)
 		end
 
 		local meta = player:get_meta()

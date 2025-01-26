@@ -180,7 +180,6 @@ minetest.register_abm({
 	end
 })
 
-
 -- spread moss/lichen/algae to nearby cobblestone
 minetest.register_abm({
 	label = "Caverealms stone spread",
@@ -195,13 +194,10 @@ minetest.register_abm({
 	catch_up = false,
 	action = function(pos, node)
 
-		local num = minetest.find_nodes_in_area_under_air(
-			{x = pos.x - 1, y = pos.y - 2, z = pos.z - 1},
-			{x = pos.x + 1, y = pos.y + 1, z = pos.z + 1},
-			"default:cobble")
+		local p = minetest.find_node_near(pos, 1, "default:cobble")
 
-		if #num > 0 then
-			minetest.set_node(num[math.random(#num)], {name = node.name})
+		if p then
+			minetest.set_node(p, {name = node.name})
 		end
 	end
 })

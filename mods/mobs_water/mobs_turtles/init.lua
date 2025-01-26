@@ -24,7 +24,7 @@ mobs:register_mob("mobs_turtles:turtle", {
 	passive = true,
 	hp_min = 15,
 	hp_max = 20,
-	armor = 200,
+	armor = 100,
 	collisionbox = {-0.4, 0.0, -0.4, 0.4, 0.35, 0.4},
 	visual = "mesh",
 	mesh = "mobf_turtle.x",

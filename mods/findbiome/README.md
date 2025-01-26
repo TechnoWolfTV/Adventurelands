@@ -24,6 +24,7 @@ See `API.md` for details.
 - Wuzzy (MIT License)
 - Skivling (MIT License, `list_biomes()` function)
 - rstcxk (MIT License, Polish translation, general cleanups)
+- SkyBuilder1717 (Russian translation)
 
 This mod is free software. See `license.txt` for license information.
 

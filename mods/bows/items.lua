@@ -1,4 +1,6 @@
 
+local S = minetest.get_translator("bows")
+
 -- detect feather item to use
 
 local feather = "default:leaves"
@@ -26,7 +28,7 @@ minetest.register_craft({
 -- wooden bow
 
 bows.register_bow("bow_wood",{
-	description = "Wooden bow",
+	description = S("Wooden bow"),
 	texture = "bows_bow.png",
 	texture_loaded = "bows_bow_loaded.png",
 	uses = 50,
@@ -47,7 +49,7 @@ minetest.register_craft({
 -- steel bow
 
 bows.register_bow("bow_steel",{
-	description = "Steel bow",
+	description = S("Steel bow"),
 	texture = "bows_bow_steel.png",
 	texture_loaded = "bows_bow_loaded_steel.png",
 	uses = 280,
@@ -62,7 +64,7 @@ bows.register_bow("bow_steel",{
 -- bronze bow
 
 bows.register_bow("bow_bronze",{
-	description = "Bronze bow",
+	description = S("Bronze bow"),
 	texture = "bows_bow_bronze.png",
 	texture_loaded = "bows_bow_loaded_bronze.png",
 	uses = 140,
@@ -77,7 +79,7 @@ bows.register_bow("bow_bronze",{
 -- special David BOWie (lucky block drop)
 
 bows.register_bow("bow_bowie",{
-	description = "David BOWie",
+	description = S("David BOWie"),
 	texture = "bows_bow_bowie.png",
 	texture_loaded = "bows_bow_loaded_bowie.png",
 	uses = 500,
@@ -87,7 +89,7 @@ bows.register_bow("bow_bowie",{
 -- wooden arrow
 
 bows.register_arrow("arrow",{
-	description = "Arrow",
+	description = S("Wooden arrow"),
 	texture = "bows_arrow_wood.png",
 	damage = 2,
 	craft_count = 4,
@@ -121,7 +123,7 @@ minetest.register_craft({
 -- steel arrow
 
 bows.register_arrow("arrow_steel",{
-	description = "Steel arrow",
+	description = S("Steel arrow"),
 	texture = "bows_arrow_wood.png^[colorize:#FFFFFFcc",
 	damage = 6,
 	craft_count = 4,
@@ -146,7 +148,7 @@ bows.register_arrow("arrow_steel",{
 -- mese arrow (enables node mesecons when hit)
 
 bows.register_arrow("arrow_mese",{
-	description = "Mese arrow",
+	description = S("Mese arrow"),
 	texture = "bows_arrow_wood.png^[colorize:#e3ff00cc",
 	damage = 7,
 	craft_count = 4,
@@ -173,7 +175,7 @@ bows.register_arrow("arrow_mese",{
 -- diamond arrow (breaks glass node when hit)
 
 bows.register_arrow("arrow_diamond",{
-	description = "Diamond arrow",
+	description = S("Diamond arrow"),
 	texture = "bows_arrow_wood.png^[colorize:#15d7c2cc",
 	damage = 8,
 	craft_count = 4,

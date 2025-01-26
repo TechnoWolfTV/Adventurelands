@@ -11,4 +11,4 @@ Stack arrows you wish to use on the left side of the bow.
 
 License: CC0
 
-Lucky blocks: 8
+Lucky blocks: 9

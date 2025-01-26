@@ -10,9 +10,9 @@ mobs:register_mob("mobs_animal:cow", {
 	attack_npcs = false,
 	reach = 2,
 	damage = 4,
-	hp_min = 5,
+	hp_min = 10,
 	hp_max = 20,
-	armor = 200,
+	armor = 100,
 	collisionbox = {-0.4, -0.01, -0.4, 0.4, 1.2, 0.4},
 	visual = "mesh",
 	mesh = "mobs_cow.b3d",
@@ -43,7 +43,7 @@ mobs:register_mob("mobs_animal:cow", {
 		walk_start = 85, walk_end = 114, walk_speed = 20,
 		run_start = 120, run_end = 140, run_speed = 30,
 		punch_start = 145, punch_end = 160, punch_speed = 20,
-		die_start = 165, die_end = 185, die_speed = 10, die_loop = false
+		die_start = 165, die_end = 185, die_speed = 25, die_loop = false
 	},
 	follow = {
 		"farming:wheat", "default:grass_1", "farming:barley",
