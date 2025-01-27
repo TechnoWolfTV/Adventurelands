@@ -10,6 +10,9 @@ work follows the other listed works.
 In accordance with GPL requirements to indicate changes to works, all changes
 made to the below listed works are officially made on or after 5 March 2024.
 
+- Main menu music
+  - Locations: ./menu/theme.ogg
+  - License: "Relaxing Piano Music" by Kevin MacLeod (https://incompetech.com/) CC BY (http://creativecommons.org/licenses/by/3.0/)
 - Main menu icon
   - Locations: ./menu/icon.png
   - License: "Compass" by Lucian Pavel (https://opengameart.org/content/compass-pbrunity-cc0) CC BY (https://creativecommons.org/publicdomain/zero/1.0/)
