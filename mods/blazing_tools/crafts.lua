@@ -5,9 +5,9 @@ if minetest.get_modpath("blazing_tools") then
 	minetest.register_craft({
 		output = "blazing_tools:blazing_block",
 		recipe = {
-			{"", "", ""},
-			{"", "bucket:bucket_lava", "default:gold_ingot"},
-			{"", "default:coal_lump", "group:stick"},
+			{"default:gold_ingot", "default:coal_lump", "default:gold_ingot"},
+			{"default:coal_lump", "bucket:bucket_lava", "default:coal_lump"},
+			{"default:gold_ingot", "default:coal_lump", "default:gold_ingot"},
 		},
 		replacements = {{'bucket:bucket_lava', 'bucket:bucket_empty'},},
 	})

@@ -2,8 +2,8 @@ Adds an axe, pick, shovel and sword at high strength and speed made from the "bl
 
 Crafting
 
-* A blazing block can be crafted from one lump of coal, one regular stick, one
-  gold ingot and one bucket of lava. Empty buckets are returned upon crafting.
+* A blazing block can be crafted from four lumps of coal, four gold
+  ingots and one bucket of lava. Empty buckets are returned upon crafting.
   Blazing blocks emit light.
 
 * Blazing tools can be crafted using the same standard recipes used by other
