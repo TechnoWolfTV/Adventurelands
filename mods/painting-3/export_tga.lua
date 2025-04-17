@@ -20,7 +20,7 @@ local function to_tgapixels(data, res)
   return pixels
 end
 
-minetest.register_chatcommand("painting_export_tga", {
+core.register_chatcommand("painting_export_tga", {
     params = "<filename> [position]",
     description = "Export painting data to tga file in world directory. If not position is set, wielded item is used.",
     privs = {painting_export=true},
@@ -33,11 +33,11 @@ minetest.register_chatcommand("painting_export_tga", {
         local data = nil
         if #params>1 then
           -- node
-          local pos = minetest.string_to_pos(params[2])
+          local pos = core.string_to_pos(params[2])
           if (not pos) then
             return false, "Bad position format."
           end
-          local node_meta = minetest.get_meta(pos)
+          local node_meta = core.get_meta(pos)
           data = {
               res = node_meta:get_int("resolution"),
               version = node_meta:get_string("version"),
@@ -45,7 +45,7 @@ minetest.register_chatcommand("painting_export_tga", {
             }
         else
           -- wielded item
-          local player = minetest.get_player_by_name(name)
+          local player = core.get_player_by_name(name)
           local stack = player:get_wielded_item()
           local meta = stack:get_meta()
           data = {
@@ -57,7 +57,7 @@ minetest.register_chatcommand("painting_export_tga", {
         if (data.grid=="") then
           return false, "Wielded item or node is not valid painting."
         else
-          data.grid = minetest.deserialize(painting.decompress(data.grid))
+          data.grid = core.deserialize(painting.decompress(data.grid))
         end
         if (not data) or (not data.grid) or (data.grid=="") then
           return false, "Wielded item or node is not valid painting."

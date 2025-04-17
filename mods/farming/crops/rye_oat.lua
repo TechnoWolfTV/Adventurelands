@@ -25,6 +25,8 @@ minetest.override_item("farming:rye", {
 minetest.override_item("farming:rye_1", {drop = {}})
 minetest.override_item("farming:rye_2", {drop = {}})
 minetest.override_item("farming:rye_3", {drop = {}})
+minetest.override_item("farming:rye_4", {drop = {}})
+minetest.override_item("farming:rye_5", {drop = {}})
 
 -- Oats
 
@@ -48,3 +50,5 @@ minetest.override_item("farming:oat", {
 minetest.override_item("farming:oat_1", {drop = {}})
 minetest.override_item("farming:oat_2", {drop = {}})
 minetest.override_item("farming:oat_3", {drop = {}})
+minetest.override_item("farming:oat_4", {drop = {}})
+minetest.override_item("farming:oat_5", {drop = {}})

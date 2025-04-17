@@ -93,12 +93,6 @@ minetest.register_node("farming:cotton_5", table.copy(def))
 -- stage 6
 
 def.tiles = {"farming_cotton_6.png"}
-def.drop = {
-	items = {
-		{items = {"farming:cotton"}, rarity = 1},
-		{items = {"farming:cotton"}, rarity = 2}
-	}
-}
 minetest.register_node("farming:cotton_6", table.copy(def))
 
 -- stage 7
@@ -106,10 +100,8 @@ minetest.register_node("farming:cotton_6", table.copy(def))
 def.tiles = {"farming_cotton_7.png"}
 def.drop = {
 	items = {
-		{items = {"farming:cotton"}, rarity = 1},
 		{items = {"farming:cotton"}, rarity = 2},
-		{items = {"farming:seed_cotton"}, rarity = 1},
-		{items = {"farming:seed_cotton"}, rarity = 2}
+		{items = {"farming:seed_cotton"}, rarity = 1}
 	}
 }
 minetest.register_node("farming:cotton_7", table.copy(def))

@@ -1,16 +1,16 @@
 -- painting - in-game painting for minetest
 
 function painting.compress(string)
-  return minetest.encode_base64(minetest.compress(string, "deflate"))
+  return core.encode_base64(core.compress(string, "deflate"))
 end
 
 function painting.decompress(string)
-  return minetest.decompress(minetest.decode_base64(string), "deflate")
+  return core.decompress(core.decode_base64(string), "deflate")
 end
 
 function painting.to_imagestring(data, res)
 	if not data then
-		minetest.log("error", "[painting] missing data")
+		core.log("error", "[painting] missing data")
 		return
 	end
 	local cols = {}
@@ -39,7 +39,7 @@ function painting.to_imagestring(data, res)
 	end
 	n = n-1
 	if n == 0 then
-		minetest.log("error", "[painting] no texels")
+		core.log("error", "[painting] no texels")
 		return "w.png"
 	end
 	t[n] = t[n]:sub(1,-2)
@@ -48,10 +48,10 @@ function painting.to_imagestring(data, res)
 end
 
 function painting.old_compress(string)
-  return minetest.compress(string, "deflate")
+  return core.compress(string, "deflate")
 end
 
 function painting.old_decompress(string)
-  return minetest.decompress(string, "deflate")
+  return core.decompress(string, "deflate")
 end
 

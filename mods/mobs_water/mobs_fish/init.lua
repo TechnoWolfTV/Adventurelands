@@ -50,7 +50,7 @@ mobs:register_mob("mobs_fish:clownfish", {
 	fly = true,
 	fly_in = (mod_mcl and "mcl_core:water_source" or "default:water_source"),
 	fall_speed = 0,
-	view_range = 8,
+	view_range = 2,
 	water_damage = 0,
 	air_damage = 0,
 	lava_damage = 5,
@@ -62,6 +62,7 @@ mobs:register_mob("mobs_fish:clownfish", {
 		fly_start = 81, fly_end = 155,
 		run_start = 81, run_end = 155
 	},
+	stay_near = {(mod_mcl and "mcl_core:water_source" or "default:water_source"), 3},
 
 	on_rightclick = function(self, clicker)
 
@@ -118,6 +119,7 @@ mobs:register_mob("mobs_fish:tropical", {
 		walk_start = 81, walk_end = 155,
 		run_start = 81, run_end = 155
 	},
+	stay_near = {(mod_mcl and "mcl_core:water_source" or "default:water_source"), 3},
 
 	on_rightclick = function(self, clicker)
 

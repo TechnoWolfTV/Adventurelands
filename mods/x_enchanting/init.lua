@@ -1,6 +1,6 @@
 --[[
     X Enchanting. Adds Enchanting Mechanics and API.
-    Copyright (C) 2023 SaKeL <juraj.vajda@gmail.com>
+    Copyright (C) 2025 SaKeL
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -16,8 +16,8 @@
     License along with this library; if not, write to juraj.vajda@gmail.com
 --]]
 
-local path = minetest.get_modpath('x_enchanting')
-local mod_start_time = minetest.get_us_time()
+local path = core.get_modpath('x_enchanting')
+local mod_start_time = core.get_us_time()
 
 dofile(path .. '/api.lua')
 dofile(path .. '/table.lua')
@@ -31,23 +31,23 @@ local function starts_with(str, start)
     return str:sub(1, #start) == start
 end
 
-minetest.register_on_mods_loaded(function()
+core.register_on_mods_loaded(function()
     -- Tools override
-    for name, tool_def in pairs(minetest.registered_tools) do
+    for name, tool_def in pairs(core.registered_tools) do
         if XEnchanting:has_tool_group(name) then
             XEnchanting:set_tool_enchantability(tool_def)
         end
     end
 
     -- Ores override - Fortune
-    for _, def in pairs(minetest.registered_ores) do
+    for _, def in pairs(core.registered_ores) do
         if not XEnchanting.registered_ores[def.ore] then
             XEnchanting.registered_ores[def.ore] = true
         end
     end
 
     -- Entities override - Looting
-    for name, def in pairs(minetest.registered_entities) do
+    for name, def in pairs(core.registered_entities) do
         if starts_with(name, 'mobs_animal:')
             or starts_with(name, 'mobs_monster:')
         then
@@ -103,7 +103,7 @@ minetest.register_on_mods_loaded(function()
                                     stack:set_count(stack:get_count() * chance)
 
                                     if stack:get_count() > 0 then
-                                        minetest.item_drop(stack, puncher, pos)
+                                        core.item_drop(stack, puncher, pos)
                                     end
                                 end
                             end
@@ -161,7 +161,7 @@ minetest.register_on_mods_loaded(function()
                                 stack:set_count(stack:get_count() * chance)
 
                                 if stack:get_count() > 0 then
-                                    minetest.item_drop(stack, puncher, pos)
+                                    core.item_drop(stack, puncher, pos)
                                 end
                             end
                         end
@@ -173,7 +173,7 @@ minetest.register_on_mods_loaded(function()
 end)
 
 ---@diagnostic disable-next-line: unused-local
-minetest.register_on_joinplayer(function(player, last_login)
+core.register_on_joinplayer(function(player, last_login)
     XEnchanting.form_context[player:get_player_name()] = nil
 
     if not XEnchanting.player_seeds[player:get_player_name()] then
@@ -182,20 +182,20 @@ minetest.register_on_joinplayer(function(player, last_login)
 end)
 
 ---@diagnostic disable-next-line: unused-local
-minetest.register_on_leaveplayer(function(player, timed_out)
+core.register_on_leaveplayer(function(player, timed_out)
     XEnchanting.form_context[player:get_player_name()] = nil
 end)
 
-local old_handle_node_drops = minetest.handle_node_drops
+local old_handle_node_drops = core.handle_node_drops
 
-function minetest.handle_node_drops(pos, drops, digger)
+function core.handle_node_drops(pos, drops, digger)
     if not digger
         or not digger:is_player()
     then
         return old_handle_node_drops(pos, drops, digger)
     end
 
-    local node = minetest.get_node(pos)
+    local node = core.get_node(pos)
     local wield_stack = digger:get_wielded_item()
     local wield_stack_meta = wield_stack:get_meta()
 
@@ -207,13 +207,13 @@ function minetest.handle_node_drops(pos, drops, digger)
 
         for _, itemstring in ipairs(drops) do
             if XEnchanting.registered_ores[node.name]
-                or minetest.get_item_group(node.name, 'stone') > 0
-                or minetest.get_item_group(node.name, 'soil') > 0
-                or minetest.get_item_group(node.name, 'sand') > 0
-                or minetest.get_item_group(node.name, 'snowy') > 0
-                or minetest.get_item_group(node.name, 'slippery') > 0
-                or minetest.get_item_group(node.name, 'tree') > 0
-                or minetest.get_item_group(node.name, 'leaves') > 0
+                or core.get_item_group(node.name, 'stone') > 0
+                or core.get_item_group(node.name, 'soil') > 0
+                or core.get_item_group(node.name, 'sand') > 0
+                or core.get_item_group(node.name, 'snowy') > 0
+                or core.get_item_group(node.name, 'slippery') > 0
+                or core.get_item_group(node.name, 'tree') > 0
+                or core.get_item_group(node.name, 'leaves') > 0
             then
                 local tool_capabilities = wield_stack:get_tool_capabilities()
                 local stack = ItemStack(itemstring)
@@ -238,7 +238,7 @@ function minetest.handle_node_drops(pos, drops, digger)
     local silk_touch = wield_stack_meta:get_float('is_silk_touch')
 
     if silk_touch > 0
-        and minetest.get_item_group(node.name, 'no_silktouch') == 0
+        and core.get_item_group(node.name, 'no_silktouch') == 0
     then
         -- drop raw item/node
         return old_handle_node_drops(pos, { ItemStack(node.name) }, digger)
@@ -248,7 +248,7 @@ function minetest.handle_node_drops(pos, drops, digger)
 end
 
 ---@diagnostic disable-next-line: unused-local
-minetest.register_on_player_hpchange(function(player, hp_change, reason)
+core.register_on_player_hpchange(function(player, hp_change, reason)
     -- Curse of Vanishing
     if (player:get_hp() + hp_change) <= 0 then
         -- Going to die
@@ -273,9 +273,9 @@ minetest.register_on_player_hpchange(function(player, hp_change, reason)
 end, true)
 
 -- Knockback (only for players)
-local old_calculate_knockback = minetest.calculate_knockback
+local old_calculate_knockback = core.calculate_knockback
 
-function minetest.calculate_knockback(player, hitter, time_from_last_punch,
+function core.calculate_knockback(player, hitter, time_from_last_punch,
     tool_capabilities, dir, distance, damage)
     if hitter and hitter:is_player() then
         local hitter_wield_stack = hitter:get_wielded_item()
@@ -307,6 +307,6 @@ function minetest.calculate_knockback(player, hitter, time_from_last_punch,
     tool_capabilities, dir, distance, damage)
 end
 
-local mod_end_time = (minetest.get_us_time() - mod_start_time) / 1000000
+local mod_end_time = (core.get_us_time() - mod_start_time) / 1000000
 
 print('[Mod] x_enchanting loaded.. [' .. mod_end_time .. 's]')

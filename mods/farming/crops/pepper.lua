@@ -107,7 +107,7 @@ minetest.register_node("farming:pepper_4", table.copy(def))
 def.tiles = {"crops_pepper_plant_5.png"}
 def.selection_box = farming.select_final
 def.drop = {
-	max_items = 2, items = {
+	items = {
 		{items = {"farming:pepper 2"}, rarity = 1},
 		{items = {"farming:pepper"}, rarity = 2},
 		{items = {"farming:pepper"}, rarity = 3}
@@ -119,7 +119,7 @@ minetest.register_node("farming:pepper_5", table.copy(def))
 
 def.tiles = {"crops_pepper_plant_6.png"}
 def.drop = {
-	max_items = 2, items = {
+	items = {
 		{items = {"farming:pepper_yellow 2"}, rarity = 1},
 		{items = {"farming:pepper_yellow"}, rarity = 2},
 		{items = {"farming:pepper_yellow"}, rarity = 3}
@@ -132,7 +132,7 @@ minetest.register_node("farming:pepper_6", table.copy(def))
 def.tiles = {"crops_pepper_plant_7.png"}
 def.groups.growing = nil
 def.drop = {
-	max_items = 2, items = {
+	items = {
 		{items = {"farming:pepper_red 2"}, rarity = 1},
 		{items = {"farming:pepper_red"}, rarity = 2},
 		{items = {"farming:pepper_red"}, rarity = 3}

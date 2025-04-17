@@ -87,8 +87,8 @@ function technic.register_power_tool(itemname, def_or_max_charge)
 				-- Add legacy meta handlers if mod did not attempt to read technic.plus value
 				local modname = itemname:match(":?(.+):")
 				if plus_aware[modname] then
-					overrides.technic_get_charge = redef.technic_get_charge or technic.get_RE_charge
-					overrides.technic_set_charge = redef.technic_set_charge or technic.set_RE_charge
+					overrides.technic_get_charge = redef.technic_get_charge or technic.get_charge
+					overrides.technic_set_charge = redef.technic_set_charge or technic.set_charge
 					minetest.log("warning", "Mod "..modname.." seems to be aware of technic.plus but "..
 						itemname.." is still using deprecated registration, skipping meta charge compatibility.")
 				elseif not redef.technic_get_charge and not redef.technic_set_charge then
@@ -109,8 +109,31 @@ function technic.register_power_tool(itemname, def_or_max_charge)
 	end
 end
 
--- Same as `technic.set_RE_charge` but without calling through `itemdef.technic_set_charge`.
+technic.set_RE_charge = assert(technic.set_charge)
+technic.get_RE_charge = assert(technic.get_charge)
+technic.use_RE_charge = assert(technic.use_charge)
+
+-- Same as `technic.set_charge` but without calling through `itemdef.technic_set_charge`.
 function technic.set_RE_wear(stack, charge)
 	minetest.log("warning", "Use of deprecated function technic.set_RE_wear with stack: "..stack:get_name())
 	compat_set_RE_wear(stack, charge)
+end
+
+-- Old utility function to recharge tools
+local function charge_tools(meta, batt_charge, charge_step)
+	local src_stack = meta:get_inventory():get_stack("src", 1)
+	local def = src_stack:get_definition()
+	if not def or not def.technic_max_charge or src_stack:is_empty() then
+		return batt_charge, false
+	end
+	local new_charge = math.min(def.technic_max_charge, def.technic_get_charge(src_stack) + charge_step)
+	def.technic_set_charge(src_stack, new_charge)
+	meta:get_inventory():set_stack("src", 1, src_stack)
+	return batt_charge, (def.technic_max_charge == new_charge)
+end
+
+function technic.charge_tools(...)
+	minetest.log("warning", "Use of deprecated function technic.charge_tools")
+	technic.charge_tools = charge_tools
+	return charge_tools(...)
 end

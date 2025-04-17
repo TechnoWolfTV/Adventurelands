@@ -64,11 +64,10 @@ def.tiles = {"farming_beetroot_5.png"}
 def.groups.growing = nil
 def.selection_box = farming.select_final
 def.drop = {
-	max_items = 4, items = {
-		{items = {"farming:beetroot"}, rarity = 1},
+	items = {
+		{items = {"farming:beetroot 2"}, rarity = 1},
 		{items = {"farming:beetroot"}, rarity = 2},
-		{items = {"farming:beetroot"}, rarity = 3},
-		{items = {"farming:beetroot"}, rarity = 4}
+		{items = {"farming:beetroot"}, rarity = 3}
 	}
 }
 minetest.register_node("farming:beetroot_5", table.copy(def))

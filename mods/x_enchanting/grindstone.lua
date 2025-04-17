@@ -1,7 +1,7 @@
 ---@diagnostic disable
 --[[
     X Enchanting. Adds Enchanting Mechanics and API.
-    Copyright (C) 2023 SaKeL <juraj.vajda@gmail.com>
+    Copyright (C) 2025 SaKeL
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -17,13 +17,13 @@
     License along with this library; if not, write to juraj.vajda@gmail.com
 --]]
 
-local S = minetest.get_translator(minetest.get_current_modname())
+local S = core.get_translator(core.get_current_modname())
 
 ----
 --- Grindstone Node
 ----
 
-minetest.register_node('x_enchanting:grindstone', {
+core.register_node('x_enchanting:grindstone', {
     description = S('Grindstone'),
     short_description = S('Grindstone'),
     drawtype = 'mesh',
@@ -50,7 +50,7 @@ minetest.register_node('x_enchanting:grindstone', {
     mod_origin = 'x_enchanting',
     ---@param pos Vector
     on_construct = function(pos)
-        local meta = minetest.get_meta(pos)
+        local meta = core.get_meta(pos)
         local inv = meta:get_inventory()
 
         meta:set_string('infotext', S('Grindstone'))
@@ -64,7 +64,7 @@ minetest.register_node('x_enchanting:grindstone', {
     ---@param pointed_thing PointedThingDef
     ---@diagnostic disable-next-line: unused-local
     after_place_node = function(pos, placer, itemstack, pointed_thing)
-        local meta = minetest.get_meta(pos)
+        local meta = core.get_meta(pos)
 
         if not placer then
             return
@@ -85,17 +85,17 @@ minetest.register_node('x_enchanting:grindstone', {
     ---@param pointed_thing? PointedThingDef
     ---@diagnostic disable-next-line: unused-local
     on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-        local meta = minetest.get_meta(pos)
+        local meta = core.get_meta(pos)
         local p_name = clicker:get_player_name()
         local inv = meta:get_inventory()
         local item_stack = inv:get_stack('item', 1)
         local has_all_cursed_ench = XEnchanting:has_all_cursed_ench(item_stack)
 
-        if minetest.is_protected(pos, p_name) then
+        if core.is_protected(pos, p_name) then
             return itemstack
         end
 
-        minetest.sound_play('x_enchanting_wood_hit', {
+        core.sound_play('x_enchanting_wood_hit', {
             gain = 0.5,
             pos = pos,
             max_hear_distance = 10
@@ -111,12 +111,12 @@ minetest.register_node('x_enchanting:grindstone', {
     ---@return table | nil
     ---@diagnostic disable-next-line: unused-local
     on_blast = function(pos, intensity)
-        if minetest.is_protected(pos, '') then
+        if core.is_protected(pos, '') then
             return
         end
 
         local drops = {}
-        local inv = minetest.get_meta(pos):get_inventory()
+        local inv = core.get_meta(pos):get_inventory()
         local stack_item = inv:get_stack('item', 1)
 
         if not stack_item:is_empty() then
@@ -124,7 +124,7 @@ minetest.register_node('x_enchanting:grindstone', {
         end
 
         drops[#drops + 1] = 'x_enchanting:grindstone'
-        minetest.remove_node(pos)
+        core.remove_node(pos)
 
         return drops
     end,
@@ -135,11 +135,11 @@ minetest.register_node('x_enchanting:grindstone', {
             return false
         end
 
-        local inv = minetest.get_meta(pos):get_inventory()
+        local inv = core.get_meta(pos):get_inventory()
 
         return inv:is_empty('item')
             and inv:is_empty('result')
-            and not minetest.is_protected(pos, player:get_player_name())
+            and not core.is_protected(pos, player:get_player_name())
     end,
     ---@diagnostic disable-next-line: unused-local
     on_rotate = function(pos, node, user, mode, new_param2)
@@ -191,13 +191,13 @@ minetest.register_node('x_enchanting:grindstone', {
         --
         -- Create new itemstack with removed enchantments (excl. curses) and populate the result slot with this new item
         --
-        local meta = minetest.get_meta(pos)
+        local meta = core.get_meta(pos)
         local p_name = player:get_player_name()
         local inv = meta:get_inventory()
         local item_stack = inv:get_stack('item', 1)
         local item_stack_meta = item_stack:get_meta()
         local is_enchanted = item_stack_meta:get_int('is_enchanted')
-        local stack_enchantment_data = minetest.deserialize(item_stack_meta:get_string('x_enchanting')) or {}
+        local stack_enchantment_data = core.deserialize(item_stack_meta:get_string('x_enchanting')) or {}
         local has_all_cursed_ench = XEnchanting:has_all_cursed_ench(item_stack)
 
         if not inv:is_empty('item') and is_enchanted == 1 and not has_all_cursed_ench then
@@ -253,12 +253,12 @@ minetest.register_node('x_enchanting:grindstone', {
 
             -- Upgrade description with remaining enchantments
             if #current_enchantments > 0 then
-                local item_stack_def = minetest.registered_tools[item_stack:get_name()]
+                local item_stack_def = core.registered_tools[item_stack:get_name()]
                 item_stack_meta:set_string('description', (item_stack_def and item_stack_def.description or '') .. '\n' .. descriptions.enchantments_desc)
             end
 
             item_stack_meta:set_tool_capabilities(nil)
-            item_stack_meta:set_string('x_enchanting', minetest.serialize(stack_enchantment_data))
+            item_stack_meta:set_string('x_enchanting', core.serialize(stack_enchantment_data))
 
             inv:set_stack('result', 1, item_stack)
         end
@@ -274,14 +274,14 @@ minetest.register_node('x_enchanting:grindstone', {
     ---@param player ObjectRef
     ---@diagnostic disable-next-line: unused-local
     on_metadata_inventory_take = function(pos, listname, index, stack, player)
-        local meta = minetest.get_meta(pos)
+        local meta = core.get_meta(pos)
         local p_name = player:get_player_name()
         local inv = meta:get_inventory()
         local result_stack = inv:get_stack('result', 1)
         local item_stack = inv:get_stack('item', 1)
         local item_stack_meta = item_stack:get_meta()
         local has_all_cursed_ench = XEnchanting:has_all_cursed_ench(item_stack)
-        local stack_enchantment_data = minetest.deserialize(item_stack_meta:get_string('x_enchanting')) or {}
+        local stack_enchantment_data = core.deserialize(item_stack_meta:get_string('x_enchanting')) or {}
         local result_payment_stack = ItemStack({ name = 'default:mese_crystal_fragment' })
 
         if item_stack:is_empty() or has_all_cursed_ench then
@@ -331,9 +331,9 @@ minetest.register_node('x_enchanting:grindstone', {
         if listname == 'result' and result_stack:is_empty() then
             -- Drop payment result
             inv:set_stack('item', 1, ItemStack(''))
-            minetest.item_drop(result_payment_stack, player, player:get_pos())
+            core.item_drop(result_payment_stack, player, player:get_pos())
 
-            minetest.sound_play('x_enchanting_disenchant', {
+            core.sound_play('x_enchanting_disenchant', {
                 gain = 0.3,
                 pos = pos,
                 max_hear_distance = 10
@@ -357,7 +357,7 @@ minetest.register_node('x_enchanting:grindstone', {
                 glow = 1
             }
 
-            minetest.add_particlespawner(particlespawner_def)
+            core.add_particlespawner(particlespawner_def)
         end
 
 
@@ -371,7 +371,7 @@ minetest.register_node('x_enchanting:grindstone', {
 -- Recipe
 ---
 
-minetest.register_craft({
+core.register_craft({
     output = 'x_enchanting:grindstone',
     recipe = {
         { 'group:stick', 'stairs:slab_stone', 'group:stick' },

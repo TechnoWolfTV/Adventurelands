@@ -9,28 +9,28 @@ local empty_bottle = "bucket:bucket_empty"
 local feather = nil
 local feather_img = nil
 
-if minetest.registered_items["farming:glass_water"] then
+if core.registered_items["farming:glass_water"] then
   water_bottle = "farming:glass_water"
   empty_bottle = "vessels:drinking_glass"
 end
 
-if minetest.get_modpath("hades_bucket") then
+if core.get_modpath("hades_bucket") then
   water_bottle = "hades_bucket:bucket_water"
   empty_bottle = "hades_bucket:bucket_empty"
 end
-if minetest.get_modpath("hades_extrafarming") then
+if core.get_modpath("hades_extrafarming") then
   water_bottle = "hades_extrafarming:glass_water"
   empty_bottle = "vessels:drinking_glass"
 end
 
 --[[
 -- water color with feather only in MineClone
-if minetest.get_modpath("mobs_animal") or minetest.get_modpath("hades_animals") then
+if core.get_modpath("mobs_animal") or core.get_modpath("hades_animals") then
 	feather = "mobs:chicken_feather"
 	feather_img = "mobs_chicken_feather.png"
 end
 --]]
-if minetest.get_modpath("mcl_core") then
+if core.get_modpath("mcl_core") then
 	color_vessel = "mcl_potions:glass_bottle"
 	water_bottle = "mcl_potions:river_water"
 	empty_bottle = "mcl_potions:glass_bottle"
@@ -41,11 +41,11 @@ end
 for color,hexcol in pairs(painting.hexcolors) do
 	des_col = color:gsub("^%l", string.upper)
 	
-	minetest.register_craftitem("painting:water_color_"..color, {
+	core.register_craftitem("painting:water_color_"..color, {
 			description = S("Glass with "..des_col.." Water Color"),
 			inventory_image = "painting_glass_water_color.png^[colorize:#"..hexcol.."^painting_glass.png",
 		})	
-	minetest.register_tool("painting:brush_water_color_"..color, {
+	core.register_tool("painting:brush_water_color_"..color, {
 			description = S("Brush with "..des_col.." Water Color"),
 			inventory_image = "painting_glass_oil_color.png^[colorize:#"..hexcol.."^painting_glass.png",
 			inventory_overlay = "painting_brush_stem.png^painting_brush_head.png",
@@ -63,7 +63,7 @@ for color,hexcol in pairs(painting.hexcolors) do
 			},
 		})
 	if feather then
-		minetest.register_tool("painting:feather_water_color_"..color, {
+		core.register_tool("painting:feather_water_color_"..color, {
 				description = S("Feather with "..des_col.." Water Color"),
 				inventory_image = "painting_glass_water_color.png^[colorize:#"..hexcol.."^painting_glass.png",
 				inventory_overlay = feather_img,
@@ -78,8 +78,8 @@ for color,hexcol in pairs(painting.hexcolors) do
 			})
 	end
 	
-	if minetest.get_modpath("mcl_dye") then
-		minetest.register_craft{
+	if core.get_modpath("mcl_dye") then
+		core.register_craft{
 			output = "painting:water_color_"..color,
 			recipe = {
 				{"mcl_dye:"..color},
@@ -89,7 +89,7 @@ for color,hexcol in pairs(painting.hexcolors) do
 			replacements = {{water_bottle,empty_bottle}},
 		}
 	else
-		minetest.register_craft{
+		core.register_craft{
 			output = "painting:water_color_"..color,
 			recipe = {
 				{"dye:"..color},
@@ -99,7 +99,7 @@ for color,hexcol in pairs(painting.hexcolors) do
 			replacements = {{water_bottle,empty_bottle}},
 		}
 	end
-	minetest.register_craft{
+	core.register_craft{
 		output = "painting:brush_water_color_"..color,
 		recipe = {
 			{"painting:brush"},
@@ -107,7 +107,7 @@ for color,hexcol in pairs(painting.hexcolors) do
 		},
 	}
 	if feather then
-		minetest.register_craft{
+		core.register_craft{
 			output = "painting:feather_water_color_"..color,
 			recipe = {
 				{feather},

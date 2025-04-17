@@ -55,6 +55,11 @@ minetest.register_node("farming:artichoke_3", table.copy(def))
 -- stage 4
 
 def.tiles = {"farming_artichoke_4.png"}
+def.drop = {
+	items = {
+		{items = {"farming:artichoke"}, rarity = 1}
+	}
+}
 minetest.register_node("farming:artichoke_4", table.copy(def))
 
 -- stage 5 (final)
@@ -97,6 +102,6 @@ minetest.register_decoration({
 		persist = 0.6
 	},
 	y_min = 1, y_max = 13,
-	decoration = "farming:artichoke_5",
+	decoration = "farming:artichoke_4",
 	spawn_by = "group:tree", num_spawn_by = 1
 })

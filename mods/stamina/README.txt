@@ -45,7 +45,27 @@ parameter of your function then.
 
 A global function is available for mods to change player stamina levels:
 
-   stamina.change(player, change)
+   stamina.change_saturation(player, change)
+
+Function to get player saturation level:
+
+   stamina.get_saturation(player)
+
+Function to set player saturation level:
+
+   stamina.set_saturation(player, level)
+
+Function to check if player is poisoned, returns True if so:
+
+   stamina.is_poisoned(player)
+
+Function to exhaust player:
+
+   stamina.exhaust_player(player, change)
+
+Function to enable/disable sprinting:
+
+  stamina.set_sprinting(player, sprinting)
 
 
 TenPlus1 Additions:
@@ -57,4 +77,4 @@ TenPlus1 Additions:
  - Moved exhaustion and hud_id to player table instead of player attributes
  - Added 4 lucky block effects
  - Ability to drink milk from mobs or soy milk from farming to counteract poison/drunk
-
+ - Added API

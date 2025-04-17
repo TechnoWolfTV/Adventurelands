@@ -1,7 +1,7 @@
 
-local paintingdir = minetest.get_worldpath().."/painting/"
+local paintingdir = core.get_worldpath().."/painting/"
 
-minetest.mkdir(paintingdir)
+core.mkdir(paintingdir)
 
 function painting.complete_path(filename)
   return paintingdir..filename

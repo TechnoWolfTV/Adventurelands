@@ -55,6 +55,7 @@ def.tiles = {"farming_rhubarb_3.png"}
 def.drop = {
 	items = {
 		{items = {"farming:rhubarb"}, rarity = 1},
+		{items = {"farming:rhubarb"}, rarity = 3}
 	}
 }
 minetest.register_node("farming:rhubarb_3", table.copy(def))

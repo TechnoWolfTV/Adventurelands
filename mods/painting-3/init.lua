@@ -2,16 +2,16 @@
 
 -- picture is drawn using a nodebox to draw the canvas
 -- and an entity which has the painting as its texture.
--- this texture is created by minetests internal image
+-- this texture is created by core. internal image
 -- compositing engine (see tile.cpp).
 
-minetest.log("action", "Painting mod loading...")
+core.log("action", "Painting mod loading...")
 
 painting = {
-	translator = minetest.get_translator("painting")
+	translator = core.get_translator("painting")
 }
 
-local modpath = minetest.get_modpath(minetest.get_current_modname())
+local modpath = core.get_modpath(core.get_current_modname())
 
 dofile(modpath.."/functions.lua")
 dofile(modpath.."/definitions.lua")
@@ -23,9 +23,9 @@ dofile(modpath.."/crafting.lua")
 
 dofile(modpath.."/files.lua")
 dofile(modpath.."/commands.lua")
-if minetest.get_modpath("tga_encoder") then
+if core.get_modpath("tga_encoder") then
   dofile(modpath.."/export_tga.lua")
 end
 
-minetest.log("action", "Painting mod loaded.")
+core.log("action", "Painting mod loaded.")
 

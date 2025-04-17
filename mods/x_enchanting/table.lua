@@ -1,7 +1,7 @@
 ---@diagnostic disable
 --[[
     X Enchanting. Adds Enchanting Mechanics and API.
-    Copyright (C) 2023 SaKeL <juraj.vajda@gmail.com>
+    Copyright (C) 2025 SaKeL
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -17,13 +17,13 @@
     License along with this library; if not, write to juraj.vajda@gmail.com
 --]]
 
-local S = minetest.get_translator(minetest.get_current_modname())
+local S = core.get_translator(core.get_current_modname())
 
 ----
 --- Table Node
 ----
 
-minetest.register_node('x_enchanting:table', {
+core.register_node('x_enchanting:table', {
     description = S('Enchanting Table'),
     short_description = S('Enchanting Table'),
     drawtype = 'mesh',
@@ -63,15 +63,15 @@ minetest.register_node('x_enchanting:table', {
     light_source = 6,
     ---@param pos Vector
     on_construct = function(pos)
-        local meta = minetest.get_meta(pos)
+        local meta = core.get_meta(pos)
         local inv = meta:get_inventory()
 
         meta:set_string('infotext', S('Enchanting Table'))
         meta:set_string('owner', '')
         inv:set_size('item', 1)
         inv:set_size('trade', 1)
-        minetest.add_entity({ x = pos.x, y = pos.y + 0.7, z = pos.z }, 'x_enchanting:table_scroll')
-        minetest.get_node_timer(pos):start(5)
+        core.add_entity({ x = pos.x, y = pos.y + 0.7, z = pos.z }, 'x_enchanting:table_scroll')
+        core.get_node_timer(pos):start(5)
     end,
     ---@param pos Vector
     ---@param placer ObjectRef | nil
@@ -79,7 +79,7 @@ minetest.register_node('x_enchanting:table', {
     ---@param pointed_thing PointedThingDef
     ---@diagnostic disable-next-line: unused-local
     after_place_node = function(pos, placer, itemstack, pointed_thing)
-        local meta = minetest.get_meta(pos)
+        local meta = core.get_meta(pos)
 
         if not placer then
             return
@@ -100,34 +100,34 @@ minetest.register_node('x_enchanting:table', {
     ---@param pointed_thing? PointedThingDef
     ---@diagnostic disable-next-line: unused-local
     on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-        local meta = minetest.get_meta(pos)
+        local meta = core.get_meta(pos)
         local p_name = clicker:get_player_name()
 
-        if minetest.is_protected(pos, p_name) then
+        if core.is_protected(pos, p_name) then
             return itemstack
         end
 
-        minetest.sound_play('x_enchanting_scroll', {
+        core.sound_play('x_enchanting_scroll', {
             gain = 0.3,
             pos = pos,
             max_hear_distance = 10
         }, true)
 
         -- bookshelfs
-        local bookshelfs = minetest.find_nodes_in_area(
+        local bookshelfs = core.find_nodes_in_area(
             { x = pos.x - 2, y = pos.y, z = pos.z - 2 },
             { x = pos.x + 2, y = pos.y + 2, z = pos.z + 2 },
             { 'default:bookshelf', 'group:bookshelf' }
         )
 
-        local inv = minetest.get_meta(pos):get_inventory()
+        local inv = core.get_meta(pos):get_inventory()
 
         if not inv:is_empty('item') and inv:get_stack('item', 1):get_meta():get_int('is_enchanted') ~= 1 then
             local item_stack = inv:get_stack('item', 1)
             local data = XEnchanting:get_enchantment_data(
                 clicker,
                 #bookshelfs,
-                minetest.registered_tools[item_stack:get_name()]
+                core.registered_tools[item_stack:get_name()]
             )
             local formspec = XEnchanting:get_formspec(pos, p_name, data)
 
@@ -145,12 +145,12 @@ minetest.register_node('x_enchanting:table', {
     ---@return table | nil
     ---@diagnostic disable-next-line: unused-local
     on_blast = function(pos, intensity)
-        if minetest.is_protected(pos, '') then
+        if core.is_protected(pos, '') then
             return
         end
 
         local drops = {}
-        local inv = minetest.get_meta(pos):get_inventory()
+        local inv = core.get_meta(pos):get_inventory()
         local stack_item = inv:get_stack('item', 1)
         local stack_trade = inv:get_stack('trade', 1)
 
@@ -163,7 +163,7 @@ minetest.register_node('x_enchanting:table', {
         end
 
         drops[#drops + 1] = 'x_enchanting:table'
-        minetest.remove_node(pos)
+        core.remove_node(pos)
 
         return drops
     end,
@@ -174,11 +174,11 @@ minetest.register_node('x_enchanting:table', {
             return false
         end
 
-        local inv = minetest.get_meta(pos):get_inventory()
+        local inv = core.get_meta(pos):get_inventory()
 
         return inv:is_empty('item')
             and inv:is_empty('trade')
-            and not minetest.is_protected(pos, player:get_player_name())
+            and not core.is_protected(pos, player:get_player_name())
     end,
     ---@diagnostic disable-next-line: unused-local
     on_rotate = function(pos, node, user, mode, new_param2)
@@ -189,10 +189,10 @@ minetest.register_node('x_enchanting:table', {
     ---@diagnostic disable-next-line: unused-local
     on_timer = function(pos, elapsed)
         -- entity
-        local table_scroll = minetest.get_objects_inside_radius(pos, 0.9)
+        local table_scroll = core.get_objects_inside_radius(pos, 0.9)
 
         if #table_scroll == 0 then
-            minetest.add_entity({ x = pos.x, y = pos.y + 0.7, z = pos.z }, 'x_enchanting:table_scroll')
+            core.add_entity({ x = pos.x, y = pos.y + 0.7, z = pos.z }, 'x_enchanting:table_scroll')
         end
 
         local particlespawner_def = {
@@ -212,7 +212,7 @@ minetest.register_node('x_enchanting:table', {
             glow = 1
         }
 
-        if minetest.has_feature({ dynamic_add_media_table = true, particlespawner_tweenable = true }) then
+        if core.has_feature({ dynamic_add_media_table = true, particlespawner_tweenable = true }) then
             -- new syntax, after v5.6.0
             particlespawner_def = {
                 amount = 50,
@@ -243,10 +243,10 @@ minetest.register_node('x_enchanting:table', {
             }
         end
 
-        minetest.add_particlespawner(particlespawner_def)
+        core.add_particlespawner(particlespawner_def)
 
         ---bookshelfs
-        local bookshelfs = minetest.find_nodes_in_area(
+        local bookshelfs = core.find_nodes_in_area(
             { x = pos.x - 2, y = pos.y, z = pos.z - 2 },
             { x = pos.x + 2, y = pos.y + 2, z = pos.z + 2 },
             { 'default:bookshelf', 'group:bookshelf' }
@@ -267,8 +267,8 @@ minetest.register_node('x_enchanting:table', {
             local rand2 = math.random(10, 500) / 100
             local rand3 = math.random(50, 200) / 100
 
-            minetest.after(rand2, function()
-                minetest.add_particle({
+            core.after(rand2, function()
+                core.add_particle({
                     pos = pos_random,
                     velocity = { x = x, y = 2 - y, z = z },
                     acceleration = { x = 0, y = rand1, z = 0 },
@@ -284,7 +284,7 @@ minetest.register_node('x_enchanting:table', {
     end,
     ---@param pos Vector
     on_destruct = function(pos)
-        for _, obj in ipairs(minetest.get_objects_inside_radius(pos, 0.9)) do
+        for _, obj in ipairs(core.get_objects_inside_radius(pos, 0.9)) do
             if obj
                 and obj:get_luaentity()
                 and obj:get_luaentity().name == 'x_enchanting:table_scroll'
@@ -306,14 +306,14 @@ minetest.register_node('x_enchanting:table', {
         local is_enchanted = st_meta:get_int('is_enchanted')
 
         if listname == 'item'
-            and minetest.get_item_group(st_name, 'enchantability') > 0
+            and core.get_item_group(st_name, 'enchantability') > 0
             and is_enchanted ~= 1
         then
             return stack:get_count()
         elseif listname == 'trade'
             and (
                 st_name == 'default:mese_crystal'
-                or minetest.get_item_group(st_name, 'enchanting_trade') > 0
+                or core.get_item_group(st_name, 'enchanting_trade') > 0
             )
             and is_enchanted ~= 1
         then
@@ -336,7 +336,7 @@ minetest.register_node('x_enchanting:table', {
         elseif listname == 'trade'
             and (
                 st_name == 'default:mese_crystal'
-                or minetest.get_item_group(st_name, 'enchanting_trade') > 0
+                or core.get_item_group(st_name, 'enchanting_trade') > 0
             )
         then
             return stack:get_count()
@@ -362,7 +362,7 @@ minetest.register_node('x_enchanting:table', {
     ---@param player ObjectRef
     ---@diagnostic disable-next-line: unused-local
     on_metadata_inventory_put = function(pos, listname, index, stack, player)
-        local meta = minetest.get_meta(pos)
+        local meta = core.get_meta(pos)
         local p_name = player:get_player_name()
         local inv = meta:get_inventory()
         local item_stack = inv:get_stack('item', 1)
@@ -371,7 +371,7 @@ minetest.register_node('x_enchanting:table', {
 
         if not inv:is_empty('item') and is_enchanted == 0 then
             -- bookshelfs
-            local bookshelfs = minetest.find_nodes_in_area(
+            local bookshelfs = core.find_nodes_in_area(
                 { x = pos.x - 2, y = pos.y, z = pos.z - 2 },
                 { x = pos.x + 2, y = pos.y + 2, z = pos.z + 2 },
                 { 'default:bookshelf', 'group:bookshelf' }
@@ -380,7 +380,7 @@ minetest.register_node('x_enchanting:table', {
             local data = XEnchanting:get_enchantment_data(
                 player,
                 #bookshelfs,
-                minetest.registered_tools[item_stack:get_name()]
+                core.registered_tools[item_stack:get_name()]
             )
             local formspec = XEnchanting:get_formspec(pos, p_name, data)
 
@@ -398,7 +398,7 @@ minetest.register_node('x_enchanting:table', {
     ---@param player ObjectRef
     ---@diagnostic disable-next-line: unused-local
     on_metadata_inventory_take = function(pos, listname, index, stack, player)
-        local meta = minetest.get_meta(pos)
+        local meta = core.get_meta(pos)
         local p_name = player:get_player_name()
         local inv = meta:get_inventory()
         local item_stack = inv:get_stack('item', 1)
@@ -407,7 +407,7 @@ minetest.register_node('x_enchanting:table', {
 
         if not inv:is_empty('item') and is_enchanted == 0 then
             -- bookshelfs
-            local bookshelfs = minetest.find_nodes_in_area(
+            local bookshelfs = core.find_nodes_in_area(
                 { x = pos.x - 2, y = pos.y, z = pos.z - 2 },
                 { x = pos.x + 2, y = pos.y + 2, z = pos.z + 2 },
                 { 'default:bookshelf', 'group:bookshelf' }
@@ -416,7 +416,7 @@ minetest.register_node('x_enchanting:table', {
             local data = XEnchanting:get_enchantment_data(
                 player,
                 #bookshelfs,
-                minetest.registered_tools[item_stack:get_name()]
+                core.registered_tools[item_stack:get_name()]
             )
             local formspec = XEnchanting:get_formspec(pos, p_name, data)
 
@@ -455,7 +455,7 @@ minetest.register_node('x_enchanting:table', {
             return
         end
 
-        local inv = minetest.get_meta(pos):get_inventory()
+        local inv = core.get_meta(pos):get_inventory()
 
         if inv:is_empty('trade') or inv:is_empty('item') then
             return
@@ -488,7 +488,7 @@ minetest.register_node('x_enchanting:table', {
 --- Entity (Scroll)
 ----
 
-minetest.register_entity('x_enchanting:table_scroll', {
+core.register_entity('x_enchanting:table_scroll', {
     initial_properties = {
         visual = 'mesh',
         mesh = 'x_enchanting_scroll.b3d',
@@ -543,7 +543,7 @@ minetest.register_entity('x_enchanting:table_scroll', {
         -- table
         if self._tablechecktimer <= 0 then
             self._tablechecktimer = 5
-            local node = minetest.get_node({ x = pos.x, y = pos.y - 0.7, z = pos.z })
+            local node = core.get_node({ x = pos.x, y = pos.y - 0.7, z = pos.z })
 
             if node.name ~= 'x_enchanting:table' then
                 -- remove entity when no table under it
@@ -554,7 +554,7 @@ minetest.register_entity('x_enchanting:table_scroll', {
         -- player
         if self._playerchecktimer <= 0 then
             self._playerchecktimer = 1
-            local objects = minetest.get_objects_inside_radius(pos, 5)
+            local objects = core.get_objects_inside_radius(pos, 5)
 
             -- inital value
             local shortest_distance = 10
@@ -587,7 +587,7 @@ minetest.register_entity('x_enchanting:table_scroll', {
                 self._scroll_closed = false
                 self.object:set_animation(unpack(XEnchanting.scroll_animations.scroll_open))
 
-                minetest.sound_play('x_enchanting_scroll', {
+                core.sound_play('x_enchanting_scroll', {
                     gain = 0.3,
                     pos = pos,
                     max_hear_distance = 10
@@ -596,7 +596,7 @@ minetest.register_entity('x_enchanting:table_scroll', {
                 self._scroll_closed = true
                 self.object:set_animation(unpack(XEnchanting.scroll_animations.scroll_close))
 
-                minetest.sound_play('x_enchanting_scroll', {
+                core.sound_play('x_enchanting_scroll', {
                     gain = 0.3,
                     pos = pos,
                     max_hear_distance = 10
@@ -607,7 +607,7 @@ minetest.register_entity('x_enchanting:table_scroll', {
         -- rotation
         if self._player and self._player:get_pos() then
             local direction = vector.direction(pos, self._player:get_pos())
-            self.object:set_yaw(minetest.dir_to_yaw(direction))
+            self.object:set_yaw(core.dir_to_yaw(direction))
         else
             self.object:set_rotation({
                 x = self._last_rotation.x,
@@ -633,8 +633,8 @@ minetest.register_entity('x_enchanting:table_scroll', {
 -- Recipe
 ---
 
-if minetest.get_modpath('xdecor') then
-    minetest.register_craft({
+if core.get_modpath('xdecor') then
+    core.register_craft({
         output = 'x_enchanting:table',
         recipe = {
             { 'default:book', '', '' },
@@ -643,7 +643,7 @@ if minetest.get_modpath('xdecor') then
         }
     })
 else
-    minetest.register_craft({
+    core.register_craft({
         output = 'x_enchanting:table',
         recipe = {
             { '', 'default:book', '' },

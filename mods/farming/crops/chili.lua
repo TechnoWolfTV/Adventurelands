@@ -80,8 +80,10 @@ def.groups.growing = nil
 def.selection_box = farming.select_final
 def.drop = {
 	items = {
-		{items = {"farming:chili_pepper 3"}, rarity = 1},
-		{items = {"farming:chili_pepper 2"}, rarity = 2}
+		{items = {"farming:chili_pepper 2"}, rarity = 1},
+		{items = {"farming:chili_pepper"}, rarity = 2},
+		{items = {"farming:chili_pepper"}, rarity = 3},
+		{items = {"farming:chili_pepper"}, rarity = 4}
 	}
 }
 minetest.register_node("farming:chili_8", table.copy(def))

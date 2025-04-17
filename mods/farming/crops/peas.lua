@@ -71,11 +71,10 @@ def.tiles = {"farming_pea_5.png"}
 def.groups.growing = nil
 def.selection_box = farming.select_final
 def.drop = {
-	max_items = 5, items = {
-		{items = {"farming:pea_pod"}, rarity = 1},
+	items = {
+		{items = {"farming:pea_pod 2"}, rarity = 1},
 		{items = {"farming:pea_pod"}, rarity = 2},
-		{items = {"farming:pea_pod"}, rarity = 3},
-		{items = {"farming:pea_pod"}, rarity = 5}
+		{items = {"farming:pea_pod"}, rarity = 3}
 	}
 }
 minetest.register_node("farming:pea_5", table.copy(def))

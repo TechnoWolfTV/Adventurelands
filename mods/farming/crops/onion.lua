@@ -72,12 +72,10 @@ def.tiles = {"crops_onion_plant_5.png"}
 def.groups.growing = nil
 def.selection_box = farming.select_final
 def.drop = {
-	max_items = 5, items = {
-		{items = {"farming:onion"}, rarity = 1},
-		{items = {"farming:onion"}, rarity = 1},
+	items = {
+		{items = {"farming:onion 2"}, rarity = 1},
 		{items = {"farming:onion"}, rarity = 2},
-		{items = {"farming:onion"}, rarity = 2},
-		{items = {"farming:onion"}, rarity = 5}
+		{items = {"farming:onion"}, rarity = 4}
 	}
 }
 minetest.register_node("farming:onion_5", table.copy(def))

@@ -1,7 +1,6 @@
----@diagnostic disable
 --[[
     X Enchanting. Adds Enchanting Mechanics and API.
-    Copyright (C) 2023 SaKeL <juraj.vajda@gmail.com>
+    Copyright (C) 2025 SaKeL
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -17,7 +16,7 @@
     License along with this library; if not, write to juraj.vajda@gmail.com
 --]]
 
-local S = minetest.get_translator(minetest.get_current_modname())
+local S = core.get_translator(core.get_current_modname())
 
 ---@type XEnchanting
 XEnchanting = {
@@ -321,15 +320,15 @@ end
 
 ---@diagnostic disable-next-line: unused-local
 function XEnchanting.has_tool_group(self, name)
-    if minetest.get_item_group(name, 'pickaxe') > 0 then
+    if core.get_item_group(name, 'pickaxe') > 0 then
         return 'pickaxe'
-    elseif minetest.get_item_group(name, 'shovel') > 0 then
+    elseif core.get_item_group(name, 'shovel') > 0 then
         return 'shovel'
-    elseif minetest.get_item_group(name, 'axe') > 0 then
+    elseif core.get_item_group(name, 'axe') > 0 then
         return 'axe'
-    elseif minetest.get_item_group(name, 'sword') > 0 then
+    elseif core.get_item_group(name, 'sword') > 0 then
         return 'sword'
-    elseif minetest.get_item_group(name, 'bow') > 0 then
+    elseif core.get_item_group(name, 'bow') > 0 then
         return 'bow'
     end
 
@@ -337,7 +336,7 @@ function XEnchanting.has_tool_group(self, name)
 end
 
 function XEnchanting.set_tool_enchantability(self, tool_def)
-    if minetest.get_item_group(tool_def.name, 'enchantability') > 0 then
+    if core.get_item_group(tool_def.name, 'enchantability') > 0 then
         -- enchantability is already set, we dont need to override the item
         return
     end
@@ -348,7 +347,7 @@ function XEnchanting.set_tool_enchantability(self, tool_def)
         _enchantability = self.tools_enchantability[tool_def.name]
     end
 
-    minetest.override_item(tool_def.name, {
+    core.override_item(tool_def.name, {
         groups = mergeTables(tool_def.groups, { enchantability = _enchantability })
     })
 end
@@ -507,7 +506,7 @@ function XEnchanting.get_enchanted_descriptions(self, enchantments)
         end
     end
 
-    enchantments_desc = '\n' .. minetest.colorize('#AE81FF', S('Enchanted'))
+    enchantments_desc = '\n' .. core.colorize('#AE81FF', S('Enchanted'))
         .. '\n' .. table.concat(enchantments_desc, '\n')
     enchantments_desc_masked = table.concat(enchantments_desc_masked, '') .. '..?'
 
@@ -515,6 +514,10 @@ function XEnchanting.get_enchanted_descriptions(self, enchantments)
         enchantments_desc = enchantments_desc,
         enchantments_desc_masked = enchantments_desc_masked
     }
+end
+
+function XEnchanting.get_glint_texture_modifier(self, image)
+    return image .. '^((' .. image .. '^[contrast:127:127)^[mask:x_enchanting_glint.png^[opacity:80)'
 end
 
 function XEnchanting.set_enchanted_tool(self, pos, itemstack, level, player_name)
@@ -527,9 +530,9 @@ function XEnchanting.set_enchanted_tool(self, pos, itemstack, level, player_name
     local capabilities = data.slots[level].tool_cap_data
     local description = data.slots[level].descriptions.enchantments_desc
     local final_enchantments = data.slots[level].final_enchantments
-    local inv = minetest.get_meta(pos):get_inventory()
-    local tool_def = minetest.registered_tools[itemstack:get_name()]
-    local node_meta = minetest.get_meta(pos)
+    local inv = core.get_meta(pos):get_inventory()
+    local tool_def = core.registered_tools[itemstack:get_name()]
+    local node_meta = core.get_meta(pos)
 
     if not tool_def then
         return
@@ -552,7 +555,7 @@ function XEnchanting.set_enchanted_tool(self, pos, itemstack, level, player_name
     stack_meta:set_string('description', itemstack:get_description() .. '\n' .. description)
     stack_meta:set_string('short_description', S('Enchanted') .. ' ' .. itemstack:get_short_description())
     stack_meta:set_int('is_enchanted', 1)
-    stack_meta:set_string('x_enchanting', minetest.serialize(final_enchantments_meta))
+    stack_meta:set_string('x_enchanting', core.serialize(final_enchantments_meta))
 
     if tool_def and tool_def.inventory_image and tool_def.inventory_image ~= '' then
         stack_meta:set_string('inventory_image', tool_def.inventory_image .. '^((' .. tool_def.inventory_image .. '^[contrast:127:127)^[mask:x_enchanting_glint.png^[opacity:80)')
@@ -582,7 +585,7 @@ function XEnchanting.set_enchanted_tool(self, pos, itemstack, level, player_name
     local formspec = self:get_formspec(pos, player_name)
     node_meta:set_string('formspec', formspec)
 
-    minetest.sound_play('x_enchanting_enchant', {
+    core.sound_play('x_enchanting_enchant', {
         gain = 0.3,
         pos = pos,
         max_hear_distance = 10
@@ -606,7 +609,7 @@ function XEnchanting.set_enchanted_tool(self, pos, itemstack, level, player_name
         glow = 1
     }
 
-    if minetest.has_feature({ dynamic_add_media_table = true, particlespawner_tweenable = true }) then
+    if core.has_feature({ dynamic_add_media_table = true, particlespawner_tweenable = true }) then
         -- new syntax, after v5.6.0
         particlespawner_def = {
             amount = 50,
@@ -638,7 +641,7 @@ function XEnchanting.set_enchanted_tool(self, pos, itemstack, level, player_name
         }
     end
 
-    minetest.add_particlespawner(particlespawner_def)
+    core.add_particlespawner(particlespawner_def)
 end
 
 function XEnchanting.get_enchantment_data(self, player, nr_of_bookshelfs, tool_def)
@@ -666,7 +669,7 @@ function XEnchanting.get_enchantment_data(self, player, nr_of_bookshelfs, tool_d
         else
             ---@diagnostic disable-next-line: unused-local
             for i, group in ipairs(enchantment_def.groups) do
-                if minetest.get_item_group(tool_def.name, group) > 0 then
+                if core.get_item_group(tool_def.name, group) > 0 then
                     group_enchantments[enchantment_name] = enchantment_def
                     break
                 end
@@ -691,7 +694,7 @@ function XEnchanting.get_enchantment_data(self, player, nr_of_bookshelfs, tool_d
 
         local chosen_enchantment_level = slot_lvl
         -- Applying modifiers to the enchantment level
-        local enchantability = minetest.get_item_group(tool_def.name, 'enchantability')
+        local enchantability = core.get_item_group(tool_def.name, 'enchantability')
         -- Generate a random number between 1 and 1+(enchantability/2), with a triangular distribution
         local rand_enchantability = 1 + math.random(enchantability / 4 + 1) + math.random(enchantability / 4 + 1)
         -- Choose the enchantment level
@@ -878,7 +881,7 @@ end
 
 local function get_formspec_bg(player_name, bg_img)
     local bg_image = bg_img and bg_img or 'x_enchanting_gui_formbg.png'
-    local info = minetest.get_player_information(player_name)
+    local info = core.get_player_information(player_name)
     local bg = 'background[5,5;1,1;' .. bg_image .. ';true]'
 
     if info.formspec_version > 1 then
@@ -890,7 +893,7 @@ end
 
 function XEnchanting.get_formspec(self, pos, player_name, data)
     local spos = pos.x .. ',' .. pos.y .. ',' .. pos.z
-    local inv = minetest.get_meta(pos):get_inventory()
+    local inv = core.get_meta(pos):get_inventory()
     ---@diagnostic disable-next-line: codestyle-check
     local model_scroll_open = 'model[0,0;2,3;x_enchanting_table;x_enchanting_scroll.b3d;x_enchanting_scroll_mesh.png,x_enchanting_scroll_handles_mesh.png,x_enchanting_scroll_mesh.png;89,0;false;false;' .. self.scroll_animations.scroll_open_idle[1].x .. ',' .. self.scroll_animations.scroll_open_idle[1].y .. ';0]'
     ---@diagnostic disable-next-line: codestyle-check
@@ -931,10 +934,10 @@ function XEnchanting.get_formspec(self, pos, player_name, data)
 
                 if inv:get_stack('trade', 1):get_count() >= i then
                     ---@diagnostic disable-next-line: codestyle-check
-                    formspec[#formspec + 1] = 'image_button[3.125,' .. -0.5 + i .. ';5.125,1;x_enchanting_image_button.png;slot_' .. i .. ';' .. slot.descriptions.enchantments_desc_masked .. minetest.formspec_escape(' [' .. slot.level .. ']') .. ']'
+                    formspec[#formspec + 1] = 'image_button[3.125,' .. -0.5 + i .. ';5.125,1;x_enchanting_image_button.png;slot_' .. i .. ';' .. slot.descriptions.enchantments_desc_masked .. core.formspec_escape(' [' .. slot.level .. ']') .. ']'
                 else
                     ---@diagnostic disable-next-line: codestyle-check
-                    formspec[#formspec + 1] = 'image_button[3.125,' .. -0.5 + i .. ';5.125,1;x_enchanting_image_button_disabled.png;slot_' .. i .. ';' .. slot.descriptions.enchantments_desc_masked .. minetest.formspec_escape(' [' .. slot.level .. ']') .. ']'
+                    formspec[#formspec + 1] = 'image_button[3.125,' .. -0.5 + i .. ';5.125,1;x_enchanting_image_button_disabled.png;slot_' .. i .. ';' .. slot.descriptions.enchantments_desc_masked .. core.formspec_escape(' [' .. slot.level .. ']') .. ']'
                 end
 
                 formspec[#formspec + 1] = 'image[2.3,' .. -0.5 + i .. ';1,1;x_enchanting_image_trade_' .. i .. '.png;]'
@@ -1015,7 +1018,7 @@ function XEnchanting.has_all_cursed_ench(self, itemstack)
     end
 
     local item_stack_meta = itemstack:get_meta()
-    local stack_enchantment_data = minetest.deserialize(item_stack_meta:get_string('x_enchanting')) or {}
+    local stack_enchantment_data = core.deserialize(item_stack_meta:get_string('x_enchanting')) or {}
     local stack_enchantment_data_length = get_table_length(stack_enchantment_data)
     local cursed_ench = 0
 

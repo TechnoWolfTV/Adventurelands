@@ -50,7 +50,7 @@ functions needed for the mob to work properly which contains the following:
                    set to 0 for jumping mobs only.
    'randomly_turn' if set to false then mob will not turn to face player or
                    randomly turn while walking or standing.
-   'jump'          when true allows your mob to jump updwards.
+   'jump'          when true allows your mob to jump updwards[DEPRECATED].
    'jump_height'   holds the height your mob can jump, 0 to disable jumping.
    'can_leap'      when true obstacles like fences or pits wont stop a mob
                    from trying to jump out.
@@ -92,7 +92,7 @@ functions needed for the mob to work properly which contains the following:
                       When set to 16 then only natural light will kill mob.
    'suffocation'   when > 0 mobs will suffocate inside solid blocks and will be
                    hurt by the value given every second (0 to disable).
-   'floats'        when set to 1 mob will float in water, 0 has them sink.
+   'floats'        when True mob will float in water, otherwise they sink.
    'follow'        mobs follow player when holding any of the items which appear
                    on this table, the same items can be fed to a mob to tame or
                    breed e.g. {"farming:wheat", "default:apple", "group:fish"}
@@ -230,8 +230,6 @@ functions needed for the mob to work properly which contains the following:
    'rotate'            custom model rotation, 0 = front, 90 = side, 180 = back,
                        270 = other side.
    'glow'              has mob glow without light source, 0 to 15 or nil to disable
-   'double_melee_attack' when true has the api choose between 'punch' and
-                      'punch2' animations. [DEPRECATED]
 
    'animation'       holds a table containing animation names and settings for use with
                      mesh models:
@@ -308,6 +306,25 @@ eating.
 
        By default, replacing sets self.gotten to true and resets the object
        properties. (DEPRECATED, use on_replace to make changes).
+
+
+Pickup Items
+------------
+
+   'pick_up'            table of itemstrings the mob will pick up.
+   'on_pick_up'         function that will be called on item pickup - arguments are
+                        (self, itemstring) and can return nil or a a modified itemstack e.g.
+
+on_pick_up = function(self, itemstring)
+
+		local istack = ItemStack(entity.itemstring)
+
+		print("-- took", istack:get_name())
+
+		istack:take_item(1)
+
+		return istack
+end,
 
 
 Custom Definition Functions
@@ -867,6 +884,7 @@ External Settings for "minetest.conf"
                             custom on_sound function.
    'mobs_disable_damage_kb' Knockback is calculated by hit damage or uses knockback value
                             from the weapon used, this setting lets you disable the former.
+   'mob_infotext'          True by default, shows mob information when you hover over one.
 
 Players can override the spawn chance for each mob registered by adding a line
 to their minetest.conf file with a new value, the lower the value the more each

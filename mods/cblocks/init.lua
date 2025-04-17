@@ -22,11 +22,13 @@ local colours = {
 }
 
 
-local function cblocks_stairs(nodename, def)
+local function cblocks_stairs(nodename, odef)
 
-	minetest.register_node(nodename, def)
+	minetest.register_node(nodename, odef)
 
 	if stairs_mod or stairsplus_mod then
+
+		local def = table.copy(odef)
 
 		def.groups.wood = nil ; def.groups.stone = nil
 

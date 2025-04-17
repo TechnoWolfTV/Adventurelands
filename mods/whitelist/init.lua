@@ -1,4 +1,4 @@
-local version = "1.2.5"
+local version = "1.3.0-dev"
 local srcpath = minetest.get_modpath("whitelist") .. "/src"
 
 -- TODO: remove after https://github.com/minetest/modtools/issues/2

@@ -202,9 +202,10 @@ def.selection_box = farming.select_final
 def.drop = {
 	items = {
 		{items = {"farming:trellis"}, rarity = 1},
-		{items = {"farming:grapes 3"}, rarity = 1},
-		{items = {"farming:grapes 1"}, rarity = 2},
-		{items = {"farming:grapes 1"}, rarity = 3}
+		{items = {"farming:grapes 2"}, rarity = 1},
+		{items = {"farming:grapes"}, rarity = 2},
+		{items = {"farming:grapes"}, rarity = 3},
+		{items = {"farming:grapes"}, rarity = 4}
 	}
 }
 minetest.register_node("farming:grapes_8", table.copy(def))
@@ -232,9 +233,9 @@ minetest.register_node("farming:grapebush", {
 	sunlight_propagates = true,
 	drop = {
 		items = {
-			{items = {"farming:grapes 1"}, rarity = 1},
-			{items = {"farming:grapes 1"}, rarity = 2},
-			{items = {"farming:grapes 1"}, rarity = 3}
+			{items = {"farming:grapes"}, rarity = 1},
+			{items = {"farming:grapes"}, rarity = 2},
+			{items = {"farming:grapes"}, rarity = 3}
 		}
 	},
 	selection_box = farming.select,

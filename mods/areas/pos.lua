@@ -184,20 +184,21 @@ function areas:setPos1(name, pos)
 	pos = posLimit(pos)
 	areas.pos1[name] = pos
 
-	local entity = minetest.add_entity(pos, "areas:pos1")
-	if entity then
-		local luaentity = entity:get_luaentity()
-		if luaentity then
-			luaentity.player = name
-		end
-	end
-
 	if old_pos then
-		for object in core.objects_inside_radius(old_pos, 0.01) do
+		-- TODO: use `core.objects_inside_radius` after Luanti 5.10.0 is well established.
+		for _, object in ipairs(core.get_objects_inside_radius(old_pos, 0.01)) do
 			local luaentity = object:get_luaentity()
 			if luaentity and luaentity.name == "areas:pos1" and luaentity.player == name then
 				object:remove()
 			end
+		end
+	end
+
+	local entity = core.add_entity(pos, "areas:pos1")
+	if entity then
+		local luaentity = entity:get_luaentity()
+		if luaentity then
+			luaentity.player = name
 		end
 	end
 end
@@ -207,20 +208,21 @@ function areas:setPos2(name, pos)
 	pos = posLimit(pos)
 	areas.pos2[name] = pos
 
-	local entity = minetest.add_entity(pos, "areas:pos2")
-	if entity then
-		local luaentity = entity:get_luaentity()
-		if luaentity then
-			luaentity.player = name
-		end
-	end
-
 	if old_pos then
-		for object in core.objects_inside_radius(old_pos, 0.01) do
+		-- TODO: use `core.objects_inside_radius` after Luanti 5.10.0 is well established.
+		for _, object in ipairs(core.get_objects_inside_radius(old_pos, 0.01)) do
 			local luaentity = object:get_luaentity()
 			if luaentity and luaentity.name == "areas:pos2" and luaentity.player == name then
 				object:remove()
 			end
+		end
+	end
+
+	local entity = core.add_entity(pos, "areas:pos2")
+	if entity then
+		local luaentity = entity:get_luaentity()
+		if luaentity then
+			luaentity.player = name
 		end
 	end
 end

@@ -79,6 +79,7 @@ if ENABLE_LARGE then
 		},
 		jump = false,
 		stepheight = 0,
+		stay_near = {(mod_mcl and "mcl_core:water_source" or "default:water_source"), 3},
 		drops = {
 			{name = (mod_mcl and "mcl_mobitems:beef" or "mobs:meat_raw"),
 					chance = 1, min = 1, max = 3}
@@ -125,6 +126,7 @@ if ENABLE_MEDIUM then
 		},
 		jump = false,
 		stepheight = 0,
+		stay_near = {(mod_mcl and "mcl_core:water_source" or "default:water_source"), 3},
 		drops = {
 			{name = (mod_mcl and "mcl_mobitems:beef" or "mobs:meat_raw"),
 					chance = 1, min = 1, max = 3}
@@ -171,6 +173,7 @@ if ENABLE_SMALL then
 		},
 		jump = false,
 		stepheight = 0,
+		stay_near = {(mod_mcl and "mcl_core:water_source" or "default:water_source"), 3},
 		drops = {
 			{name = (mod_mcl and "mcl_mobitems:beef" or "mobs:meat_raw"),
 					chance = 1, min = 1, max = 3}

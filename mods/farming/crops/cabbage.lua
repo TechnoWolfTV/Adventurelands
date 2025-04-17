@@ -68,9 +68,9 @@ def.tiles = {"farming_cabbage_6.png"}
 def.groups.growing = nil
 def.selection_box = farming.select_final
 def.drop = {
-	max_items = 2, items = {
+	items = {
 		{items = {"farming:cabbage 2"}, rarity = 1},
-		{items = {"farming:cabbage 1"}, rarity = 2}
+		{items = {"farming:cabbage"}, rarity = 3}
 	}
 }
 minetest.register_node("farming:cabbage_6", table.copy(def))

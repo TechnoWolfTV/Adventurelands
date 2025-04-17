@@ -118,7 +118,7 @@ def.drop = {
 	items = {
 		{items = {"farming:hemp_leaf 2"}, rarity = 1},
 		{items = {"farming:hemp_leaf"}, rarity = 2},
-		{items = {"farming:seed_hemp"}, rarity = 1},
+		{items = {"farming:seed_hemp 2"}, rarity = 1},
 		{items = {"farming:seed_hemp"}, rarity = 2}
 	}
 }

@@ -77,7 +77,7 @@ def.tiles = {"farming_carrot_7.png"}
 def.drop = {
 	items = {
 		{items = {"farming:carrot"}, rarity = 1},
-		{items = {"farming:carrot 2"}, rarity = 3}
+		{items = {"farming:carrot"}, rarity = 3}
 	}
 }
 minetest.register_node("farming:carrot_7", table.copy(def))
@@ -90,7 +90,8 @@ def.selection_box = farming.select_final
 def.drop = {
 	items = {
 		{items = {"farming:carrot 2"}, rarity = 1},
-		{items = {"farming:carrot 3"}, rarity = 2}
+		{items = {"farming:carrot"}, rarity = 2},
+		{items = {"farming:carrot"}, rarity = 3},
 	}
 }
 minetest.register_node("farming:carrot_8", table.copy(def))

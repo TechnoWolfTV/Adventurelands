@@ -113,7 +113,7 @@ minetest.register_node("farming:cocoa_2", table.copy(def))
 def.tiles = {"farming_cocoa_3.png"}
 def.drop = {
 	items = {
-		{items = {"farming:cocoa_beans_raw 1"}, rarity = 1}
+		{items = {"farming:cocoa_beans_raw"}, rarity = 1}
 	}
 }
 minetest.register_node("farming:cocoa_3", table.copy(def))
@@ -126,8 +126,8 @@ def.growth_check = nil
 def.drop = {
 	items = {
 		{items = {"farming:cocoa_beans_raw 2"}, rarity = 1},
-		{items = {"farming:cocoa_beans_raw 1"}, rarity = 2},
-		{items = {"farming:cocoa_beans_raw 1"}, rarity = 4}
+		{items = {"farming:cocoa_beans_raw"}, rarity = 2},
+		{items = {"farming:cocoa_beans_raw"}, rarity = 3}
 	}
 }
 minetest.register_node("farming:cocoa_4", table.copy(def))

@@ -17,7 +17,7 @@ painting.revcolors = {
 	"dark_grey", "pink", "green", "magenta", "yellow", "black", "blue"
 }
 
-if minetest.get_modpath("mcl_dye") then
+if core.get_modpath("mcl_dye") then
 	painting.hexcolors.lightblue = "00aaff"
 end
 
