@@ -11,3 +11,5 @@ stamina_sprint_speed (Extra sprint speed - 0.0 to 1.0) float 0.3
 stamina_sprint_jump (Extra sprint jump height - 0.0 to 1.0) float 0.1
 
 stamina_sprint_drain (Sprint stamina drain - 0.0 to 1.0) float 0.35
+
+stamina_fov_multiplier (Sprinting FOV effect - 0 to disable) float 0.9

@@ -1,9 +1,9 @@
 
 -- load settings
 
-local ENABLE_LARGE = minetest.settings:get_bool("mobs_sharks.enable_large") ~= false
-local ENABLE_MEDIUM = minetest.settings:get_bool("mobs_sharks.enable_medium") ~= false
-local ENABLE_SMALL = minetest.settings:get_bool("mobs_sharks.enable_small") ~= false
+local ENABLE_LARGE = core.settings:get_bool("mobs_sharks.enable_large") ~= false
+local ENABLE_MEDIUM = core.settings:get_bool("mobs_sharks.enable_medium") ~= false
+local ENABLE_SMALL = core.settings:get_bool("mobs_sharks.enable_small") ~= false
 
 -- Shark spawn examples
 

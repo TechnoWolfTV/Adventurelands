@@ -71,10 +71,11 @@ Function to enable/disable sprinting:
 TenPlus1 Additions:
 -------------------
 
- - Added support for POVA and player_monoids
+ - Added support for POVA, PlayerMonoids and PlayerPhysics
  - Added Pipeworks checks for fake players
  - Added 60 second drunk effect when foods have {alcohol=1} group (eat 4 or more)
  - Moved exhaustion and hud_id to player table instead of player attributes
  - Added 4 lucky block effects
  - Ability to drink milk from mobs or soy milk from farming to counteract poison/drunk
  - Added API
+ - Added FOV effect when sprinting, and alcohol units lowers every saturation tick

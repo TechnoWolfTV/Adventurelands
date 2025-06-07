@@ -5,9 +5,9 @@ local function setting(stype, name, default)
 	local value
 
 	if stype == "bool" then
-		value = minetest.settings:get_bool("caverealms." .. name)
+		value = core.settings:get_bool("caverealms." .. name)
 	elseif stype == "number" then
-		value = tonumber(minetest.settings:get("caverealms." .. name))
+		value = tonumber(core.settings:get("caverealms." .. name))
 	end
 
 	if value == nil then

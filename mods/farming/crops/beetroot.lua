@@ -1,14 +1,14 @@
 
-local S = minetest.get_translator("farming")
+local S = core.get_translator("farming")
 local a = farming.recipe_items
 
 -- item/seed
 
-minetest.register_craftitem("farming:beetroot", {
+core.register_craftitem("farming:beetroot", {
 	description = S("Beetroot"),
 	inventory_image = "farming_beetroot.png",
 	groups = {compostability = 48, seed = 2, food_beetroot = 1},
-	on_use = minetest.item_eat(1),
+	on_use = core.item_eat(1),
 
 	on_place = function(itemstack, placer, pointed_thing)
 		return farming.place_seed(itemstack, placer, pointed_thing, "farming:beetroot_1")
@@ -41,22 +41,22 @@ local def = {
 
 -- stage 1
 
-minetest.register_node("farming:beetroot_1", table.copy(def))
+core.register_node("farming:beetroot_1", table.copy(def))
 
 -- stage 2
 
 def.tiles = {"farming_beetroot_2.png"}
-minetest.register_node("farming:beetroot_2", table.copy(def))
+core.register_node("farming:beetroot_2", table.copy(def))
 
 -- stage 3
 
 def.tiles = {"farming_beetroot_3.png"}
-minetest.register_node("farming:beetroot_3", table.copy(def))
+core.register_node("farming:beetroot_3", table.copy(def))
 
 -- stage 4
 
 def.tiles = {"farming_beetroot_4.png"}
-minetest.register_node("farming:beetroot_4", table.copy(def))
+core.register_node("farming:beetroot_4", table.copy(def))
 
 -- stage 5 (final)
 
@@ -70,7 +70,7 @@ def.drop = {
 		{items = {"farming:beetroot"}, rarity = 3}
 	}
 }
-minetest.register_node("farming:beetroot_5", table.copy(def))
+core.register_node("farming:beetroot_5", table.copy(def))
 
 -- add to registered_plants
 
@@ -90,7 +90,7 @@ if farming.eth then
 	spawn_on = {"ethereal:prairie_dirt"}
 end
 
-minetest.register_decoration({
+core.register_decoration({
 	deco_type = "simple",
 	place_on = spawn_on,
 	sidelen = 16,

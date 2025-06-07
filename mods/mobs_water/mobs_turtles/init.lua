@@ -15,7 +15,7 @@ local l_spawn_chance = 30000
 
 -- Mineclone check
 
-local mod_mcl = minetest.get_modpath("mcl_core")
+local mod_mcl = core.get_modpath("mcl_core")
 
 -- land turtle
 
@@ -64,7 +64,7 @@ mobs:register_mob("mobs_turtles:turtle", {
 		self:set_velocity(0)
 		self:set_animation("hide")
 
-		minetest.after(5, function()
+		core.after(5, function()
 
 			if self and self.object then
 				self.state = "stand"
@@ -134,7 +134,7 @@ mobs:register_egg("mobs_turtles:seaturtle", "Sea Turtle", "default_water.png", 1
 
 -- Check for custom spawn.lua
 
-local MP = minetest.get_modpath(minetest.get_current_modname()) .. "/"
+local MP = core.get_modpath(core.get_current_modname()) .. "/"
 local input = io.open(MP .. "spawn.lua", "r")
 
 if input then

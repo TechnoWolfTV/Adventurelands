@@ -102,7 +102,8 @@ functions needed for the mob to work properly which contains the following:
    'docile_by_day'       when true has mobs wandering around during daylight
                          hours and only attacking player at night or when
                          provoked.
-   'attack_chance'       0 to 100 chance the mob will attack (default is 5).
+   'attack_chance'       0 to 100 chance the mob will attack (default is 5),
+                         set to 100 so that mob needs to be provoked to attack.
    'attack_patience'     Time in seconds before mob gives up attacking if
                          player isn't seen (Defaults to 11).
    'attack_monsters'     when true mob will attack monsters.

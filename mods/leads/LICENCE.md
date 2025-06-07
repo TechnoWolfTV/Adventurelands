@@ -4,7 +4,7 @@ Leads Licence
 Licence of Code
 ---------------
 
-Copyright © 2023‒2024, Silver Sandstone <@SilverSandstone@craftodon.social>
+Copyright © 2023-2025, Silver Sandstone <@SilverSandstone@craftodon.social>
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -93,6 +93,9 @@ Translation Credits
 -------------------
 
 - Kyoushi (German)
+- Miguel P.L (Spanish)
+- otf31 (Spanish)
+- randomei (Russian)
 
 Translation files are dedicated to the public domain via [Creative Commons Zero][CC0 1.0].
 
@@ -104,7 +107,7 @@ Translation files are dedicated to the public domain via [Creative Commons Zero]
 [Twigs snapping]:               https://freesound.org/people/giddster/sounds/437360/                        "Twigs snapping on Freesound"
 [Wooden Twangs--2.flac]:        https://freesound.org/people/D.jones/sounds/521938/                         "Wooden Twangs--2.flac on Freesound"
 
-[Silver Sandstone]:             https://content.minetest.net/users/SilverSandstone/                         "Silver Sandstone on Minetest ContentDB"
+[Silver Sandstone]:             https://content.luanti.org/users/SilverSandstone/                           "Silver Sandstone on Luanti ContentDB"
 [XSSheep]:                      https://www.planetminecraft.com/member/xssheep/                             "XSSheep on Planet Minecraft"
 [freejusticehere]:              https://www.minecraftforum.net/members/freejusticehere                      "freejusticehere on Minecraft Forum"
 [Nova_Wostra]:                  https://www.minecraftforum.net/members/Nova_Wostra                          "Nova_Wostra on Minecraft Forum"

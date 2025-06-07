@@ -23,9 +23,9 @@ local l_spawn_chance = 60000
 
 -- load settings
 
-local ENABLE_LARGE = minetest.settings:get_bool("mobs_sharks.enable_large") ~= false
-local ENABLE_MEDIUM = minetest.settings:get_bool("mobs_sharks.enable_medium") ~= false
-local ENABLE_SMALL = minetest.settings:get_bool("mobs_sharks.enable_small") ~= false
+local ENABLE_LARGE = core.settings:get_bool("mobs_sharks.enable_large") ~= false
+local ENABLE_MEDIUM = core.settings:get_bool("mobs_sharks.enable_medium") ~= false
+local ENABLE_SMALL = core.settings:get_bool("mobs_sharks.enable_small") ~= false
 
 if not ENABLE_LARGE then
 	l_spawn_chance = l_spawn_chance - 20000
@@ -41,7 +41,7 @@ end
 
 -- Mineclone check
 
-local mod_mcl = minetest.get_modpath("mcl_core")
+local mod_mcl = core.get_modpath("mcl_core")
 
 -- large
 
@@ -186,7 +186,7 @@ end
 
 -- Check for custom spawn.lua
 
-local MP = minetest.get_modpath(minetest.get_current_modname()) .. "/"
+local MP = core.get_modpath(core.get_current_modname()) .. "/"
 local input = io.open(MP .. "spawn.lua", "r")
 
 if input then

@@ -1,9 +1,9 @@
 
 -- load settings
 
-local ENABLE_GULLS = minetest.settings:get_bool("mobs_birds.enable_gulls") ~= false
-local ENABLE_LARGE = minetest.settings:get_bool("mobs_birds.enable_large_birds") ~= false
-local ENABLE_SMALL = minetest.settings:get_bool("mobs_birds.enable_small_birds") ~= false
+local ENABLE_GULLS = core.settings:get_bool("mobs_birds.enable_gulls") ~= false
+local ENABLE_LARGE = core.settings:get_bool("mobs_birds.enable_large_birds") ~= false
+local ENABLE_SMALL = core.settings:get_bool("mobs_birds.enable_small_birds") ~= false
 
 -- Custom spawn examples
 

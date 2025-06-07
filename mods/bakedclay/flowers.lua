@@ -1,7 +1,7 @@
 
 -- translation support
 
-local S = minetest.get_translator("bakedclay")
+local S = core.get_translator("bakedclay")
 
 -- new flowers
 
@@ -28,7 +28,7 @@ local function add_simple_flower(name, desc, box, f_groups)
 	f_groups.flora = 1
 	f_groups.attached_node = 1
 
-	minetest.register_node("bakedclay:" .. name, {
+	core.register_node("bakedclay:" .. name, {
 		description = desc,
 		drawtype = "plantlike",
 		waving = 1,
@@ -53,7 +53,7 @@ end
 
 -- add new flowers to mapgen
 
-minetest.register_decoration({
+core.register_decoration({
 	deco_type = "simple",
 	place_on = {"default:dirt_with_grass"},
 	sidelen = 16,
@@ -65,12 +65,11 @@ minetest.register_decoration({
 		octaves = 3,
 		persist = 0.6
 	},
-	y_min = 10,
-	y_max = 90,
+	y_min = 10, y_max = 90,
 	decoration = "bakedclay:delphinium"
 })
 
-minetest.register_decoration({
+core.register_decoration({
 	deco_type = "simple",
 	place_on = {"default:dirt_with_grass", "default:dirt_with_dry_grass"},
 	sidelen = 16,
@@ -82,12 +81,11 @@ minetest.register_decoration({
 		octaves = 3,
 		persist = 0.6
 	},
-	y_min = 15,
-	y_max = 90,
+	y_min = 15, y_max = 90,
 	decoration = "bakedclay:thistle"
 })
 
-minetest.register_decoration({
+core.register_decoration({
 	deco_type = "simple",
 	place_on = {"default:dirt_with_grass", "default:dirt_with_rainforest_litter"},
 	sidelen = 16,
@@ -99,14 +97,12 @@ minetest.register_decoration({
 		octaves = 3,
 		persist = 0.6
 	},
-	y_min = 1,
-	y_max = 90,
+	y_min = 1, y_max = 90,
 	decoration = "bakedclay:lazarus",
-	spawn_by = "default:jungletree",
-	num_spawn_by = 1
+	spawn_by = "default:jungletree", num_spawn_by = 1
 })
 
-minetest.register_decoration({
+core.register_decoration({
 	deco_type = "simple",
 	place_on = {"default:dirt_with_grass", "default:sand"},
 	sidelen = 16,
@@ -118,16 +114,14 @@ minetest.register_decoration({
 		octaves = 3,
 		persist = 0.6
 	},
-	y_min = 1,
-	y_max = 15,
+	y_min = 1, y_max = 15,
 	decoration = "bakedclay:mannagrass",
-	spawn_by = "group:water",
-	num_spawn_by = 1
+	spawn_by = "group:water", num_spawn_by = 1
 })
 
 -- flowerpot mod support
 
-if minetest.get_modpath("flowerpot") then
+if core.get_modpath("flowerpot") then
 	flowerpot.register_node("bakedclay:delphinium")
 	flowerpot.register_node("bakedclay:thistle")
 	flowerpot.register_node("bakedclay:lazarus")

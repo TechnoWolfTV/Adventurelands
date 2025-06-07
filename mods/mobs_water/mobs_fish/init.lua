@@ -4,7 +4,7 @@ local SPRITE_VERSION = false -- set to true to use upright sprites instead of me
 -- local variables
 
 local l_spawn_chance = 10000
-local l_water_level = minetest.settings:get("water_level") - 1
+local l_water_level = core.settings:get("water_level") - 1
 local l_visual = "mesh"
 local l_visual_size = {x = .75, y = .75}
 local l_clown_mesh = "animal_clownfish.b3d"
@@ -29,7 +29,7 @@ if SPRITE_VERSION then
 end
 
 -- Mineclone check
-local mod_mcl = minetest.get_modpath("mcl_core")
+local mod_mcl = core.get_modpath("mcl_core")
 
 -- Clownfish
 
@@ -149,7 +149,7 @@ mobs:register_egg("mobs_fish:tropical", "Tropical fish",
 
 -- Check for custom spawn.lua
 
-local MP = minetest.get_modpath(minetest.get_current_modname()) .. "/"
+local MP = core.get_modpath(core.get_current_modname()) .. "/"
 local input = io.open(MP .. "spawn.lua", "r")
 
 if input then
@@ -190,12 +190,12 @@ end
 
 local function add_food_group(item)
 
-	local def = minetest.registered_items[item]
+	local def = core.registered_items[item]
 	local grp = table.copy(def.groups)
 
 	grp.food_fish_raw = 1
 
-	minetest.override_item(item, {groups = grp})
+	core.override_item(item, {groups = grp})
 end
 
 add_food_group("mobs_fish:tropical")

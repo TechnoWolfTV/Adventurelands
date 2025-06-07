@@ -6,9 +6,9 @@ local l_spawn_chance_bird = 36000
 
 -- load settings
 
-local ENABLE_GULLS = minetest.settings:get_bool("mobs_birds.enable_gulls") ~= false
-local ENABLE_LARGE = minetest.settings:get_bool("mobs_birds.enable_large_birds") ~= false
-local ENABLE_SMALL = minetest.settings:get_bool("mobs_birds.enable_small_birds") ~= false
+local ENABLE_GULLS = core.settings:get_bool("mobs_birds.enable_gulls") ~= false
+local ENABLE_LARGE = core.settings:get_bool("mobs_birds.enable_large_birds") ~= false
+local ENABLE_SMALL = core.settings:get_bool("mobs_birds.enable_small_birds") ~= false
 
 if not ENABLE_LARGE then
 	l_spawn_chance_bird = l_spawn_chance_bird - 18000
@@ -20,7 +20,7 @@ end
 
 -- Mineclone check
 
-local mod_mcl = minetest.get_modpath("mcl_core")
+local mod_mcl = core.get_modpath("mcl_core")
 
 -- gulls
 
@@ -166,13 +166,13 @@ end
 
 -- Check for custom spawn.lua
 
-local MP = minetest.get_modpath(minetest.get_current_modname()) .. "/"
+local MP = core.get_modpath(core.get_current_modname()) .. "/"
 local input = io.open(MP .. "spawn.lua", "r")
 
 if input then
 	input:close() ; input = nil ; dofile(MP .. "spawn.lua")
 else
-	if ENABLE_GULL then
+	if ENABLE_GULLS then
 
 		mobs:spawn({
 			name = "mobs_birds:gull",

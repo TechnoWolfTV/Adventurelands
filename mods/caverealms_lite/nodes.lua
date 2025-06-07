@@ -1,5 +1,5 @@
 --glowing crystal
-minetest.register_node("caverealms:glow_crystal", {
+core.register_node("caverealms:glow_crystal", {
 	description = "Glow Sapphire",
 	tiles = {"caverealms_glow_crystal.png"},
 	is_ground_content = true,
@@ -13,7 +13,7 @@ minetest.register_node("caverealms:glow_crystal", {
 })
 
 --glowing emerald
-minetest.register_node("caverealms:glow_emerald", {
+core.register_node("caverealms:glow_emerald", {
 	description = "Glow Emerald",
 	tiles = {"caverealms_glow_emerald.png"},
 	is_ground_content = true,
@@ -27,7 +27,7 @@ minetest.register_node("caverealms:glow_emerald", {
 })
 
 --glowing mese crystal blocks
-minetest.register_node("caverealms:glow_mese", {
+core.register_node("caverealms:glow_mese", {
 	description = "Glow Mese Crystal",
 	tiles = {"caverealms_glow_mese.png"},
 	is_ground_content = true,
@@ -41,7 +41,7 @@ minetest.register_node("caverealms:glow_mese", {
 })
 
 --glowing ruby
-minetest.register_node("caverealms:glow_ruby", {
+core.register_node("caverealms:glow_ruby", {
 	description = "Glow Ruby",
 	tiles = {"caverealms_glow_ruby.png"},
 	is_ground_content = true,
@@ -55,7 +55,7 @@ minetest.register_node("caverealms:glow_ruby", {
 })
 
 --glowing amethyst
-minetest.register_node("caverealms:glow_amethyst", {
+core.register_node("caverealms:glow_amethyst", {
 	description = "Glow Amethyst",
 	tiles = {"caverealms_glow_amethyst.png"},
 	is_ground_content = true,
@@ -69,7 +69,7 @@ minetest.register_node("caverealms:glow_amethyst", {
 })
 
 --embedded crystal
-minetest.register_node("caverealms:glow_ore", {
+core.register_node("caverealms:glow_ore", {
 	description = "Glow Crystal Ore",
 	tiles = {"caverealms_glow_ore.png"},
 	is_ground_content = true,
@@ -80,7 +80,7 @@ minetest.register_node("caverealms:glow_ore", {
 })
 
 --embedded emerald
-minetest.register_node("caverealms:glow_emerald_ore", {
+core.register_node("caverealms:glow_emerald_ore", {
 	description = "Glow Emerald Ore",
 	tiles = {"caverealms_glow_emerald_ore.png"},
 	is_ground_content = true,
@@ -91,7 +91,7 @@ minetest.register_node("caverealms:glow_emerald_ore", {
 })
 
 --embedded ruby
-minetest.register_node("caverealms:glow_ruby_ore", {
+core.register_node("caverealms:glow_ruby_ore", {
 	description = "Glow Ruby Ore",
 	tiles = {"caverealms_glow_ruby_ore.png"},
 	is_ground_content = true,
@@ -102,7 +102,7 @@ minetest.register_node("caverealms:glow_ruby_ore", {
 })
 
 --embedded amethyst
-minetest.register_node("caverealms:glow_amethyst_ore", {
+core.register_node("caverealms:glow_amethyst_ore", {
 	description = "Glow Amethyst Ore",
 	tiles = {"caverealms_glow_amethyst_ore.png"},
 	is_ground_content = true,
@@ -113,7 +113,7 @@ minetest.register_node("caverealms:glow_amethyst_ore", {
 })
 
 --thin (transparent) ice
-minetest.register_node("caverealms:thin_ice", {
+core.register_node("caverealms:thin_ice", {
 	description = "Thin Ice",
 	tiles = {"caverealms_thin_ice.png"},
 	is_ground_content = true,
@@ -126,7 +126,7 @@ minetest.register_node("caverealms:thin_ice", {
 })
 
 --salt crystal
-minetest.register_node("caverealms:salt_crystal", {
+core.register_node("caverealms:salt_crystal", {
 	description = "Salt Crystal",
 	tiles = {"caverealms_salt_crystal.png"},
 	is_ground_content = true,
@@ -140,7 +140,7 @@ minetest.register_node("caverealms:salt_crystal", {
 })
 
 --glowing crystal gem
-minetest.register_node("caverealms:glow_gem", {
+core.register_node("caverealms:glow_gem", {
 	description = "Glow Gem",
 	tiles = {"caverealms_glow_gem.png"},
 	inventory_image = "caverealms_glow_gem.png",
@@ -161,7 +161,7 @@ minetest.register_node("caverealms:glow_gem", {
 })
 
 --glowing salt gem
-minetest.register_node("caverealms:salt_gem", {
+core.register_node("caverealms:salt_gem", {
 	description = "Salt Gem",
 	tiles = {"caverealms_salt_gem.png"},
 	inventory_image = "caverealms_salt_gem.png",
@@ -182,7 +182,7 @@ minetest.register_node("caverealms:salt_gem", {
 })
 
 --stone spike
-minetest.register_node("caverealms:spike", {
+core.register_node("caverealms:spike", {
 	description = "Stone Spike",
 	tiles = {"caverealms_spike.png"},
 	inventory_image = "caverealms_spike.png",
@@ -203,7 +203,7 @@ minetest.register_node("caverealms:spike", {
 })
 
 --upward pointing icicle
-minetest.register_node("caverealms:icicle_up", {
+core.register_node("caverealms:icicle_up", {
 	description = "Icicle",
 	tiles = {"caverealms_icicle_up.png"},
 	inventory_image = "caverealms_icicle_up.png",
@@ -224,7 +224,7 @@ minetest.register_node("caverealms:icicle_up", {
 })
 
 --downward pointing icicle
-minetest.register_node("caverealms:icicle_down", {
+core.register_node("caverealms:icicle_down", {
 	description = "Icicle",
 	tiles = {"caverealms_icicle_down.png"},
 	inventory_image = "caverealms_icicle_down.png",
@@ -245,7 +245,7 @@ minetest.register_node("caverealms:icicle_down", {
 })
 
 --cave mossy cobble - bluish?
-minetest.register_node("caverealms:stone_with_moss", {
+core.register_node("caverealms:stone_with_moss", {
 	description = "Cave Stone with Moss",
 	tiles = {
 		"default_cobble.png^caverealms_moss.png", "default_cobble.png",
@@ -259,7 +259,7 @@ minetest.register_node("caverealms:stone_with_moss", {
 })
 
 --cave lichen-covered cobble - purple-ish
-minetest.register_node("caverealms:stone_with_lichen", {
+core.register_node("caverealms:stone_with_lichen", {
 	description = "Cave Stone with Lichen",
 	tiles = {
 		"default_cobble.png^caverealms_lichen.png", "default_cobble.png",
@@ -273,7 +273,7 @@ minetest.register_node("caverealms:stone_with_lichen", {
 })
 
 --cave algae-covered cobble - yellow-ish
-minetest.register_node("caverealms:stone_with_algae", {
+core.register_node("caverealms:stone_with_algae", {
 	description = "Cave Stone with Algae",
 	tiles = {
 		"default_cobble.png^caverealms_algae.png", "default_cobble.png",
@@ -287,7 +287,7 @@ minetest.register_node("caverealms:stone_with_algae", {
 })
 
 --tiny-salt-crystal-covered cobble - pink-ish
-minetest.register_node("caverealms:stone_with_salt", {
+core.register_node("caverealms:stone_with_salt", {
 	description = "Salt Crystal",
 	tiles = {"caverealms_salty2.png"},
 	light_source = 9,
@@ -301,7 +301,7 @@ minetest.register_node("caverealms:stone_with_salt", {
 })
 
 --Hot Cobble - cobble with lava instead of mortar XD
-minetest.register_node("caverealms:hot_cobble", {
+core.register_node("caverealms:hot_cobble", {
 	description = "Hot Cobble",
 	tiles = {"caverealms_hot_cobble.png"},
 	is_ground_content = true,
@@ -312,7 +312,7 @@ minetest.register_node("caverealms:hot_cobble", {
 })
 
 --Glow Obsidian
-minetest.register_node("caverealms:glow_obsidian", {
+core.register_node("caverealms:glow_obsidian", {
 	description = "Hot Glowing Obsidian",
 	tiles = {"caverealms_glow_obsidian.png"},
 	is_ground_content = true,
@@ -323,7 +323,7 @@ minetest.register_node("caverealms:glow_obsidian", {
 })
 
 --Glow Obsidian 2 - has traces of lava
-minetest.register_node("caverealms:glow_obsidian_2", {
+core.register_node("caverealms:glow_obsidian_2", {
 	description = "Hot Glow Obsidian",
 	tiles = {"caverealms_glow_obsidian2.png"},
 	is_ground_content = true,
@@ -335,7 +335,7 @@ minetest.register_node("caverealms:glow_obsidian_2", {
 })
 
 --Glow Obsidian Bricks
-minetest.register_node("caverealms:glow_obsidian_brick", {
+core.register_node("caverealms:glow_obsidian_brick", {
 	description = "Glow Obsidian Brick",
 	tiles = {"caverealms_glow_obsidian_brick.png"},
 	light_source = 7,
@@ -343,7 +343,7 @@ minetest.register_node("caverealms:glow_obsidian_brick", {
 	sounds = default.node_sound_stone_defaults()
 })
 
-minetest.register_node("caverealms:glow_obsidian_brick_2", {
+core.register_node("caverealms:glow_obsidian_brick_2", {
 	description = "Glow Obsidian Brick",
 	tiles = {"caverealms_glow_obsidian_brick_2.png"},
 	light_source = 9,
@@ -352,7 +352,7 @@ minetest.register_node("caverealms:glow_obsidian_brick_2", {
 })
 
 --Glow Obsidian Glass
-minetest.register_node("caverealms:glow_obsidian_glass", {
+core.register_node("caverealms:glow_obsidian_glass", {
 	description = "Glow Obsidian Glass",
 	drawtype = "glasslike_framed_optional",
 	tiles = {
@@ -368,7 +368,7 @@ minetest.register_node("caverealms:glow_obsidian_glass", {
 })
 
 --Coal Dust
-minetest.register_node("caverealms:coal_dust", {
+core.register_node("caverealms:coal_dust", {
 	description = "Coal Dust",
 	tiles = {"caverealms_coal_dust.png"},
 	is_ground_content = true,
@@ -377,7 +377,7 @@ minetest.register_node("caverealms:coal_dust", {
 })
 
 --glow worms
-minetest.register_node("caverealms:glow_worm", {
+core.register_node("caverealms:glow_worm", {
 	description = "Blue Glow Worms",
 	tiles = {"caverealms_glow_worm.png"},
 	inventory_image = "caverealms_glow_worm.png",
@@ -395,7 +395,7 @@ minetest.register_node("caverealms:glow_worm", {
 	}
 })
 
-minetest.register_node("caverealms:glow_worm_green", {
+core.register_node("caverealms:glow_worm_green", {
 	description = "Green Glow Worms",
 	tiles = {"caverealms_glow_worm_green.png"},
 	inventory_image = "caverealms_glow_worm_green.png",
@@ -414,7 +414,7 @@ minetest.register_node("caverealms:glow_worm_green", {
 	}
 })
 
-minetest.register_node("caverealms:fire_vine", {
+core.register_node("caverealms:fire_vine", {
 	description = "Fire Vine",
 	tiles = {"caverealms_fire_vine.png"},
 	inventory_image = "caverealms_fire_vine.png",
@@ -435,10 +435,10 @@ minetest.register_node("caverealms:fire_vine", {
 })
 
 --define special flame so that it does not expire
-if minetest.get_modpath("fire") then
-	minetest.register_alias("caverealms:constant_flame", "fire:permanent_flame")
+if core.get_modpath("fire") then
+	core.register_alias("caverealms:constant_flame", "fire:permanent_flame")
 else
-	minetest.register_node("caverealms:constant_flame", {
+	core.register_node("caverealms:constant_flame", {
 		description = "Fire",
 		drawtype = "plantlike",
 		tiles = {{
@@ -457,7 +457,7 @@ else
 end
 
 --dungeon master statue (nodebox)
-minetest.register_node("caverealms:dm_statue", {
+core.register_node("caverealms:dm_statue", {
 	description = "Dungeon Master Statue",
 	tiles = {
 		"caverealms_dm_stone.png",
@@ -488,19 +488,19 @@ minetest.register_node("caverealms:dm_statue", {
 })
 
 -- Compatibility
-minetest.register_alias("caverealms:hanging_thin_ice", "caverealms:thin_ice")
+core.register_alias("caverealms:hanging_thin_ice", "caverealms:thin_ice")
 
-minetest.register_alias("caverealms:spike_2", "caverealms:spike")
-minetest.register_alias("caverealms:spike_3", "caverealms:spike")
-minetest.register_alias("caverealms:spike_4", "caverealms:spike")
-minetest.register_alias("caverealms:spike_5", "caverealms:spike")
+core.register_alias("caverealms:spike_2", "caverealms:spike")
+core.register_alias("caverealms:spike_3", "caverealms:spike")
+core.register_alias("caverealms:spike_4", "caverealms:spike")
+core.register_alias("caverealms:spike_5", "caverealms:spike")
 
-minetest.register_alias("caverealms:salt_gem_2", "caverealms:salt_gem")
-minetest.register_alias("caverealms:salt_gem_3", "caverealms:salt_gem")
-minetest.register_alias("caverealms:salt_gem_4", "caverealms:salt_gem")
-minetest.register_alias("caverealms:salt_gem_5", "caverealms:salt_gem")
+core.register_alias("caverealms:salt_gem_2", "caverealms:salt_gem")
+core.register_alias("caverealms:salt_gem_3", "caverealms:salt_gem")
+core.register_alias("caverealms:salt_gem_4", "caverealms:salt_gem")
+core.register_alias("caverealms:salt_gem_5", "caverealms:salt_gem")
 
-minetest.register_alias("caverealms:glow_gem_2", "caverealms:glow_gem")
-minetest.register_alias("caverealms:glow_gem_3", "caverealms:glow_gem")
-minetest.register_alias("caverealms:glow_gem_4", "caverealms:glow_gem")
-minetest.register_alias("caverealms:glow_gem_5", "caverealms:glow_gem")
+core.register_alias("caverealms:glow_gem_2", "caverealms:glow_gem")
+core.register_alias("caverealms:glow_gem_3", "caverealms:glow_gem")
+core.register_alias("caverealms:glow_gem_4", "caverealms:glow_gem")
+core.register_alias("caverealms:glow_gem_5", "caverealms:glow_gem")

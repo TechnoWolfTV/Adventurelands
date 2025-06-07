@@ -1,6 +1,6 @@
 --[[
-    Leads — Adds leads for transporting animals to Minetest.
-    Copyright © 2023‒2024, Silver Sandstone <@SilverSandstone@craftodon.social>
+    Leads — Adds leads for transporting animals to Luanti.
+    Copyright © 2023-2025, Silver Sandstone <@SilverSandstone@craftodon.social>
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),
@@ -29,12 +29,12 @@
 leads = {};
 
 
-leads.S = minetest.get_translator('leads');
+leads.S = core.get_translator('leads');
 
 leads.DEFAULT_LEAD_TEXTURE = 'leads_lead.png';
 
 
-local modpath = minetest.get_modpath(minetest.get_current_modname());
+local modpath = core.get_modpath(core.get_current_modname());
 dofile(modpath .. '/util.lua');
 dofile(modpath .. '/api.lua');
 dofile(modpath .. '/settings.lua');

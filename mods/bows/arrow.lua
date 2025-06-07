@@ -5,7 +5,7 @@ local math_random = math.random
 
 local function on_hit_remove(self)
 
-	minetest.sound_play(
+	core.sound_play(
 		bows.registered_arrows[self.name].on_hit_sound, {
 			pos = self.object:get_pos(),
 			gain = 1.0,
@@ -13,14 +13,14 @@ local function on_hit_remove(self)
 		}, true)
 
 	-- chance of dropping arrow
-	local chance = minetest.registered_items[self.name].drop_chance or 10
+	local chance = core.registered_items[self.name].drop_chance or 10
 	local pos = self.object:get_pos()
 
 	if pos and math_random(chance) == 1 then
 
 		pos.y = pos.y + 0.5
 
-		minetest.add_item(pos, self.name)
+		core.add_item(pos, self.name)
 	end
 
 	self.object:remove()
@@ -50,7 +50,7 @@ end
 
 -- arrow entity
 
-minetest.register_entity("bows:arrow",{
+core.register_entity("bows:arrow",{
 
 	initial_properties = {
 		hp_max = 10,
@@ -94,7 +94,7 @@ minetest.register_entity("bows:arrow",{
 		end
 
 		local pos = self.object:get_pos() ; self.oldpos = self.oldpos or pos
-		local cast = minetest.raycast(self.oldpos, pos, true, true)
+		local cast = core.raycast(self.oldpos, pos, true, true)
 		local thing = cast:next()
 		local ok = true
 
@@ -129,9 +129,9 @@ minetest.register_entity("bows:arrow",{
 			-- are we inside a node ?
 			elseif thing.type == "node" then
 
-				self.node = minetest.get_node(pos)
+				self.node = core.get_node(pos)
 
-				local def = minetest.registered_nodes[self.node.name]
+				local def = core.registered_nodes[self.node.name]
 
 				if def and def.walkable then
 

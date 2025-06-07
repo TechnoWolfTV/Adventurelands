@@ -1,7 +1,7 @@
 -- Lichen biome
 
 --glowing fungi
-minetest.register_node("caverealms:fungus", {
+core.register_node("caverealms:fungus", {
 	description = "Glowing Fungus",
 	tiles = {"caverealms_fungi.png"},
 	inventory_image = "caverealms_fungi.png",
@@ -21,7 +21,7 @@ minetest.register_node("caverealms:fungus", {
 })
 
 --mycena mushroom
-minetest.register_node("caverealms:mycena", {
+core.register_node("caverealms:mycena", {
 	description = "Mycena Mushroom",
 	tiles = {"caverealms_mycena.png"},
 	inventory_image = "caverealms_mycena.png",
@@ -41,12 +41,12 @@ minetest.register_node("caverealms:mycena", {
 })
 
 --giant mushroom
-if minetest.get_modpath("ethereal") then
-	minetest.register_alias("caverealms:mushroom_cap", "ethereal:mushroom")
-	minetest.register_alias("caverealms:mushroom_stem", "ethereal:mushroom_trunk")
+if core.get_modpath("ethereal") then
+	core.register_alias("caverealms:mushroom_cap", "ethereal:mushroom")
+	core.register_alias("caverealms:mushroom_stem", "ethereal:mushroom_trunk")
 else
 	--stem
-	minetest.register_node("caverealms:mushroom_stem", {
+	core.register_node("caverealms:mushroom_stem", {
 		description = "Giant Mushroom Stem",
 		tiles = {"caverealms_mushroom_stem.png"},
 		is_ground_content = true,
@@ -54,7 +54,7 @@ else
 	})
 
 	--cap
-	minetest.register_node("caverealms:mushroom_cap", {
+	core.register_node("caverealms:mushroom_cap", {
 		description = "Giant Mushroom Cap",
 		tiles = {"caverealms_mushroom_cap.png"},
 		is_ground_content = true,
@@ -70,7 +70,7 @@ else
 end
 
 --gills
-minetest.register_node("caverealms:mushroom_gills", {
+core.register_node("caverealms:mushroom_gills", {
 	description = "Giant Mushroom Gills",
 	tiles = {"caverealms_mushroom_gills.png"},
 	is_ground_content = true,
@@ -81,7 +81,7 @@ minetest.register_node("caverealms:mushroom_gills", {
 })
 
 -- add caverealms mushroom sapling
-minetest.register_node("caverealms:mushroom_sapling", {
+core.register_node("caverealms:mushroom_sapling", {
 	description = "Mushroom Sapling",
 	drawtype = "plantlike",
 	tiles = {"caverealms_mushroom_sapling.png"},
@@ -109,13 +109,13 @@ local add_tree = function (pos, ofx, ofy, ofz, schem)
 	end
 
 	-- remove sapling and place schematic
-	minetest.swap_node(pos, {name = "air"})
-	minetest.place_schematic(
+	core.swap_node(pos, {name = "air"})
+	core.place_schematic(
 		{x = pos.x - ofx, y = pos.y - ofy, z = pos.z - ofz}, schem, 0, nil, false)
 end
 
 
-local path = minetest.get_modpath("caverealms") .. "/schematics/"
+local path = core.get_modpath("caverealms") .. "/schematics/"
 
 -- grow tree function
 local function grow_caverealms_mushroom(pos)
@@ -126,7 +126,7 @@ end
 -- height check
 local function enough_height(pos, height)
 
-	local nod = minetest.line_of_sight(
+	local nod = core.line_of_sight(
 		{x = pos.x, y = pos.y + 1, z = pos.z},
 		{x = pos.x, y = pos.y + height, z = pos.z})
 
@@ -139,7 +139,7 @@ end
 
 
 -- Grow saplings
-minetest.register_abm({
+core.register_abm({
 	label = "Caverealms grow sapling",
 	nodenames = {"ethereal:mushroom_sapling", "caverealms:mushroom_sapling"},
 	interval = 10,
@@ -147,7 +147,7 @@ minetest.register_abm({
 	catch_up = false,
 	action = function(pos, node)
 
-		local light_level = minetest.get_node_light(pos)
+		local light_level = core.get_node_light(pos)
 
 		-- light has to be between 3 and 10
 		if not light_level or light_level < 3 or light_level > 10 then
@@ -155,11 +155,11 @@ minetest.register_abm({
 		end
 
 		-- get node under sapling
-		local under =  minetest.get_node(
+		local under =  core.get_node(
 				{x = pos.x, y = pos.y - 1, z = pos.z}).name
 
 		-- is it registered?
-		if not minetest.registered_nodes[node.name] then
+		if not core.registered_nodes[node.name] then
 			return
 		end
 
@@ -181,7 +181,7 @@ minetest.register_abm({
 })
 
 -- spread moss/lichen/algae to nearby cobblestone
-minetest.register_abm({
+core.register_abm({
 	label = "Caverealms stone spread",
 	nodenames = {
 		"caverealms:stone_with_moss",
@@ -194,10 +194,10 @@ minetest.register_abm({
 	catch_up = false,
 	action = function(pos, node)
 
-		local p = minetest.find_node_near(pos, 1, "default:cobble")
+		local p = core.find_node_near(pos, 1, "default:cobble")
 
 		if p then
-			minetest.set_node(p, {name = node.name})
+			core.set_node(p, {name = node.name})
 		end
 	end
 })

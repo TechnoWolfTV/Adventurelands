@@ -1,5 +1,5 @@
 
-local S = minetest.get_translator("bows")
+local S = core.get_translator("bows")
 
 -- custom lb function
 
@@ -12,13 +12,13 @@ local function arrow_to_knee(pos, player)
 		damage_groups = {fleshy = 6}
 	}, nil)
 
-	minetest.sound_play("player_damage",
+	core.sound_play("player_damage",
 			{pos = ppos, gain = 1.0, max_hear_distance = 10}, true)
 
-	minetest.chat_send_player(player:get_player_name(),
+	core.chat_send_player(player:get_player_name(),
 			lucky_block.green .. S("You took an arrow to the knee!"))
 
-	minetest.add_item(ppos, "bows:arrow_steel")
+	core.add_item(ppos, "bows:arrow_steel")
 end
 
 -- add lucky blocks

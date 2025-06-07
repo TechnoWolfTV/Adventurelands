@@ -1,13 +1,13 @@
 
-local S = minetest.get_translator("farming")
+local S = core.get_translator("farming")
 
 -- item/seed
 
-minetest.register_craftitem("farming:asparagus", {
+core.register_craftitem("farming:asparagus", {
 	description = S("Asparagus"),
 	inventory_image = "farming_asparagus.png",
 	groups = {compostability = 48, seed = 2, food_asparagus = 1},
-	on_use = minetest.item_eat(1),
+	on_use = core.item_eat(1),
 
 	on_place = function(itemstack, placer, pointed_thing)
 		return farming.place_seed(itemstack, placer, pointed_thing, "farming:asparagus_1")
@@ -42,17 +42,17 @@ local def = {
 
 -- stage 1
 
-minetest.register_node("farming:asparagus_1", table.copy(def))
+core.register_node("farming:asparagus_1", table.copy(def))
 
 -- stage 2
 
 def.tiles = {"farming_asparagus_2.png"}
-minetest.register_node("farming:asparagus_2", table.copy(def))
+core.register_node("farming:asparagus_2", table.copy(def))
 
 -- stage 3
 
 def.tiles = {"farming_asparagus_3.png"}
-minetest.register_node("farming:asparagus_3", table.copy(def))
+core.register_node("farming:asparagus_3", table.copy(def))
 
 -- stage 4
 
@@ -62,7 +62,7 @@ def.drop = {
 		{items = {"farming:asparagus"}, rarity = 1}
 	}
 }
-minetest.register_node("farming:asparagus_4", table.copy(def))
+core.register_node("farming:asparagus_4", table.copy(def))
 
 -- stage 5 (final)
 
@@ -75,7 +75,7 @@ def.drop = {
 		{items = {"farming:asparagus"}, rarity = 2}
 	}
 }
-minetest.register_node("farming:asparagus_5", table.copy(def))
+core.register_node("farming:asparagus_5", table.copy(def))
 
 -- add to registered_plants
 
@@ -89,7 +89,7 @@ farming.registered_plants["farming:asparagus"] = {
 
 -- mapgen
 
-minetest.register_decoration({
+core.register_decoration({
 	name = "farming:asparagus_5",
 	deco_type = "simple",
 	place_on = {"default:dirt_with_grass", "mcl_core:dirt_with_grass"},

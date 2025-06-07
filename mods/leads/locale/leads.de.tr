@@ -2,16 +2,16 @@
 
 # textdomain: leads
 
-##[ api.lua:101 ]##
+##[ api.lua:113 ]##
 You cannot leash something to itself.=Du kannst nichts an sich selbst anbinden.
 
-##[ api.lua:118 ]##
+##[ api.lua:130 ]##
 Failed to create lead.=Konnte die Leine nicht erzeugen.
 
-##[ api.lua:403 ]##
+##[ api.lua:427 ]##
 You cannot leash this.=Das kannst Du nicht anbinden.
 
-##[ api.lua:409 ]##
+##[ api.lua:433 ]##
 You do not own this.=Das gehört Dir nicht.
 
 ##[ items.lua:34 ]##

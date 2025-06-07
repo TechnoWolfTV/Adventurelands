@@ -1,7 +1,7 @@
 
 -- mineclone check
 
-local mod_mcl = minetest.get_modpath("mcl_core")
+local mod_mcl = core.get_modpath("mcl_core")
 
 -- jellyfish definition
 
@@ -39,7 +39,7 @@ mobs:register_mob("mobs_jellyfish:jellyfish", {
 
 -- Check for custom spawn.lua
 
-local MP = minetest.get_modpath(minetest.get_current_modname()) .. "/"
+local MP = core.get_modpath(core.get_current_modname()) .. "/"
 local input = io.open(MP .. "spawn.lua", "r")
 
 if input then
@@ -62,7 +62,7 @@ mobs:register_egg("mobs_jellyfish:jellyfish", "Jellyfish", "jellyfish_inv.png", 
 
 -- compatibility
 
-minetest.register_alias("mobs_jellyfish:jellyfish_set", "mobs_jellyfish:jellyfish")
+core.register_alias("mobs_jellyfish:jellyfish_set", "mobs_jellyfish:jellyfish")
 
 
 print("[MOD] Mobs Redo Jellyfish loaded")

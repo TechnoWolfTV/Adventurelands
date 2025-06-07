@@ -1,7 +1,7 @@
 
 -- Translation support & localize math functions
 
-local S = minetest.get_translator("stamina")
+local S = core.get_translator("stamina")
 local math_max, math_min = math.max, math.min
 local math_floor, math_random = math.floor, math.random
 
@@ -16,7 +16,7 @@ end
 stamina = {
 	players = {}, mod = "redo",
 	-- time in seconds after that 1 stamina point is taken
-	TICK = tonumber(minetest.settings:get("stamina_tick")) or 800,
+	TICK = tonumber(core.settings:get("stamina_tick")) or 800,
 	-- stamina ticks won't reduce stamina below this level
 	TICK_MIN = 4,
 	-- time in seconds after player gets healed/damaged
@@ -51,22 +51,24 @@ stamina = {
 	VISUAL_MAX = 20,
 	-- how much faster players can run if satiated.
 	SPRINT_SPEED = clamp(tonumber(
-			minetest.settings:get("stamina_sprint_speed")) or 0.5, 0.0, 1.0),
+			core.settings:get("stamina_sprint_speed")) or 0.5, 0.0, 1.0),
 	-- how much higher player can jump if satiated
 	SPRINT_JUMP  = clamp(tonumber(
-			minetest.settings:get("stamina_sprint_jump")) or 0.1, 0.0, 1.0),
+			core.settings:get("stamina_sprint_jump")) or 0.1, 0.0, 1.0),
 	-- how fast to drain satation while sprinting (0-1)
 	SPRINT_DRAIN  = clamp(tonumber(
-			minetest.settings:get("stamina_sprint_drain")) or 0.35, 0.0, 1.0),
-	enable_sprint = minetest.settings:get_bool("sprint") ~= false,
-	enable_sprint_particles = minetest.settings:get_bool("sprint_particles") ~= false
+			core.settings:get("stamina_sprint_drain")) or 0.35, 0.0, 1.0),
+	enable_sprint = core.settings:get_bool("sprint") ~= false,
+	enable_sprint_particles = core.settings:get_bool("sprint_particles") ~= false,
+	-- fov
+	fov_change = tonumber(minetest.settings:get("stamina_fov_multiplier") or 0.9)
 }
 
 -- are we a real player ?
 
 local function is_player(player)
 
-	if player and type(player) == "userdata" and minetest.is_player(player) then
+	if player and type(player) == "userdata" and core.is_player(player) then
 		return true
 	end
 end
@@ -88,8 +90,8 @@ end
 
 -- is player stamina & damage enabled
 
-local stamina_enabled = minetest.settings:get_bool("enable_stamina") ~= false
-local damage_enabled = minetest.settings:get_bool("enable_damage")
+local stamina_enabled = core.settings:get_bool("enable_stamina") ~= false
+local damage_enabled = core.settings:get_bool("enable_damage")
 
 -- update stamina level
 
@@ -103,17 +105,14 @@ function stamina.update_saturation(player, level)
 	if level == old then return end -- To suppress HUD update
 
 	-- players without interact priv cannot eat
-	if not minetest.check_player_privs(player, {interact = true}) then return end
+	if not core.check_player_privs(player, {interact = true}) then return end
 
 	local meta = player and player:get_meta() ; if not meta then return end
 
 	meta:set_string("stamina:level", level)
 
-	player:hud_change(
-		stamina.players[player:get_player_name()].hud_id,
-		"number",
-		math_min(stamina.VISUAL_MAX, level)
-	)
+	player:hud_change(stamina.players[player:get_player_name()].hud_id,
+			"number", math_min(stamina.VISUAL_MAX, level))
 end
 
 -- global function for mods to amend stamina level
@@ -171,19 +170,38 @@ end
 
 -- mod check
 
-local monoids = minetest.get_modpath("player_monoids")
-local pova_mod = minetest.get_modpath("pova")
+local monoids = core.get_modpath("player_monoids")
+local pova_mod = core.get_modpath("pova")
+local mod_playerphysics = core.get_modpath("playerphysics")
+
+-- attach helpers
+
+local is_54 = core.has_feature("direct_velocity_on_players")
+
+local function is_attached(player)
+
+	if player:get_attach() then return true end
+
+	if is_54 then -- check attached children entities that would disallow sprinting
+
+		for _, obj in pairs(player:get_children()) do
+
+			local ent = obj:get_luaentity() or {}
+
+			if ent.name == "hangglider:glider" then return true end
+		end
+	end
+end
+
 
 -- turn sprint on/off
 
 function stamina.set_sprinting(player, sprinting)
 
-	if not player then return end
+	if not player or is_attached(player) then return end
 
 	local name = player:get_player_name()
-
-	-- get player physics
-	local def = player:get_physics_override()
+	local def = player:get_physics_override() -- get player physics
 
 --print ("---", def.speed, def.jump)
 
@@ -205,6 +223,16 @@ function stamina.set_sprinting(player, sprinting)
 
 			stamina.players[name].jump = player_monoids.jump:add_change(
 					player, def.jump + stamina.SPRINT_JUMP)
+
+		elseif mod_playerphysics then
+
+			playerphysics.add_physics_factor(player, "speed", "stamina:sprint",
+					def.speed + stamina.SPRINT_SPEED)
+
+			playerphysics.add_physics_factor(player, "jump", "stamina:jump",
+					def.jump + stamina.SPRINT_JUMP)
+
+			stamina.players[name].sprint = true
 		else
 			player:set_physics_override({
 				speed = def.speed + stamina.SPRINT_SPEED,
@@ -214,8 +242,11 @@ function stamina.set_sprinting(player, sprinting)
 			stamina.players[name].sprint = true
 		end
 
-	elseif sprinting == false
-	and stamina.players[name] and stamina.players[name].sprint then
+		if stamina.fov_change ~= 0 then
+			player:set_fov(stamina.fov_change, true, 0.2)
+		end
+
+	elseif sprinting == false and stamina.players[name].sprint then
 
 		if pova_mod then
 
@@ -232,6 +263,12 @@ function stamina.set_sprinting(player, sprinting)
 			stamina.players[name].sprint = nil
 			stamina.players[name].jump = nil
 
+		elseif mod_playerphysics then
+
+			playerphysics.remove_physics_factor(player, "stamina:sprint")
+			playerphysics.remove_physics_factor(player, "stamina:jump")
+
+			stamina.players[name].sprint = nil
 		else
 			player:set_physics_override({
 				speed = def.speed - stamina.SPRINT_SPEED,
@@ -239,6 +276,10 @@ function stamina.set_sprinting(player, sprinting)
 			})
 
 			stamina.players[name].sprint = nil
+		end
+
+		if stamina.fov_change ~= 0 then
+			player:set_fov(1, true, 0.4)
 		end
 	end
 end
@@ -248,10 +289,10 @@ end
 local function head_particle(player, texture)
 
 	local prop = player and player:get_properties() ; if not prop then return end
-	local pos = player:get_pos() ; pos.y = pos.y + (prop.eye_height or 1.23) -- mouth level
+	local pos = player:get_pos() ; pos.y = pos.y + (prop.eye_height or 1.23)
 	local dir = player:get_look_dir()
 
-	minetest.add_particlespawner({
+	core.add_particlespawner({
 		amount = 5,
 		time = 0.1,
 		minpos = pos,
@@ -272,7 +313,7 @@ end
 
 local function drunk_tick()
 
-	for _,player in pairs(minetest.get_connected_players()) do
+	for _,player in pairs(core.get_connected_players()) do
 
 		local name = player and player:get_player_name()
 
@@ -285,8 +326,7 @@ local function drunk_tick()
 
 				head_particle(player, "bubble.png")
 
-				minetest.sound_play("stamina_burp",
-						{to_player = name, gain = 0.7}, true)
+				core.sound_play("stamina_burp", {to_player = name, gain = 0.7}, true)
 			end
 
 			stamina.players[name].drunk = stamina.players[name].drunk - 1
@@ -318,7 +358,7 @@ end
 
 local function health_tick()
 
-	for _,player in pairs(minetest.get_connected_players()) do
+	for _,player in pairs(core.get_connected_players()) do
 
 		local name = player and player:get_player_name()
 
@@ -349,11 +389,10 @@ end
 
 local function action_tick()
 
-	for _,player in pairs(minetest.get_connected_players()) do
+	for _,player in pairs(core.get_connected_players()) do
 
 		local controls = player and player:get_player_control()
 
-		-- Determine if the player is walking or jumping
 		if controls then
 
 			if controls.jump then
@@ -375,7 +414,7 @@ local function action_tick()
 			and not stamina.players[name].poisoned
 			and not stamina.players[name].drunk
 			and controls and controls.aux1 and controls.up
-			and not minetest.check_player_privs(player, {fast = true})
+			and not core.check_player_privs(player, {fast = true})
 			and stamina.get_saturation(player) > 6 then
 
 				stamina.set_sprinting(player, true)
@@ -384,7 +423,7 @@ local function action_tick()
 				if stamina.enable_sprint_particles then
 
 					local pos = player:get_pos()
-					local node = minetest.get_node({
+					local node = core.get_node({
 						x = pos.x,
 						y = pos.y - 1,
 						z = pos.z
@@ -392,7 +431,7 @@ local function action_tick()
 
 					if node.name ~= "air" then
 
-						minetest.add_particlespawner({
+						core.add_particlespawner({
 							amount = 5,
 							time = 0.5,
 							minpos = {x = -0.3, y = 0.1, z = -0.3},
@@ -431,7 +470,7 @@ end
 
 local function poison_tick()
 
-	for _,player in pairs(minetest.get_connected_players()) do
+	for _,player in pairs(core.get_connected_players()) do
 
 		local name = player and player:get_player_name()
 
@@ -467,12 +506,19 @@ end
 
 local function stamina_tick()
 
-	for _,player in pairs(minetest.get_connected_players()) do
+	for _,player in pairs(core.get_connected_players()) do
 
 		local h = player and stamina.get_saturation(player)
 
 		if h and h > stamina.TICK_MIN then
 			stamina.update_saturation(player, h - 1)
+		end
+
+		local name = player and player:get_player_name()
+
+		if name and stamina.players[name] and stamina.players[name].units
+		and stamina.players[name].units > 0 then
+			stamina.players[name].units = stamina.players[name].units - 1
 		end
 	end
 end
@@ -507,7 +553,7 @@ end
 
 -- stamina and eating functions disabled if damage is disabled
 
-if damage_enabled and minetest.settings:get_bool("enable_stamina") ~= false then
+if damage_enabled and core.settings:get_bool("enable_stamina") ~= false then
 
 	-- override core.do_item_eat() so we can redirect hp_change to stamina
 	core.do_item_eat = function(hp_change, replace_with_item, itemstack, user, pointed_thing)
@@ -556,18 +602,18 @@ if damage_enabled and minetest.settings:get_bool("enable_stamina") ~= false then
 		-- if {drink=1} group set then use sip sound instead of default eat
 		local snd, gain = "stamina_eat", 0.7
 		local itemname = itemstack:get_name()
-		local def = minetest.registered_items[itemname]
+		local def = core.registered_items[itemname]
 
 		if def and def.groups and def.groups.drink then
 			snd = "stamina_sip" ; gain = 1.0
 		end
 
-		minetest.sound_play(snd, {to_player = name, gain = gain}, true)
+		core.sound_play(snd, {to_player = name, gain = gain}, true)
 
 		-- particle effect when eating
-		local texture  = minetest.registered_items[itemname].inventory_image
+		local texture  = core.registered_items[itemname].inventory_image
 
-		texture = texture or minetest.registered_items[itemname].wield_image
+		texture = texture or core.registered_items[itemname].wield_image
 
 		head_particle(user, texture)
 
@@ -602,8 +648,8 @@ if damage_enabled and minetest.settings:get_bool("enable_stamina") ~= false then
 		end
 
 		-- check for alcohol
-		local units = minetest.registered_items[itemname].groups
-				and minetest.registered_items[itemname].groups.alcohol or 0
+		local units = core.registered_items[itemname].groups
+				and core.registered_items[itemname].groups.alcohol or 0
 
 		if units > 0 then
 
@@ -617,8 +663,8 @@ if damage_enabled and minetest.settings:get_bool("enable_stamina") ~= false then
 				user:hud_change(stamina.players[name].hud_id, "text",
 						"stamina_hud_poison.png")
 
-				minetest.chat_send_player(name,
-						minetest.get_color_escape_sequence("#1eff00")
+				core.chat_send_player(name,
+						core.get_color_escape_sequence("#1eff00")
 						.. S("You suddenly feel tipsy!"))
 			end
 		end
@@ -626,7 +672,7 @@ if damage_enabled and minetest.settings:get_bool("enable_stamina") ~= false then
 		return itemstack
 	end
 
-	minetest.register_on_joinplayer(function(player)
+	core.register_on_joinplayer(function(player)
 
 		if not player then return end
 
@@ -641,7 +687,7 @@ if damage_enabled and minetest.settings:get_bool("enable_stamina") ~= false then
 		if meta then meta:set_string("stamina:level", level) end
 
 		local name = player:get_player_name()
-		local hud_style = minetest.has_feature("hud_def_type_field")
+		local hud_style = core.has_feature("hud_def_type_field")
 		local hud_tab = {
 			name = "stamina",
 			position = {x = 0.5, y = 1},
@@ -670,7 +716,7 @@ if damage_enabled and minetest.settings:get_bool("enable_stamina") ~= false then
 		}
 	end)
 
-	minetest.register_on_respawnplayer(function(player)
+	core.register_on_respawnplayer(function(player)
 
 		local name = player and player:get_player_name() ; if not name then return end
 
@@ -685,29 +731,33 @@ if damage_enabled and minetest.settings:get_bool("enable_stamina") ~= false then
 		stamina.players[name].sprint = nil
 
 		stamina.update_saturation(player, stamina.VISUAL_MAX)
+
+		if stamina.fov_change ~= 0 then
+			player:set_fov(1, true, 0.2)
+		end
 	end)
 
-	minetest.register_globalstep(stamina_globaltimer)
+	core.register_globalstep(stamina_globaltimer)
 
-	minetest.register_on_placenode(function(pos, oldnode, player, ext)
+	core.register_on_placenode(function(pos, oldnode, player, ext)
 		stamina.exhaust_player(player, stamina.EXHAUST_PLACE)
 	end)
 
-	minetest.register_on_dignode(function(pos, oldnode, player, ext)
+	core.register_on_dignode(function(pos, oldnode, player, ext)
 		stamina.exhaust_player(player, stamina.EXHAUST_DIG)
 	end)
 
-	minetest.register_on_craft(function(itemstack, player, old_craft_grid, craft_inv)
+	core.register_on_craft(function(itemstack, player, old_craft_grid, craft_inv)
 		stamina.exhaust_player(player, stamina.EXHAUST_CRAFT)
 	end)
 
-	minetest.register_on_punchplayer(function(player, hitter, time_from_last_punch,
+	core.register_on_punchplayer(function(player, hitter, time_from_last_punch,
 			tool_capabilities, dir, damage)
 		stamina.exhaust_player(hitter, stamina.EXHAUST_PUNCH)
 	end)
 
 else -- create player table on join
-	minetest.register_on_joinplayer(function(player)
+	core.register_on_joinplayer(function(player)
 
 		if player then
 			stamina.players[player:get_player_name()] = {
@@ -718,7 +768,7 @@ end
 
 -- clear when player leaves
 
-minetest.register_on_leaveplayer(function(player)
+core.register_on_leaveplayer(function(player)
 
 	if player then
 		stamina.players[player:get_player_name()] = nil
@@ -727,11 +777,11 @@ end)
 
 -- add lucky blocks (if damage and stamina active)
 
-if minetest.get_modpath("lucky_block")
-and minetest.settings:get_bool("enable_damage")
-and minetest.settings:get_bool("enable_stamina") ~= false then
+if core.get_modpath("lucky_block")
+and core.settings:get_bool("enable_damage")
+and core.settings:get_bool("enable_stamina") ~= false then
 
-	local MP = minetest.get_modpath(minetest.get_current_modname())
+	local MP = core.get_modpath(core.get_current_modname())
 
 	dofile(MP .. "/lucky_block.lua")
 end

@@ -1,7 +1,7 @@
 
 -- mod check and settings
 
-local butterfly_mod = minetest.get_modpath("butterflies")
+local butterfly_mod = core.get_modpath("butterflies")
 
 local l_skins = {
 	{"bf1.png^bf2.png^bf3.png^bf4.png^bf5.png"},
@@ -65,7 +65,7 @@ mobs:register_mob("mobs_butterfly:butterfly", {
 		walk_start = 0, walk_end = 90,
 		fly_start = 0, fly_end = 90
 	},
-
+--[[
 	after_activate = function(self, staticdata, def, dtime)
 
 		if butterfly_mod then
@@ -74,21 +74,21 @@ mobs:register_mob("mobs_butterfly:butterfly", {
 			local butter = {"white", "red", "violet"}
 			local replace = "butterflies:butterfly_" .. butter[math.random(#butter)]
 
-			minetest.set_node(pos, {name = replace})
+			core.set_node(pos, {name = replace})
 
 			self.object:remove()
 		end
 	end,
-
+]]
 	on_rightclick = function(self, clicker)
 
-		if not butterfly_mod then
-			mobs:capture_mob(self, clicker, 10, 80, 0, true, nil)
-		end
+--		if not butterfly_mod then
+			mobs:capture_mob(self, clicker, 10, 80, 0, true, "mobs_butterfly:butterfly")
+--		end
 	end
 })
 
-if not butterfly_mod then
+--if not butterfly_mod then
 
 	-- spawn in world
 
@@ -98,6 +98,6 @@ if not butterfly_mod then
 	-- spawn egg
 
 	mobs:register_egg("mobs_butterfly:butterfly", "Butterfly", "default_cloud.png", 1)
-end
+--end
 
 print("[MOD] Mobs Redo Butterfly loaded")

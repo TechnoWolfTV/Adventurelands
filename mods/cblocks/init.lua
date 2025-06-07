@@ -1,7 +1,7 @@
 
-local stairs_mod = minetest.get_modpath("stairs")
-local stairsplus_mod = minetest.global_exists("stairsplus")
-local ethereal_mod = minetest.get_modpath("ethereal")
+local stairs_mod = core.get_modpath("stairs")
+local stairsplus_mod = core.global_exists("stairsplus")
+local ethereal_mod = core.get_modpath("ethereal")
 
 local colours = {
 	{"black",      "Black",      "#000000b0"},
@@ -24,7 +24,7 @@ local colours = {
 
 local function cblocks_stairs(nodename, odef)
 
-	minetest.register_node(nodename, odef)
+	core.register_node(nodename, odef)
 
 	if stairs_mod or stairsplus_mod then
 
@@ -82,19 +82,19 @@ end
 
 local function set_alias(col, name)
 
-	minetest.register_alias("stairs:stair_" .. col .. "_" .. name,
+	core.register_alias("stairs:stair_" .. col .. "_" .. name,
 			"stairs:stair_" .. name .. "_" .. col)
 
-	minetest.register_alias("stairs:slab_" .. col .. "_" .. name,
+	core.register_alias("stairs:slab_" .. col .. "_" .. name,
 			"stairs:slab_" .. name .. "_" .. col)
 
-	minetest.register_alias("stairs:stair_inner_" .. col .. "_" .. name,
+	core.register_alias("stairs:stair_inner_" .. col .. "_" .. name,
 			"stairs:stair_inner_" .. name .. "_" .. col)
 
-	minetest.register_alias("stairs:stair_outer_" .. col .. "_" .. name,
+	core.register_alias("stairs:stair_outer_" .. col .. "_" .. name,
 			"stairs:stair_outer_" .. name .. "_" .. col)
 
-	minetest.register_alias("stairs:slope_" .. col .. "_" .. name,
+	core.register_alias("stairs:slope_" .. col .. "_" .. name,
 			"stairs:slope_" .. name .. "_" .. col)
 end
 
@@ -116,7 +116,7 @@ for i = 1, #colours do
 		walign = true
 	})
 
-	minetest.register_craft({
+	core.register_craft({
 		output = "cblocks:stonebrick_" .. colours[i][1] .. " 2",
 		recipe = {
 			{"default:stonebrick","default:stonebrick", "dye:" .. colours[i][1]}
@@ -142,7 +142,7 @@ for i = 1, #colours do
 
 		set_alias(colours[i][1], "glass")
 	else
-		minetest.register_node("cblocks:glass_" .. colours[i][1], {
+		core.register_node("cblocks:glass_" .. colours[i][1], {
 			description = colours[i][2] .. " Glass",
 			tiles = {"cblocks.png^[colorize:" .. colours[i][3]},
 			drawtype = "glasslike",
@@ -155,7 +155,7 @@ for i = 1, #colours do
 		})
 	end
 
-	minetest.register_craft({
+	core.register_craft({
 		output = "cblocks:glass_".. colours[i][1] .. " 2",
 		recipe = {
 			{"default:glass","default:glass", "dye:" .. colours[i][1]},
@@ -186,7 +186,7 @@ for i = 1, #colours do
 
 	set_alias(colours[i][1], "wood")
 
-	minetest.register_craft({
+	core.register_craft({
 		output = "cblocks:wood_" .. col .. " 2",
 		recipe = {
 			{"group:wood","group:wood", "dye:" .. colours[i][1]}
@@ -196,7 +196,7 @@ end
 
 
 -- add lucky blocks
-if minetest.get_modpath("lucky_block") then
+if core.get_modpath("lucky_block") then
 
 	lucky_block:add_blocks({
 		{"dro", {"cblocks:wood_"}, 10, true},

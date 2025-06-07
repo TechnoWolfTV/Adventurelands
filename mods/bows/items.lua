@@ -1,26 +1,26 @@
 
-local S = minetest.get_translator("bows")
+local S = core.get_translator("bows")
 
 -- detect feather item to use
 
 local feather = "default:leaves"
 
-if minetest.get_modpath("animalia") then
+if core.get_modpath("animalia") then
 	feather = "animalia:feather"
-elseif minetest.get_modpath("mobs_animal") then
+elseif core.get_modpath("mobs_animal") then
 	feather = "mobs:chicken_feather"
-elseif minetest.get_modpath("xanadu") then
+elseif core.get_modpath("xanadu") then
 	feather = "mobs:chicken_feather"
 end
 
 -- helpful recipes
 
-minetest.register_craft({
+core.register_craft({
 	output = "default:flint",
 	recipe = {{"default:gravel"}}
 })
 
-minetest.register_craft({
+core.register_craft({
 	output = "farming:cotton 4",
 	recipe = {{"group:wool"}}
 })
@@ -40,7 +40,7 @@ bows.register_bow("bow_wood",{
 	}
 })
 
-minetest.register_craft({
+core.register_craft({
 	type = "fuel",
 	recipe = "bows:bow_wood",
 	burntime = 3
@@ -101,7 +101,7 @@ bows.register_arrow("arrow",{
 --[[
 	on_hit_node = function(self, pos, user, arrow_pos)
 
-		minetest.add_particle({
+		core.add_particle({
 			pos = pos,
 			velocity = {x=0, y=0, z=0},
 			acceleration = {x=0, y=0, z=0},
@@ -114,7 +114,7 @@ bows.register_arrow("arrow",{
 	end]]
 })
 
-minetest.register_craft({
+core.register_craft({
 	type = "fuel",
 	recipe = "bows:arrow",
 	burntime = 1
@@ -162,7 +162,7 @@ bows.register_arrow("arrow_mese",{
 		if self.node.name == "mesecons_switch:mesecon_switch_on"
 		or self.node.name == "mesecons_switch:mesecon_switch_off" then
 
-			local def = minetest.registered_nodes[self.node.name]
+			local def = core.registered_nodes[self.node.name]
 
 			-- This toggles the mesecons switch on/off
 			if def and def.on_rightclick then
@@ -186,11 +186,11 @@ bows.register_arrow("arrow_diamond",{
 	on_hit_sound = "bows_arrow_hit",
 	on_hit_node = function(self, pos, user, arrow_pos)
 		if self.node.name == "default:glass"
-		and not minetest.is_protected(pos, user:get_player_name()) then
-			minetest.sound_play("default_break_glass", {
+		and not core.is_protected(pos, user:get_player_name()) then
+			core.sound_play("default_break_glass", {
 				pos = pos, gain = 1.0, max_hear_distance = 10}, true)
-			minetest.remove_node(pos)
-			minetest.add_item(pos, "vessels:glass_fragments")
+			core.remove_node(pos)
+			core.add_item(pos, "vessels:glass_fragments")
 		end
 	end
 })

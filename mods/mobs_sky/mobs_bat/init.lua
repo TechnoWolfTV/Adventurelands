@@ -13,7 +13,7 @@ local l_skins = {
 mobs:register_mob("mobs_bat:bat", {
 	type = "animal",
 	passive = false,
-	damage = 1,
+	damage = 1, attack_chance = 95,
 	reach = 2,
 	attack_type = "dogfight",
 	hp_min = 7,
@@ -55,7 +55,7 @@ mobs:register_mob("mobs_bat:bat", {
 
 -- Check for custom spawn.lua
 
-local MP = minetest.get_modpath(minetest.get_current_modname()) .. "/"
+local MP = core.get_modpath(core.get_current_modname()) .. "/"
 local input = io.open(MP .. "spawn.lua", "r")
 
 if input then

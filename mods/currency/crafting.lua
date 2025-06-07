@@ -8,7 +8,6 @@ if minetest.get_modpath("default") then
 				"default:steelblock"},
 			{"default:steelblock", "default:steelblock",
 				"default:steelblock"},
-
 		}
 	})
 

@@ -1,6 +1,6 @@
 --[[
-    Leads — Adds leads for transporting animals to Minetest.
-    Copyright © 2023‒2024, Silver Sandstone <@SilverSandstone@craftodon.social>
+    Leads — Adds leads for transporting animals to Luanti.
+    Copyright © 2023-2025, Silver Sandstone <@SilverSandstone@craftodon.social>
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),
@@ -53,7 +53,7 @@ if leads.settings.drop_mode == 'drop' then
 elseif leads.settings.drop_mode == 'give' then
     leads.DROP_ITEM = false;
 else
-    leads.DROP_ITEM = (minetest.get_modpath('mcl_core') or minetest.get_modpath('rp_default') or minetest.get_modpath('item_drop')) ~= nil;
+    leads.DROP_ITEM = (core.get_modpath('mcl_core') or core.get_modpath('rp_default') or core.get_modpath('item_drop')) ~= nil;
 end;
 
 
@@ -86,7 +86,7 @@ function leads.LeadEntity:on_activate(staticdata, dtime_s)
     self.strength = leads.settings.lead_strength;
     self.breaking = 0.0;
 
-    local data = minetest.deserialize(staticdata);
+    local data = core.deserialize(staticdata);
     if data then
         self:load_from_data(data);
     end;
@@ -203,7 +203,7 @@ function leads.LeadEntity:step_physics(dtime)
         if self.sound_timer >= leads.STRETCH_SOUND_INTERVAL then
             self.sound_timer = self.sound_timer - leads.STRETCH_SOUND_INTERVAL;
             if leads.util.rng:next(0, 8) == 0 then
-                minetest.sound_play(leads.sounds.stretch, {pos = pos}, true);
+                core.sound_play(leads.sounds.stretch, {pos = pos}, true);
             end;
         end;
     end;
@@ -236,7 +236,7 @@ function leads.LeadEntity:_update_connectors()
                 -- the object's mapblock has been unloaded, and the lead
                 -- should just wait until it gets loaded again. We can figure
                 -- out which one by checking if the mapblock is active.
-                if minetest.compare_block_status(pos, 'active') then
+                if core.compare_block_status(pos, 'active') then
                     return nil;
                 end;
             end;
@@ -256,7 +256,7 @@ function leads.LeadEntity:on_punch(puncher, time_from_last_punch, tool_capabilit
     -- Check protection:
     local is_protected, protected_pos = self:is_protected(name);
     if is_protected then
-        minetest.record_protection_violation(protected_pos, name);
+        core.record_protection_violation(protected_pos, name);
         return true;
     end;
 
@@ -294,7 +294,7 @@ function leads.LeadEntity:get_staticdata()
     data.follower_id = self.follower_id;
     data.leader_attach_offset = self.leader_attach_offset;
     data.follower_attach_offset = self.follower_attach_offset;
-    return minetest.serialize(data);
+    return core.serialize(data);
 end;
 
 --- Breaks the lead, possibly giving/dropping an item.
@@ -302,7 +302,7 @@ end;
 -- @param snap    [boolean|nil]   true if the lead is breaking due to tension.
 function leads.LeadEntity:break_lead(breaker, snap)
     if leads.settings.debug then
-        minetest.log(debug.traceback(('[Leads] Breaking lead %s at %s.'):format(self, self.object:get_pos())));
+        core.log(debug.traceback(('[Leads] Breaking lead %s at %s.'):format(self, self.object:get_pos())));
     end;
 
     -- Notify leader and follower:
@@ -312,29 +312,29 @@ function leads.LeadEntity:break_lead(breaker, snap)
     -- Give or drop item:
     if not self.item:is_empty() then
         local owner = breaker;
-        if not minetest.is_player(owner) then
+        if not core.is_player(owner) then
             owner = self.leader;
         end;
         local pos = self.object:get_pos();
         local item = self.item;
         if not leads.DROP_ITEM then
-            local inventory = minetest.is_player(owner) and owner:get_inventory();
+            local inventory = core.is_player(owner) and owner:get_inventory();
             if inventory then
-                if minetest.is_creative_enabled(owner) and inventory:contains_item('main', item, true) then
+                if core.is_creative_enabled(owner) and inventory:contains_item('main', item, true) then
                     item = ItemStack();
                 else
                     item = inventory:add_item('main', item);
                 end;
             end;
         end;
-        minetest.add_item(pos, item);
+        core.add_item(pos, item);
     end;
 
     -- Play sound:
     if snap then
-        minetest.sound_play(leads.sounds.snap, {pos = self.object:get_pos()}, true);
+        core.sound_play(leads.sounds.snap, {pos = self.object:get_pos()}, true);
     else
-        minetest.sound_play(leads.sounds.remove, {pos = self.object:get_pos()}, true);
+        core.sound_play(leads.sounds.remove, {pos = self.object:get_pos()}, true);
     end;
 
     -- Remove lead:
@@ -360,7 +360,7 @@ function leads.LeadEntity:is_protected(player)
     end;
     name = name or '';
 
-    if minetest.check_player_privs(name, 'protection_bypass') then
+    if core.check_player_privs(name, 'protection_bypass') then
         return false, nil; -- The player is exempt from protection.
     end;
 
@@ -371,7 +371,7 @@ function leads.LeadEntity:is_protected(player)
     for __, connector_id in ipairs{self.leader_id, self.follower_id} do
         if connector_id and connector_id.pos then
             local pos = vector.round(connector_id.pos);
-            if minetest.is_protected(pos, name) then
+            if core.is_protected(pos, name) then
                 return true, pos; -- An end of the lead is in a protected area.
             end;
         end;
@@ -533,4 +533,4 @@ function leads.LeadEntity:get_follower()
     return nil;
 end;
 
-minetest.register_entity('leads:lead', leads.LeadEntity);
+core.register_entity('leads:lead', leads.LeadEntity);

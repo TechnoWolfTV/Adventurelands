@@ -1,6 +1,6 @@
 --[[
-    Leads — Adds leads for transporting animals to Minetest.
-    Copyright © 2023‒2024, Silver Sandstone <@SilverSandstone@craftodon.social>
+    Leads — Adds leads for transporting animals to Luanti.
+    Copyright © 2023-2025, Silver Sandstone <@SilverSandstone@craftodon.social>
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),
@@ -30,7 +30,7 @@ leads.util = {};
 
 leads.util.rng = PcgRandom(0x4C656164);
 
-local has_objectuuids = minetest.get_modpath('objectuuids') ~= nil;
+local has_objectuuids = core.get_modpath('objectuuids') ~= nil;
 
 
 --- Checks if the object is a mob.
@@ -114,7 +114,7 @@ function leads.util.serialise_objref(obj)
         result.uuid = objectuuids.get_uuid(obj);
     end;
 
-    if minetest.is_player(obj) then
+    if core.is_player(obj) then
         result.player_name = obj:get_player_name();
     else
         local entity = obj:get_luaentity();
@@ -143,10 +143,10 @@ function leads.util.deserialise_objref(id)
 
     -- Without UUIDs, players are identified by name:
     if id.player_name then
-        return minetest.get_player_by_name(id.player_name);
+        return core.get_player_by_name(id.player_name);
     end;
 
-    -- Minetest doesn't provide any way to persistently identify Lua entities,
+    -- Luanti doesn't provide any way to persistently identify Lua entities,
     -- so the best we can do is look for an entity with the correct name near
     -- the saved position.
     if not id.pos then
@@ -157,7 +157,7 @@ function leads.util.deserialise_objref(id)
     local range = 3;
     local range_min = pos:offset(-range, -range, -range);
     local range_max = pos:offset( range,  range,  range);
-    local objects = minetest.get_objects_in_area(range_min, range_max);
+    local objects = core.get_objects_in_area(range_min, range_max);
     local best_object = nil;
     local best_distance = math.huge;
     for __, object in ipairs(objects) do
@@ -186,8 +186,8 @@ function leads.util.is_same_object(obj1, obj2)
         return false;
     end;
 
-    local obj1_is_player = minetest.is_player(obj1);
-    local obj2_is_player = minetest.is_player(obj2);
+    local obj1_is_player = core.is_player(obj1);
+    local obj2_is_player = core.is_player(obj2);
     if obj1_is_player ~= obj2_is_player then
         return false;
     end;
@@ -236,7 +236,7 @@ end;
 -- @return    [string|nil] One of the specified IDs, or nil.
 function leads.util.first_available_item(...)
     for __, name in ipairs{...} do
-        if name == '' or string.match(name, '^group:.*') or minetest.registered_items[name] then
+        if name == '' or string.match(name, '^group:.*') or core.registered_items[name] then
             return name;
         end;
     end;
@@ -248,7 +248,7 @@ end;
 -- @param object [ObjectRef] An object reference.
 -- @return       [string]    A string describing the object.
 function leads.util.describe_object(object)
-    if minetest.is_player(object) then
+    if core.is_player(object) then
         return ('[Player %q]'):format(object:get_player_name());
     end;
 
@@ -274,7 +274,7 @@ function leads.util.block_player_interaction(name, time)
         old_timer:cancel();
     end;
 
-    leads.interaction_blockers[name] = minetest.after(time, _callback);
+    leads.interaction_blockers[name] = core.after(time, _callback);
 end;
 
 
@@ -283,7 +283,7 @@ end;
 -- @return       [ObjectType] The type of the object.
 function leads.util.get_object_type(object)
     -- Check player:
-    if minetest.is_player(object) then
+    if core.is_player(object) then
         return leads.ObjectType.PLAYER;
     end;
 
@@ -300,7 +300,7 @@ function leads.util.get_object_type(object)
     end;
 
     -- Get entity definition:
-    local def = minetest.registered_entities[entity.name];
+    local def = core.registered_entities[entity.name];
     if not def then
         return leads.ObjectType.OTHER;
     end;

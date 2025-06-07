@@ -1,6 +1,6 @@
 --[[
-    Leads — Adds leads for transporting animals to Minetest.
-    Copyright © 2023‒2024, Silver Sandstone <@SilverSandstone@craftodon.social>
+    Leads — Adds leads for transporting animals to Luanti.
+    Copyright © 2023-2025, Silver Sandstone <@SilverSandstone@craftodon.social>
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),
@@ -51,7 +51,7 @@ leads.KnotEntity.initial_properties =
 function leads.KnotEntity:on_activate(staticdata, dtime_s)
     self.num_connections = 0;
 
-    local data = minetest.deserialize(staticdata);
+    local data = core.deserialize(staticdata);
     if data then
         self.num_connections = data.num_connections or 0;
     end;
@@ -66,7 +66,7 @@ function leads.KnotEntity:on_step(dtime, moveresult)
         return;
     end;
 
-    local node = minetest.get_node(self.object:get_pos());
+    local node = core.get_node(self.object:get_pos());
     if not leads.is_knottable(node.name) then
         self.object:remove();
         return;
@@ -76,17 +76,17 @@ end;
 --- Returns the knot's state as a table.
 function leads.KnotEntity:get_staticdata()
     local data = {num_connections = self.num_connections};
-    return minetest.serialize(data);
+    return core.serialize(data);
 end;
 
 --- Handles the knot being punched.
 function leads.KnotEntity:on_punch(puncher, time_from_last_punch, tool_capabilities, dir, damage)
     -- Check protection:
-    if leads.settings.respect_protection and minetest.is_player(puncher) and not minetest.check_player_privs(puncher, 'protection_bypass') then
+    if leads.settings.respect_protection and core.is_player(puncher) and not core.check_player_privs(puncher, 'protection_bypass') then
         local pos = self.object:get_pos():round();
         local name = puncher and puncher:get_player_name() or '';
-        if minetest.is_protected(pos, name) then
-            minetest.record_protection_violation(pos, name);
+        if core.is_protected(pos, name) then
+            core.record_protection_violation(pos, name);
             return true;
         end;
     end;
@@ -100,7 +100,7 @@ function leads.KnotEntity:on_punch(puncher, time_from_last_punch, tool_capabilit
             table.insert(connected_leads, lead);
         end;
     else
-        minetest.sound_play(leads.sounds.remove, {pos = self.object:get_pos()}, true);
+        core.sound_play(leads.sounds.remove, {pos = self.object:get_pos()}, true);
     end;
 
     -- Transfer all connected leads to the puncher:
@@ -163,4 +163,4 @@ function leads.KnotEntity:_leads_lead_remove(lead, is_leader)
     self.num_connections = self.num_connections - 1;
 end;
 
-minetest.register_entity('leads:knot', leads.KnotEntity);
+core.register_entity('leads:knot', leads.KnotEntity);

@@ -1,6 +1,6 @@
 --[[
-    Leads — Adds leads for transporting animals to Minetest.
-    Copyright © 2023‒2024, Silver Sandstone <@SilverSandstone@craftodon.social>
+    Leads — Adds leads for transporting animals to Luanti.
+    Copyright © 2023-2025, Silver Sandstone <@SilverSandstone@craftodon.social>
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),
@@ -29,7 +29,7 @@
 local S = leads.S;
 
 
-minetest.register_craftitem('leads:lead',
+core.register_craftitem('leads:lead',
 {
     description          = S'Lead';
     inventory_image      = 'leads_lead_inv.png';
@@ -46,7 +46,7 @@ minetest.register_craftitem('leads:lead',
 
 local rope = leads.util.first_available_item('farming:string', 'mcl_mobitems:string', 'rp_default:rope', 'hades_farming:cotton', 'nodes_nature:chalin') or 'group:string';
 local glue = leads.util.first_available_item('mesecons_materials:glue', 'mcl_mobitems:slimeball', 'mobs_mc:slimeball', 'rp_default:fiber')              or rope;
-minetest.register_craft(
+core.register_craft(
 {
     output = 'leads:lead';
     recipe =
@@ -58,7 +58,7 @@ minetest.register_craft(
 });
 
 
-if minetest.get_modpath('doc_identifier') then
+if core.get_modpath('doc_identifier') then
     doc.sub.identifier.register_object('leads:lead', 'craftitems', 'leads:lead');
     doc.sub.identifier.register_object('leads:knot', 'craftitems', 'leads:lead');
 end;

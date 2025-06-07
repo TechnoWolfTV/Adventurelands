@@ -1,6 +1,6 @@
-local modpath = minetest.get_modpath("caverealms")
+local modpath = core.get_modpath("caverealms")
 local config = dofile(modpath .. "/config.lua")
-local async_env = minetest.save_gen_notify ~= nil
+local async_env = core.save_gen_notify ~= nil
 
 -- Basic params
 local YMIN = config.ymin --Approximate realm limits.
@@ -40,55 +40,55 @@ local random = math.random
 local abs = math.abs
 
 -- Content IDs
-local c_air = minetest.get_content_id("air")
-local c_stone = minetest.get_content_id("default:stone")
-local c_ice = minetest.get_content_id("default:ice")
-local c_thinice = minetest.get_content_id("caverealms:thin_ice")
-local c_crystal = minetest.get_content_id("caverealms:glow_crystal")
-local c_gem1 = minetest.get_content_id("caverealms:glow_gem")
-local c_saltgem1 = minetest.get_content_id("caverealms:salt_gem")
-local c_spike1 = minetest.get_content_id("caverealms:spike")
-local c_moss = minetest.get_content_id("caverealms:stone_with_moss")
-local c_lichen = minetest.get_content_id("caverealms:stone_with_lichen")
-local c_algae = minetest.get_content_id("caverealms:stone_with_algae")
-local c_salt = minetest.get_content_id("caverealms:stone_with_salt")
-local c_hcobble = minetest.get_content_id("caverealms:hot_cobble")
-local c_gobsidian = minetest.get_content_id("caverealms:glow_obsidian")
-local c_gobsidian2 = minetest.get_content_id("caverealms:glow_obsidian_2")
-local c_coalblock = minetest.get_content_id("default:coalblock")
-local c_desand = minetest.get_content_id("default:desert_sand")
-local c_coaldust = minetest.get_content_id("caverealms:coal_dust")
-local c_fungus = minetest.get_content_id("caverealms:fungus")
-local c_mycena = minetest.get_content_id("caverealms:mycena")
-local c_worm = minetest.get_content_id("caverealms:glow_worm")
-local c_worm_green = minetest.get_content_id("caverealms:glow_worm_green")
-local c_fire_vine = minetest.get_content_id("caverealms:fire_vine")
-local c_iciu = minetest.get_content_id("caverealms:icicle_up")
-local c_icid = minetest.get_content_id("caverealms:icicle_down")
-local c_flame = minetest.get_content_id("fire:permanent_flame")
+local c_air = core.get_content_id("air")
+local c_stone = core.get_content_id("default:stone")
+local c_ice = core.get_content_id("default:ice")
+local c_thinice = core.get_content_id("caverealms:thin_ice")
+local c_crystal = core.get_content_id("caverealms:glow_crystal")
+local c_gem1 = core.get_content_id("caverealms:glow_gem")
+local c_saltgem1 = core.get_content_id("caverealms:salt_gem")
+local c_spike1 = core.get_content_id("caverealms:spike")
+local c_moss = core.get_content_id("caverealms:stone_with_moss")
+local c_lichen = core.get_content_id("caverealms:stone_with_lichen")
+local c_algae = core.get_content_id("caverealms:stone_with_algae")
+local c_salt = core.get_content_id("caverealms:stone_with_salt")
+local c_hcobble = core.get_content_id("caverealms:hot_cobble")
+local c_gobsidian = core.get_content_id("caverealms:glow_obsidian")
+local c_gobsidian2 = core.get_content_id("caverealms:glow_obsidian_2")
+local c_coalblock = core.get_content_id("default:coalblock")
+local c_desand = core.get_content_id("default:desert_sand")
+local c_coaldust = core.get_content_id("caverealms:coal_dust")
+local c_fungus = core.get_content_id("caverealms:fungus")
+local c_mycena = core.get_content_id("caverealms:mycena")
+local c_worm = core.get_content_id("caverealms:glow_worm")
+local c_worm_green = core.get_content_id("caverealms:glow_worm_green")
+local c_fire_vine = core.get_content_id("caverealms:fire_vine")
+local c_iciu = core.get_content_id("caverealms:icicle_up")
+local c_icid = core.get_content_id("caverealms:icicle_down")
+local c_flame = core.get_content_id("fire:permanent_flame")
 
-local c_meseore = minetest.get_content_id("default:stone_with_mese")
-local c_crystore = minetest.get_content_id("caverealms:glow_ore")
-local c_emerald = minetest.get_content_id("caverealms:glow_emerald")
-local c_emore = minetest.get_content_id("caverealms:glow_emerald_ore")
-local c_mesecry = minetest.get_content_id("caverealms:glow_mese")
-local c_ruby = minetest.get_content_id("caverealms:glow_ruby")
-local c_rubore = minetest.get_content_id("caverealms:glow_ruby_ore")
-local c_ameth = minetest.get_content_id("caverealms:glow_amethyst")
-local c_amethore = minetest.get_content_id("caverealms:glow_amethyst_ore")
+local c_meseore = core.get_content_id("default:stone_with_mese")
+local c_crystore = core.get_content_id("caverealms:glow_ore")
+local c_emerald = core.get_content_id("caverealms:glow_emerald")
+local c_emore = core.get_content_id("caverealms:glow_emerald_ore")
+local c_mesecry = core.get_content_id("caverealms:glow_mese")
+local c_ruby = core.get_content_id("caverealms:glow_ruby")
+local c_rubore = core.get_content_id("caverealms:glow_ruby_ore")
+local c_ameth = core.get_content_id("caverealms:glow_amethyst")
+local c_amethore = core.get_content_id("caverealms:glow_amethyst_ore")
 
-local c_gills = minetest.get_content_id("caverealms:mushroom_gills")
+local c_gills = core.get_content_id("caverealms:mushroom_gills")
 local c_stem, c_cap
 
-if minetest.get_modpath("ethereal") then
-	c_stem = minetest.get_content_id("ethereal:mushroom_trunk")
-	c_cap = minetest.get_content_id("ethereal:mushroom")
+if core.get_modpath("ethereal") then
+	c_stem = core.get_content_id("ethereal:mushroom_trunk")
+	c_cap = core.get_content_id("ethereal:mushroom")
 else
-	c_stem = minetest.get_content_id("caverealms:mushroom_stem")
-	c_cap = minetest.get_content_id("caverealms:mushroom_cap")
+	c_stem = core.get_content_id("caverealms:mushroom_stem")
+	c_cap = core.get_content_id("caverealms:mushroom_cap")
 end
 
-local c_ignore = minetest.get_content_id("ignore")
+local c_ignore = core.get_content_id("ignore")
 
 
 -- Helpers
@@ -547,7 +547,7 @@ local function generate(vm, minp, maxp)
 	local chulens2D = {x = sidelen, y = sidelen, z = 1}
 
 	--2D noise for biomes (will be 3D humidity/temp later)
-	local nvals_biome = minetest.get_perlin_map(np_biome, chulens2D):get_2d_map_flat(
+	local nvals_biome = core.get_perlin_map(np_biome, chulens2D):get_2d_map_flat(
 			{x = x0 + 150, y = z0 + 50})
 
 	local nixyz = 1 --3D node index
@@ -827,18 +827,18 @@ local function generate(vm, minp, maxp)
 	local chugent = math.ceil((os.clock() - t1) * 1000) --grab how long it took
 
 	print("[caverealms] Took "..chugent.." ms generating "
-		.. minetest.pos_to_string(minp) .. " to "
-		.. minetest.pos_to_string(maxp)) --tell people how long
+		.. core.pos_to_string(minp) .. " to "
+		.. core.pos_to_string(maxp)) --tell people how long
 		print("[caverealms] Used memory: " .. collectgarbage("count") / 1024 .. " MiB")
 ]]
 end
 
 if async_env then -- async env (5.9+)
-	minetest.register_on_generated(function(vm, minp, maxp, blockseed)
+	core.register_on_generated(function(vm, minp, maxp, blockseed)
 		generate(vm, minp, maxp)
 	end)
 else -- main thread (5.8 and earlier)
-	minetest.register_on_generated(function(minp, maxp, blockseed)
-		generate(minetest.get_mapgen_object("voxelmanip"), minp, maxp)
+	core.register_on_generated(function(minp, maxp, blockseed)
+		generate(core.get_mapgen_object("voxelmanip"), minp, maxp)
 	end)
 end

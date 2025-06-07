@@ -1,10 +1,10 @@
 Leads
 =====
 
-[ContentDB](https://content.minetest.net/packages/SilverSandstone/leads/) ·
+[ContentDB](https://content.luanti.org/packages/SilverSandstone/leads/) ·
 [Codeberg](https://codeberg.org/SilverSandstone/leads)
 
-This Minetest mod adds leads which can be used for moving animals or
+This Luanti mod adds leads which can be used for moving animals or
 for tethering animals to fence posts.
 
 Leads can also be attached between two fence posts for decoration.
@@ -31,7 +31,7 @@ Compatibility
 This mod supports Mobs Redo, Creatura, VoxeLibre, Mineclonia, Repixture, and Exile.
 Other games and mob frameworks may also work.
 
-Minetest 5.5.0+ server required, Minetest 5.7.0+ client recommended.
+Luanti 5.5.0+ server required, Luanti 5.7.0+ client recommended.
 If you want to support older clients, disable ‘Long selection box’ in the settings.
 
 
@@ -44,4 +44,4 @@ various authors under CC BY-SA 4.0 or compatible.
 See `LICENCE.md` for more information.
 
 
-[Object UUIDs]: https://content.minetest.net/packages/SilverSandstone/objectuuids/ "Object UUIDs on Minetest ContentDB"
+[Object UUIDs]: https://content.luanti.org/packages/SilverSandstone/objectuuids/ "Object UUIDs on Luanti ContentDB"

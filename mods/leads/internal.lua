@@ -1,6 +1,6 @@
 --[[
-    Leads — Adds leads for transporting animals to Minetest.
-    Copyright © 2023‒2024, Silver Sandstone <@SilverSandstone@craftodon.social>
+    Leads — Adds leads for transporting animals to Luanti.
+    Copyright © 2023-2025, Silver Sandstone <@SilverSandstone@craftodon.social>
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),
@@ -38,7 +38,7 @@ function leads._apply_item_patches(name, def)
     function overrides.on_place(itemstack, placer, pointed_thing, ...)
         -- Try knotting the placer's held lead:
         if placer and not placer:get_player_control().sneak then
-            local node = pointed_thing.under and minetest.get_node_or_nil(pointed_thing.under);
+            local node = pointed_thing.under and core.get_node_or_nil(pointed_thing.under);
             if node and leads.is_knottable(node.name) then
                 if leads.knot(placer, pointed_thing.under) then
                     return nil;
@@ -47,7 +47,7 @@ function leads._apply_item_patches(name, def)
         end;
 
         -- Fallback to the item's old on_place function:
-        return (old_on_place or minetest.item_place)(itemstack, placer, pointed_thing, ...);
+        return (old_on_place or core.item_place)(itemstack, placer, pointed_thing, ...);
     end;
 
     function overrides.on_secondary_use(itemstack, user, pointed_thing, ...)
@@ -77,15 +77,15 @@ function leads._apply_item_patches(name, def)
             end;
         end;
 
-        return (old_on_secondary_use or minetest.item_secondary_use)(itemstack, user, pointed_thing, ...);
+        return (old_on_secondary_use or core.item_secondary_use)(itemstack, user, pointed_thing, ...);
     end;
 
-    minetest.override_item(name, overrides);
+    core.override_item(name, overrides);
 end;
 
 
-local old_is_protected = minetest.is_protected;
-function minetest.is_protected(pos, name)
+local old_is_protected = core.is_protected;
+function core.is_protected(pos, name)
     if leads.interaction_blockers[name] then
         return true;
     end;
@@ -93,9 +93,17 @@ function minetest.is_protected(pos, name)
 end;
 
 
-minetest.register_on_mods_loaded(
+core.register_on_mods_loaded(
 function()
-    for name, def in pairs(minetest.registered_items) do
+    for name, def in pairs(core.registered_items) do
         leads._apply_item_patches(name, def);
+    end;
+end);
+
+
+core.register_on_dieplayer(
+function(player, reason)
+    for lead in leads.find_connected_leads(player, true, true) do
+        lead:get_luaentity():break_lead();
     end;
 end);

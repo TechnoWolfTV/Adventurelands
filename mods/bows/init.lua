@@ -2,17 +2,17 @@
 -- Bows Mod by UjEdwin (edited by TenPlus1)
 
 bows = {
-	pvp = minetest.settings:get_bool("enable_pvp"),
+	pvp = core.settings:get_bool("enable_pvp"),
 	registered_arrows = {},
 	registered_bows = {}
 }
 
 -- creative check
 
-local creative_mode_cache = minetest.settings:get_bool("creative_mode")
+local creative_mode_cache = core.settings:get_bool("creative_mode")
 
 function bows.is_creative(name)
-	return creative_mode_cache or minetest.check_player_privs(name, {creative = true})
+	return creative_mode_cache or core.check_player_privs(name, {creative = true})
 end
 
 -- register arrow
@@ -32,7 +32,7 @@ function bows.register_arrow(name, def)
 
 	bows.registered_arrows[def.name] = def
 
-	minetest.register_craftitem(":bows:" .. name, {
+	core.register_craftitem(":bows:" .. name, {
 		description = def.description or name,
 		inventory_image = def.texture or "bows_arrow_wooden.png",
 		groups = {arrow = 1},
@@ -41,7 +41,7 @@ function bows.register_arrow(name, def)
 
 	if def.craft then
 
-		minetest.register_craft({
+		core.register_craft({
 			output = def.name .." " .. (def.craft_count or 4),
 			recipe = def.craft
 		})
@@ -62,14 +62,14 @@ function bows.register_bow(name, def)
 
 	bows.registered_bows[def.replace] = def
 
-	minetest.register_tool(":" .. def.name, {
+	core.register_tool(":" .. def.name, {
 		description = def.description or name,
 		inventory_image = def.texture or "bows_bow.png",
 		on_use = bows.load,
 		groups = {bow = 1}
 	})
 
-	minetest.register_tool(":" .. def.replace, {
+	core.register_tool(":" .. def.replace, {
 		description = def.description or name,
 		inventory_image = def.texture_loaded or "bows_bow_loaded.png",
 		on_use = bows.shoot,
@@ -77,7 +77,7 @@ function bows.register_bow(name, def)
 	})
 
 	if def.craft then
-		minetest.register_craft({output = def.name,recipe = def.craft})
+		core.register_craft({output = def.name,recipe = def.craft})
 	end
 end
 
@@ -89,16 +89,16 @@ function bows.load(itemstack, user, pointed_thing)
 	local index = user:get_wield_index() - 1
 	local arrow = inv:get_stack("main", index)
 
-	if minetest.get_item_group(arrow:get_name(), "arrow") == 0 then
+	if core.get_item_group(arrow:get_name(), "arrow") == 0 then
 		return itemstack
 	end
 
 	local item = itemstack:to_table()
-	local meta = minetest.deserialize(item.metadata)
+	local meta = core.deserialize(item.metadata)
 
 	meta = {arrow = arrow:get_name()}
 
-	item.metadata = minetest.serialize(meta)
+	item.metadata = core.serialize(meta)
 	item.name = item.name .. "_loaded"
 
 	itemstack:replace(item)
@@ -116,7 +116,7 @@ end
 function bows.shoot(itemstack, user, pointed_thing)
 
 	local item = itemstack:to_table()
-	local meta = minetest.deserialize(item.metadata)
+	local meta = core.deserialize(item.metadata)
 
 	if (not (meta and meta.arrow))
 	or (not bows.registered_arrows[meta.arrow]) then
@@ -135,7 +135,7 @@ function bows.shoot(itemstack, user, pointed_thing)
 	bows.tmp.name = meta.arrow
 
 	item.arrow = ""
-	item.metadata = minetest.serialize(meta)
+	item.metadata = core.serialize(meta)
 	item.name = replace
 	itemstack:replace(item)
 
@@ -153,7 +153,7 @@ function bows.shoot(itemstack, user, pointed_thing)
 		pos.y = pos.y + height
 	end
 
-	local e = minetest.add_entity({x = pos.x, y = pos.y, z = pos.z}, "bows:arrow")
+	local e = core.add_entity({x = pos.x, y = pos.y, z = pos.z}, "bows:arrow")
 
 	e:set_velocity({x = dir.x * level, y = dir.y * level, z = dir.z * level})
 	e:set_acceleration({x = dir.x * -3, y = -10, z = dir.z * -3})
@@ -163,21 +163,21 @@ function bows.shoot(itemstack, user, pointed_thing)
 		itemstack:add_wear(65535 / wear)
 	end
 
-	minetest.sound_play("bows_shoot", {pos = pos, max_hear_distance = 10}, true)
+	core.sound_play("bows_shoot", {pos = pos, max_hear_distance = 10}, true)
 
 	return itemstack
 end
 
 -- register items
 
-local path = minetest.get_modpath("bows")
+local path = core.get_modpath("bows")
 
 dofile(path .. "/arrow.lua")
 dofile(path .. "/items.lua")
 
 -- add lucky blocks
 
-if minetest.get_modpath("lucky_block") then
+if core.get_modpath("lucky_block") then
 	dofile(path .. "/lucky_block.lua")
 end
 

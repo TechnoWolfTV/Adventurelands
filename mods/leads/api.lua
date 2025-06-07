@@ -1,6 +1,6 @@
 --[[
-    Leads — Adds leads for transporting animals to Minetest.
-    Copyright © 2023‒2024, Silver Sandstone <@SilverSandstone@craftodon.social>
+    Leads — Adds leads for transporting animals to Luanti.
+    Copyright © 2023-2025, Silver Sandstone <@SilverSandstone@craftodon.social>
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),
@@ -65,6 +65,7 @@ leads.custom_knottable_nodes =
     ['advtrains:retrosignal_on']            = true;
     ['nodes_nature:mahal']                  = true;
     ['hades_furniture:binding_rusty_bars']  = true;
+    ['pride_flags:lower_mast']              = true;
 };
 
 --- Overrides the lead attachment offset of entities.
@@ -119,12 +120,12 @@ function leads.add_lead(leader, follower, item)
     local f_pos = follower:get_pos();
 
     if leads.settings.debug then
-        minetest.log(debug.traceback(('[Leads] Connecting L:%s to F:%s.'):format(leads.util.describe_object(leader), leads.util.describe_object(follower))));
+        core.log(debug.traceback(('[Leads] Connecting L:%s to F:%s.'):format(leads.util.describe_object(leader), leads.util.describe_object(follower))));
     end;
 
     local centre = (l_pos + f_pos) / 2;
 
-    local object = minetest.add_entity(centre, 'leads:lead');
+    local object = core.add_entity(centre, 'leads:lead');
     if not object then
         return nil, S'Failed to create lead.';
     end;
@@ -137,7 +138,7 @@ function leads.add_lead(leader, follower, item)
     entity:update_objref_ids();
     entity:notify_connector_added(leader,   true);
     entity:notify_connector_added(follower, false);
-    minetest.sound_play(leads.sounds.attach, {pos = centre}, true);
+    core.sound_play(leads.sounds.attach, {pos = centre}, true);
     return object, nil;
 end;
 
@@ -180,7 +181,7 @@ end;
 -- @param name [string]  The name of a node.
 -- @return     [boolean] true if the node is knottable.
 function leads.is_knottable(name)
-    local def = minetest.registered_nodes[name];
+    local def = core.registered_nodes[name];
     if not def then
         return false;
     end;
@@ -192,7 +193,7 @@ function leads.is_knottable(name)
     end;
 
     -- Fence:
-    if def.drawtype == 'fencelike' or (minetest.get_item_group(name, 'fence') > 0 and not (name:match('.*:fence_rail_.*') or name:match('.*:gate_.*'))) then
+    if def.drawtype == 'fencelike' or (core.get_item_group(name, 'fence') > 0 and not (name:match('.*:fence_rail_.*') or name:match('.*:gate_.*'))) then
         return true;
     end;
 
@@ -216,10 +217,9 @@ end;
 -- @param leader [ObjectRef]     The player or entity to find leads connected to.
 -- @return       [ObjectRef|nil] The lead, if any.
 function leads.find_lead_by_leader(leader)
-    for lead in leads.find_connected_leads(leader, true, false) do
-        return lead;
-    end;
-    return nil;
+    local iter = leads.find_connected_leads(leader, true, false);
+    local lead = iter();
+    return lead;
 end;
 
 
@@ -229,18 +229,29 @@ end;
 -- @param accept_follower [boolean]   Find leads where the specified object is the follower.
 -- @return                [function]  An iterator of (lead: ObjectRef, is_leader: boolean).
 function leads.find_connected_leads(connector, accept_leader, accept_follower)
-    local function _iter()
-        for lead in pairs(leads.leads_by_connector[connector]) do
-            local entity = lead:get_luaentity();
-            if accept_leader and entity.leader and leads.util.is_same_object(entity.leader, connector) then
-                coroutine.yield(lead, true);
-            elseif accept_follower and entity.follower and leads.util.is_same_object(entity.follower, connector) then
-                coroutine.yield(lead, false);
-            end;
+    local lead;
+    local set = leads.leads_by_connector[connector];
+
+    local function _next()
+        lead = next(set, lead);
+        if not lead then
+            return nil, nil;
         end;
+
+        local entity = lead:get_luaentity();
+        if not entity then
+            return _next();
+        end;
+
+        if accept_leader and entity.leader and leads.util.is_same_object(entity.leader, connector) then
+            return lead, true;
+        elseif accept_follower and entity.follower and leads.util.is_same_object(entity.follower, connector) then
+            return lead, false;
+        end;
+        return _next();
     end;
 
-    return coroutine.wrap(_iter);
+    return _next;
 end;
 
 
@@ -252,10 +263,10 @@ function leads.knot(leader, pos)
     pos = vector.round(pos);
 
     -- Check protection:
-    if leads.settings.respect_protection and not minetest.check_player_privs(leader, 'protection_bypass') then
+    if leads.settings.respect_protection and not core.check_player_privs(leader, 'protection_bypass') then
         local name = leader and leader:get_player_name() or '';
-        if minetest.is_protected(pos, name) then
-            minetest.record_protection_violation(pos, name);
+        if core.is_protected(pos, name) then
+            core.record_protection_violation(pos, name);
             return nil;
         end;
     end;
@@ -273,7 +284,7 @@ function leads.knot(leader, pos)
     end;
 
     -- Play sound:
-    minetest.sound_play(leads.sounds.attach, {pos = pos}, true);
+    core.sound_play(leads.sounds.attach, {pos = pos}, true);
 
     -- Attach the lead to the knot:
     lead:get_luaentity():set_leader(knot);
@@ -287,14 +298,14 @@ end;
 function leads.add_knot(pos)
     pos = pos:round();
 
-    for __, object in ipairs(minetest.get_objects_in_area(pos, pos)) do
+    for __, object in ipairs(core.get_objects_in_area(pos, pos)) do
         local entity = object:get_luaentity();
         if entity and entity.name == 'leads:knot' then
             return object;
         end;
     end;
 
-    return minetest.add_entity(pos, 'leads:knot');
+    return core.add_entity(pos, 'leads:knot');
 end;
 
 
@@ -322,7 +333,7 @@ function leads.allowed_to_leash(object, player)
     end;
 
     -- Players with the 'protection_bypass' privilege can bypass protection and ownership:
-    if minetest.check_player_privs(name, 'protection_bypass') then
+    if core.check_player_privs(name, 'protection_bypass') then
         return true;
     end;
 
@@ -335,8 +346,8 @@ function leads.allowed_to_leash(object, player)
     -- Players can't leash anything else in protected areas if protection support is enabled:
     if leads.settings.respect_protection then
         local pos = object:get_pos():round();
-        if minetest.is_protected(pos, name) then
-            minetest.record_protection_violation(pos, name);
+        if core.is_protected(pos, name) then
+            core.record_protection_violation(pos, name);
             return false;
         end;
     end;
@@ -359,7 +370,7 @@ end;
 function leads.on_lead_interact(itemstack, user, pointed_thing, is_punch)
     local function _message(message)
         if leads.settings.chat_messages then
-            minetest.chat_send_player(user:get_player_name(), message);
+            core.chat_send_player(user:get_player_name(), message);
         end;
     end;
 
@@ -367,16 +378,16 @@ function leads.on_lead_interact(itemstack, user, pointed_thing, is_punch)
     if pointed_thing.under then
         -- Clicking on a node:
         local pos = pointed_thing.under;
-        local node = minetest.get_node(pos);
+        local node = core.get_node(pos);
         if not leads.is_knottable(node.name) then
             return nil;
         end;
 
         -- Check protection:
-        if leads.settings.respect_protection and not minetest.check_player_privs(user, 'protection_bypass') then
+        if leads.settings.respect_protection and not core.check_player_privs(user, 'protection_bypass') then
             local name = user and user:get_player_name() or '';
-            if minetest.is_protected(pos, name) then
-                minetest.record_protection_violation(pos, name);
+            if core.is_protected(pos, name) then
+                core.record_protection_violation(pos, name);
                 return nil;
             end;
         end;
@@ -432,7 +443,7 @@ function leads.on_lead_interact(itemstack, user, pointed_thing, is_punch)
     end;
 
     -- Consume the lead item:
-    if not (minetest.is_player(user) and minetest.is_creative_enabled(user:get_player_name())) then
+    if not (core.is_player(user) and core.is_creative_enabled(user:get_player_name())) then
         itemstack:take_item(1);
     end;
     return itemstack;
@@ -448,8 +459,8 @@ function leads.on_lead_use(itemstack, user, pointed_thing)
     local result = leads.on_lead_interact(itemstack, user, pointed_thing, false);
     if (not result) and pointed_thing.under then
         -- Fallback to the node's right-click handler:
-        local node = minetest.get_node(pointed_thing.under);
-        local def = minetest.registered_nodes[node.name] or {};
+        local node = core.get_node(pointed_thing.under);
+        local def = core.registered_nodes[node.name] or {};
         return def.on_rightclick and def.on_rightclick(pointed_thing.under, node, user, itemstack, pointed_thing) or nil;
     end;
     return result;

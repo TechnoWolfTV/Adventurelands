@@ -1,9 +1,9 @@
 
 -- load settings
 
-local croc_walkers = minetest.settings:get_bool("mobs_crocs.enable_walkers", true)
-local croc_floaters = minetest.settings:get_bool("mobs_crocs.enable_floaters", true)
-local croc_swimmers = minetest.settings:get_bool("mobs_crocs.enable_swimmers", true)
+local croc_walkers = core.settings:get_bool("mobs_crocs.enable_walkers", true)
+local croc_floaters = core.settings:get_bool("mobs_crocs.enable_floaters", true)
+local croc_swimmers = core.settings:get_bool("mobs_crocs.enable_swimmers", true)
 
 -- spawn examples
 

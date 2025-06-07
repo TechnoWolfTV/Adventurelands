@@ -1,7 +1,7 @@
 -- stair mods active
-local stairs_mod = minetest.get_modpath("stairs")
+local stairs_mod = core.get_modpath("stairs")
 local stairs_redo = stairs_mod and stairs.mod and stairs.mod == "redo"
-local stairs_plus = minetest.global_exists("stairsplus")
+local stairs_plus = core.global_exists("stairsplus")
 
 -- stair selection function
 local do_stair = function(
@@ -30,16 +30,16 @@ local do_stair = function(
 		end
 
 		-- aliases need to be set for previous stairs to avoid unknown nodes
-		minetest.register_alias_force("stairs:stair_" .. name,
+		core.register_alias_force("stairs:stair_" .. name,
 				mod .. ":stair_" .. name)
 
-		minetest.register_alias_force("stairs:stair_outer_" .. name,
+		core.register_alias_force("stairs:stair_outer_" .. name,
 				mod .. ":stair_" .. name .. "_outer")
 
-		minetest.register_alias_force("stairs:stair_inner_" .. name,
+		core.register_alias_force("stairs:stair_inner_" .. name,
 				mod .. ":stair_" .. name .. "_inner")
 
-		minetest.register_alias_force("stairs:slab_"  .. name,
+		core.register_alias_force("stairs:slab_"  .. name,
 				mod .. ":slab_"  .. name)
 
 	elseif stairs_mod then
@@ -74,7 +74,7 @@ do_stair(
 
 -- Glow Obsidian Glass (stairs registered seperately to use special texture)
 
-local gsides = minetest.settings:get_bool("stairs.glass_sides") ~= false
+local gsides = core.settings:get_bool("stairs.glass_sides") ~= false
 local face_tex = "caverealms_glow_obsidian_glass.png"
 local side_tex = gsides and "caverealms_glow_obsidian_glass_quarter.png" or face_tex
 

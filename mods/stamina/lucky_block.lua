@@ -1,8 +1,8 @@
 
 -- colour helpers
 
-local green = minetest.get_color_escape_sequence("#bada55")
-local green2 = minetest.get_color_escape_sequence("#33ff55")
+local green = core.get_color_escape_sequence("#bada55")
+local green2 = core.get_color_escape_sequence("#33ff55")
 
 -- poison and drunk effects function
 
@@ -19,13 +19,13 @@ local effect_me = function(pos, player, def)
 
 		stamina.players[name].poisoned = def.poison
 
-		minetest.chat_send_player(name, green .. "Seems you have been poisoned!")
+		core.chat_send_player(name, green .. "Seems you have been poisoned!")
 
 	elseif def.drunk and def.drunk > 0 then
 
 		stamina.players[name].drunk = def.drunk
 
-		minetest.chat_send_player(name, green .. "You seem a little tipsy!")
+		core.chat_send_player(name, green .. "You seem a little tipsy!")
 	end
 end
 
@@ -37,7 +37,7 @@ local full_stamina = function(pos, player, def)
 
 	stamina.change(player, 100) -- set to 100 incase of default stamina increase
 
-	minetest.chat_send_player(name, green2 .. "You suddenly feel full!")
+	core.chat_send_player(name, green2 .. "You suddenly feel full!")
 end
 
 -- add lucky blocks
