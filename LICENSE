@@ -148,6 +148,9 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Facade
   - Location: ./mods/facade/
   - License file: ./mods/facade/license.txt
+- Factory Bridges
+  - Location: ./mods/factory_bridges/
+  - License file: ./mods/factory_bridges/LICENSE
 - FakeLib
   - Location: ./mods/fakelib/
   - License file: ./mods/fakelib/LICENSE
@@ -169,12 +172,12 @@ made to the below listed works are officially made on or after 5 March 2024.
 - HB Armor (HUD bar for `3d_armor`)
   - Location: ./mods/hbarmor/
   - License file: ./mods/hbarmor/README.md
-- Home Workshop Modpack
-  - Location: ./mods/home_workshop_modpack/
-  - License file: ./mods/home_workshop_modpack/license.txt
 - Homedecor Modpack
   - Location: ./mods/homedecor_modpack/
   - License file: ./mods/homedecor_modpack/LICENSE
+- Home Workshop Modpack
+  - Location: ./mods/home_workshop_modpack/
+  - License file: ./mods/home_workshop_modpack/license.txt
 - Hopper
   - Location: ./mods/hopper/
   - License file: ./mods/hopper/license.txt
@@ -287,6 +290,9 @@ made to the below listed works are officially made on or after 5 March 2024.
 - TPad
   - Location: ./mods/tpad/
   - License file: ./mods/tpad/LICENSE
+- Travelnet
+  - Location: ./mods/travelnet/
+  - License file: ./mods/travelnet/LICENSE
 - TSM Pyramids
   - Location: ./mods/tsm_pyramids/
   - License file: ./mods/tsm_pyramids/README.md
@@ -296,12 +302,12 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Tunnelmaker
   - Location: ./mods/tunnelmaker/
   - License file: ./mods/tunnelmaker/LICENSE.txt
-- Unified Inventory
-  - Location: ./mods/unified_inventory/
-  - License file: ./mods/unified_inventory/LICENSE.txt
 - Unified Dyes
   - Location: ./mods/unifieddyes/
   - License file: ./mods/unifieddyes/LICENSE
+- Unified Inventory
+  - Location: ./mods/unified_inventory/
+  - License file: ./mods/unified_inventory/LICENSE.txt
 - Void Chest
   - Location: ./mods/void_chest/
   - License file: ./mods/void_chest/LICENSE.txt
