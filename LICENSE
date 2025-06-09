@@ -169,6 +169,9 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Hang Glider
   - Location: ./mods/hangglider/
   - License file: ./mods/hangglider/LICENSE.txt
+- Hazmat Suit
+  - Location: ./mods/hazmat_suit/
+  - License file: ./mods/hazmat_suit/LICENSE.md
 - HB Armor (HUD bar for `3d_armor`)
   - Location: ./mods/hbarmor/
   - License file: ./mods/hbarmor/README.md
