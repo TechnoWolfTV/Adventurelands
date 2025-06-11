@@ -248,12 +248,21 @@ made to the below listed works are officially made on or after 5 March 2024.
 - More Trees
   - Location: ./mods/moretrees/
   - License file: ./mods/moretrees/LICENSE
+- Mydeck
+  - Location: ./mods/mydeck/
+  - License file: ./mods/mydeck/licence.txt
 - Mydoors
   - Location: ./mods/mydoors/
   - License file: ./mods/mydoors/licence.txt
+- Myglass
+  - Location: ./mods/myglass/
+  - License file: ./mods/myglass/licence.txt
 - Mymillwork
   - Location: ./mods/mymillwork/
   - License file: ./mods/mymillwork/licence.txt
+- Mysheetmetal
+  - Location: ./mods/mysheetmetal/
+  - License file: ./mods/mysheetmetal/licence.txt
 - New Campfire
   - Location: ./mods/new_campfire/
   - License file: ./mods/new_campfire/LICENSE.txt
