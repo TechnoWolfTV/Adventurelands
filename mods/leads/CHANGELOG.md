@@ -1,6 +1,36 @@
 Leads Changelog
 ===============
 
+0.4.0 (2025-06-14)
+------------------
+
+### Additions
+
+- Added subtitle descriptions for sound effects.
+- Added Russian translation (contributed by randomei).
+- Added Spanish translation (contributed by Miguel P.L and otf31).
+
+
+### Changes
+
+- Using a lookup tool on a lead or knot now shows documentation for the lead item.
+- Leads can now be knotted to Pride Flags flag poles.
+
+
+### Fixes
+
+- Fixed leads jumping to a nearby knot when a knot is removed without Object UUIDs.
+- Fixed leads floating above small animals (reported by Nathan Salapat).
+- Fixed a crash when a knot is punched by a Lua entity.
+- Fixed a crash caused by invalid object references (reported by Bastrabun).
+- Fixed leads staying attached to players when they die.
+
+
+### API Changes
+
+- The `connect_objects` function has been renamed to `add_lead`. The old name is still available as a deprecated alias.
+
+
 0.3.2 (2024-01-18)
 ------------------
 

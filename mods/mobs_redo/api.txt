@@ -314,15 +314,15 @@ Pickup Items
 
    'pick_up'            table of itemstrings the mob will pick up.
    'on_pick_up'         function that will be called on item pickup - arguments are
-                        (self, itemstring) and can return nil or a a modified itemstack e.g.
+                        (self, itemtable) and can return nil or a a modified itemstack e.g.
 
-on_pick_up = function(self, itemstring)
+on_pick_up = function(self, itemtable)
 
-		local istack = ItemStack(entity.itemstring)
+		local istack = ItemStack(itemtable.itemstring)
 
 		print("-- took", istack:get_name())
 
-		istack:take_item(1)
+		istack:take_item()
 
 		return istack
 end,
