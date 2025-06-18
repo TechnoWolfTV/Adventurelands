@@ -15,7 +15,7 @@ function asrs.create_id(player_name, pos)
 end
 
 function asrs.update_inventory(pos)
-   local meta = minetest.get_meta(pos)
+   local meta = core.get_meta(pos)
    local sys_id = meta:get_string('system_id')
    local sys_data = asrs.data[sys_id]
    if sys_data then
@@ -26,7 +26,7 @@ function asrs.update_inventory(pos)
 end
 
 function asrs.count_inventory(pos)
-   local meta = minetest.get_meta(pos)
+   local meta = core.get_meta(pos)
    local inv = meta:get_inventory()
    local inv_list = inv:get_list('storage')
    local count = 0
@@ -42,7 +42,7 @@ function asrs.count_inventory(pos)
 end
 
 function asrs.sort_inventory(pos)  -- Mostly copied from the Technic_chests mod.
-   local meta = minetest.get_meta(pos)
+   local meta = core.get_meta(pos)
    local inv = meta:get_inventory()
    local inv_list = inv:get_list('storage')
    local unique_items = {}
@@ -54,7 +54,7 @@ function asrs.sort_inventory(pos)  -- Mostly copied from the Technic_chests mod.
             local wear = stack:get_wear()
             local meta = stack:get_meta():get_string('')
             local count = stack:get_count()
-            local def = minetest.registered_items[name]
+            local def = core.registered_items[name]
             local key = string.format("%s %05d %s", name, wear, meta)
             if not items[key] then
                items[key] = {
@@ -107,7 +107,7 @@ function asrs.connected_nodes(pos, node_name)
    local found_node = false
    local other_pos
    for _, loc in ipairs(positions) do
-      local name = minetest.get_node(loc).name
+      local name = core.get_node(loc).name
       if string.find(node_name, name) then
          other_pos = loc
          found_node = true
@@ -130,24 +130,24 @@ fdir_table = {
 }
 
 function asrs.space_to_place(pos)
-   local node = minetest.get_node(pos)
+   local node = core.get_node(pos)
    local fdir = node.param2 % 32
    local pos2 = {x = pos.x + fdir_table[fdir+1][1], y=pos.y, z = pos.z + fdir_table[fdir+1][2]}
    local pos3 = {x = pos2.x, y = pos2.y+1, z = pos2.z}
    local pos4 = {x = pos.x, y = pos.y+1, z = pos.z}
-   local node2 = minetest.get_node(pos2) -- Node to the right
-   local node3 = minetest.get_node(pos3) -- Node above to the right
-   local node4 = minetest.get_node(pos4) -- Node above
-   local node2def = minetest.registered_nodes[node2.name] or nil
-   local node3def = minetest.registered_nodes[node3.name] or nil
-   local node4def = minetest.registered_nodes[node4.name] or nil
+   local node2 = core.get_node(pos2) -- Node to the right
+   local node3 = core.get_node(pos3) -- Node above to the right
+   local node4 = core.get_node(pos4) -- Node above
+   local node2def = core.registered_nodes[node2.name] or nil
+   local node3def = core.registered_nodes[node3.name] or nil
+   local node4def = core.registered_nodes[node4.name] or nil
    if not node2def.buildable_to or not node3def.buildable_to or not node4def.buildable_to then
       return false
    else
-      minetest.after(1, function()
-         minetest.set_node(pos2,{name = 'asrs:blank'})
-         minetest.set_node(pos3,{name = 'asrs:blank'})
-         minetest.set_node(pos4,{name = 'asrs:connection_point'})
+      core.after(1, function()
+         core.set_node(pos2,{name = 'asrs:blank'})
+         core.set_node(pos3,{name = 'asrs:blank'})
+         core.set_node(pos4,{name = 'asrs:connection_point'})
       end)
       return true
    end
@@ -158,15 +158,15 @@ function asrs.remove_side_node(pos, oldnode)
    local pos2 = {x = pos.x + fdir_table[fdir+1][1], y=pos.y, z = pos.z + fdir_table[fdir+1][2]}
    local pos3 = {x = pos2.x, y = pos2.y+1, z = pos2.z}
    local pos4 = {x = pos.x, y = pos.y+1, z = pos.z}
-   minetest.remove_node(pos2)
-   minetest.remove_node(pos3)
-   minetest.remove_node(pos4)
+   core.remove_node(pos2)
+   core.remove_node(pos3)
+   core.remove_node(pos4)
 end
 
 function asrs.load()
-   local file = io.open(minetest.get_worldpath() .. '/asrs_systems', 'r')
+   local file = io.open(core.get_worldpath() .. '/asrs_systems', 'r')
    if file then
-      asrs.data = minetest.deserialize(file:read('*a'))
+      asrs.data = core.deserialize(file:read('*a'))
       file:close()
    else
       asrs.data = {}
@@ -174,7 +174,7 @@ function asrs.load()
 end
 
 function asrs.save()
-   local file = io.open(minetest.get_worldpath() .. '/asrs_systems', 'w')
-   file:write(minetest.serialize(asrs.data))
+   local file = io.open(core.get_worldpath() .. '/asrs_systems', 'w')
+   file:write(core.serialize(asrs.data))
    file:close()
 end

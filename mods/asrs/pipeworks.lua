@@ -1,21 +1,21 @@
-minetest.register_node('asrs:pipeworks', {
+core.register_node('asrs:pipeworks', {
    description = 'A.S.R.S pipeworks interface',
    tiles = {'asrs_cell.png^pipeworks_tube_connection_metallic.png'},
    groups = {cracky=2, choppy=2, oddly_breakable_by_hand=2, tubedevice = 1, tubedevice_receiver = 1},
    tube = {
       insert_object = function(pos, node, stack, direction)
-         local meta = minetest.get_meta(pos)
+         local meta = core.get_meta(pos)
          local sys_id = meta:get_string('system_id')
          pos = asrs.data[sys_id].inv_pos
-         meta = minetest.get_meta(pos)
+         meta = core.get_meta(pos)
          local inv = meta:get_inventory()
          return inv:add_item('storage', stack)
       end,
       can_insert = function(pos, node, stack, direction)
-         local meta = minetest.get_meta(pos)
+         local meta = core.get_meta(pos)
          local sys_id = meta:get_string('system_id')
          pos = asrs.data[sys_id].inv_pos
-         meta = minetest.get_meta(pos)
+         meta = core.get_meta(pos)
          local inv = meta:get_inventory()
          return inv:room_for_item('storage', stack)
       end,
@@ -25,8 +25,8 @@ minetest.register_node('asrs:pipeworks', {
    after_place_node = function(pos, placer)
       local neighbor, pos1 = asrs.connected_nodes(pos, 'asrs:lift, asrs:connection_point')
       if neighbor then
-         local this_meta = minetest.get_meta(pos)
-         local that_meta = minetest.get_meta(pos1)
+         local this_meta = core.get_meta(pos)
+         local that_meta = core.get_meta(pos1)
          local children = that_meta:get_int('children')
          local sys_id = that_meta:get_string('system_id')
          this_meta:set_string('system_id', sys_id)
@@ -39,19 +39,19 @@ minetest.register_node('asrs:pipeworks', {
          asrs.save()
       else
          local name = placer:get_player_name() or ''
-         minetest.chat_send_player(name, 'You must place this adjacent to a lift or controller node.')
-         minetest.remove_node(pos)
+         core.chat_send_player(name, 'You must place this adjacent to a lift or controller node.')
+         core.remove_node(pos)
          return true
       end
    end,
    can_dig = function(pos, player)
-      local meta = minetest.get_meta(pos)
+      local meta = core.get_meta(pos)
       local sys_id = meta:get_string('system_id')
       local sys_inv_max = asrs.data[sys_id].max_inv
       asrs.sort_inventory(asrs.data[sys_id].inv_pos)
       local inv_count = asrs.count_inventory(asrs.data[sys_id].inv_pos)
       if inv_count > (sys_inv_max - 10) then
-         minetest.chat_send_player(player:get_player_name(), 'Remove some inventory from the system first.')
+         core.chat_send_player(player:get_player_name(), 'Remove some inventory from the system first.')
          return false
       else
          return true
@@ -60,7 +60,7 @@ minetest.register_node('asrs:pipeworks', {
    after_dig_node = function(pos, _, oldmetadata)
       local _, pos1 = asrs.connected_nodes(pos, 'asrs:lift')
       if pos1 then
-         local that_meta = minetest.get_meta(pos1)
+         local that_meta = core.get_meta(pos1)
          local children = that_meta:get_int('children')
          that_meta:set_int('children', children - 1)
       end
@@ -73,7 +73,7 @@ minetest.register_node('asrs:pipeworks', {
    end,
 })
 
-minetest.register_craft({
+core.register_craft({
    output = 'asrs:pipeworks',
    type = 'shapeless',
    recipe = {'asrs:cell', 'pipeworks:tube_1'}
