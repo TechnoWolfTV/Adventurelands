@@ -1,4 +1,4 @@
-minetest.register_chatcommand("count_registered_nodes", {
+minetest.register_chatcommand("countregisterednodes", {
 	params = "",
 	description = "counts the total number of registered nodes",
 	privs = {
