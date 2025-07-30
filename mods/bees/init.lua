@@ -845,7 +845,7 @@ core.register_craftitem("bees:bottle_honey", {
 	inventory_image = "bees_bottle_honey.png",
 	stack_max = 12,
 	on_use = core.item_eat(3, "vessels:glass_bottle"),
-	groups = {vessel = 1}
+	groups = {vessel = 1, food_honey = 1, food_sugar = 1}
 })
 
 add_eatable("bees:bottle_honey", 3)
@@ -878,7 +878,7 @@ core.register_craft({
 	recipe = {
 		{"", "default:steel_ingot", ""},
 		{"default:steel_ingot", "default:stick", "default:steel_ingot"},
-		{"default:mese_crystal", "default:steel_ingot", "default:mese_crystal"}
+		{"default:glass", "default:steel_ingot", "default:glass"}
 	}
 })
 

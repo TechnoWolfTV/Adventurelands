@@ -3,14 +3,12 @@ local S = core.get_translator("bows")
 
 -- detect feather item to use
 
-local feather = "default:leaves"
+local feather = "group:leaves"
 
-if core.get_modpath("animalia") then
-	feather = "animalia:feather"
-elseif core.get_modpath("mobs_animal") then
-	feather = "mobs:chicken_feather"
-elseif core.get_modpath("xanadu") then
-	feather = "mobs:chicken_feather"
+if core.get_modpath("animalia")
+or core.get_modpath("mobs_animal")
+or core.get_modpath("xanadu") then
+	feather = "group:feather"
 end
 
 -- helpful recipes
@@ -194,3 +192,35 @@ bows.register_arrow("arrow_diamond",{
 		end
 	end
 })
+
+-- tnt arrow
+
+local enable_tnt = core.settings:get_bool("enable_tnt")
+if enable_tnt == nil then
+	enable_tnt = core.is_singleplayer()
+end
+
+if core.get_modpath("tnt") and enable_tnt then
+
+	bows.register_arrow("arrow_tnt",{
+		description = S("TNT arrow"),
+		texture = "bows_arrow_wood.png^[colorize:#660000cc",
+		damage = 6,
+		craft_count = 1,
+		drop_chance = 1000,
+		craft = {
+			{"tnt:tnt", "group:stick", feather},
+		},
+		on_hit_sound = "bows_arrow_hit",
+		on_hit_node = function(self, pos, user, arrow_pos)
+			if not core.is_protected(pos, user:get_player_name()) then
+				tnt.boom(pos, {radius = 2})
+			end
+		end,
+		on_hit_object = function(self, target, hp, user, lastpos)
+			if not core.is_protected(lastpos, user:get_player_name()) then
+				tnt.boom(lastpos, {radius = 1})
+			end
+		end,
+	})
+end

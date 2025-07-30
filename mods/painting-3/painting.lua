@@ -459,11 +459,15 @@ core.register_node("painting:easel", {
 	on_punch = function(pos, node, player)
 		local meta = core.get_meta(pos)
 		
+		if core.is_protected(pos, player:get_player_name()) then
+			return
+		end
+		
 		-- prevent canvas to be place immediately into easel again
 		if (meta:get_int("gametime")>core.get_gametime()) then
 			return
 		end
-		
+
 		local wield_item = player:get_wielded_item()
 		local wield_item_idx = player:get_wield_index()
 		local wield_meta = wield_item:get_meta()
