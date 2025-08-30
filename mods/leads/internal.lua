@@ -54,25 +54,27 @@ function leads._apply_item_patches(name, def)
         local object = pointed_thing and pointed_thing.ref;
         local keys = user:get_player_control();
 
-        -- If the player is holding a knotted lead, tie it to the object instead:
-        if user and object and leads.is_leashable(object) and not leads.is_immobile(object) and not keys.sneak then
-            for lead in leads.find_connected_leads(user, true, false) do
-                local lead_entity = lead:get_luaentity();
-                local follower = lead_entity:get_follower();
-                if follower and leads.is_immobile(follower) then
-                    lead_entity:reverse(); -- Reverse the lead so the knot becomes the leader.
-                    if lead_entity:set_follower(object) then
-                        return nil;
+        if user and object then
+            -- If the player is holding a knotted lead, tie it to the object instead:
+            if leads.is_leashable(object) and not leads.is_immobile(object) and not keys.sneak then
+                for lead in leads.find_connected_leads(user, true, false) do
+                    local lead_entity = lead:get_luaentity();
+                    local follower = lead_entity:get_follower();
+                    if follower and leads.is_immobile(follower) then
+                        lead_entity:reverse(); -- Reverse the lead so the knot becomes the leader.
+                        if lead_entity:set_follower(object) then
+                            return nil;
+                        end;
                     end;
                 end;
             end;
-        end;
 
-        -- Hold Aux1 to leash an animal to another animal:
-        if object and keys.aux1 and leads.is_leashable(object) then
-            for lead in leads.find_connected_leads(user, true, false) do
-                if lead:get_luaentity():set_leader(object) then
-                    return nil;
+            -- Hold Aux1 to leash an animal to another animal:
+            if keys.aux1 and leads.is_leashable(object) then
+                for lead in leads.find_connected_leads(user, true, false) do
+                    if lead:get_luaentity():set_leader(object) then
+                        return nil;
+                    end;
                 end;
             end;
         end;

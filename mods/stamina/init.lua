@@ -63,7 +63,7 @@ stamina = {
 	-- fov change
 	fov_change = tonumber(minetest.settings:get("stamina_fov_multiplier") or 0.9),
 	-- double tap time
-	double_tap_time = 0.8
+	double_tap_time = tonumber(minetest.settings:get("stamina_double_tap_time") or 0.4)
 }
 
 -- are we a real player ?
@@ -511,6 +511,8 @@ end
 -- check for double tap forward (thanks xXOsielXx)
 
 local function check_for_double_tap(controls, data, DOUBLE_TAP_TIME)
+
+	if stamina.double_tap_time == 0 then return end
 
 	if controls and controls.up and not data.was_pressing_forward and not controls.down
 	and not controls.sneak and not data.sprint then

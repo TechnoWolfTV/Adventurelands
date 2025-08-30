@@ -592,6 +592,7 @@ This function registers a arrow for mobs with the attack type shoot.
        'drop'         if set to true any arrows hitting a node will drop as item,
                       if number given then chance (1/num) of item dropping will
                       be used.  arrow "mymob:myarrow" will use item of same name.
+       'drop_item'    name of custom item to drop instead of arrow.
        'hit_player'   a function that is called when the arrow hits a player;
                       this function should hurt the player, the parameters are
                       (self, player)
@@ -616,6 +617,9 @@ This function registers a arrow for mobs with the attack type shoot.
        'collisionbox' is hitbox table for arrow, {-.1,-.1,-.1,.1,.1,.1} by default.
        'lifetime'     contains float value for how many seconds arrow exists in
                       world before being removed (default is 4.5 seconds).
+
+Note: When an arrow hits a solid item moveresult is copied into the arrow
+      self.moveresult for use inside the hit functions.
 
 
 Spawn Eggs

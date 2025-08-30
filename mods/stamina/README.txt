@@ -79,3 +79,4 @@ TenPlus1 Additions:
  - Ability to drink milk from mobs or soy milk from farming to counteract poison/drunk
  - Added API
  - Added FOV effect when sprinting, and alcohol units lowers every saturation tick
+ - Added double-tap to sprint and 'stamina_double_tap_time' setting, 0 to disable

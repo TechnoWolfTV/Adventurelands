@@ -192,12 +192,17 @@ function leads.is_knottable(name)
         return knottable;
     end;
 
-    -- Fence:
-    if def.drawtype == 'fencelike' or (core.get_item_group(name, 'fence') > 0 and not (name:match('.*:fence_rail_.*') or name:match('.*:gate_.*'))) then
+    -- Not gates or fence rails:
+    if def._gate or name:match('.*:fence_rail_.*') or name:match('.*:.*_fence_rail$') then
+        return false;
+    end
+
+    -- Fences:
+    if def.drawtype == 'fencelike' or core.get_item_group(name, 'fence') > 0 then
         return true;
     end;
 
-    -- Mese post:
+    -- Mese posts:
     if name:match('.*:mese_post_.*') then
         return true;
     end;
@@ -262,6 +267,12 @@ end;
 function leads.knot(leader, pos)
     pos = vector.round(pos);
 
+    -- Find a lead attached to the player:
+    local lead = leads.find_lead_by_leader(leader);
+    if not lead then
+        return nil;
+    end;
+
     -- Check protection:
     if leads.settings.respect_protection and not core.check_player_privs(leader, 'protection_bypass') then
         local name = leader and leader:get_player_name() or '';
@@ -269,12 +280,6 @@ function leads.knot(leader, pos)
             core.record_protection_violation(pos, name);
             return nil;
         end;
-    end;
-
-    -- Find a lead attached to the player:
-    local lead = leads.find_lead_by_leader(leader);
-    if not lead then
-        return nil;
     end;
 
     -- Create a knot:
