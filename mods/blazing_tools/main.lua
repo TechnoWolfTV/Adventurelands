@@ -19,7 +19,7 @@ minetest.register_tool("blazing_tools:pick_blazing", {
 	inventory_image = "blazing_pick.png",
 	light_source = 13,
 	tool_capabilities = {
-		full_punch_interval = 0.45,
+		full_punch_interval = 1.0,
 		max_drop_level=3,
 		groupcaps={
 			cracky={times={[1]=0.10, [2]=0.10, [3]=0.10}, uses=1000, maxlevel=2}
@@ -34,12 +34,12 @@ minetest.register_tool("blazing_tools:shovel_blazing", {
 	inventory_image = "blazing_shovel.png",
 	light_source = 13,
 	tool_capabilities = {
-		full_punch_interval = 0.45,
+		full_punch_interval = 1.0,
 		max_drop_level=3,
 		groupcaps={
 			crumbly={times={[1]=0.05, [2]=0.05, [3]=0.05}, uses=1000, maxlevel=2}
 		},
-		damage_groups = {fleshy=5},
+		damage_groups = {fleshy=6},
 	},
 	groups = {shovel = 1, enchantability=22}
 })
@@ -49,13 +49,13 @@ minetest.register_tool("blazing_tools:axe_blazing", {
 	inventory_image = "blazing_axe.png",
 	light_source = 13,
 	tool_capabilities = {
-		full_punch_interval = 0.45,
+		full_punch_interval = 1.0,
 		max_drop_level=3,
 		groupcaps={
 			choppy={times={[1]=0.15, [2]=0.15, [3]=0.15}, uses=1000, maxlevel=2},
 			fleshy={times={[1]=0.15, [2]=0.15, [3]=0.15}, uses=1000, maxlevel=2}
 		},
-		damage_groups = {fleshy=8},
+		damage_groups = {fleshy=6},
 	},
 	groups = {axe = 1, enchantability=22}
 })
@@ -65,7 +65,7 @@ minetest.register_tool("blazing_tools:sword_blazing", {
 	inventory_image = "blazing_sword.png",
 	light_source = 13,
 	tool_capabilities = {
-		full_punch_interval = 0.45,
+		full_punch_interval = 1.0,
 		max_drop_level=3,
 		groupcaps={
 			fleshy={times={[1]=0.20, [2]=0.20, [3]=0.20}, uses=1000, maxlevel=2},
