@@ -853,7 +853,8 @@ add_eatable("bees:bottle_honey", 3)
 core.register_craftitem("bees:wax", {
 	description = S("Bees Wax"),
 	inventory_image = "bees_wax.png",
-	stack_max = 48
+	stack_max = 48,
+	groups = {wax = 1}
 })
 
 core.register_craftitem("bees:honey_comb", {

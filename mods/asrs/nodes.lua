@@ -163,7 +163,9 @@ core.register_node('asrs:remote_node', {
       local sys_id = meta:get_string('system_id')
       pos = asrs.data[sys_id].inv_pos
       local infotext = asrs.data[sys_id].infotext
-      meta:set_string('infotext', infotext)
+      if infotext then
+      	  meta:set_string('infotext', infotext)
+      end
       local name = clicker:get_player_name()
       if name == owner or string.find(players, ' '..name..' ') then
          asrs.update_inventory(pos)

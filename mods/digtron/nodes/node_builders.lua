@@ -7,6 +7,8 @@ local S = digtron.S
 
 local node_inventory_table = {type="node"} -- a reusable parameter for get_inventory calls, set the pos parameter before using.
 
+local has_wrench_mod = minetest.get_modpath("wrench")
+
 local displace_due_to_help_button = 1.0
 if minetest.get_modpath("doc") then
 	displace_due_to_help_button = 0.0
@@ -68,6 +70,15 @@ local builder_on_rightclick = function(pos, _, clicker, itemstack, pointed_thing
 	minetest.show_formspec(clicker:get_player_name(),
 		"digtron:builder"..minetest.pos_to_string(pos),
 		builder_formspec(pos, meta))
+end
+
+local function sanitize_item(item)
+	-- check if the item can be "wrenched"
+	if has_wrench_mod and wrench.registered_nodes[item:get_name()] then
+		-- item can be "wrenched" (contains the inventory serialized in the "data" field)
+		-- remove the serialized data on the placed node
+		item:get_meta():set_string("data", "")
+	end
 end
 
 minetest.register_on_player_receive_fields(function(sender, formname, fields)
@@ -277,7 +288,10 @@ minetest.register_node("digtron:builder", {
 
 		node_inventory_table.pos = pos
 		local inv = minetest.get_inventory(node_inventory_table)
-		inv:set_stack(listname, index, stack:take_item(1))
+		local item = stack:take_item(1)
+		sanitize_item(item)
+
+		inv:set_stack(listname, index, item)
 
 		-- If we're adding a wallmounted item and the build facing is greater than 5, reset it to 0
 		local meta = minetest.get_meta(pos)
@@ -364,6 +378,7 @@ minetest.register_node("digtron:builder", {
 		local build_facing = tonumber(meta:get_int("build_facing"))
 		local facing = minetest.get_node(pos).param2
 		local buildpos = digtron.find_new_pos(pos, facing)
+		local protection_bypass = minetest.check_player_privs(player, "protection_bypass")
 
 		if (buildpos[controlling_coordinate] + meta:get_int("offset")) % meta:get_int("period") ~= 0 then
 			return 0
@@ -386,6 +401,18 @@ minetest.register_node("digtron:builder", {
 		while extrusion_count < extrusion_target do
 			if not digtron.can_build_to(buildpos, protected_nodes, nodes_dug) then
 				return built_count
+			end
+
+			-- When extruding beyond the first node, we may be out of area
+			-- explored by `DigtronLayout`. `can_build_to` is not able to
+			-- distinguish unknown nodes from unprotected ones.
+			-- We have to check for protection ourselves.
+			if extrusion_count > 0 then
+				if minetest.is_protected(buildpos, player:get_player_name()) and
+					not protection_bypass
+				then
+					return built_count
+				end
 			end
 
 			local oldnode = minetest.get_node(buildpos)
@@ -511,7 +538,10 @@ minetest.register_node("digtron:master_builder", {
 
 		node_inventory_table.pos = pos
 		local inv = minetest.get_inventory(node_inventory_table)
-		inv:set_stack(listname, index, stack:take_item(1))
+		local item = stack:take_item(1)
+		sanitize_item(item)
+
+		inv:set_stack(listname, index, item)
 
 		-- If we're adding a wallmounted item and the build facing is greater than 5, reset it to 0
 		local meta = minetest.get_meta(pos)

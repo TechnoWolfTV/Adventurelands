@@ -68,8 +68,7 @@ function asrs.main(pos, node) --The main inventory screen.
    local sys_id = meta:get_string('system_id')
    local sys_data = asrs.data[sys_id]
    local sys_inv_max = sys_data.max_inv
-   local quantity = meta:get_int('rows') or 3
-   local total_pages = math.floor(sys_inv_max/(quantity*10))
+   local total_pages = math.floor(sys_inv_max/(inv_rows*10))
    local formspec =
       base(inv_rows)..
       'field[.4,'..(offset+.0625)..';3.75,.75;inv_search_filter;;]'..
@@ -86,7 +85,7 @@ function asrs.main(pos, node) --The main inventory screen.
       'tooltip[next_page;Go forward one page.]'..
       'image_button[12,'..(offset+.0625)..';.75,.75;asrs_last.png;last_page;]'..
       'tooltip[last_page;Jump to last page.]'..
-      'hypertext[6.25,'..(offset+.0625)..';2.75,.75;;<style size=24><global halign=center valign=middle>page: '..((index/(quantity*10))+1)..'/'..total_pages..'</style>]'..
+      'hypertext[6.25,'..(offset+.0625)..';2.75,.75;;<style size=24><global halign=center valign=middle>page: '..((index/(inv_rows*10))+1)..'/'..total_pages..'</style>]'..
       'list[nodemeta:'..spos..';'..inv_name..';.5,.5;10,'..inv_rows..';'..index..']'..
       'list[current_player;main;3,'..1+offset..';8,4]'..
       'listring[]'
@@ -104,7 +103,7 @@ function asrs.settings(pos)
    local name = meta:get_string('infotext')
    local players = meta:get_string('players') or ''
    local owner = meta:get_string('owner') or ''
-   local inv_rows = meta:get_int('rows')
+   local inv_rows = math.max(meta:get_int('rows'), 3)
    local formspec =
       base()..
       'image[.375,.375;12.5,3.75;asrs_logo.png]'..
@@ -181,13 +180,13 @@ core.register_on_player_receive_fields(function(player, formname, fields)
       elseif fields.prev_page then
          local meta = core.get_meta(pos)
          local index = meta:get_int('inv_page')
-         local quantity = meta:get_int('rows')*10
+         local quantity = math.max(meta:get_int('rows'), 3)*10
          meta:set_int('inv_page', math.max(index - quantity, 0))
          core.show_formspec(name, 'asrs:control_panel', asrs.main(pos, node))
       elseif fields.next_page then
          local meta = core.get_meta(pos)
          local index = meta:get_int('inv_page')
-         local quantity = meta:get_int('rows')*10
+         local quantity = math.max(meta:get_int('rows'), 3)*10
          local sys_id = meta:get_string('system_id')
          local sys_data = asrs.data[sys_id]
          local sys_inv_max = sys_data.max_inv
@@ -196,7 +195,7 @@ core.register_on_player_receive_fields(function(player, formname, fields)
       elseif fields.last_page then
          local meta = core.get_meta(pos)
          local index = meta:get_int('inv_page')
-         local quantity = meta:get_int('rows')*10
+         local quantity = math.max(meta:get_int('rows'), 3)*10
          local sys_id = meta:get_string('system_id')
          local sys_data = asrs.data[sys_id]
          local sys_inv_max = sys_data.max_inv

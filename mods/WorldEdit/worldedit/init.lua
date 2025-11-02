@@ -1,4 +1,4 @@
---- WorldEdit mod for the Minetest engine
+--- WorldEdit mod for the Luanti engine
 -- @module worldedit
 -- @release 1.3
 -- @copyright 2012 sfan5, Anthony Zhang (Uberi/Temperest), and Brett O'Donnell (cornernote)
@@ -32,7 +32,6 @@ load_module(path .. "/visualization.lua")
 load_module(path .. "/serialization.lua")
 load_module(path .. "/code.lua")
 load_module(path .. "/compatibility.lua")
-load_module(path .. "/cuboid.lua")
 
 
 if minetest.settings:get_bool("log_mods") then
