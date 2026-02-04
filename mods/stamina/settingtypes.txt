@@ -15,3 +15,5 @@ stamina_sprint_drain (Sprint stamina drain - 0.0 to 1.0) float 0.35
 stamina_fov_multiplier (Sprinting FOV effect - 0 to disable) float 0.9
 
 stamina_double_tap_time (Double-tap time for sprinting - 0 to disable) float 0.4
+
+stamina_drunk_interval (How long is player drunk for) int 60

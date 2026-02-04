@@ -133,9 +133,15 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Digtron
   - Location: ./mods/digtron/
   - License file: ./mods/digtron/LICENSE.txt
+- Discovery Maps
+  - Location: ./mods/discovery_maps/
+  - License file: ./mods/discovery_maps/LICENSE
 - Dreambuilder Hotbar
   - Location: ./mods/dreambuilder_hotbar/
   - License file: ./mods/dreambuilder_hotbar/LICENSE
+- Dungeons Plus
+  - Location: ./mods/dungeonsplus/
+  - License file: ./mods/dungeonsplus/LICENSE
 - Edit Skin
   - Location: ./mods/edit_skin/
   - License file: ./mods/edit_skin/LICENSE.txt
@@ -277,6 +283,9 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Painting
   - Location: ./mods/painting-3/
   - License file: ./mods/painting-3/LICENSE
+- Personal Bookmarks
+  - Location: ./mods/pbmarks/
+  - License file: ./mods/pbmarks/LICENSE.txt
 - Pipeworks
   - Location: ./mods/pipeworks/
   - License file: ./mods/pipeworks/LICENSE
@@ -290,6 +299,9 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Signs Lib
   - Location: ./mods/signs_lib/
   - License file: ./mods/signs_lib/LICENSE
+- Sprinting
+  - Location: ./mods/sprinting/
+  - License file: ./mods/sprinting/LICENSE.txt
 - Stamina
   - Location: ./mods/stamina/
   - License file: ./mods/stamina/licence.txt
@@ -345,6 +357,9 @@ made to the below listed works are officially made on or after 5 March 2024.
   - Location: ./mods/woodpiles/
   - License file: ./mods/woodpiles/LICENSE
   - Changes were made to this work
+- World Data Manager Library
+  - Location: ./mods/wdata/
+  - License file: ./mods/wdata/LICENSE.txt
 - WorldEdit
   - Location: ./mods/WorldEdit/
   - License file: ./mods/WorldEdit/LICENSE.txt

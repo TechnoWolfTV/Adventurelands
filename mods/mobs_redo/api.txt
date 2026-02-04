@@ -142,7 +142,7 @@ functions needed for the mob to work properly which contains the following:
    'arrow'               holds the pre-defined arrow object to shoot when
                          attacking.
    'arrow_override'      function that allows tweaking of arrow entity from
-                         inside mob definition (self) passed to function.
+                         inside mob definition (self, mob_ent) passed to function.
    'dogshoot_switch'     allows switching between attack types by using timers
                          (1 for shoot, 2 for dogfight)
    'dogshoot_count_max'  contains how many seconds before switching from
@@ -153,6 +153,7 @@ functions needed for the mob to work properly which contains the following:
    'shoot_offset'         holds the y position added as to where the
                          arrow/fireball appears on mob.
    'homing'              When True arrows will follow player when visible.
+   'punch_interval'      the number of seconds between punches (default: 1)
    'specific_attack'     has a table of entity names that mob can also attack
                          e.g. {"player", "mobs_animal:chicken"}.
    'friendly_fire`       when set to false, mobs will not be able to harm other
@@ -625,7 +626,7 @@ Note: When an arrow hits a solid item moveresult is copied into the arrow
 Spawn Eggs
 ----------
 
-mobs:register_egg(name, description, background, addegg, no_creative)
+mobs:register_egg(name, description, background, addegg, no_creative, can_spawn_protect)
 
 This function registers a spawn egg which can be used to properly spawn in a mob.
 Animals are spawned as tamed unless sneak/shift is held while spawning.
@@ -637,6 +638,7 @@ Animals are spawned as tamed unless sneak/shift is held while spawning.
                  0 = no)
    'no_creative' when set to true this stops spawn egg appearing in creative
                  mode for destructive mobs like Dungeon Masters.
+   'can_spawn_protect' when true can spawn mob inside protected areas (default:nil).
 
 
 Explosion Function
@@ -945,3 +947,4 @@ mobs:yaw_to_pos(self, target, rotation_steps)
 mobs:line_of_sight(self, pos1, pos2)
 mobs:set_animation(self, animation)
 mobs:yaw(self, yaw, rotation_steps)
+mobs:scale_mob(self, width, height, permanent) -- scale by w,h

@@ -16,10 +16,8 @@ end
 
 castle_masonry.register_pillar = function(material)
 	local composition_def, burn_time, tile, desc = castle_masonry.get_material_properties(material)
-	local crossbrace_connectable_groups = {}
-	for group, val in pairs(composition_def.groups) do
-		crossbrace_connectable_groups[group] = val
-	end
+
+	local crossbrace_connectable_groups = table.copy(composition_def.groups)
 	crossbrace_connectable_groups.crossbrace_connectable = 1
 
 	local mod_name = minetest.get_current_modname()
@@ -114,9 +112,17 @@ castle_masonry.register_pillar = function(material)
 		},
 	}))
 
+	local groups_micro = table.copy(composition_def.groups)
+	-- Remove groups that can cause item duplication due to cheap crossbrace recipes.
+	-- See also moreblocks' `stairsplus:prepare_groups(groups)`.
+	groups_micro.wood = nil
+	groups_micro.stone = nil
+	groups_micro.wool = nil
+	groups_micro.tree = nil
+
 	core.register_node(name_prefix .. "_crossbrace", copy_merge(template, {
 		description = S("@1 Crossbrace", desc),
-		groups = composition_def.groups,
+		groups = groups_micro,
 		node_box = {
 			type = "connected",
 			fixed = {-0.25,0.25,-0.25,0.25,0.5,0.25},
@@ -134,6 +140,8 @@ castle_masonry.register_pillar = function(material)
 
 	core.register_node(name_prefix .. "_extended_crossbrace", copy_merge(template, {
 		description = S("@1 Extended Crossbrace", desc),
+		-- In case of a `wood = 1` group, this may be crafted back to 4 sticks (1 wood block).
+		-- The cost of this node is 3/2 wood blocks -> acceptable material loss.
 		groups = composition_def.groups,
 		node_box = {
 			type = "fixed",
@@ -208,12 +216,13 @@ castle_masonry.register_pillar = function(material)
 
 	minetest.register_craft({
 		output = name_prefix.."_extended_crossbrace",
-		type="shapeless",
-		recipe = {name_prefix.."_crossbrace"},
+		recipe = {
+			{name_prefix.."_crossbrace", name_prefix.."_crossbrace", name_prefix.."_crossbrace"},
+		},
 	})
 
 	minetest.register_craft({
-		output = name_prefix.."_crossbrace",
+		output = name_prefix.."_crossbrace 3",
 		type="shapeless",
 		recipe = {name_prefix.."_extended_crossbrace"},
 	})
@@ -271,13 +280,6 @@ local PILLAR_VARIANTS = {
 	"_middle_half",
 	"_top",
 	"_top_half",
-	"_bottom",
-	"_bottom_half",
-	"_crossbrace",
-	"_middle",
-	"_middle_half",
-	"_top",
-	"_top_half"
 }
 
 -- The original castle mod had "pillars_", plural, which didn't match the arrowslit and murderhole standard.

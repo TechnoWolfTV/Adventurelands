@@ -2,6 +2,8 @@ local S = minetest.get_translator("unified_inventory")
 local F = minetest.formspec_escape
 local ui = unified_inventory
 
+local MIN_FORMSPEC_VERSION = 4
+
 -- This pair of encoding functions is used where variable text must go in
 -- button names, where the text might contain formspec metacharacters.
 -- We can escape button names for the formspec, to avoid screwing up
@@ -46,8 +48,6 @@ end
 
 -- Add registered buttons (tabs)
 local function formspec_tab_buttons(player, formspec, style)
-	local n = #formspec + 1
-
 	-- Main buttons
 
 	local filtered_inv_buttons = {}
@@ -62,6 +62,7 @@ local function formspec_tab_buttons(player, formspec, style)
 
 	local needs_scrollbar = #filtered_inv_buttons > style.main_button_cols * style.main_button_rows
 
+	local n = #formspec + 1
 	formspec[n] = ("scroll_container[%g,%g;%g,%g;tabbtnscroll;vertical]"):format(
 		style.main_button_x, style.main_button_y, -- position
 		style.main_button_cols * style.btn_spc, style.main_button_rows -- size
@@ -188,12 +189,8 @@ local function formspec_add_search_box(player, formspec, ui_peruser)
 	end
 end
 
-local function formspec_add_item_browser(player, formspec, ui_peruser)
-	local player_name = player:get_player_name()
-	local n = #formspec + 1
-
-	-- Controls to flip items pages
-
+-- Helper function for 'formspec_add_item_browser'
+local function add_item_browser_nav(formspec, ui_peruser)
 	local btnlist = {
 		{ "ui_skip_backward_icon.png", "start_list", S("First page") },
 		{ "ui_doubleleft_icon.png",    "rewind3",    S("Back three pages") },
@@ -202,23 +199,37 @@ local function formspec_add_item_browser(player, formspec, ui_peruser)
 		{ "ui_doubleright_icon.png",   "forward3",   S("Forward three pages") },
 		{ "ui_skip_forward_icon.png",  "end_list",   S("Last page") },
 	}
+	local btnlist_max = #btnlist -- to iterate in order
 
 	if ui_peruser.is_lite_mode then
 		btnlist[2] = nil
 		btnlist[5] = nil
 	end
 
-	local bn = 0
-	for _, b in pairs(btnlist) do
-		formspec[n] =  string.format("image_button[%f,%f;%f,%f;%s;%s;]",
-			ui_peruser.page_buttons_x + ui_peruser.btn_spc*bn,
-			ui_peruser.page_buttons_y + ui_peruser.btn_spc,
-			ui_peruser.btn_size, ui_peruser.btn_size,
-			b[1],b[2])
-		formspec[n+1] = "tooltip["..b[2]..";"..F(b[3]).."]"
-		bn = bn + 1
-		n = n + 2
+	local n = #formspec + 1
+	local btns_shown = 0
+	for i = 1, btnlist_max do
+		local b = btnlist[i]
+		if b then
+			formspec[n] =  string.format("image_button[%f,%f;%f,%f;%s;%s;]",
+				ui_peruser.page_buttons_x + ui_peruser.btn_spc * btns_shown,
+				ui_peruser.page_buttons_y + ui_peruser.btn_spc,
+				ui_peruser.btn_size, ui_peruser.btn_size,
+				b[1],b[2])
+			formspec[n+1] = "tooltip["..b[2]..";"..F(b[3]).."]"
+			btns_shown = btns_shown + 1
+			n = n + 2
+		end
 	end
+	return btns_shown
+end
+
+local function formspec_add_item_browser(player, formspec, ui_peruser)
+	local player_name = player:get_player_name()
+
+	-- Controls to flip items pages
+	local btns_shown = add_item_browser_nav(formspec, ui_peruser)
+	local n = #formspec + 1
 
 	-- Items list
 	if #ui.filtered_items_list[player_name] == 0 then
@@ -281,7 +292,7 @@ local function formspec_add_item_browser(player, formspec, ui_peruser)
 	formspec[n + 1] = string.format("image_button[%f,%f;%f,0.4;;page_number;%s: %s;false;false;]",
 		ui_peruser.page_buttons_x,
 		ui_peruser.page_buttons_y + ui_peruser.btn_spc * 2 - 0.1,
-		ui_peruser.btn_spc * (bn - 1) + ui_peruser.btn_size,
+		ui_peruser.btn_spc * (btns_shown - 1) + ui_peruser.btn_size,
 		F(S("Page")), S("@1 of @2",page2,pagemax))
 end
 
@@ -292,7 +303,6 @@ function ui.get_formspec(player, page)
 	end
 
 	local player_name = player:get_player_name()
-	local ui_peruser = ui.get_per_player_formspec(player_name)
 
 	ui.current_page[player_name] = page
 	local pagedef = ui.pages[page]
@@ -301,23 +311,22 @@ function ui.get_formspec(player, page)
 		return "" -- Invalid page name
 	end
 
+	local ui_peruser = ui.get_per_player_formspec(player_name)
 	local fs = {
-		"formspec_version[4]",
+		("formspec_version[%d]"):format(MIN_FORMSPEC_VERSION),
 		"size["..ui_peruser.formw..","..ui_peruser.formh.."]",
 		pagedef.formspec_prepend and "" or "no_prepend[]",
 		ui.standard_background
 	}
 
-	local perplayer_formspec = ui.get_per_player_formspec(player_name)
-	local fsdata = pagedef.get_formspec(player, perplayer_formspec)
-
+	local fsdata = pagedef.get_formspec(player, ui_peruser)
 	fs[#fs + 1] = fsdata.formspec
 
 	formspec_tab_buttons(player, fs, ui_peruser)
 
 	if fsdata.draw_inventory ~= false then
 		-- Player inventory
-		fs[#fs + 1] = "listcolors[#00000000;#00000000]"
+		fs[#fs + 1] = "listcolors[#00000000;#00000000]" -- needed by 'ui.single_slot'
 		fs[#fs + 1] = ui_peruser.standard_inv
 	end
 
@@ -444,8 +453,8 @@ end
 minetest.register_on_joinplayer(function(player)
 	local player_name = player:get_player_name()
 	local info = minetest.get_player_information(player_name)
-	if info and (info.formspec_version or 0) < 4 then
-		minetest.chat_send_player(player_name, S("Unified Inventory: Your game version is too old"
-			.. " and does not support the GUI requirements. You might experience visual issues."))
+	if info and (info.formspec_version or 0) < MIN_FORMSPEC_VERSION then
+		minetest.chat_send_player(player_name, S("Unified Inventory: Your Luanti/Minetest is"
+			.. " no longer supported. You might experience visual issues."))
 	end
 end)

@@ -61,10 +61,13 @@ function wine:add_item(list)
 		if is_uninv then
 
 			unified_inventory.register_craft({
-				type = "barrel",
-				items = item[1],
-				output = item[2]
+				type = "barrel", items = item[1], output = item[2]
 			})
+		else -- show expensive recipe for item in guide
+--			table.insert(item[1], "wine:wine_barrel")
+--			core.register_craft({
+--				type = "shapeless", output = item[2], recipe = item[1]
+--			})
 		end
 	end
 end
@@ -78,7 +81,7 @@ function wine.add_eatable(item, hp)
 
 		local groups = table.copy(def.groups) or {}
 
-		groups.eatable = hp ; groups.flammable = 2
+		groups.eatable = hp ; groups.flammable = 2 ; groups.food = 3
 
 		core.override_item(item, {groups = groups})
 	end
@@ -88,7 +91,7 @@ end
 function wine:add_drink(name, desc, has_bottle, num_hunger, num_thirst, alcoholic)
 
 	-- glass
-	core.register_node("wine:glass_" .. name, {
+	core.register_node(":wine:glass_" .. name, {
 		description = S("Glass of " .. desc),
 		drawtype = "plantlike",
 		visual_scale = 0.5,
@@ -127,7 +130,7 @@ function wine:add_drink(name, desc, has_bottle, num_hunger, num_thirst, alcoholi
 	-- bottle
 	if has_bottle then
 
-		core.register_node("wine:bottle_" .. name, {
+		core.register_node(":wine:bottle_" .. name, {
 			description = S("Bottle of " .. desc),
 			drawtype = "plantlike",
 			visual_scale = 0.7,
@@ -244,7 +247,9 @@ end
 
 -- Wine barrel node
 core.register_node("wine:wine_barrel", {
-	description = S("Fermenting Barrel"),
+	description = S("Fermenting Barrel") .. "\n" ..
+			core.get_color_escape_sequence("#ffdf00") ..
+			S("(Put ingredients inside barrel with water!)"),
 	tiles = {"wine_barrel.png" },
 	drawtype = "mesh",
 	mesh = "wine_barrel.obj",

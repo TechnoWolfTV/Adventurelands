@@ -1,5 +1,5 @@
 --Glass Black
-minetest.register_node("myglass:myglass_black", {
+core.register_node("myglass:myglass_black", {
 	description = "Glass Black",
 	drawtype = "glasslike",
 	tiles = {"myglass_black_framed.png"},
@@ -10,7 +10,7 @@ minetest.register_node("myglass:myglass_black", {
 })
 
 --Glass Yellow
-minetest.register_node("myglass:myglass_yellow", {
+core.register_node("myglass:myglass_yellow", {
 	description = "Glass Yellow",
 	drawtype = "glasslike",
 	tiles = {"myglass_yellow_framed.png"},
@@ -22,7 +22,7 @@ minetest.register_node("myglass:myglass_yellow", {
 })
 
 --Glass White
-minetest.register_node("myglass:myglass_white", {
+core.register_node("myglass:myglass_white", {
 	description = "Glass White",
 	drawtype = "glasslike",
 	tiles = {"myglass_white_framed.png"},
@@ -34,7 +34,7 @@ minetest.register_node("myglass:myglass_white", {
 })
 
 --Glass Blue
-minetest.register_node("myglass:myglass_blue", {
+core.register_node("myglass:myglass_blue", {
 	description = "Glass Blue",
 	drawtype = "glasslike",
 	tiles = {"myglass_blue_framed.png"},
@@ -46,7 +46,7 @@ minetest.register_node("myglass:myglass_blue", {
 })
 
 --Glass Red
-minetest.register_node("myglass:myglass_red", {
+core.register_node("myglass:myglass_red", {
 	description = "Glass Red",
 	drawtype = "glasslike",
 	tiles = {"myglass_red_framed.png"},
@@ -58,7 +58,7 @@ minetest.register_node("myglass:myglass_red", {
 })
 
 --Glass Lime
-minetest.register_node("myglass:myglass_lime", {
+core.register_node("myglass:myglass_lime", {
 	description = "Glass Lime",
 	drawtype = "glasslike",
 	tiles = {"myglass_lime_framed.png"},
@@ -74,7 +74,7 @@ minetest.register_node("myglass:myglass_lime", {
 
 --Glass Black
 
-minetest.register_craft({
+core.register_craft({
 	type = "shapeless",
 	output = "myglass:myglass_black",
 	recipe = {
@@ -83,7 +83,7 @@ minetest.register_craft({
 })
 --Glass White
 
-minetest.register_craft({
+core.register_craft({
 	type = "shapeless",
 	output = "myglass:myglass_white",
 	recipe = {
@@ -92,7 +92,7 @@ minetest.register_craft({
 })
 --Glass Yellow
 
-minetest.register_craft({
+core.register_craft({
 	type = "shapeless",
 	output = "myglass:myglass_yellow",
 	recipe = {
@@ -101,7 +101,7 @@ minetest.register_craft({
 })
 --Glass Blue
 
-minetest.register_craft({
+core.register_craft({
 	type = "shapeless",
 	output = "myglass:myglass_blue",
 	recipe = {
@@ -110,7 +110,7 @@ minetest.register_craft({
 })
 --Glass Red
 
-minetest.register_craft({
+core.register_craft({
 	type = "shapeless",
 	output = "myglass:myglass_red",
 	recipe = {
@@ -119,7 +119,7 @@ minetest.register_craft({
 })
 --Glass Lime
 
-minetest.register_craft({
+core.register_craft({
 	type = "shapeless",
 	output = "myglass:myglass_lime",
 	recipe = {

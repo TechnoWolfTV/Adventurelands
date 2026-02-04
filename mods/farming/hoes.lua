@@ -36,19 +36,14 @@ farming.register_hoe = function(name, def)
 	})
 
 	-- Register its recipe
-	if def.recipe then
-		core.register_craft({ output = name:sub(2), recipe = def.recipe })
+	local recipe = def.recipe or (def.material and {
+		{def.material, def.material},
+		{"", "group:stick"},
+		{"", "group:stick"}
+	})
 
-	elseif def.material then
-
-		core.register_craft({
-			output = name:sub(2),
-			recipe = {
-				{def.material, def.material, ""},
-				{"", "group:stick", ""},
-				{"", "group:stick", ""}
-			}
-		})
+	if recipe then
+		core.register_craft({ output = name:sub(2), recipe = recipe })
 	end
 end
 
@@ -123,7 +118,7 @@ function farming.hoe_on_use(itemstack, user, pointed_thing, uses)
 	-- only when used on soil top or external entity
 	if is_used then
 
-		-- cretive doesnt wear tools but toolranks registers uses with wear so set to 1
+		-- creative doesnt wear tools but toolranks registers uses with wear so set to 1
 		if farming.is_creative(user:get_player_name()) then
 			if mod_tr then wear = 1 else wear = 0 end
 		end
@@ -322,15 +317,15 @@ core.register_craftitem("farming:hoe_bomb", {
 			hoe_area(pointed_thing.under, user)
 		else
 			throw_potion(itemstack, user)
-
-			if not farming.is_creative(user:get_player_name()) then
-
-				itemstack:take_item()
-
-				return itemstack
-			end
 		end
-	end,
+
+		if not farming.is_creative(user:get_player_name()) then
+
+			itemstack:take_item()
+
+			return itemstack
+		end
+	end
 })
 
 -- helper function
@@ -363,6 +358,12 @@ core.register_tool("farming:scythe_mithril", {
 	sound = {breaks = "default_tool_breaks"},
 
 	on_use = function(itemstack, placer, pointed_thing)
+
+		-- if punching entity/object
+		if pointed_thing.type == "object" then
+			pointed_thing.ref:punch(placer, 1, {full_punch_interval = 1.0})
+			return itemstack
+		end
 
 		if pointed_thing.type ~= "node" then return end
 

@@ -176,7 +176,6 @@ ui.register_page("craft", {
 			perplayer_formspec.standard_inv_bg,
 			perplayer_formspec.craft_grid,
 			"label["..formheaderx..","..formheadery..";" ..F(S("Crafting")).."]",
-			"listcolors[#00000000;#00000000]",
 			"listring[current_name;craft]",
 			"listring[current_player;main]"
 		}
@@ -287,16 +286,13 @@ ui.register_page("craftguide", {
 
 		local formspec = {
 			perplayer_formspec.standard_inv_bg,
-			"label["..formheaderx..","..formheadery..";" .. F(S("Crafting Guide")) .. "]",
-			"listcolors[#00000000;#00000000]"
+			"label["..formheaderx..","..formheadery..";" .. F(S("Crafting Guide")) .. "]"
 		}
 
 		local item_name = ui.current_item[player_name]
 		if not item_name then
 			return { formspec = table.concat(formspec) }
 		end
-
-		local n = 4
 
 		local item_def = minetest.registered_items[item_name]
 		local item_name_shown
@@ -318,6 +314,7 @@ ui.register_page("craftguide", {
 		end
 		local has_give = player_privs.give or ui.is_creative(player_name)
 
+		local n = #formspec + 1
 		formspec[n] = string.format("image[%f,%f;%f,%f;ui_crafting_arrow.png]",
 	                            craftguidearrowx, craftguidey, ui.imgscale, ui.imgscale)
 
@@ -392,30 +389,30 @@ ui.register_page("craftguide", {
 			bsize = 0.8 * sf
 		end
 		if (bsize > 0.35 and display_size.width) then
-		for y = 1, display_size.height do
-		for x = 1, display_size.width do
-			local item
-			if craft and x <= craft_width then
-				item = craft.items[(y-1) * craft_width + x]
+			for y = 1, display_size.height do
+			for x = 1, display_size.width do
+				local item
+				if craft and x <= craft_width then
+					item = craft.items[(y-1) * craft_width + x]
+				end
+				-- Flipped x, used to build formspec buttons from right to left
+				local fx = display_size.width - (x-1)
+				-- x offset, y offset
+				local xof = ((fx-1) * of + of) * bspc
+				local yof = ((y-1) * of + 1) * bspc
+				if item then
+					formspec[n] = stack_image_button(
+							xoffset - xof, craftguidey - 1.25 + yof, bsize, bsize,
+							"item_button_recipe_",
+							ItemStack(item))
+				else
+					-- Fake buttons just to make grid
+					formspec[n] = string.format("image_button[%f,%f;%f,%f;ui_blank_image.png;;]",
+							xoffset - xof, craftguidey - 1.25 + yof, bsize, bsize)
+				end
+				n = n + 1
 			end
-			-- Flipped x, used to build formspec buttons from right to left
-			local fx = display_size.width - (x-1)
-			-- x offset, y offset
-			local xof = ((fx-1) * of + of) * bspc
-			local yof = ((y-1) * of + 1) * bspc
-			if item then
-				formspec[n] = stack_image_button(
-						xoffset - xof, craftguidey - 1.25 + yof, bsize, bsize,
-						"item_button_recipe_",
-						ItemStack(item))
-			else
-				-- Fake buttons just to make grid
-				formspec[n] = string.format("image_button[%f,%f;%f,%f;ui_blank_image.png;;]",
-						xoffset - xof, craftguidey - 1.25 + yof, bsize, bsize)
 			end
-			n = n + 1
-		end
-		end
 		else
 			-- Error
 			formspec[n] = string.format("label[2,%f;%s]",

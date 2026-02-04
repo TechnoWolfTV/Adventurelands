@@ -12,7 +12,7 @@ local S = core.get_translator("farming")
 
 farming = {
 	mod = "redo",
-	version = "20250717",
+	version = "20260104",
 	path = core.get_modpath("farming"),
 	select = {type = "fixed", fixed = {-0.5, -0.5, -0.5, 0.5, -5/16, 0.5}},
 	select_final = {type = "fixed", fixed = {-0.5, -0.5, -0.5, 0.5, -2.5/16, 0.5}},
@@ -262,7 +262,8 @@ local function set_growing(pos, stages_left)
 
 			local stage_length = statistics.normal(STAGE_LENGTH_AVG, STAGE_LENGTH_DEV)
 
-			stage_length = clamp(stage_length, 0.5 * STAGE_LENGTH_AVG, 3.0 * STAGE_LENGTH_AVG)
+			stage_length = clamp(
+					stage_length, 0.5 * STAGE_LENGTH_AVG, 3.0 * STAGE_LENGTH_AVG)
 
 			timer:set(stage_length, -0.5 * random() * STAGE_LENGTH_AVG)
 		end
@@ -443,7 +444,7 @@ function farming.place_seed(itemstack, placer, pointed_thing, plantname)
 	-- check if pointing at the top of the node
 	if pt.above.y ~= pt.under.y + 1 then return end
 
-	-- return if any of the nodes is not registered
+	-- return if any of the nodes arent registered
 	if not core.registered_nodes[under.name]
 	or not core.registered_nodes[above.name] then return end
 
@@ -464,7 +465,7 @@ function farming.place_seed(itemstack, placer, pointed_thing, plantname)
 
 		farming.start_seed_timer(pt.above)
 
-		core.sound_play("default_place_node", {pos = pt.above, gain = 1.0})
+		core.sound_play("default_place_node", {pos = pt.above}, true)
 
 		core.log("action", string.format("%s planted %s at %s",
 			(placer and placer:is_player() and placer:get_player_name() or "A mod"),
@@ -502,8 +503,8 @@ function farming.register_plant(name, def)
 	-- Check def
 	def.description = def.description or S("Seed")
 	def.inventory_image = def.inventory_image or "unknown_item.png"
-	def.minlight = def.minlight or 12
-	def.maxlight = def.maxlight or 15
+	def.minlight = def.minlight or farming.min_light
+	def.maxlight = def.maxlight or farming.max_light
 
 	-- Register seed
 	core.register_node(":" .. mname .. ":seed_" .. pname, {
@@ -687,7 +688,7 @@ if input then dofile(worldpath .. "/farming.conf") ; input:close() end
 
 -- helper function to add {eatable} group to food items, also {flammable}
 
-function farming.add_eatable(item, hp)
+function farming.add_eatable(item, hp, ftype)
 
 	local def = core.registered_items[item]
 
@@ -695,7 +696,7 @@ function farming.add_eatable(item, hp)
 
 		local groups = table.copy(def.groups) or {}
 
-		groups.eatable = hp ; groups.flammable = 2
+		groups.eatable = hp ; groups.flammable = 2 ; groups.food = ftype or 2
 
 		core.override_item(item, {groups = groups})
 	end

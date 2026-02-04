@@ -25,6 +25,10 @@ stamina = {
 	MOVE_TICK = 0.5,
 	-- time in seconds after player is poisoned
 	POISON_TICK = 1.25,
+	-- time in seconds after player has drunk effects
+	DRUNK_TICK = 1.0,
+	-- length of drunk effects
+	DRUNK_INTERVAL = tonumber(core.settings:get("stamina_drunk_interval")) or 60,
 	-- exhaustion increased this value after digged node
 	EXHAUST_DIG = 2,
 	-- after placing node
@@ -324,7 +328,7 @@ local function drunk_tick()
 				core.sound_play("stamina_burp", {to_player = name, gain = 0.7}, true)
 			end
 
-			data.drunk = data.drunk - 1
+			data.drunk = data.drunk - stamina.DRUNK_TICK
 
 			if data.drunk < 1 then
 
@@ -564,7 +568,7 @@ local function stamina_globaltimer(dtime)
 	drunk_timer = drunk_timer + dtime
 
 	-- simulate drunk walking (thanks LumberJ)
-	if drunk_timer > 1.0 then drunk_tick() ; drunk_timer = 0 end
+	if drunk_timer > stamina.DRUNK_TICK then drunk_tick() ; drunk_timer = 0 end
 
 	-- hurt player when poisoned
 	if poison_timer > stamina.POISON_TICK then poison_tick() ; poison_timer = 0 end
@@ -633,8 +637,11 @@ if damage_enabled and core.settings:get_bool("enable_stamina") ~= false then
 		local itemname = itemstack:get_name()
 		local def = core.registered_items[itemname]
 
-		if def and def.groups and def.groups.drink then
-			snd = "stamina_sip" ; gain = 1.0
+		if def and def.groups then
+
+			if def.groups.drink == 1 or def.groups.food == 3 then
+				snd = "stamina_sip" ; gain = 1.0
+			end
 		end
 
 		core.sound_play(snd, {to_player = name, gain = gain}, true)
@@ -684,7 +691,7 @@ if damage_enabled and core.settings:get_bool("enable_stamina") ~= false then
 
 			if data.units > 3 then
 
-				data.drunk = 60 ; data.units = 0
+				data.drunk = stamina.DRUNK_INTERVAL ; data.units = 0
 
 				user:hud_change(data.hud_id, "text", "stamina_hud_poison.png")
 

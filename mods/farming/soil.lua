@@ -203,7 +203,7 @@ if core.settings:get_bool("farming_disable_weeds") ~= true then
 		nodenames = {"group:field"},
 		neighbors = {"air"},
 		interval = 50,
-		chance = 35,
+		chance = 70,
 		catch_up = false,
 
 		action = function(pos, node)
@@ -215,7 +215,7 @@ if core.settings:get_bool("farming_disable_weeds") ~= true then
 			pos.y = pos.y + 1
 
 			if core.get_node(pos).name == "air" then
-				core.set_node(pos, {name = "farming:weed", param2 = 2})
+				core.set_node(pos, {name = "farming:weed", param2 = 10})
 			end
 		end
 	})

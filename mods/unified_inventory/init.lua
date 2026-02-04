@@ -50,7 +50,10 @@ unified_inventory = {
 	trash_enabled = (minetest.settings:get_bool("unified_inventory_trash") ~= false),
 	imgscale = 1.25,
 	list_img_offset = 0.13,
-	standard_background = "bgcolor[#0000]background9[0,0;1,1;ui_formbg_9_sliced.png;true;16]",
+	standard_background = (
+		"bgcolor[#0000]" ..
+		"background9[0,0;1,1;ui_formbg_9_sliced.png;true;16]"
+	),
 
 	hide_disabled_buttons = minetest.settings:get_bool("unified_inventory_hide_disabled_buttons", false),
 	hide_uncraftable_items = minetest.settings:get_bool("unified_inventory_hide_uncraftable_items", false),
@@ -100,6 +103,7 @@ ui.style_full = {
 	-- Generic sizes
 	btn_spc = 0.85,
 	btn_size = 0.75,
+	-- "main" inventory list position
 	std_inv_x = 0.3,
 	std_inv_y = 5.75,
 }
@@ -141,6 +145,7 @@ ui.style_lite = {
 	-- Generic sizes
 	btn_spc = 0.8,
 	btn_size = 0.7,
+	-- "main" inventory list position
 	std_inv_x = 0.1,
 	std_inv_y = 4.6,
 }

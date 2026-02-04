@@ -11,11 +11,62 @@
 local mod_def = core.get_modpath("default")
 local mod_mcl = core.get_modpath("mcl_core")
 
+-- Big Splash jumping in water
+
+if core.settings:get_bool("ambience_water_splash") == true then
+
+	local in_water = {}
+
+	ambience.add_set("big_splash", {
+
+		frequency = 1000,
+
+		sounds = {
+			{name = "big_splash", gain = 0.3, length = 4, ephemeral = true}
+		},
+
+		sound_check = function(def)
+
+			local hdef = core.registered_nodes[def.head_node]
+			local fdef = core.registered_nodes[def.feet_node]
+			local name = def.player:get_player_name()
+			local vel
+
+			if core.has_feature("direct_velocity_on_players") then
+				vel = def.player:get_velocity()
+			else
+				vel = def.player:get_player_velocity()
+			end
+
+			if  hdef and hdef.groups and hdef.groups.water
+			and fdef and fdef.groups and fdef.groups.water then
+
+				if not in_water[name] and vel.y < -0.15 then
+					in_water[name] = 2
+					return "big_splash"
+				end
+			else
+				if fdef and fdef.groups and fdef.groups.water then
+					in_water[name] = 1
+				else
+					in_water[name] = nil
+				end
+			end
+		end
+	})
+end
+
 -- Underwater sounds play when player head is submerged
 
 ambience.add_set("underwater", {
 
 	frequency = 1000,
+
+-- This is an example of how it could be used as a background sound also
+--	background = {
+--		{name = "scuba", length = 8},
+--		{name = "scuba", pitch = 1.2, length = 8}
+--	},
 
 	sounds = {
 		{name = "scuba", length = 8}
@@ -30,6 +81,10 @@ ambience.add_set("underwater", {
 		end
 	end
 })
+
+-- add new sound to above set
+
+ambience.add_to_set("underwater", {name = "scuba", pitch = 1.2, length = 8})
 
 -- Splashing sound plays when player walks inside water nodes (if enabled)
 
@@ -159,7 +214,7 @@ ambience.add_set("beach", {
 		{name = "seagull", length = 4.5, pitch = 1.2, ephemeral = true},
 		{name = "beach", length = 13},
 		{name = "gull", length = 1, ephemeral = true},
-		{name = "beach_2", length = 6}
+		{name = "seagull_2", length = 4, ephemeral = true}
 	},
 
 	nodes = {"group:water"},
@@ -262,7 +317,8 @@ ambience.add_set("jungle", {
 		{name = "canadianloon2", length = 14},
 		{name = "bird1", length = 11},
 		{name = "peacock", length = 2, ephemeral = true},
-		{name = "peacock", length = 2, pitch = 1.2, ephemeral = true}
+		{name = "peacock", length = 2, pitch = 1.2, ephemeral = true},
+		{name = "wooden_frog", length = 2, gain = 0.2, ephemeral = true}
 	},
 
 	nodes = {(mod_mcl and "mcl_trees:tree_jungle" or "default:jungletree")},
@@ -287,7 +343,8 @@ ambience.add_set("jungle_night", {
 		{name = "jungle_night_2", length = 4, ephemeral = true},
 		{name = "deer", length = 7, ephemeral = true},
 		{name = "frog", length = 1, ephemeral = true},
-		{name = "frog", length = 1, pitch = 1.3, ephemeral = true}
+		{name = "frog", length = 1, pitch = 1.3, ephemeral = true},
+		{name = "wooden_frog", length = 2, gain = 0.2, ephemeral = true}
 	},
 
 	sound_check = function(def)

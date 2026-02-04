@@ -77,7 +77,7 @@ core.register_node("farming:eggplant_4", table.copy(def))
 farming.registered_plants["farming:eggplant"] = {
 	crop = "farming:eggplant",
 	seed = "farming:eggplant",
-	minlight = 7,
+	minlight = farming.min_light,
 	maxlight = farming.max_light,
 	steps = 4
 }

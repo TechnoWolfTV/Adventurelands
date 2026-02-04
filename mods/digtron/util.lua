@@ -63,32 +63,45 @@ digtron.mark_diggable = function(pos, nodes_dug, player)
 	end
 
 	local targetdef = minetest.registered_nodes[target.name]
-	if targetdef == nil or targetdef.can_dig == nil or targetdef.can_dig(pos, player) then
+	if targetdef == nil then
+		minetest.log("warning",
+			string.format("Digtron encountered unknown node %s at (%d, %d, %d), not digging", target.name, pos.x, pos.y, pos.z))
+	elseif (targetdef.diggable or targetdef.buildable_to) and
+		(targetdef.can_dig == nil or targetdef.can_dig(pos, player)) and
+		targetdef.on_dig == minetest.nodedef_default.on_dig and
+		target.name ~= "air" then
 		nodes_dug:set(pos.x, pos.y, pos.z, true)
-		if target.name ~= "air" then
-			local in_known_group = false
-			local material_cost = 0
+		local in_known_group = false
+		local material_cost = 0
 
-			if digtron.config.uses_resources then
-				if minetest.get_item_group(target.name, "cracky") ~= 0 then
-					in_known_group = true
-					material_cost = math.max(material_cost, digtron.config.dig_cost_cracky)
-				end
-				if minetest.get_item_group(target.name, "crumbly") ~= 0 then
-					in_known_group = true
-					material_cost = math.max(material_cost, digtron.config.dig_cost_crumbly)
-				end
-				if minetest.get_item_group(target.name, "choppy") ~= 0 then
-					in_known_group = true
-					material_cost = math.max(material_cost, digtron.config.dig_cost_choppy)
-				end
-				if not in_known_group then
-					material_cost = digtron.config.dig_cost_default
-				end
+		if digtron.config.uses_resources then
+			if minetest.get_item_group(target.name, "cracky") ~= 0 then
+				in_known_group = true
+				material_cost = math.max(material_cost, digtron.config.dig_cost_cracky)
 			end
-
-			return material_cost, minetest.get_node_drops(target.name, "")
+			if minetest.get_item_group(target.name, "crumbly") ~= 0 then
+				in_known_group = true
+				material_cost = math.max(material_cost, digtron.config.dig_cost_crumbly)
+			end
+			if minetest.get_item_group(target.name, "choppy") ~= 0 then
+				in_known_group = true
+				material_cost = math.max(material_cost, digtron.config.dig_cost_choppy)
+			end
+			if not in_known_group then
+				material_cost = digtron.config.dig_cost_default
+			end
 		end
+
+		local drops = minetest.get_node_drops(target.name, "")
+
+		if targetdef.preserve_metadata ~= nil then
+			local targetmeta = minetest.get_meta(pos):to_table()
+			-- preserve_metadata may modify all its parameters, but
+			-- we only care about the modified drops, anyway
+			targetdef.preserve_metadata(pos, target, targetmeta.fields, drops)
+		end
+
+		return material_cost, drops
 	end
 	return 0
 end
@@ -109,6 +122,10 @@ digtron.can_build_to = function(pos, protected_nodes, dug_nodes)
 		return true
 	end
 	return false
+end
+
+digtron.can_dig_pos = function(pos, protected_nodes, dug_nodes)
+	return not (protected_nodes:get_pos(pos) or dug_nodes:get_pos(pos))
 end
 
 digtron.can_move_to = function(pos, protected_nodes, dug_nodes)
@@ -408,34 +425,34 @@ end
 digtron.show_offset_markers = function(pos, offset, period)
 	local buildpos = digtron.find_new_pos(pos, minetest.get_node(pos).param2)
 	local x_pos = math.floor((buildpos.x+offset)/period)*period - (offset or 0)
-	safe_add_entity({x=x_pos, y=buildpos.y, z=buildpos.z}, "digtron:marker")
+	safe_add_entity(vector.new(x_pos, buildpos.y, buildpos.z), "digtron:marker")
 	if x_pos >= buildpos.x then
-		safe_add_entity({x=x_pos - period, y=buildpos.y, z=buildpos.z}, "digtron:marker")
+		safe_add_entity(vector.new(x_pos - period, buildpos.y, buildpos.z), "digtron:marker")
 	end
 	if x_pos <= buildpos.x then
-		safe_add_entity({x=x_pos + period, y=buildpos.y, z=buildpos.z}, "digtron:marker")
+		safe_add_entity(vector.new(x_pos + period, buildpos.y, buildpos.z), "digtron:marker")
 	end
 
 	local y_pos = math.floor((buildpos.y+offset)/period)*period - offset
-	safe_add_entity({x=buildpos.x, y=y_pos, z=buildpos.z}, "digtron:marker_vertical")
+	safe_add_entity(vector.new(buildpos.x, y_pos, buildpos.z), "digtron:marker_vertical")
 	if y_pos >= buildpos.y then
-		safe_add_entity({x=buildpos.x, y=y_pos - period, z=buildpos.z}, "digtron:marker_vertical")
+		safe_add_entity(vector.new(buildpos.x, y_pos - period, buildpos.z), "digtron:marker_vertical")
 	end
 	if y_pos <= buildpos.y then
-		safe_add_entity({x=buildpos.x, y=y_pos + period, z=buildpos.z}, "digtron:marker_vertical")
+		safe_add_entity(vector.new(buildpos.x, y_pos + period, buildpos.z), "digtron:marker_vertical")
 	end
 
 	local z_pos = math.floor((buildpos.z+offset)/period)*period - offset
 
-	local entity = safe_add_entity({x=buildpos.x, y=buildpos.y, z=z_pos}, "digtron:marker")
+	local entity = safe_add_entity(vector.new(buildpos.x, buildpos.y, z_pos), "digtron:marker")
 	if entity ~= nil then entity:set_yaw(1.5708) end
 
 	if z_pos >= buildpos.z then
-		entity = safe_add_entity({x=buildpos.x, y=buildpos.y, z=z_pos - period}, "digtron:marker")
+		entity = safe_add_entity(vector.new(buildpos.x, buildpos.y, z_pos - period), "digtron:marker")
 		if entity ~= nil then entity:set_yaw(1.5708) end
 	end
 	if z_pos <= buildpos.z then
-		entity = safe_add_entity({x=buildpos.x, y=buildpos.y, z=z_pos + period}, "digtron:marker")
+		entity = safe_add_entity(vector.new(buildpos.x, buildpos.y, z_pos + period), "digtron:marker")
 		if entity ~= nil then entity:set_yaw(1.5708) end
 	end
 end
@@ -460,3 +477,4 @@ end
 digtron.protected_allow_metadata_inventory_take = function(pos, _, _, stack, player)
 	return digtron.check_protected_and_record(pos, player) and 0 or stack:get_count()
 end
+

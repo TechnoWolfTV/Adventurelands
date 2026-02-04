@@ -110,7 +110,9 @@ function leads.util.serialise_objref(obj)
 
     local result = {pos = obj:get_pos()};
 
-    if has_objectuuids then
+    if core.features.object_guids then
+        result.guid = obj:get_guid();
+    elseif has_objectuuids then
         result.uuid = objectuuids.get_uuid(obj);
     end;
 
@@ -136,7 +138,12 @@ function leads.util.deserialise_objref(id)
         return nil;
     end;
 
-    -- Objects are identified by UUID where possible:
+    -- Objects are identified by GUID on Luanti 5.13+:
+    if core.features.object_guids and id.guid then
+        return core.objects_by_guid[id.guid];
+    end;
+
+    -- On older versions, objects are identified by UUID where possible:
     if has_objectuuids and id.uuid then
         return objectuuids.get_object_by_uuid(id.uuid);
     end;

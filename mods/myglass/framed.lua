@@ -1,7 +1,7 @@
 
 --Black Framed
 
-minetest.register_node("myglass:myglass_framed_black", {
+core.register_node("myglass:myglass_framed_black", {
 	description = "Glass Framed Black",
 	drawtype = "glasslike_framed",
 	tiles = {"myglass_black.png","myglass_blank.png"},
@@ -13,7 +13,7 @@ minetest.register_node("myglass:myglass_framed_black", {
 
 --Glass Yellow Framed
 
-minetest.register_node("myglass:myglass_framed_yellow", {
+core.register_node("myglass:myglass_framed_yellow", {
 	description = "Glass Framed Yellow",
 	drawtype = "glasslike_framed",
 	tiles = {"myglass_yellow.png","myglass_blank.png"},
@@ -25,7 +25,7 @@ minetest.register_node("myglass:myglass_framed_yellow", {
 
 --Glass White Framed
 
-minetest.register_node("myglass:myglass_framed_white", {
+core.register_node("myglass:myglass_framed_white", {
 	description = "Glass Framed White",
 	drawtype = "glasslike_framed",
 	tiles = {"myglass_white.png","myglass_blank.png"},
@@ -37,7 +37,7 @@ minetest.register_node("myglass:myglass_framed_white", {
 
 --Glass Blue Framed
 
-minetest.register_node("myglass:myglass_framed_blue", {
+core.register_node("myglass:myglass_framed_blue", {
 	description = "Glass Framed Blue",
 	drawtype = "glasslike_framed",
 	tiles = {"myglass_blue.png","myglass_blank.png"},
@@ -49,7 +49,7 @@ minetest.register_node("myglass:myglass_framed_blue", {
 
 --Glass Red Framed
 
-minetest.register_node("myglass:myglass_framed_red", {
+core.register_node("myglass:myglass_framed_red", {
 	description = "Glass Framed Red",
 	drawtype = "glasslike_framed",
 	tiles = {"myglass_red.png","myglass_blank.png"},
@@ -61,7 +61,7 @@ minetest.register_node("myglass:myglass_framed_red", {
 
 --Glass Lime Framed
 
-minetest.register_node("myglass:myglass_framed_lime", {
+core.register_node("myglass:myglass_framed_lime", {
 	description = "Glass Framed Lime",
 	drawtype = "glasslike_framed",
 	tiles = {"myglass_lime.png","myglass_blank.png"},
@@ -76,7 +76,7 @@ minetest.register_node("myglass:myglass_framed_lime", {
 --Crafts
 --Glass Framed Black
 
-minetest.register_craft({
+core.register_craft({
 	type = "shapeless",
 	output = "myglass:myglass_framed_black 2",
 	recipe = {
@@ -85,7 +85,7 @@ minetest.register_craft({
 })
 --Glass Framed White
 
-minetest.register_craft({
+core.register_craft({
 	type = "shapeless",
 	output = "myglass:myglass_framed_white 2",
 	recipe = {
@@ -94,7 +94,7 @@ minetest.register_craft({
 })
 --Glass Framed Yellow
 
-minetest.register_craft({
+core.register_craft({
 	type = "shapeless",
 	output = "myglass:myglass_framed_yellow 2",
 	recipe = {
@@ -103,7 +103,7 @@ minetest.register_craft({
 })
 --Glass Framed Yellow
 
-minetest.register_craft({
+core.register_craft({
 	type = "shapeless",
 	output = "myglass:myglass_framed_blue 2",
 	recipe = {
@@ -112,7 +112,7 @@ minetest.register_craft({
 })
 --Glass Framed Yellow
 
-minetest.register_craft({
+core.register_craft({
 	type = "shapeless",
 	output = "myglass:myglass_framed_red 2",
 	recipe = {
@@ -121,7 +121,7 @@ minetest.register_craft({
 })
 --Glass Framed Yellow
 
-minetest.register_craft({
+core.register_craft({
 	type = "shapeless",
 	output = "myglass:myglass_framed_lime 2",
 	recipe = {

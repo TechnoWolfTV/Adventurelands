@@ -29,7 +29,27 @@ if SPRITE_VERSION then
 end
 
 -- Mineclone check
+
 local mod_mcl = core.get_modpath("mcl_core")
+
+-- on_flop function
+
+local on_flop = function(self)
+
+--	print("=== am on land, help!", self.state)
+
+	local pos = self and core.find_node_near(self.object:get_pos(), 5, self.fly_in)
+
+	if pos then
+
+		local yaw = self:yaw_to_pos(pos, 5)
+
+		self.object:set_velocity({x = math.sin(yaw), y = 2, z = math.cos(yaw)})
+		self.object:set_acceleration({x = 0, y = -10, z = 0})
+	end
+
+	return true
+end
 
 -- Clownfish
 
@@ -69,20 +89,7 @@ mobs:register_mob("mobs_fish:clownfish", {
 		mobs:capture_mob(self, clicker, 25, 80, 0, true, "mobs_fish:clownfish")
 	end,
 
-	on_flop = function(self)
-
---		print("=== am on land, help!", self.state)
-
-		self.object:set_acceleration({
-			x = math.random(-0.1, 0.1),
-			y = -10,
-			z = math.random(-0.1, 0.1)
-		})
-
-		self.object:set_velocity({x = 0, y = -10, z = 0})
-
-		return true
-	end
+	on_flop = on_flop
 })
 
 -- spawn egg
@@ -126,20 +133,7 @@ mobs:register_mob("mobs_fish:tropical", {
 		mobs:capture_mob(self, clicker, 25, 80, 0, true, "mobs_fish:tropical")
 	end,
 
-	on_flop = function(self)
-
---		print("=== am on land, help!", self.state)
-
-		self.object:set_acceleration({
-			x = math.random(-0.1, 0.1),
-			y = -10,
-			z = math.random(-0.1, 0.1)
-		})
-
-		self.object:set_velocity({x = 0, y = -10, z = 0})
-
-		return true
-	end
+	on_flop = on_flop
 })
 
 -- spawn egg

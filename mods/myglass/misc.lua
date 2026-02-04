@@ -1,5 +1,5 @@
 -- Glass Mesh
-minetest.register_node("myglass:myglass_mesh", {
+core.register_node("myglass:myglass_mesh", {
 	description = "Glass Mesh",
 	drawtype = "glasslike",
 	tiles = {"myglass_glass2.png"},
@@ -9,7 +9,7 @@ minetest.register_node("myglass:myglass_mesh", {
 
 })
 -- Glass Cross
-minetest.register_node("myglass:myglass_cross", {
+core.register_node("myglass:myglass_cross", {
 	description = "Glass Cross",
 	drawtype = "glasslike",
 	tiles = {"myglass_cross.png"},
@@ -19,7 +19,7 @@ minetest.register_node("myglass:myglass_cross", {
 
 })
 -- Glass Hole
-minetest.register_node("myglass:myglass_hole", {
+core.register_node("myglass:myglass_hole", {
 	description = "Glass Hole",
 	drawtype = "glasslike",
 	tiles = {"myglass_hole.png"},
@@ -29,7 +29,7 @@ minetest.register_node("myglass:myglass_hole", {
 
 })
 -- Glass Bars
-minetest.register_node("myglass:myglass_bars", {
+core.register_node("myglass:myglass_bars", {
 	description = "Glass Bars",
 	drawtype = "glasslike",
 	tiles = {"myglass_bars.png"},
@@ -39,7 +39,7 @@ minetest.register_node("myglass:myglass_bars", {
 
 })
 -- Glass Grid
-minetest.register_node("myglass:myglass_grid", {
+core.register_node("myglass:myglass_grid", {
 	description = "Glass Grid",
 	drawtype = "glasslike",
 	tiles = {"myglass_grid.png"},
@@ -54,7 +54,7 @@ minetest.register_node("myglass:myglass_grid", {
 
 --Glass Mesh
 
-minetest.register_craft({
+core.register_craft({
 	output = "myglass:myglass_mesh 5",
 	recipe = {
 		{"default:glass","","default:glass"},
@@ -65,7 +65,7 @@ minetest.register_craft({
 
 --Glass Lime
 
-minetest.register_craft({
+core.register_craft({
 	output = "myglass:myglass_cross 4",
 	recipe = {
 		{"","default:glass",""},
@@ -76,7 +76,7 @@ minetest.register_craft({
 
 --Glass Lime
 
-minetest.register_craft({
+core.register_craft({
 	output = "myglass:myglass_hole 8",
 	recipe = {
 		{"default:glass","default:glass","default:glass"},
@@ -87,7 +87,7 @@ minetest.register_craft({
 
 --Glass Lime
 
-minetest.register_craft({
+core.register_craft({
 	output = "myglass:myglass_bars 6",
 	recipe = {
 		{"default:glass","","default:glass"},
@@ -98,7 +98,7 @@ minetest.register_craft({
 
 --Glass Lime
 
-minetest.register_craft({
+core.register_craft({
 	output = "myglass:myglass_grid 6",
 	recipe = {
 		{"default:glass","default:glass","default:glass"},

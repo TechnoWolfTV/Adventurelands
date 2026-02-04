@@ -55,7 +55,7 @@ local def = {
 	drawtype = "plantlike",
 	tiles = {"farming_sunflower_1.png"},
 	paramtype = "light",
-	sunlight_propagates = true,
+	sunlight_propagates = true, minlight = 14,
 	walkable = false,
 	buildable_to = true,
 	drop = "",

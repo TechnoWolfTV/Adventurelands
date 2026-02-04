@@ -188,9 +188,10 @@ WorldEdit would not be possible without the contributions of many developers and
 
 License
 -------
-Copyright (c) 2012 sfan5, Anthony Zhang (Uberi/Temperest), and Brett O'Donnell (cornernote).
+Copyright © 2012 sfan5, Anthony Zhang (Uberi/Temperest), and Brett O'Donnell (cornernote).
 
-This mod is licensed under the [GNU Affero General Public License](https://www.gnu.org/licenses/agpl-3.0.html).
+This mod is licensed under the GNU Affero General Public License v3,
+see [LICENSE.txt](LICENSE.txt) for the full details.
 
 Basically, this means everyone is free to use, modify, and distribute the files, as long as these modifications are also licensed the same way.
 Most importantly, the Affero variant of the GPL requires you to publish your modifications in source form, even if the mod is run only on the server, and not distributed.

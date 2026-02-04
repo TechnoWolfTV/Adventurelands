@@ -34,6 +34,7 @@ https://forum.minetest.net/viewtopic.php?f=11&t=9917
 * Fixed fall damage check when riding mob
 * Calculate damage before do_punch function called
 * Add function to check for dropped items and for mob to do something with them
+* Add vizlib support to draw mob repellent area when punched
 
 ### Version 1.61
 

@@ -98,15 +98,11 @@ end
 
 
 castle_masonry.get_material_properties = function(material)
-	local composition_def
-	local burn_time
-	if material.composition_material ~= nil then
-		composition_def = minetest.registered_nodes[material.composition_material]
-		burn_time = minetest.get_craft_result({method="fuel", width=1, items={ItemStack(material.composition_material)}}).time
-	else
-		composition_def = minetest.registered_nodes[material.craft_material]
-		burn_time = minetest.get_craft_result({method="fuel", width=1, items={ItemStack(material.craft_material)}}).time
-	end
+	local nodename = material.composition_material or material.craft_material
+	local composition_def = core.registered_nodes[nodename]
+	assert(composition_def, "Node " .. nodename .. " not found")
+
+	local burn_time = core.get_craft_result({method="fuel", width=1, items={ItemStack(nodename)}}).time
 
 	local tiles = material.tile
 	if tiles == nil then
@@ -115,10 +111,7 @@ castle_masonry.get_material_properties = function(material)
 		tiles = {tiles}
 	end
 
-	local desc = material.desc
-	if desc == nil then
-		desc = composition_def.description
-	end
+	local desc = material.desc or composition_def.description
 
 	return composition_def, burn_time, tiles, desc
 end

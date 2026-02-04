@@ -23,7 +23,7 @@ local def = {
 	drawtype = "plantlike",
 	tiles = {"farming_ginger_1.png"},
 	paramtype = "light",
-	sunlight_propagates = true,
+	sunlight_propagates = true, minlight = 5,
 	walkable = false,
 	buildable_to = true,
 	drop = "",
@@ -78,7 +78,7 @@ farming.registered_plants["farming:ginger"] = {
 	crop = "farming:ginger",
 	seed = "farming:ginger",
 	minlight = 5,
-	maxlight = core.LIGHT_MAX,
+	maxlight = farming.max_light,
 	steps = 4
 }
 

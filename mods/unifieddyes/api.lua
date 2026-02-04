@@ -489,7 +489,11 @@ function unifieddyes.get_color_from_dye_name(name)
 		return "000000"
 	elseif name == "dye:white" then
 		return "ffffff"
-	end
+    elseif name == "dye:brown" then
+        return "b43500"
+    elseif name == "dye:pink" then
+        return "ff5050"
+    end
 	local item = minetest.registered_items[name]
 	if not item then return end
 	local inv_image = item.inventory_image

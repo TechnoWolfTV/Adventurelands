@@ -2,7 +2,7 @@
 -- @module worldedit
 -- @release 1.3
 -- @copyright 2012 sfan5, Anthony Zhang (Uberi/Temperest), and Brett O'Donnell (cornernote)
--- @license GNU Affero General Public License version 3 (AGPLv3)
+-- @license AGPL-3.0-only
 -- @author sfan5
 -- @author Anthony Zang (Uberi/Temperest)
 -- @author Bret O'Donnel (cornernote)

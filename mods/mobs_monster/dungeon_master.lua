@@ -178,7 +178,7 @@ mobs:register_arrow("mobs_monster:fireball", {
 
 	-- node hit
 	hit_node = function(self, pos, node)
-		mobs:boom(self, pos, 1)
+		mobs:boom(self, pos, 2)
 	end
 })
 

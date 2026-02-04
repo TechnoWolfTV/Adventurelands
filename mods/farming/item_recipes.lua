@@ -1436,9 +1436,9 @@ core.register_craft({output = a.dye_yellow, recipe = {{"group:food_onion"}}})
 
 -- fuel items
 
-core.register_craft({type = "fuel", recipe = "farming:straw", burntime = 3})
+core.register_craft({type = "fuel", recipe = "farming:straw", burntime = 9})
 core.register_craft({type = "fuel", recipe = "farming:wheat", burntime = 1})
-core.register_craft({type = "fuel", recipe = "farming:weed_bale", burntime = 3})
+core.register_craft({type = "fuel", recipe = "farming:weed_bale", burntime = 10})
 core.register_craft({type = "fuel", recipe = "farming:weed", burntime = 1})
 core.register_craft({type = "fuel", recipe = "farming:bowl",burntime = 10})
 core.register_craft({type = "fuel", recipe = "farming:string", burntime = 1})
