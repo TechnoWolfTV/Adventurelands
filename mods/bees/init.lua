@@ -866,6 +866,14 @@ core.register_craftitem("bees:honey_comb", {
 
 add_eatable("bees:honey_comb", 2)
 
+if core.get_modpath("hunger_ng") then
+
+	hunger_ng.add_hunger_data("bees:bottle_honey",
+			{satiates = 3, returns = "vessels:glass_bottle"})
+
+	hunger_ng.add_hunger_data("bees:honey_comb", {satiates = 2})
+end
+
 core.register_craftitem("bees:queen", {
 	description = S("Queen Bee"),
 	inventory_image = "bees_particle_bee.png",

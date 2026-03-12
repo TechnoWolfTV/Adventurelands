@@ -11,5 +11,6 @@ Change log:
 - 0.2 - Added coloured glass and fixed violet
 - 0.3 - Added stairsplus and stairs mod support
 - 0.4 - Glass stairs created with transparency if stairs redo active
+- 0.5 - Add Mineclonia support
 
 Lucky Blocks: 4

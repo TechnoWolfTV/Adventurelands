@@ -1,0 +1,53 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Luanti Mod\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-08 12:53+0100\n"
+"PO-Revision-Date: 2026-02-08 11:52+0000\n"
+"Language: whitelist.pl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Whitelist"
+msgstr "Biała lista"
+
+msgid "Manage who can and who can't enter in your server"
+msgstr "Zarządzaj, kto może a kto nie może wejść na ten serwer"
+
+msgid "You're not whitelisted!"
+msgstr "Nie ma cię na białej liście!"
+
+msgid "Whitelist commands. <player> is only needed for `add` and `remove`"
+msgstr ""
+"Komendy białej listy. <gracz> należy podać tylko przy `add` albo `remove`"
+
+msgid "player"
+msgstr "gracz"
+
+msgid "[!] The whitelist is already enabled!"
+msgstr "[!] Biała lista jest już włączona!"
+
+msgid "Whitelist successfully enabled"
+msgstr "Pomyślnie włączono białą listę"
+
+msgid "[!] The whitelist is already disabled!"
+msgstr "[!] Biała lista jest już wyłączona!"
+
+msgid "Whitelist successfully disabled"
+msgstr "Pomyślnie wyłączono białą listę"
+
+msgid "[!] @1 is already whitelisted!"
+msgstr "[!] @1 jest już dodany/a na białą listę!"
+
+msgid "[!] There is no player whitelisted with that name..."
+msgstr "[!] Brak graczy o tej ksywce na białej liście..."
+
+msgid "[!] You can't remove yourself!"
+msgstr "[!] Nie możesz usunąć siebie!"
+
+msgid "[!] Whitelist can't be empty when enabled!"
+msgstr "[!] Biała lista nie może być pusta przy jej włączeniu!"
+
+msgid "Whitelisted players: @1"
+msgstr "Gracze na białej liście: @1"

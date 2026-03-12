@@ -1,7 +1,21 @@
 
+-- check mods active
+
 local stairs_mod = core.get_modpath("stairs")
 local stairsplus_mod = core.global_exists("stairsplus")
 local ethereal_mod = core.get_modpath("ethereal")
+local mod_mcl_core = core.get_modpath("mcl_core")
+local mod_mcl_stairs = core.global_exists("mcl_stairs")
+local mod_default = core.get_modpath("default")
+
+-- make sure we are running either default or mcl_core
+
+if not mod_default and not mod_mcl_core then
+	print("-- No compatible game active!")
+	do return end
+end
+
+-- default dye colours
 
 local colours = {
 	{"black",      "Black",      "#000000b0"},
@@ -21,12 +35,39 @@ local colours = {
 	{"yellow",     "Yellow",     "#e3ff0070"}
 }
 
+-- mcl_dye colours
+
+if mod_mcl_core then
+
+	local colors = {
+		{"white",     "White",       "#abababc0"},
+		{"orange",    "Orange",      "#F9801D"},
+		{"magenta",   "Magenta",     "#C74EBD"},
+		{"light_blue", "Light Blue", "#3AB3DA"},
+		{"yellow",    "Yellow",      "#FED83D"},
+		{"lime",      "Lime",        "#80C71F"},
+		{"pink",      "Pink",        "#F38BAA"},
+		{"gray",      "Gray",        "#474F52"},
+		{"silver",    "Silver",      "#9D9D97"},
+		{"cyan",      "Cyan",        "#169C9C"},
+		{"purple",    "Purple",      "#8932B8"},
+		{"blue",      "Blue",        "#3C44AA"},
+		{"brown",     "Brown",       "#835432"},
+		{"green",     "Green",       "#5E7C16"},
+		{"red",       "Red",         "#B02E26"},
+		{"black",     "Black",       "#1D1D21"}
+	}
+end
+
+-- main registration function
 
 local function cblocks_stairs(nodename, odef)
 
+	-- register node
+
 	core.register_node(nodename, odef)
 
-	if stairs_mod or stairsplus_mod then
+	if stairs_mod or stairsplus_mod or mod_mcl_stairs then
 
 		local def = table.copy(odef)
 
@@ -44,6 +85,8 @@ local function cblocks_stairs(nodename, odef)
 				def.groups.groupname = nil
 			end
 		end
+
+		-- register stairs depending on mod being used
 
 		if stairsplus_mod then
 
@@ -75,12 +118,22 @@ local function cblocks_stairs(nodename, odef)
 				def.sounds,
 				def.walign
 			)
+		elseif mod_mcl_stairs then
+
+			mcl_stairs.register_stair_and_slab(name, {
+				baseitem = nodename,
+				description_stair = ("%s Stair"):format(def.description),
+				description_slab = ("%s Slab"):format(def.description)
+			})
 		end
 	end
 end
 
+-- alias helper function
 
 local function set_alias(col, name)
+
+	if not mod_default then return end
 
 	core.register_alias("stairs:stair_" .. col .. "_" .. name,
 			"stairs:stair_" .. name .. "_" .. col)
@@ -98,71 +151,58 @@ local function set_alias(col, name)
 			"stairs:slope_" .. name .. "_" .. col)
 end
 
+-- loop through dye colours
 
 for i = 1, #colours do
 
 	-- stone brick
 
-	cblocks_stairs("cblocks:stonebrick_" .. colours[i][1], {
-		description = colours[i][2] .. " Stone Brick",
-		tiles = {"default_stone_brick.png^[colorize:" .. colours[i][3]},
-		paramtype = "light",
-		use_texture_alpha = "opaque",
-		is_ground_content = false,
-		groups = {cracky = 2, stone = 1},
-		sounds = default.node_sound_stone_defaults(),
-		paramtype2 = "facedir",
-		place_param2 = 0,
-		walign = true
-	})
+	local stone_nod = mod_mcl_core and "mcl_core:stonebrick" or "default:stonebrick"
+	local stone_def = table.copy(core.registered_nodes[stone_nod])
+	local dye_mod = mod_mcl_core and "mcl_dye:" or "dye:"
+
+	stone_def.tiles = {"default_stone_brick.png^[colorize:" .. colours[i][3]}
+	stone_def.description = colours[i][2] .. " Stone Brick"
+	stone_def.use_texture_alpha = "opaque"
+
+	cblocks_stairs("cblocks:stonebrick_" .. colours[i][1], stone_def)
 
 	core.register_craft({
 		output = "cblocks:stonebrick_" .. colours[i][1] .. " 2",
 		recipe = {
-			{"default:stonebrick","default:stonebrick", "dye:" .. colours[i][1]}
+			{stone_nod, stone_nod, dye_mod .. colours[i][1]}
 		}
 	})
 
-	-- glass (no stairs unless stairs redo active because default stairs mod
-	-- does not support transparent stairs)
+	-- glass
 
-	if stairs_mod and stairs and stairs.mod and stairs.mod == "redo" then
+	local glass_nod = mod_mcl_core and "mcl_core:glass" or "default:glass"
+	local glass_def = table.copy(core.registered_nodes[glass_nod])
 
-		cblocks_stairs("cblocks:glass_" .. colours[i][1], {
-			description = colours[i][2] .. " Glass",
-			tiles = {"cblocks.png^[colorize:" .. colours[i][3]},
-			drawtype = "glasslike",
-			paramtype = "light",
-			sunlight_propagates = true,
-			use_texture_alpha = "blend",
-			is_ground_content = false,
-			groups = {cracky = 3, oddly_breakable_by_hand = 3},
-			sounds = default.node_sound_glass_defaults()
-		})
+	glass_def.tiles = {"cblocks.png^[colorize:" .. colours[i][3]}
+	glass_def.drawtype = "glasslike"
+	glass_def.description = colours[i][2] .. " Glass Brick"
+	glass_def.use_texture_alpha = "blend"
 
-		set_alias(colours[i][1], "glass")
-	else
-		core.register_node("cblocks:glass_" .. colours[i][1], {
-			description = colours[i][2] .. " Glass",
-			tiles = {"cblocks.png^[colorize:" .. colours[i][3]},
-			drawtype = "glasslike",
-			paramtype = "light",
-			sunlight_propagates = true,
-			use_texture_alpha = "blend",
-			is_ground_content = false,
-			groups = {cracky = 3, oddly_breakable_by_hand = 3},
-			sounds = default.node_sound_glass_defaults()
-		})
-	end
+	cblocks_stairs("cblocks:glass_" .. colours[i][1], glass_def)
+
+	set_alias(colours[i][1], "glass")
 
 	core.register_craft({
 		output = "cblocks:glass_".. colours[i][1] .. " 2",
 		recipe = {
-			{"default:glass","default:glass", "dye:" .. colours[i][1]},
+			{glass_nod, glass_nod, dye_mod .. colours[i][1]},
 		}
 	})
 
 	-- wood
+
+	local wood_nod = mod_mcl_core and "mcl_core:wood" or "default:wood"
+	local wood_def = table.copy(core.registered_nodes[wood_nod])
+
+	wood_def.tiles = {"default_wood.png^[colorize:" .. colours[i][3]}
+	wood_def.description = colours[i][2] .. " Wooden Planks"
+	wood_def.use_texture_alpha = "opaque"
 
 	local col = colours[i][1]
 
@@ -171,31 +211,20 @@ for i = 1, #colours do
 		col = "yellow2"
 	end
 
-	cblocks_stairs("cblocks:wood_" .. col, {
-		description = colours[i][2] .. " Wooden Planks",
-		tiles = {"default_wood.png^[colorize:" .. colours[i][3]},
-		paramtype = "light",
-		use_texture_alpha = "opaque",
-		is_ground_content = false,
-		groups = {choppy = 2, oddly_breakable_by_hand = 2, flammable = 3, wood = 1},
-		sounds = default.node_sound_wood_defaults(),
-		paramtype2 = "facedir",
-		place_param2 = 0,
-		walign = true
-	})
+	cblocks_stairs("cblocks:wood_" .. col, wood_def)
 
 	set_alias(colours[i][1], "wood")
 
 	core.register_craft({
 		output = "cblocks:wood_" .. col .. " 2",
 		recipe = {
-			{"group:wood","group:wood", "dye:" .. colours[i][1]}
+			{wood_nod, wood_nod, dye_mod .. colours[i][1]}
 		}
 	})
 end
 
-
 -- add lucky blocks
+
 if core.get_modpath("lucky_block") then
 
 	lucky_block:add_blocks({

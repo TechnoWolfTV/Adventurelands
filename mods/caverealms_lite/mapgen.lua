@@ -96,9 +96,7 @@ local function above_solid(x, y, z, area, data)
 
 	local ai = area:index(x, y + 1, z - 3)
 
-	if data[ai] == c_air or data[ai] == c_ignore then
-		return false
-	end
+	if data[ai] == c_air or data[ai] == c_ignore then return end
 
 	return true
 end
@@ -108,9 +106,7 @@ local function below_solid(x, y, z, area, data)
 
 	local ai = area:index(x, y - 1, z - 3)
 
-	if data[ai] == c_air or data[ai] == c_ignore then
-		return false
-	end
+	if data[ai] == c_air or data[ai] == c_ignore then return end
 
 	return true
 end
@@ -118,12 +114,9 @@ end
 --stalagmite spawner
 local function stalagmite(x, y, z, area, data)
 
-	if not below_solid(x, y, z, area, data) then
-		return
-	end
+	if not below_solid(x, y, z, area, data) then return end
 
 	local top = random(6, H_LAG) --random height for the stalagmite
-	local vi
 
 	for j = 0, top do --y
 		for k = -3, 3 do
@@ -132,26 +125,22 @@ local function stalagmite(x, y, z, area, data)
 				if j == 0 then
 
 					if k * k + l * l <= 9 then
-						vi = area:index(x + k, y + j, z + l - 3)
-						data[vi] = c_stone
+						data[ area:index(x + k, y + j, z + l - 3) ] = c_stone
 					end
 
 				elseif j <= top/5 then
 
 					if k * k + l * l <= 4 then
-						vi = area:index(x + k, y + j, z + l - 3)
-						data[vi] = c_stone
+						data[ area:index(x + k, y + j, z + l - 3) ] = c_stone
 					end
 
 				elseif j <= top / 5 * 3 then
 
 					if k * k + l * l <= 1 then
-						vi = area:index(x + k, y + j, z + l - 3)
-						data[vi] = c_stone
+						data[ area:index(x + k, y + j, z + l - 3) ] = c_stone
 					end
 				else
-					vi = area:index(x, y + j, z - 3)
-					data[vi] = c_stone
+					data [ area:index(x, y + j, z - 3) ] = c_stone
 				end
 			end
 		end
@@ -162,12 +151,9 @@ end
 --stalactite spawner
 local function stalactite(x, y, z, area, data)
 
-	if not above_solid(x, y, z, area, data) then
-		return
-	end
+	if not above_solid(x, y, z, area, data) then return end
 
 	local bot = random(-H_LAC, -6) -- random height for the stalagmite
-	local vi
 
 	for j = bot, 0 do --y
 		for k = -3, 3 do
@@ -176,26 +162,22 @@ local function stalactite(x, y, z, area, data)
 				if j >= -1 then
 
 					if k * k + l * l <= 9 then
-						vi = area:index(x + k, y + j, z + l - 3)
-						data[vi] = c_stone
+						data [ area:index(x + k, y + j, z + l - 3) ] = c_stone
 					end
 
 				elseif j >= bot / 5 then
 
 					if k * k + l * l <= 4 then
-						vi = area:index(x + k, y + j, z + l - 3)
-						data[vi] = c_stone
+						data [ area:index(x + k, y + j, z + l - 3) ] = c_stone
 					end
 
 				elseif j >= bot / 5 * 3 then
 
 					if k * k + l * l <= 1 then
-						vi = area:index(x + k, y + j, z + l - 3)
-						data[vi] = c_stone
+						data [ area:index(x + k, y + j, z + l - 3) ] = c_stone
 					end
 				else
-					vi = area:index(x, y + j, z - 3)
-					data[vi] = c_stone
+					data [ area:index(x, y + j, z - 3) ] = c_stone
 				end
 			end
 		end
@@ -206,9 +188,7 @@ end
 --glowing crystal stalagmite spawner
 local function crystal_stalagmite(x, y, z, area, data, biome)
 
-	if not below_solid(x, y, z, area, data) then
-		return
-	end
+	if not below_solid(x, y, z, area, data) then return end
 
 	--for randomness
 	local mode = 1
@@ -245,8 +225,7 @@ local function crystal_stalagmite(x, y, z, area, data, biome)
 		{{c_amethore, c_ameth}, {c_meseore, c_mesecry}}
 	}
 
-	local nid_a
-	local nid_b
+	local nid_a, nid_b
 	local nid_s = c_stone --stone base, will be rewritten to ice in certain biomes
 
 	if biome > 3 and biome < 6 then
@@ -269,7 +248,6 @@ local function crystal_stalagmite(x, y, z, area, data, biome)
 	end
 
 	local top = random(5, H_CRY) --random height for the stalagmite
-	local vi
 
 	for j = 0, top do --y
 		for k = -3, 3 do
@@ -278,26 +256,22 @@ local function crystal_stalagmite(x, y, z, area, data, biome)
 				if j == 0 then
 
 					if k * k + l * l <= 9 then
-						vi = area:index(x + k, y + j, z + l - 3)
-						data[vi] = nid_s
+						data[ area:index(x + k, y + j, z + l - 3) ] = nid_s
 					end
 
 				elseif j <= top / 5 then
 
 					if k * k + l * l <= 4 then
-						vi = area:index(x + k, y + j, z + l - 3)
-						data[vi] = nid_a
+						data[ area:index(x + k, y + j, z + l - 3) ] = nid_a
 					end
 
 				elseif j <= top / 5 * 3 then
 
 					if k * k + l * l <= 1 then
-						vi = area:index(x + k, y + j, z + l - 3)
-						data[vi] = nid_b
+						data[ area:index(x + k, y + j, z + l - 3) ] = nid_b
 					end
 				else
-					vi = area:index(x, y + j, z - 3)
-					data[vi] = nid_b
+					data[ area:index(x, y + j, z - 3) ] = nid_b
 				end
 			end
 		end
@@ -308,9 +282,7 @@ end
 --crystal stalactite spawner
 local function crystal_stalactite(x, y, z, area, data, biome)
 
-	if not above_solid(x, y, z, area, data) then
-		return
-	end
+	if not above_solid(x, y, z, area, data) then return end
 
 	--for randomness
 	local mode = 1
@@ -347,8 +319,7 @@ local function crystal_stalactite(x, y, z, area, data, biome)
 		{{c_amethore, c_ameth}, {c_meseore, c_mesecry}}
 	}
 
-	local nid_a
-	local nid_b
+	local nid_a, nid_b
 	local nid_s = c_stone --stone base, will be rewritten to ice in certain biomes
 
 	if biome > 3 and biome < 6 then
@@ -371,7 +342,6 @@ local function crystal_stalactite(x, y, z, area, data, biome)
 	end
 
 	local bot = random(-H_CLAC, -6) --random height for the stalagmite
-	local vi
 
 	for j = bot, 0 do --y
 		for k = -3, 3 do
@@ -380,26 +350,22 @@ local function crystal_stalactite(x, y, z, area, data, biome)
 				if j >= -1 then
 
 					if k * k + l * l <= 9 then
-						vi = area:index(x + k, y + j, z + l - 3)
-						data[vi] = nid_s
+						data[ area:index(x + k, y + j, z + l - 3) ] = nid_s
 					end
 
 				elseif j >= bot / 5 then
 
 					if k * k + l * l <= 4 then
-						vi = area:index(x + k, y + j, z + l - 3)
-						data[vi] = nid_a
+						data[ area:index(x + k, y + j, z + l - 3) ] = nid_a
 					end
 
 				elseif j >= bot / 5 * 3 then
 
 					if k * k + l * l <= 1 then
-						vi = area:index(x + k, y + j, z + l - 3)
-						data[vi] = nid_b
+						data[ area:index(x + k, y + j, z + l - 3) ] = nid_b
 					end
 				else
-					vi = area:index(x, y + j, z - 3)
-					data[vi] = nid_b
+					data[ area:index(x, y + j, z - 3) ] = nid_b
 				end
 			end
 		end
@@ -410,24 +376,19 @@ end
 --glowing crystal stalagmite spawner
 local function salt_stalagmite(x, y, z, area, data, biome)
 
-	if not below_solid(x, y, z, area, data) then
-		return
-	end
+	if not below_solid(x, y, z, area, data) then return end
 
 	local scale = random(2, 4)
-	local vi
 
 	if scale == 2 then
 
 		for j = -3, 3 do
 			for k = -3, 3 do
 
-				vi = area:index(x + j, y, z + k)
-				data[vi] = c_stone
+				data[ area:index(x + j, y, z + k) ] = c_stone
 
 				if abs(j) ~= 3 and abs(k) ~= 3 then
-					vi = area:index(x + j, y + 1, z + k)
-					data[vi] = c_stone
+					data[ area:index(x + j, y + 1, z + k) ] = c_stone
 				end
 			end
 		end
@@ -435,12 +396,10 @@ local function salt_stalagmite(x, y, z, area, data, biome)
 		for j = -4, 4 do
 			for k = -4, 4 do
 
-				vi = area:index(x + j, y, z + k)
-				data[vi] = c_stone
+				data[ area:index(x + j, y, z + k) ] = c_stone
 
 				if abs(j) ~= 4 and abs(k) ~= 4 then
-					vi = area:index(x + j, y + 1, z + k)
-					data[vi] = c_stone
+					data[ area:index(x + j, y + 1, z + k) ] = c_stone
 				end
 			end
 		end
@@ -449,8 +408,7 @@ local function salt_stalagmite(x, y, z, area, data, biome)
 	for j = 2, scale + 2 do --y
 		for k = -2, scale - 2 do
 			for l = -2, scale - 2 do
-				vi = area:index(x + k, y + j, z + l)
-				data[vi] = c_salt -- make cube
+				data[ area:index(x + k, y + j, z + l) ] = c_salt -- make cube
 			end
 		end
 	end
@@ -460,61 +418,44 @@ end
 --function to create giant 'shrooms
 local function giant_shroom(x, y, z, area, data)
 
-	if not below_solid(x, y, z, area, data) then
-		return
-	end
+	if not below_solid(x, y, z, area, data) then return end
 
 	z = z - 5
-
-	local vi
 
 	--cap
 	for k = -5, 5 do
 	for l = -5, 5 do
 
 		if k * k + l * l <= 25 then
-			vi = area:index(x + k, y + 5, z + l)
-			data[vi] = c_cap
+			data[ area:index(x + k, y + 5, z + l) ] = c_cap
 		end
 
 		if k * k + l * l <= 16 then
-			vi = area:index(x + k, y + 6, z + l)
-			data[vi] = c_cap
-			vi = area:index(x + k, y + 5, z + l)
-			data[vi] = c_gills
+			data[ area:index(x + k, y + 6, z + l) ] = c_cap
+			data[ area:index(x + k, y + 5, z + l) ] = c_gills
 		end
 
 		if k * k + l * l <= 9 then
-			vi = area:index(x + k, y + 7, z + l)
-			data[vi] = c_cap
+			data[ area:index(x + k, y + 7, z + l) ] = c_cap
 		end
 
 		if k * k + l * l <= 4 then
-			vi = area:index(x + k, y + 8, z + l)
-			data[vi] = c_cap
+			data[ area:index(x + k, y + 8, z + l) ] = c_cap
 		end
 	end
 	end
-
-	local ai
 
 	--stem
 	for j = 0, 5 do
 		for k = -1, 1 do
 
-			vi = area:index(x + k, y + j, z)
-
-			data[vi] = c_stem
+			data[ area:index(x + k, y + j, z) ] = c_stem
 
 			if k == 0 then
 
-				ai = area:index(x, y + j, z + 1)
+				data[ area:index(x, y + j, z + 1) ] = c_stem
 
-				data[ai] = c_stem
-
-				ai = area:index(x, y + j, z - 1)
-
-				data[ai] = c_stem
+				data[ area:index(x, y + j, z - 1) ] = c_stem
 			end
 		end
 	end
@@ -526,10 +467,8 @@ local data = {} -- localized data buffer to reduce waste of RAM
 
 local function generate(vm, minp, maxp)
 
-	--if out of range of caverealms limits
-	if minp.y > YMAX or maxp.y < YMIN then
-		return --quit; otherwise, you'd have stalagmites all over the place
-	end
+	--if out of range of caverealms limits, we dont want stalagmites everywhere
+	if minp.y > YMAX or maxp.y < YMIN then return end
 
 	local t1 = os.clock()
 
@@ -644,17 +583,14 @@ local function generate(vm, minp, maxp)
 						if random() < WORMCHA then
 
 							data[vi] = c_selected_worm
-							bi = area:index(x, y - 1, z)
-							data[bi] = c_selected_worm
+							data[ area:index(x, y - 1, z) ] = c_selected_worm
 
 							if random(2) == 1 then
 
-								bbi = area:index(x, y - 2, z)
-								data[bbi] = c_selected_worm
+								data[ area:index(x, y - 2, z) ] = c_selected_worm
 
 								if random(2) == 1 then
-									bbbi = area:index(x, y - 3, z)
-									data[bbbi] = c_selected_worm
+									data[ area:index(x, y - 3, z) ] = c_selected_worm
 								end
 							end
 						end
@@ -707,8 +643,7 @@ local function generate(vm, minp, maxp)
 						elseif biome == 4 then
 
 							data[vi] = c_thinice
-							bi = area:index(x, y - 1, z)
-							data[bi] = c_thinice
+							data[ area:index(x, y - 1, z) ] = c_thinice
 
 							if random() < ICICHA then --if glaciated, place icicles
 								data[ai] = c_iciu
@@ -717,8 +652,7 @@ local function generate(vm, minp, maxp)
 						elseif biome == 5 then
 
 							data[vi] = c_ice
-							bi = area:index(x, y - 1, z)
-							data[bi] = c_ice
+							data[ area:index(x, y - 1, z) ] = c_ice
 
 							if random() < ICICHA then --if glaciated, place icicles
 								data[ai] = c_iciu
@@ -734,9 +668,8 @@ local function generate(vm, minp, maxp)
 
 						elseif biome == 7 then
 
-							bi = area:index(x, y - 1, z)
 							data[vi] = c_salt
-							data[bi] = c_salt
+							data[ area:index(x, y - 1, z) ] = c_salt
 
 							if random() < GEMCHA then
 								data[ai] = c_saltgem1

@@ -4,6 +4,8 @@ sprint_particles (Enable sprint particles) bool true
 
 enable_stamina (Enable stamina/hunger) bool true
 
+stamina_disable_aux1 (Disable aux1 for sprinting) bool false
+
 stamina_tick (Time in seconds after which 1 saturation point is taken) float 800
 
 stamina_sprint_speed (Extra sprint speed - 0.0 to 1.0) float 0.3
@@ -17,3 +19,7 @@ stamina_fov_multiplier (Sprinting FOV effect - 0 to disable) float 0.9
 stamina_double_tap_time (Double-tap time for sprinting - 0 to disable) float 0.4
 
 stamina_drunk_interval (How long is player drunk for) int 60
+
+stamina_hud_x (Hunger X pos [-266 left, 25 right]) int -266
+
+stamina_hud_y (Hunger Y pos [-110 over hearts, -132 one row up]) int -110

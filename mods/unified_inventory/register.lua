@@ -48,19 +48,13 @@ ui.register_button("home_gui_set", {
 	hide_lite=true,
 	action = function(player)
 		local player_name = player:get_player_name()
-		if minetest.check_player_privs(player_name, {home=true}) then
-			ui.set_home(player, player:get_pos())
-			local home = ui.home_pos[player_name]
-			if home ~= nil then
-				minetest.sound_play("dingdong",
-						{to_player=player_name, gain = 1.0})
-				minetest.chat_send_player(player_name,
-					S("Home position set to: @1", minetest.pos_to_string(home)))
-			end
-		else
+		ui.set_home(player, player:get_pos())
+		local home = ui.home_pos[player_name]
+		if home ~= nil then
+			minetest.sound_play("dingdong",
+					{to_player=player_name, gain = 1.0})
 			minetest.chat_send_player(player_name,
-				S("You don't have the \"home\" privilege!"))
-			ui.set_inventory_formspec(player, ui.current_page[player_name])
+				S("Home position set to: @1", minetest.pos_to_string(home)))
 		end
 	end,
 	condition = function(player)
@@ -75,14 +69,8 @@ ui.register_button("home_gui_go", {
 	hide_lite=true,
 	action = function(player)
 		local player_name = player:get_player_name()
-		if minetest.check_player_privs(player_name, {home=true}) then
-			if ui.go_home(player) then
-				minetest.sound_play("teleport", {to_player = player_name})
-			end
-		else
-			minetest.chat_send_player(player_name,
-				S("You don't have the \"home\" privilege!"))
-			ui.set_inventory_formspec(player, ui.current_page[player_name])
+		if ui.go_home(player) then
+			minetest.sound_play("teleport", {to_player = player_name})
 		end
 	end,
 	condition = function(player)
@@ -97,17 +85,11 @@ ui.register_button("misc_set_day", {
 	hide_lite=true,
 	action = function(player)
 		local player_name = player:get_player_name()
-		if minetest.check_player_privs(player_name, {settime=true}) then
-			minetest.sound_play("ui_morning",
-					{to_player=player_name, gain = 1.0})
-			minetest.set_timeofday((6000 % 24000) / 24000)
-			minetest.chat_send_player(player_name,
-				S("Time of day set to 6am"))
-		else
-			minetest.chat_send_player(player_name,
-				S("You don't have the settime privilege!"))
-			ui.set_inventory_formspec(player, ui.current_page[player_name])
-		end
+		minetest.sound_play("ui_morning",
+				{to_player=player_name, gain = 1.0})
+		minetest.set_timeofday((6000 % 24000) / 24000)
+		minetest.chat_send_player(player_name,
+			S("Time of day set to 6am"))
 	end,
 	condition = function(player)
 		return minetest.check_player_privs(player:get_player_name(), {settime=true})
@@ -121,17 +103,11 @@ ui.register_button("misc_set_night", {
 	hide_lite=true,
 	action = function(player)
 		local player_name = player:get_player_name()
-		if minetest.check_player_privs(player_name, {settime=true}) then
-			minetest.sound_play("ui_owl",
-					{to_player=player_name, gain = 1.0})
-			minetest.set_timeofday((21000 % 24000) / 24000)
-			minetest.chat_send_player(player_name,
-					S("Time of day set to 9pm"))
-		else
-			minetest.chat_send_player(player_name,
-					S("You don't have the settime privilege!"))
-			ui.set_inventory_formspec(player, ui.current_page[player_name])
-		end
+		minetest.sound_play("ui_owl",
+				{to_player=player_name, gain = 1.0})
+		minetest.set_timeofday((21000 % 24000) / 24000)
+		minetest.chat_send_player(player_name,
+				S("Time of day set to 9pm"))
 	end,
 	condition = function(player)
 		return minetest.check_player_privs(player:get_player_name(), {settime=true})
@@ -144,21 +120,13 @@ ui.register_button("clear_inv", {
 	tooltip = S("Clear inventory"),
 	action = function(player)
 		local player_name = player:get_player_name()
-		if not ui.is_creative(player_name) then
-			minetest.chat_send_player(player_name,
-					S("This button has been disabled outside"
-					.." of creative mode to prevent"
-					.." accidental inventory trashing."
-					.."\nUse the trash slot instead."))
-			ui.set_inventory_formspec(player, ui.current_page[player_name])
-			return
-		end
 		player:get_inventory():set_list("main", {})
 		minetest.chat_send_player(player_name, S('Inventory cleared!'))
 		minetest.sound_play("trash_all",
 				{to_player=player_name, gain = 1.0})
 	end,
 	condition = function(player)
+		-- Disabled to prevent accidental inventory trashing.
 		return ui.is_creative(player:get_player_name())
 	end,
 })
@@ -344,9 +312,14 @@ ui.register_page("craftguide", {
 				formspec[n+3] = giveme_form
 			end
 			return { formspec = table.concat(formspec) }
-		else
-			formspec[n] = stack_image_button(craftguideresultx, craftguidey, 1.2, 1.2,
-					"item_button_" .. rdir .. "_", ItemStack(craft.output))
+		end
+
+		-- List all recipes
+		for i = #craft.output, 1, -1 do
+			-- Go in reverse to not overlap the stack count
+			local itemstack = craft.output[i]
+			formspec[n] = stack_image_button(craftguideresultx + (i - 1) * 0.8, craftguidey, 1.2, 1.2,
+					"item_button_" .. rdir .. "_", itemstack)
 			n = n + 1
 		end
 

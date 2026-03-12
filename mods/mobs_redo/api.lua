@@ -1,4 +1,3 @@
-
 -- translation & mod checks
 
 local S = core.get_translator("mobs")
@@ -18,7 +17,7 @@ end
 -- global table
 
 mobs = {
-	mod = "redo", version = "20260204",
+	mod = "redo", version = "20260305",
 	spawning_mobs = {}, translate = S,
 	node_snow = has(core.registered_aliases["mapgen_snow"])
 			or has("mcl_core:snow") or has("default:snow") or "air",
@@ -197,16 +196,19 @@ end
 
 function mob_class:mob_sound(sound)
 
-	if not sound then return end
+	if not sound or not self.sounds then return end
 
-	local pitch = self.child and 1.5 or 1.0 -- higher pitch for a child
+	if type(sound) == "string" then sound = {name = sound} end
 
-	pitch = pitch + random(-10, 10) * 0.005 -- random pitch difference
+	sound.pitch = (sound.pitch or 1.0) + random(-10, 10) * 0.005 -- random differences
 
-	core.sound_play(sound, {
-		object = self.object, gain = 1.0, pitch = pitch,
-		max_hear_distance = (self.sounds and self.sounds.distance) or 10
-	}, true)
+	sound.pitch = self.child and sound.pitch + .3 or sound.pitch -- higher for a child
+
+	sound.max_hear_distance = sound.max_hear_distance or self.sounds.distance or 10
+
+	sound.object = self.object -- bind sound to mob
+
+	core.sound_play(sound.name, sound, true)
 end
 
 -- set attack
@@ -577,7 +579,7 @@ local CHILD_GROW_TIME = 60 * 20 -- 20 minutes
 function mob_class:update_tag(newname)
 
 	local col
-	local prop = self.object:get_properties()
+	local prop = self.object:get_properties() ; if not prop then return end
 	local qua = prop.hp_max / 6
 	local old_nametag = prop.nametag
 	local old_nametag_color = self.nametag_col
@@ -1027,7 +1029,7 @@ function mob_class:do_env_damage()
 	end
 
 	--- suffocation
-	if (self.suffocation and self.suffocation ~= 0)
+	if (self.suffocation and self.suffocation ~= 0) and self.protected ~= 2
 	and (nodef.walkable == nil or nodef.walkable)
 	and (nodef.collision_box == nil or nodef.collision_box.type == "regular")
 	and (nodef.node_box == nil or nodef.node_box.type == "regular")
@@ -1310,6 +1312,7 @@ function mob_class:breed()
 						ent2.mommy_tex = self.base_texture -- when grown
 						ent2.object:set_properties({textures = textures})
 						ent2.base_texture = textures
+						mobs:scale_mob(ent2, .5, .5)
 					end
 				end, self, ent)
 

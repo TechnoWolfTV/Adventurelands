@@ -97,23 +97,21 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
 	local player_name = player:get_player_name()
 
-	local ui_peruser,draw_lite_mode = unified_inventory.get_per_player_formspec(player_name)
+	local ui_peruser, _ = unified_inventory.get_per_player_formspec(player_name)
 
 	local clicked_category
-	for name, value in pairs(fields) do
-		local category_name = string.match(name, "^category_(.+)$")
-		if category_name then
-			clicked_category = category_name
+	for _, cat in ipairs(ui.category_list) do
+		if fields["category_" .. cat.name] then
+			clicked_category = cat.name
 			break
 		end
 	end
 
-	if clicked_category
-	and clicked_category ~= unified_inventory.current_category[player_name] then
-		unified_inventory.current_category[player_name] = clicked_category
-		unified_inventory.apply_filter(player, unified_inventory.current_searchbox[player_name], "nochange")
-		unified_inventory.set_inventory_formspec(player,
-				unified_inventory.current_page[player_name])
+	if clicked_category and clicked_category ~= ui.current_category[player_name] then
+		ui.current_category[player_name] = clicked_category
+		ui.apply_filter(player, ui.current_searchbox[player_name], "nochange")
+		ui.set_inventory_formspec(player, ui.current_page[player_name])
+		return
 	end
 
 	if fields.next_category or fields.prev_category then
@@ -123,16 +121,22 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
 		if scroll_old ~= scroll_new then
 			ui.current_category_scroll[player_name] = scroll_new
-			ui.set_inventory_formspec(player,
-					unified_inventory.current_page[player_name])
+			ui.set_inventory_formspec(player, ui.current_page[player_name])
 		end
+		return
 	end
 
 	for i, def in pairs(unified_inventory.buttons) do
 		if fields[def.name] then
-			def.action(player)
-			minetest.sound_play("ui_click",
-					{to_player=player_name, gain = 0.1})
+			if def.condition == nil or def.condition(player) then
+				def.action(player)
+				minetest.sound_play("ui_click",
+						{to_player=player_name, gain = 0.1})
+			else
+				-- This branch may be executed if relevant permissions were revoked.
+				core.chat_send_player(player_name, "Action disallowed. Preconditions not met.")
+				ui.set_inventory_formspec(player, ui.current_page[player_name])
+			end
 			return
 		end
 	end
@@ -175,6 +179,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		unified_inventory.current_index[player_name] = (start_i - 1) * ui_peruser.items_per_page + 1
 		unified_inventory.set_inventory_formspec(player,
 				unified_inventory.current_page[player_name])
+		return
 	end
 
 	-- Check clicked item image button
@@ -216,6 +221,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				inv:add_item("main", stack)
 			end
 		end
+		return
 	end
 
 	-- alternate buttons

@@ -1,0 +1,54 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Luanti Mod\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-08 12:53+0100\n"
+"PO-Revision-Date: 2026-02-08 11:52+0000\n"
+"Language: whitelist.hu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Whitelist"
+msgstr ""
+
+msgid "Manage who can and who can't enter in your server"
+msgstr ""
+
+msgid "You're not whitelisted!"
+msgstr "Nem vagy letiltva!"
+
+msgid "Whitelist commands. <player> is only needed for `add` and `remove`"
+msgstr ""
+"Parancsok engedélyezési listája. A <Játékos> csak az \"add\" és \"remove\" "
+"műveletekhez szükséges"
+
+msgid "player"
+msgstr "Játékos"
+
+msgid "[!] The whitelist is already enabled!"
+msgstr "[!] A tiltólista már engedélyezve van!"
+
+msgid "Whitelist successfully enabled"
+msgstr "A tiltólista sikeresen engedélyezve lett"
+
+msgid "[!] The whitelist is already disabled!"
+msgstr "[!] A tiltólist már le van tiltva!"
+
+msgid "Whitelist successfully disabled"
+msgstr "A tiltólista le lett tiltva"
+
+msgid "[!] @1 is already whitelisted!"
+msgstr "[!] @1 már ki lett tiltva"
+
+msgid "[!] There is no player whitelisted with that name..."
+msgstr "[!] Nincs ezzel a névvel játékos kitiltva …"
+
+msgid "[!] You can't remove yourself!"
+msgstr "[!] nemtudod magadat kitörölni!"
+
+msgid "[!] Whitelist can't be empty when enabled!"
+msgstr "[!] A tiltólista nem lehet üres az engedélyezésekor!"
+
+msgid "Whitelisted players: @1"
+msgstr "Kitiltott játékosok: @1"

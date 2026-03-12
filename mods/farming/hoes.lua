@@ -236,8 +236,9 @@ local function hoe_area(pos, player)
 	-- remove flora (grass, flowers etc.)
 	local res = core.find_nodes_in_area(
 			{x = pos.x - r, y = pos.y - 1, z = pos.z - r},
-			{x = pos.x + r, y = pos.y + 1, z = pos.z + r},
-			{"group:flora", "group:grass", "group:dry_grass", "default:dry_shrub"})
+			{x = pos.x + r, y = pos.y + 1, z = pos.z + r}, {
+				"group:flora", "group:grass", "group:dry_grass",
+				"default:dry_shrub", "farming:weed"})
 
 	for n = 1, #res do
 		core.swap_node(res[n], {name = "air"})

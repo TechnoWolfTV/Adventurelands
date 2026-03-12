@@ -43,6 +43,7 @@ are called after this mod, so the itemstack will have changed already
 when callbacks are called. You can get the original itemstack as 6th
 parameter of your function then.
 
+
 A global function is available for mods to change player stamina levels:
 
    stamina.change_saturation(player, change)
@@ -58,6 +59,10 @@ Function to set player saturation level:
 Function to check if player is poisoned, returns True if so:
 
    stamina.is_poisoned(player)
+
+Function to check if player is drunk, returns True if so:
+
+   stamina.is_drunk(player)
 
 Function to exhaust player:
 
@@ -76,7 +81,11 @@ TenPlus1 Additions:
  - Added 60 second drunk effect when foods have {alcohol=1} group (eat 4 or more)
  - Moved exhaustion and hud_id to player table instead of player attributes
  - Added 4 lucky block effects
- - Ability to drink milk from mobs or soy milk from farming to counteract poison/drunk
+ - Ability to drink {food_milk} or {food_milk_glass} food items to counteract poison/drunk
  - Added API
  - Added FOV effect when sprinting, and alcohol units lowers every saturation tick
  - Added double-tap to sprint and 'stamina_double_tap_time' setting, 0 to disable
+ - Added 'stamina_hud_x' and 'stamina_hud_y' to position hunger bar
+ - Added 'stamina_disable_aux1' setting to force double-tap and free Aux1 key
+ - Added 'no_hunger' player priv
+ - Added stamina.is_drunk function

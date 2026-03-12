@@ -1,0 +1,57 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Luanti Mod\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-08 12:53+0100\n"
+"PO-Revision-Date: 2026-03-04 20:29+0000\n"
+"Last-Translator: birdlover32767 <birdlover32767@noreply.codeberg.org>\n"
+"Language-Team: Turkish <https://translate.codeberg.org/projects/zughy-"
+"friends-minetest/whitelist/tr/>\n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.15.2\n"
+
+msgid "Whitelist"
+msgstr ""
+
+msgid "Manage who can and who can't enter in your server"
+msgstr ""
+
+msgid "You're not whitelisted!"
+msgstr ""
+
+msgid "Whitelist commands. <player> is only needed for `add` and `remove`"
+msgstr ""
+
+msgid "player"
+msgstr "oyuncu"
+
+msgid "[!] The whitelist is already enabled!"
+msgstr ""
+
+msgid "Whitelist successfully enabled"
+msgstr ""
+
+msgid "[!] The whitelist is already disabled!"
+msgstr ""
+
+msgid "Whitelist successfully disabled"
+msgstr ""
+
+msgid "[!] @1 is already whitelisted!"
+msgstr ""
+
+msgid "[!] There is no player whitelisted with that name..."
+msgstr ""
+
+msgid "[!] You can't remove yourself!"
+msgstr ""
+
+msgid "[!] Whitelist can't be empty when enabled!"
+msgstr ""
+
+msgid "Whitelisted players: @1"
+msgstr ""

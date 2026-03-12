@@ -2,6 +2,8 @@ local S = minetest.get_translator("unified_inventory")
 local F = minetest.formspec_escape
 local ui = unified_inventory
 
+local recipes_initialized = false
+
 --- @return boolean. Returns `true` when all ingredients exist.
 local function is_recipe_craftable(recipe)
 	-- Ensure the ingedients exist
@@ -201,6 +203,7 @@ minetest.after(0.01, function()
 		end
 		ui.crafts_for.recipe[outputitemname] = new_recipe_list
 	end
+	recipes_initialized = true
 
 	-- Remove unknown items from all categories
 	local total_removed = 0
@@ -291,21 +294,61 @@ function ui.register_craft(options)
 	if not options.output then
 		return
 	end
-	local itemstack = ItemStack(options.output)
-	if itemstack:is_empty() then
-		return
-	end
-	if options.type == "normal" and options.width == 0 then
-		options = { type = "shapeless", items = options.items, output = options.output, width = 0 }
-	end
-	local item_name = itemstack:get_name()
-	if not ui.crafts_for.recipe[item_name] then
-		ui.crafts_for.recipe[item_name] = {}
-	end
-	table.insert(ui.crafts_for.recipe[item_name],options)
 
-	for _, callback in ipairs(ui.craft_registered_callbacks) do
-		callback(item_name, options)
+	if recipes_initialized then
+		-- If you're getting this warning, do use either:
+		--   a)  unified_inventory.register_craft(...)
+		--   b)  core.register_on_mods_loaded(...)
+		core.log("warning", "[unified_inventory] Recipe registered too late: " ..
+			dump(options.output):gsub("[\t\n]", " ") ..
+			". It might not show up correctly.")
+	end
+
+	if options.type == "normal" and options.width == 0 then
+		options = {
+			type = "shapeless",
+			items = options.items,
+			output = options.output,
+			width = 0
+		}
+	end
+
+	do
+		-- Convert the the 'output' field into a table for convenience
+		local outputs = options.output
+		if type(outputs) == "string" then
+			-- Most common
+			outputs = { outputs }
+		elseif type(outputs) == "userdata" and outputs.add_item then
+			-- Rare: ItemStack
+			outputs = { outputs }
+		end
+		assert(type(outputs) == "table", "Invalid 'output' field: " .. type(options.output))
+
+		options.output = {}
+		for _, itemstack in ipairs(outputs) do
+			itemstack = ItemStack(itemstack)
+			if not itemstack:is_empty() then
+				table.insert(options.output, itemstack)
+			end
+		end
+	end
+
+	-- Pre-filter: discard empty outputs
+	for _, itemstack in ipairs(options.output) do
+		local item_name = itemstack:get_name()
+		if not ui.crafts_for.recipe[item_name] then
+			ui.crafts_for.recipe[item_name] = {}
+		end
+		table.insert(ui.crafts_for.recipe[item_name], options)
+	end
+
+	-- Run callbacks
+	for _, itemstack in ipairs(options.output) do
+		local item_name = itemstack:get_name()
+		for _, callback in ipairs(ui.craft_registered_callbacks) do
+			callback(item_name, options)
+		end
 	end
 end
 
@@ -402,22 +445,44 @@ end
 ---------------- Callback registrations ----------------
 
 function ui.register_on_initialized(callback)
-	if type(callback) ~= "function" then
-		error(("Initialized callback must be a function, %s given."):format(type(callback)))
-	end
+	assert(type(callback) == "function")
 	table.insert(ui.initialized_callbacks, callback)
 end
 
 function ui.register_on_craft_registered(callback)
-	if type(callback) ~= "function" then
-		error(("Craft registered callback must be a function, %s given."):format(type(callback)))
-	end
+	assert(type(callback) == "function")
 	table.insert(ui.craft_registered_callbacks, callback)
 end
 
 ---------------- List getters ----------------
 
+local warned_get_recipe_list = false
 function ui.get_recipe_list(output)
+	if not warned_get_recipe_list then
+		warned_get_recipe_list = true
+		core.log("warning", debug.traceback("Deprecated call to 'get_recipe_list'. " ..
+			"Please use 'get_recipe_list2' instead."))
+	end
+
+	local recipes = ui.crafts_for.recipe[output]
+	if not recipes then
+		return nil
+	end
+
+	-- Slow backwards compat
+	local list = {}
+	for _, recipe in ipairs(recipes) do
+		if #recipe.output == 1 then
+			recipe = table.copy(recipe)
+			recipe.output = recipe.output[1]:to_string()
+			table.insert(list, recipe)
+		end
+	end
+	return list
+end
+
+function ui.get_recipe_list2(output)
+	assert(type(output) == "string")
 	return ui.crafts_for.recipe[output]
 end
 

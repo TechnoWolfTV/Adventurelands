@@ -1,0 +1,58 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Luanti Mod\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-08 12:53+0100\n"
+"PO-Revision-Date: 2026-02-09 12:29+0000\n"
+"Last-Translator: Zughy <zughy@noreply.codeberg.org>\n"
+"Language-Team: Italian <https://translate.codeberg.org/projects/zughy-"
+"friends-minetest/whitelist/it/>\n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.15.2\n"
+
+msgid "Whitelist"
+msgstr "Lista bianca"
+
+msgid "Manage who can and who can't enter in your server"
+msgstr "Gestisci chi può e chi non può entrare nel tuo server"
+
+msgid "You're not whitelisted!"
+msgstr "Non sei nella lista bianca!"
+
+msgid "Whitelist commands. <player> is only needed for `add` and `remove`"
+msgstr ""
+"Comandi lista bianca. <giocante> è richiesto solamente per `add` e `remove`"
+
+msgid "player"
+msgstr "giocante"
+
+msgid "[!] The whitelist is already enabled!"
+msgstr "[!] La lista bianca è già abilitata!"
+
+msgid "Whitelist successfully enabled"
+msgstr "Lista bianca abilitata con successo"
+
+msgid "[!] The whitelist is already disabled!"
+msgstr "[!] La lista bianca è già disabilitata!"
+
+msgid "Whitelist successfully disabled"
+msgstr "Lista bianca disabilitata con successo"
+
+msgid "[!] @1 is already whitelisted!"
+msgstr "[!] @1 è già nella lista bianca!"
+
+msgid "[!] There is no player whitelisted with that name..."
+msgstr "[!] Nessunə giocante con quel nome è presente nella lista bianca..."
+
+msgid "[!] You can't remove yourself!"
+msgstr "[!] Non puoi rimuovere te stessə!"
+
+msgid "[!] Whitelist can't be empty when enabled!"
+msgstr "[!] La lista bianca non può essere vuota quand'è attiva!"
+
+msgid "Whitelisted players: @1"
+msgstr "Giocanti in lista bianca: @1"

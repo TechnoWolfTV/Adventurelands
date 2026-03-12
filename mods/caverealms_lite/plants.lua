@@ -15,8 +15,7 @@ core.register_node("caverealms:fungus", {
 	buildable_to = true,
 	visual_scale = 1.0,
 	selection_box = {
-		type = "fixed",
-		fixed = {-0.5, -0.5, -0.5, 0.5, -5/16, 0.5}
+		type = "fixed", fixed = {-0.5, -0.5, -0.5, 0.5, -5/16, 0.5}
 	}
 })
 
@@ -35,8 +34,7 @@ core.register_node("caverealms:mycena", {
 	buildable_to = true,
 	visual_scale = 1.0,
 	selection_box = {
-		type = "fixed",
-		fixed = {-0.5, -0.5, -0.5, 0.5, -5/16, 0.5}
+		type = "fixed", fixed = {-0.5, -0.5, -0.5, 0.5, -5/16, 0.5}
 	}
 })
 
@@ -92,8 +90,7 @@ core.register_node("caverealms:mushroom_sapling", {
 	is_ground_content = false,
 	walkable = false,
 	selection_box = {
-		type = "fixed",
-		fixed = {-4 / 16, -0.5, -4 / 16, 4 / 16, 7 / 16, 4 / 16}
+		type = "fixed", fixed = {-4 / 16, -0.5, -4 / 16, 4 / 16, 7 / 16, 4 / 16}
 	},
 	groups = {snappy = 2, dig_immediate = 3, flammable = 2},
 	sounds = default.node_sound_leaves_defaults()
@@ -104,8 +101,7 @@ local add_tree = function (pos, ofx, ofy, ofz, schem)
 
 	-- check for schematic
 	if not schem then
-		print ("Schematic not found")
-		return
+		print ("Schematic not found") ; return
 	end
 
 	-- remove sapling and place schematic

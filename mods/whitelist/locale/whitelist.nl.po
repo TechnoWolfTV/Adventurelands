@@ -1,0 +1,79 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-08 12:53+0100\n"
+"PO-Revision-Date: 2026-03-03 16:29+0000\n"
+"Last-Translator: Gusted <postmaster@gusted.xyz>\n"
+"Language-Team: Dutch <https://translate.codeberg.org/projects/zughy-friends-"
+"minetest/whitelist/nl/>\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.15.2\n"
+
+#: init.lua:7
+msgid "Whitelist"
+msgstr "Toegestane lijst"
+
+#: init.lua:8
+msgid "Manage who can and who can't enter in your server"
+msgstr "Beheer wie er wel en niet toegang heeft tot jouw server"
+
+#: src/player_manager.lua:7
+msgid "You're not whitelisted!"
+msgstr "Je staat niet op de toegestane lijst!"
+
+#: src/commands.lua:4
+msgid "Whitelist commands. <player> is only needed for `add` and `remove`"
+msgstr ""
+"Commando's op de toegestane lijst. <speler> is alleen nodig voor `add` en "
+"`remove`"
+
+#: src/commands.lua:5
+msgid "player"
+msgstr "speler"
+
+#: src/api.lua:38
+msgid "[!] The whitelist is already enabled!"
+msgstr "[!] De toegestane lijst is al ingeschakeld!"
+
+#: src/api.lua:45
+msgid "Whitelist successfully enabled"
+msgstr "Toegestane lijst succesvol ingeschakeld"
+
+#: src/api.lua:56
+msgid "[!] The whitelist is already disabled!"
+msgstr "[!] De toegestane lijst is al uitgeschakeld!"
+
+#: src/api.lua:61
+msgid "Whitelist successfully disabled"
+msgstr "Toegestane lijst succesvol uitgeschakeld"
+
+#: src/api.lua:72
+msgid "[!] @1 is already whitelisted!"
+msgstr "[!] @1 staat al op de toegestane lijst!"
+
+#: src/api.lua:89
+msgid "[!] There is no player whitelisted with that name..."
+msgstr "[!] Er is geen speler met die naam op de toegestane lijst..."
+
+#: src/api.lua:94
+msgid "[!] You can't remove yourself!"
+msgstr "[!] Je kunt niet jezelf verwijderen!"
+
+#: src/api.lua:101
+msgid "[!] Whitelist can't be empty when enabled!"
+msgstr ""
+"[!] De toegestane lijst mag niet leeg zijn wanneer deze is ingeschakeld!"
+
+#: src/api.lua:124
+msgid "Whitelisted players: @1"
+msgstr "Spelers op de toegestane lijst: @1"

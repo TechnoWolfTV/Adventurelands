@@ -12,5 +12,6 @@ mobs:spawn({
 		self.damage = 5
 		self.shoot_interval = 1.5
 		self.dogshoot_switch = 0
+		self.object:set_properties({hp_max = 70}) -- make sure hp_max is set
 	end
 })
