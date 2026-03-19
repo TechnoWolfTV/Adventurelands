@@ -172,6 +172,9 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Good Torch
   - Location: ./mods/goodtorch/
   - License file: ./mods/goodtorch/LICENSE
+- Grant Privs
+  - Location: ./mods/grantprivs/
+  - License file: ./mods/grantprivs/LICENSE.txt
 - Hang Glider
   - Location: ./mods/hangglider/
   - License file: ./mods/hangglider/LICENSE.txt
@@ -283,9 +286,6 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Painting
   - Location: ./mods/painting-3/
   - License file: ./mods/painting-3/LICENSE
-- Personal Bookmarks
-  - Location: ./mods/pbmarks/
-  - License file: ./mods/pbmarks/LICENSE.txt
 - Pipeworks
   - Location: ./mods/pipeworks/
   - License file: ./mods/pipeworks/LICENSE
