@@ -69,6 +69,16 @@ TO:
 
 ==============================================
 
+DREAMBUILDER HOTBAR:
+
+\mods\dreambuilder_hotbar\init.lua
+FROM:
+local hotbar_size_default = 16
+TO:
+local hotbar_size_default = 10
+
+==============================================
+
 HUDBARS:
 
 \mods\hudbars\default_settings.lua

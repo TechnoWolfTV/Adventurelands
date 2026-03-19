@@ -17,7 +17,7 @@ do
 	end
 end
 
-local hotbar_size_default = 16
+local hotbar_size_default = 10
 
 local function validate_size(s)
 	local size = tonumber(s) or hotbar_size_default
