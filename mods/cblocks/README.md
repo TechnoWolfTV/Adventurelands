@@ -7,10 +7,11 @@ https://forum.minetest.net/viewtopic.php?f=9&t=13303
 
 Change log:
 
-- 0.1 - Initial release
-- 0.2 - Added coloured glass and fixed violet
-- 0.3 - Added stairsplus and stairs mod support
-- 0.4 - Glass stairs created with transparency if stairs redo active
-- 0.5 - Add Mineclonia support
+- 0.1 - Initial release.
+- 0.2 - Added coloured glass and fixed violet.
+- 0.3 - Added stairsplus and stairs mod support.
+- 0.4 - Glass stairs created with transparency if stairs redo active.
+- 0.5 - Add Mineclonia support.
+- 0.6 - Add coloured bricks, Add settings to disable blocks and stairs.
 
-Lucky Blocks: 4
+Lucky Blocks: 5

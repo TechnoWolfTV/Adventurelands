@@ -11,10 +11,6 @@ dofile(modpath .. "/nodes.lua") --node definitions
 dofile(modpath .. "/stairs.lua") --stairs (mod auto-detected)
 dofile(modpath .. "/plants.lua")
 
-if core.get_modpath("ambience") then
-	dofile(modpath .. "/ambience.lua")
-end
-
 if core.get_modpath("mobs_monster") and config.dm_spawn == true then
 	dofile(modpath .. "/dungeon_master.lua") --special DMs for DM's Lair biome
 end

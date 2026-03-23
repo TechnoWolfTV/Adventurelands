@@ -89,6 +89,8 @@ core.register_node('asrs:controller', {
             local inv = meta:get_inventory()
             inv:remove_item('storage', stack)
          end
+      else
+         core.log('action', player:get_player_name()..' took '..stack:get_name()..' from the asrs.')
       end
    end,
    on_metadata_inventory_put = function(pos, listname, index, stack, player)
@@ -99,6 +101,8 @@ core.register_node('asrs:controller', {
             local inv = meta:get_inventory()
             inv:add_item('storage', stack)
          end
+      else
+         core.log('action', player:get_player_name()..' placed '..stack:get_name()..' into the asrs.')
       end
    end,
    tube = {

@@ -1,0 +1,5 @@
+cblocks.disable_stone (Disable Coloured Stone) bool false
+cblocks.disable_brick (Disable Coloured Brick) bool false
+cblocks.disable_glass (Disable Coloured Glass) bool false
+cblocks.disable_wood (Disable Coloured Wood) bool false
+cblocks.disable_stairs (Disable CBlock Stairs) bool false

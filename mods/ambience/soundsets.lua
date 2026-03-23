@@ -38,15 +38,18 @@ if core.settings:get_bool("ambience_water_splash") == true then
 				vel = def.player:get_player_velocity()
 			end
 
-			if  hdef and hdef.groups and hdef.groups.water
-			and fdef and fdef.groups and fdef.groups.water then
+			if hdef and hdef.groups.water and fdef and fdef.groups.water then
 
-				if not in_water[name] and vel.y < -0.15 then
+				if not in_water[name] and vel.y < -0.166 then
+
 					in_water[name] = 2
+
 					return "big_splash"
 				end
+
+				in_water[name] = 2
 			else
-				if fdef and fdef.groups and fdef.groups.water then
+				if fdef and fdef.groups.water then
 					in_water[name] = 1
 				else
 					in_water[name] = nil
@@ -69,14 +72,14 @@ ambience.add_set("underwater", {
 --	},
 
 	sounds = {
-		{name = "scuba", length = 8}
+		{name = "scuba", length = 8, loop = true}
 	},
 
 	sound_check = function(def)
 
 		local nodef = core.registered_nodes[def.head_node]
 
-		if nodef and nodef.groups and nodef.groups.water then
+		if nodef and nodef.groups.water then
 			return "underwater"
 		end
 	end
@@ -84,7 +87,7 @@ ambience.add_set("underwater", {
 
 -- add new sound to above set
 
-ambience.add_to_set("underwater", {name = "scuba", pitch = 1.2, length = 8})
+ambience.add_to_set("underwater", {name = "scuba", pitch = 1.2, length = 8, loop = true})
 
 -- Splashing sound plays when player walks inside water nodes (if enabled)
 
@@ -116,7 +119,7 @@ if core.settings:get_bool("ambience_water_move") ~= false then
 
 			local nodef = core.registered_nodes[def.feet_node]
 
-			if nodef and nodef.groups and nodef.groups.water then
+			if nodef and nodef.groups.water then
 
 				local control = def.player:get_player_control()
 
@@ -200,10 +203,10 @@ if not core.get_modpath("env_sounds") then
 		end
 	})
 else
-	print ("[MOD] Ambience - found env_sounds, using for water and lava sounds.")
+	print ("[MOD] Ambience - Using env_sounds for water and lava sounds.")
 end
 
--- Beach sounds play when below y-pos 6 and 150+ water source found
+-- Beach sounds play when pos above 0 and below 6 and 150+ water source found
 
 ambience.add_set("beach", {
 
@@ -224,7 +227,7 @@ ambience.add_set("beach", {
 		local c = (def.totals["default:water_source"] or 0)
 			+ (def.totals["mcl_core:water_source"] or 0)
 
-		if def.pos.y < 6 and def.pos.y > 0 and c > 130 then
+		if def.pos.y > 0 and def.pos.y < 6 and c > 130 then
 			return "beach"
 		end
 	end
@@ -385,7 +388,7 @@ ambience.add_set("day", {
 		-- use handy function to count all nodes in group:leaves
 		local c = ambience.group_total(def.totals, "leaves")
 
-		if (def.tod > 0.2 and def.tod < 0.8) and def.pos.y > 0 and c > 50 then
+		if def.tod > 0.2 and def.tod < 0.8 and def.pos.y > 0 and c > 50 then
 			return "day"
 		end
 	end
@@ -413,7 +416,7 @@ ambience.add_set("night", {
 		-- use handy function to count all nodes in group:leaves
 		local c = ambience.group_total(def.totals, "leaves")
 
-		if (def.tod < 0.2 or def.tod > 0.8) and def.pos.y > 0 and c > 50 then
+		if def.tod < 0.2 or def.tod > 0.8 and def.pos.y > 0 and c > 50 then
 			return "night"
 		end
 	end
@@ -442,3 +445,55 @@ ambience.add_set("high_up", {
 		if def.pos.y > 50 or c > 100 then return "high_up" end
 	end
 })
+
+-- caverealms sounds
+
+if core.get_modpath("caverealms") then
+
+	-- salt crystal biome
+
+	ambience.add_set("caverealms_crystal", {
+
+		frequency = 50,
+
+		sounds = {
+			{name = "caverealms_crystal", length = 3, ephemeral = true},
+			{name = "caverealms_crystal", length = 3, pitch = 0.9, ephemeral = true},
+			{name = "caverealms_crystal", length = 3, pitch = 1.2, ephemeral = true},
+		},
+
+		nodes = ({"caverealms:stone_with_salt"}),
+
+		sound_check = function(def)
+
+			local c = (def.totals["caverealms:stone_with_salt"] or 0)
+
+			if c > 250 then return "caverealms_crystal" end
+		end
+	})
+
+	-- moss, algae, lichen area rumble
+
+	ambience.add_set("caverealms_rumble", {
+
+		frequency = 50,
+
+		sounds = {
+			{name = "caverealms_deep_whoosh", length = 3, ephemeral = true},
+			{name = "caverealms_deep_whoosh", length = 3, pitch = 0.6, ephemeral = true},
+			{name = "caverealms_deep_whoosh", length = 3, pitch = 0.8, ephemeral = true},
+		},
+
+		nodes = ({"caverealms:stone_with_moss", "caverealms:stone_with_algae",
+				"caverealms:stone_with_lichen"}),
+
+		sound_check = function(def)
+
+			local c = (def.totals["caverealms:stone_with_moss"] or 0) +
+					(def.totals["caverealms:stone_with_algae"] or 0) +
+					(def.totals["caverealms:stone_with_lichen"] or 0)
+
+			if def.pos.y < -50 and c > 150 then return "caverealms_rumble" end
+		end
+	})
+end

@@ -4,6 +4,7 @@
 local S = core.get_translator("stamina")
 local math_max, math_min = math.max, math.min
 local math_floor, math_random = math.floor, math.random
+local get_node = core.get_node
 
 -- clamp values helper
 
@@ -409,7 +410,7 @@ local function action_tick(player, name, data)
 			if stamina.enable_sprint_particles then
 
 				local pos = player:get_pos()
-				local node = core.get_node({x = pos.x, y = pos.y - 1, z = pos.z})
+				local node = get_node({x = pos.x, y = pos.y - 1, z = pos.z})
 				local def = minetest.registered_nodes[node.name] or {}
 
 				if def.drawtype ~= "airlike" and def.drawtype ~= "liquid"

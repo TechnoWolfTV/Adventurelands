@@ -50,13 +50,13 @@ local function to_unit_vector(dir_vector)
 end
 
 
+local get_node = core.get_node
+
 local function node_ok(pos)
 
-	local node = core.get_node_or_nil(pos)
+	local node = get_node(pos)
 
-	if node and core.registered_nodes[node.name] then
-		return node
-	end
+	if core.registered_nodes[node.name] then return node end
 
 	return core.registered_nodes["default:dirt"]
 end
@@ -303,15 +303,12 @@ core.register_entity(":__builtin:item", {
 		-- get nodes every 1/4 second
 		self.timer = (self.timer or 0) + dtime
 
-		if self.timer < 0.25 and self.node_inside then
-			return
-		end
+		if self.timer < 0.25 and self.node_inside then return end
 
 		self.timer = 0
 
-		self.node_inside = core.get_node_or_nil(pos)
-		self.def_inside = self.node_inside
-				and core.registered_nodes[self.node_inside.name]
+		self.node_inside = get_node(pos)
+		self.def_inside = core.registered_nodes[self.node_inside.name]
 
 		-- get ground node for collision
 		self.node_under = nil
@@ -333,14 +330,13 @@ core.register_entity(":__builtin:item", {
 		end]]
 
 		-- old ground check (stable)
-		self.node_under = core.get_node_or_nil({
+		self.node_under = get_node({
 			x = pos.x,
 			y = pos.y + self.object:get_properties().collisionbox[2] - 0.05,
 			z = pos.z
 		})
 
-		self.def_under = self.node_under
-				and core.registered_nodes[self.node_under.name]
+		self.def_under = core.registered_nodes[self.node_under.name]
 
 		-- part of old ground check
 		if self.def_under and self.def_under.walkable then
