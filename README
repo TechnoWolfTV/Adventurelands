@@ -120,6 +120,12 @@ a modpack folder format for isolation and ease of future updating.
 
 ==============================================
 
+MYGLASS:
+
+Delete the file, "description.txt" due to depricated
+
+==============================================
+
 ONTIME CLOCKS MODPACK:
 
 Uses two mods, ontime_clocks and it's dependancy display_api from the display_modpack by mt-mods
