@@ -113,6 +113,12 @@ TO:
 
 ==============================================
 
+JELYS PIZZARIA:
+
+Delete the file, "depends.txt" due to depricated
+
+==============================================
+
 MINETEST GAME:
 
 All mods within minetest_game\mods\ with the exception of farming and weather were copied into
