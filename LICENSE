@@ -299,6 +299,9 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Signs Lib
   - Location: ./mods/signs_lib/
   - License file: ./mods/signs_lib/LICENSE
+- Simple Fishing
+  - Location: ./mods/simple_fishing/
+  - License file: ./mods/simple_fishing/LICENSE
 - Sprinting
   - Location: ./mods/sprinting/
   - License file: ./mods/sprinting/LICENSE.txt
