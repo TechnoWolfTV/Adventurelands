@@ -1,8 +1,0 @@
-Adventurelands
-By TechnoWolfTV
-
-A Luanti (formerly Minetest) game featuring exploration, mining, crafting, building and survival with monsters and animals. Adventurelands includes carefully selected mods for an optimal balance between form and function.
-
-Installation
-
-This game requires Luanti to run (version 5.9 or later). You will need to install Luanti first. Only stable versions of Luanti are officially supported. If you are downloading the package zip file, download the .zip package and extract the folder inside. Rename the extracted folder to, "adventurelands" and move it to the games folder under your Luanti installation as luanti/games/adventurelands.
