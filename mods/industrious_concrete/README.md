@@ -1,12 +1,9 @@
 # Industrious Concrete for Minetest
-
-### Industrious Mod Originally by StarNinjas
-
-### Forked and tweaked by TechnoWolfTV
+*Industrious Mod Originally by StarNinjas - Forked and tweaked by TechnoWolfTV*
 
 Adds new industrious-themed concrete nodes.
 
-# **Concrete**
+### Concrete
 - Powder can be crafted from sand and gravel
 - Concrete can be made from powder and water
 - Cheap, and hard to break
