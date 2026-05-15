@@ -88,4 +88,5 @@ TenPlus1 Additions:
  - Added 'stamina_hud_x' and 'stamina_hud_y' to position hunger bar
  - Added 'stamina_disable_aux1' setting to force double-tap and free Aux1 key
  - Added 'no_hunger' player priv
- - Added stamina.is_drunk function
+ - Added stamina.is_drunk and stamina.is_poisoned function
+ - Added hunger charm that increases stamina by defined level when worn (3d_armor)

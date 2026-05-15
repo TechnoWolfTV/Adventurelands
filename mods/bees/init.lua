@@ -130,8 +130,6 @@ core.register_node("bees:extractor", {
 		and inv:is_empty("bottles_empty") and inv:is_empty("bottles_full")
 		and inv:is_empty("wax") then
 			return true
-		else
-			return false
 		end
 	end,
 
@@ -246,9 +244,9 @@ core.register_node("bees:extractor", {
 		if (listname == "bottles_empty" and stack:get_name() == "vessels:glass_bottle")
 		or (listname == "frames_filled" and stack:get_name() == "bees:frame_full") then
 			return stack:get_count()
-		else
-			return 0
 		end
+
+		return 0
 	end,
 
 	allow_metadata_inventory_move = function()
@@ -281,10 +279,7 @@ core.register_node("bees:bees", {
 	walkable = false,
 	buildable_to = true,
 	selection_box = {
-		type = "fixed",
-		fixed = {
-			{-0.3, -0.4, -0.3, 0.3, 0.4, 0.3}
-		}
+		type = "fixed", fixed = {-0.3, -0.4, -0.3, 0.3, 0.4, 0.3}
 	},
 
 	on_timer = function(pos)
@@ -297,8 +292,7 @@ core.register_node("bees:bees", {
 
 		timer:start(25)
 
-		core.sound_play("bees",
-				{pos = pos, gain = 1.0, max_hear_distance = 10}, true)
+		core.sound_play("bees", {pos = pos, max_hear_distance = 10}, true)
 	end,
 
 	on_punch = function(_, _, puncher)
@@ -341,9 +335,8 @@ core.register_node("bees:hive_wild", {
 		local timer = core.get_node_timer(pos)
 		local rad = 10
 		local flowers = core.find_nodes_in_area(
-			{x = pos.x - rad, y = pos.y - rad, z = pos.z - rad},
-			{x = pos.x + rad, y = pos.y + rad, z = pos.z + rad},
-			"group:flower")
+				{x = pos.x - rad, y = pos.y - rad, z = pos.z - rad},
+				{x = pos.x + rad, y = pos.y + rad, z = pos.z + rad}, "group:flower")
 
 		-- Queen dies if no flowers nearby
 		if #flowers == 0 then
@@ -408,8 +401,7 @@ core.register_node("bees:hive_wild", {
 			sting_player(puncher, 4)
 		end
 
-		core.sound_play("bees",
-				{pos = pos, gain = 1.0, max_hear_distance = 10}, true)
+		core.sound_play("bees", {pos = pos, max_hear_distance = 10}, true)
 	end,
 
 	on_metadata_inventory_take = function(pos, listname, _, _, taker)
@@ -440,19 +432,17 @@ core.register_node("bees:hive_wild", {
 		-- restart the colony by adding a queen
 		if listname == "queen" and stack:get_name() == "bees:queen" then
 			return 1
-		else
-			return 0
 		end
+
+		return 0
 	end,
 
 	on_rightclick = function(pos, _, clicker, itemstack)
 
 		if not itemstack then return end
 
-		core.show_formspec(clicker:get_player_name(),
-			"bees:hive_artificial",
-			hive_wild(pos, (itemstack:get_name() == "bees:grafting_tool"))
-		)
+		core.show_formspec(clicker:get_player_name(), "bees:hive_artificial",
+				hive_wild(pos, (itemstack:get_name() == "bees:grafting_tool")) )
 
 		local meta = core.get_meta(pos)
 		local inv = meta:get_inventory()
@@ -460,8 +450,7 @@ core.register_node("bees:hive_wild", {
 		if meta:get_int("agressive") == 1
 		and inv:contains_item("queen", "bees:queen") then
 
-			core.sound_play("bees",
-					{pos = pos, gain = 1.0, max_hear_distance = 10}, true)
+			core.sound_play("bees", {pos = pos, max_hear_distance = 10}, true)
 
 			sting_player(clicker, 4)
 		else
@@ -476,27 +465,6 @@ core.register_node("bees:hive_wild", {
 
 		if inv:is_empty("queen") and inv:is_empty("combs") then
 			return true
-		else
-			return false
-		end
-	end,
-
-	after_dig_node = function(_, _, _, user)
-
-		local wielded
-		if user:get_wielded_item() ~= nil then
-			wielded = user:get_wielded_item()
-		else
-			return
-		end
-
-		if "bees:grafting_tool" == wielded:get_name() then
-
-			local inv = user:get_inventory()
-
-			if inv then
-				inv:add_item("main", ItemStack("bees:queen"))
-			end
 		end
 	end
 })
@@ -550,10 +518,7 @@ core.register_node("bees:hive_artificial", {
 			return
 		end
 
-		core.show_formspec(player_name,
-			"bees:hive_artificial",
-			hive_artificial(pos)
-		)
+		core.show_formspec(player_name, "bees:hive_artificial", hive_artificial(pos))
 
 		local meta = core.get_meta(pos)
 		local inv = meta:get_inventory()
@@ -580,9 +545,9 @@ core.register_node("bees:hive_artificial", {
 
 				local rad = 10
 				local flowers = core.find_nodes_in_area(
-					{x = pos.x - rad, y = pos.y - rad, z = pos.z - rad},
-					{x = pos.x + rad, y = pos.y + rad, z = pos.z + rad},
-					"group:flower")
+						{x = pos.x - rad, y = pos.y - rad, z = pos.z - rad},
+						{x = pos.x + rad, y = pos.y + rad, z = pos.z + rad},
+						"group:flower")
 
 				local progress = meta:get_int("progress")
 
@@ -642,12 +607,10 @@ core.register_node("bees:hive_artificial", {
 
 			if inv:get_stack(to_list, to_index):is_empty() then
 				return 1
-			else
-				return 0
 			end
-		else
-			return 0
 		end
+
+		return 0
 	end,
 
 	on_metadata_inventory_put = function(pos, listname, _, stack)
@@ -698,8 +661,6 @@ core.register_node("bees:hive_artificial", {
 
 		if inv:is_empty("queen") and inv:is_empty("frames") then
 			return true
-		else
-			return false
 		end
 	end
 })
@@ -734,15 +695,14 @@ core.register_abm({
 			texture = "bees_particle_bee.png",
 		})
 
-		core.sound_play("bees",
-				{pos = pos, gain = 0.6, max_hear_distance = 5}, true)
+		core.sound_play("bees", {pos = pos, gain = 0.6, max_hear_distance = 5}, true)
 
 		-- floating hive check and removal
 		if node.name == "bees:hive_wild" then
 
 			local num = #core.find_nodes_in_area(
-				{x = pos.x - 1, y = pos.y - 1, z = pos.z - 1},
-				{x = pos.x + 1, y = pos.y + 1, z = pos.z + 1}, {"air"})
+					{x = pos.x - 1, y = pos.y - 1, z = pos.z - 1},
+					{x = pos.x + 1, y = pos.y + 1, z = pos.z + 1}, {"air"})
 
 			if num and num > 25 then
 				core.remove_node(pos)
@@ -805,7 +765,7 @@ core.register_abm({
 		}
 
 		if core.get_node(p).name == "air" then
-			core.add_node(p, {name="bees:bees"})
+			core.add_node(p, {name = "bees:bees"})
 		end
 	end
 })
@@ -1096,8 +1056,7 @@ if core.get_modpath("pipeworks") then
 				local meta = core.get_meta(pos)
 				local inv = meta:get_inventory()
 
-				if stack:get_name() ~= "bees:frame_empty"
-				or stack:get_count() > 1 then
+				if stack:get_name() ~= "bees:frame_empty" or stack:get_count() > 1 then
 					return false
 				end
 
@@ -1115,9 +1074,9 @@ if core.get_modpath("pipeworks") then
 
 				if stack:get_name() == "bees:frame_full" then
 					return 1
-				else
-					return 0
 				end
+
+				return 0
 			end,
 
 			input_inventory = "frames",
@@ -1145,8 +1104,6 @@ if core.get_modpath("pipeworks") then
 
 			if inv:is_empty("queen") and inv:is_empty("frames") then
 				return true
-			else
-				return false
 			end
 		end,
 
@@ -1158,10 +1115,7 @@ if core.get_modpath("pipeworks") then
 				return
 			end
 
-			core.show_formspec(player_name,
-				"bees:hive_artificial",
-				hive_artificial(pos)
-			)
+			core.show_formspec(player_name, "bees:hive_artificial", hive_artificial(pos))
 
 			local meta = core.get_meta(pos)
 			local inv = meta:get_inventory()
@@ -1248,12 +1202,10 @@ if core.get_modpath("pipeworks") then
 
 				if inv:get_stack(to_list, to_index):is_empty() then
 					return 1
-				else
-					return 0
 				end
-			else
-				return 0
 			end
+
+			return 0
 		end,
 
 		on_metadata_inventory_put = function(pos, listname, _, stack)
@@ -1324,14 +1276,19 @@ if core.get_modpath("lucky_block") then
 
 			if objs[n]:is_player() then
 
-				local player_pos = objs[n]:get_pos()
+				local ppos = objs[n]:get_pos()
 
-				player_pos.y = player_pos.y + 1
+				local bee_pos = core.find_nodes_in_area(
+						{x = ppos.x, y = ppos.y, z = ppos.z},
+						{x = ppos.x, y = ppos.y + 1, z = ppos.z}, "air")
 
-				core.set_node(player_pos, {name = "bees:bees"})
+				if bee_pos and #bee_pos > 0 then
+					core.set_node(bee_pos[math.random(#bee_pos)], {name = "bees:bees"})
+				end
 			end
 		end
 	end
+
 
 	lucky_block:add_blocks({
 		{"cus", add_bees},

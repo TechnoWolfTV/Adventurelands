@@ -1,27 +1,11 @@
-
--- translation support
+-- translation and mod support check
 
 local S = core.get_translator("bakedclay")
-
--- new flowers
-
-local flowers = {
-	{"delphinium", S("Blue Delphinium"),
-	{-0.15, -0.5, -0.15, 0.15, 0.3, 0.15}, {color_cyan = 1}},
-
-	{"thistle", S("Thistle"),
-	{-0.15, -0.5, -0.15, 0.15, 0.2, 0.15}, {color_magenta = 1}},
-
-	{"lazarus", S("Lazarus Bell"),
-	{-0.15, -0.5, -0.15, 0.15, 0.2, 0.15}, {color_pink = 1}},
-
-	{"mannagrass", S("Reed Mannagrass"),
-	{-0.15, -0.5, -0.15, 0.15, 0.2, 0.15}, {color_dark_green = 1}}
-}
+local mod_flowerpot = core.get_modpath("flowerpot")
 
 -- helper function
 
-local function add_simple_flower(name, desc, box, f_groups)
+local function add_flower(name, desc, f_groups)
 
 	f_groups.snappy = 3
 	f_groups.flower = 1
@@ -41,15 +25,20 @@ local function add_simple_flower(name, desc, box, f_groups)
 		buildable_to = true,
 		groups = f_groups,
 		sounds = default.node_sound_leaves_defaults(),
-		selection_box = {type = "fixed", fixed = box}
+		selection_box = {type = "fixed", fixed = {-0.15, -0.5, -0.15, 0.15, 0.3, 0.15}}
 	})
+
+	if mod_flowerpot then
+		flowerpot.register_node("bakedclay:" .. name)
+	end
 end
 
 -- register new flowers to fill in missing dye colours
 
-for _,item in pairs(flowers) do
-	add_simple_flower(unpack(item))
-end
+add_flower("delphinium", S("Blue Delphinium"), {color_cyan = 1})
+add_flower("thistle", S("Thistle"), {color_magenta = 1})
+add_flower("lazarus", S("Lazarus Bell"), {color_pink = 1})
+add_flower("mannagrass", S("Reed Mannagrass"), {color_dark_green = 1})
 
 -- add new flowers to mapgen
 
@@ -118,12 +107,3 @@ core.register_decoration({
 	decoration = "bakedclay:mannagrass",
 	spawn_by = "group:water", num_spawn_by = 1
 })
-
--- flowerpot mod support
-
-if core.get_modpath("flowerpot") then
-	flowerpot.register_node("bakedclay:delphinium")
-	flowerpot.register_node("bakedclay:thistle")
-	flowerpot.register_node("bakedclay:lazarus")
-	flowerpot.register_node("bakedclay:mannagrass")
-end

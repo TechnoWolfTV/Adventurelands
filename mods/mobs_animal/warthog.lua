@@ -4,6 +4,7 @@ local S = core.get_translator("mobs_animal")
 -- Warthog originally by KrupnoPavel, B3D model by sirrobzeroone
 
 mobs:register_mob("mobs_animal:pumba", {
+	description = S("Warthog"),
 	stepheight = 0.6,
 	type = "animal",
 	passive = false,
@@ -27,7 +28,6 @@ mobs:register_mob("mobs_animal:pumba", {
 	},
 	walk_velocity = 2,
 	run_velocity = 3,
-	jump = true,
 	jump_height = 6,
 	pushable = true,
 	follow = {"default:apple", "farming:potato"},
@@ -43,6 +43,7 @@ mobs:register_mob("mobs_animal:pumba", {
 		speed_normal = 15,
 		stand_start = 25, stand_end = 55,
 		walk_start = 70, walk_end = 100,
+		run_start = 70, run_end = 100, run_speed = 40,
 		punch_start = 70, punch_end = 100,
 		-- no specific dying animation, so use 2 frames at 1fps and rotate
 		die_start = 1, die_end = 2, die_speed = 1,

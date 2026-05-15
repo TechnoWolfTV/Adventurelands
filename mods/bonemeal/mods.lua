@@ -4,8 +4,22 @@
 if core.get_modpath("animalmaterials") then
 
 	core.register_craft({
+		output = "bonemeal:bonemeal 2", recipe = {{"animalmaterials:bone"}}
+	})
+end
+
+-- convert bonified bone-meal and fertilizer
+
+if core.get_modpath("bonified") then
+
+	core.register_craft({
 		output = "bonemeal:bonemeal 2",
-		recipe = {{"animalmaterials:bone"}}
+		recipe = {{"bonified:bone_meal", "bonified:bone_meal"}}
+	})
+
+	core.register_craft({
+		output = "bonemeal:fertiliser 2",
+		recipe = {{"bonified:fertilizer", "bonified:fertilizer"}}
 	})
 end
 
@@ -82,12 +96,12 @@ if core.get_modpath("default") then
 	end)
 
 	bonemeal:add_deco({
-		{"default:dirt", bonemeal.green_grass, flowers},
+		{"default:dirt", green_grass, flowers},
 		{"default:dirt_with_grass", green_grass, flowers},
 		{"default:dry_dirt", dry_grass, {}},
 		{"default:dry_dirt_with_dry_grass", dry_grass, {}},
 		{"default:dirt_with_dry_grass", dry_grass, flowers},
-		{"default:sand", {}, {"default:dry_shrub", "", "", ""} },
+		{"default:sand", {}, {"default:dry_shrub", "", "", "", "default:marram_grass_1"} },
 		{"default:desert_sand", {}, {"default:dry_shrub", "", "", ""} },
 		{"default:silver_sand", {}, {"default:dry_shrub", "", "", ""} },
 		{"default:dirt_with_rainforest_litter", {}, {"default:junglegrass", "", "", ""} },
@@ -151,6 +165,10 @@ if farming and farming.mod and farming.mod == "redo" then
 		{"farming:spinach_", 4},
 		{"farming:ginger_", 4},
 		{"ethereal:strawberry_", 8}
+	})
+
+	bonemeal:add_sapling({
+		{"farming:kiwi_sapling", farming.grow_kiwi_vine, "soil"}
 	})
 end
 

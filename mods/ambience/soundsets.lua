@@ -15,14 +15,24 @@ local mod_mcl = core.get_modpath("mcl_core")
 
 if core.settings:get_bool("ambience_water_splash") == true then
 
-	local in_water = {}
+	local players = {}
+
+	core.register_on_joinplayer(function(player)
+		players[player:get_player_name()] = {in_water = nil, old_pos = -31000}
+	end)
+
+	core.register_on_leaveplayer(function(player)
+		players[player:get_player_name()] = nil
+	end)
 
 	ambience.add_set("big_splash", {
 
 		frequency = 1000,
 
 		sounds = {
-			{name = "big_splash", gain = 0.3, length = 4, ephemeral = true}
+			{name = "big_splash", gain = 0.3, length = 4, ephemeral = true},
+			{name = "big_splash", gain = 0.3, length = 4, ephemeral = true, pitch = 0.9},
+			{name = "big_splash", gain = 0.3, length = 4, ephemeral = true, pitch = 1.1}
 		},
 
 		sound_check = function(def)
@@ -30,31 +40,28 @@ if core.settings:get_bool("ambience_water_splash") == true then
 			local hdef = core.registered_nodes[def.head_node]
 			local fdef = core.registered_nodes[def.feet_node]
 			local name = def.player:get_player_name()
-			local vel
-
-			if core.has_feature("direct_velocity_on_players") then
-				vel = def.player:get_velocity()
-			else
-				vel = def.player:get_player_velocity()
-			end
 
 			if hdef and hdef.groups.water and fdef and fdef.groups.water then
 
-				if not in_water[name] and vel.y < -0.166 then
+				local diff = players[name].old_pos - def.pos.y
 
-					in_water[name] = 2
+				if not players[name].in_water and diff > 1 then
+
+					players[name].in_water = 2
 
 					return "big_splash"
 				end
 
-				in_water[name] = 2
+				players[name].in_water = 2
 			else
 				if fdef and fdef.groups.water then
-					in_water[name] = 1
+					players[name].in_water = 1
 				else
-					in_water[name] = nil
+					players[name].in_water = nil
 				end
 			end
+
+			players[name].old_pos = def.pos.y
 		end
 	})
 end
@@ -206,16 +213,22 @@ else
 	print ("[MOD] Ambience - Using env_sounds for water and lava sounds.")
 end
 
--- Beach sounds play when pos above 0 and below 6 and 150+ water source found
+-- Beach sounds play when pos above 0 and below 6 and 100+ water source found
+
+local water_level = tonumber(core.settings:get("water_level"))
 
 ambience.add_set("beach", {
+
+	background = {
+		{name = "beach", length = 13, fade = 0.2}, -- length isnt needed, just info here
+	},
 
 	frequency = 40,
 
 	sounds = {
 		{name = "seagull", length = 4.5, ephemeral = true},
 		{name = "seagull", length = 4.5, pitch = 1.2, ephemeral = true},
-		{name = "beach", length = 13},
+		--{name = "beach", length = 13},
 		{name = "gull", length = 1, ephemeral = true},
 		{name = "seagull_2", length = 4, ephemeral = true}
 	},
@@ -227,7 +240,7 @@ ambience.add_set("beach", {
 		local c = (def.totals["default:water_source"] or 0)
 			+ (def.totals["mcl_core:water_source"] or 0)
 
-		if def.pos.y > 0 and def.pos.y < 6 and c > 130 then
+		if def.pos.y > water_level - 1 and def.pos.y < water_level + 4 and c > 100 then
 			return "beach"
 		end
 	end
@@ -331,7 +344,9 @@ ambience.add_set("jungle", {
 		local c = (def.totals["default:jungletree"] or 0)
 			+ (def.totals["mcl_trees:tree_jungle"] or 0)
 
-		if def.tod > 0.2 and def.tod < 0.8 and c > 79 then return "jungle" end
+		if def.pos.y > 0 and def.tod > 0.2 and def.tod < 0.8 and c > 79 then
+			return "jungle"
+		end
 	end
 })
 
@@ -356,7 +371,9 @@ ambience.add_set("jungle_night", {
 		local c = (def.totals["default:jungletree"] or 0)
 			+ (def.totals["mcl_trees:tree_jungle"] or 0)
 
-		if (def.tod < 0.2 or def.tod > 0.8) and c > 79 then return "jungle_night" end
+		if def.pos.y > 0 and (def.tod < 0.2 or def.tod > 0.8) and c > 79 then
+			return "jungle_night"
+		end
 	end
 })
 
@@ -388,7 +405,7 @@ ambience.add_set("day", {
 		-- use handy function to count all nodes in group:leaves
 		local c = ambience.group_total(def.totals, "leaves")
 
-		if def.tod > 0.2 and def.tod < 0.8 and def.pos.y > 0 and c > 50 then
+		if (def.tod > 0.2 and def.tod < 0.8) and def.pos.y > 0 and c > 50 then
 			return "day"
 		end
 	end
@@ -416,7 +433,7 @@ ambience.add_set("night", {
 		-- use handy function to count all nodes in group:leaves
 		local c = ambience.group_total(def.totals, "leaves")
 
-		if def.tod < 0.2 or def.tod > 0.8 and def.pos.y > 0 and c > 50 then
+		if (def.tod < 0.2 or def.tod > 0.8) and def.pos.y > 0 and c > 50 then
 			return "night"
 		end
 	end

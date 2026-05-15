@@ -113,7 +113,8 @@ core.register_decoration({
 	place_on = {
 		"default:dirt_with_grass", "default:dirt_with_dry_grass",
 		"default:dirt_with_rainforest_litter", "default:dry_dirt_with_dry_grass",
-		"mcl_core:dirt_with_grass", "ethereal:prairie_dirt"
+		"mcl_core:dirt_with_grass", "ethereal:prairie_dirt",
+		"ebiomes:dry_dirt_with_grass_arid"
 	},
 	sidelen = 16,
 	noise_params = {

@@ -183,10 +183,11 @@ bows.register_arrow("arrow_diamond",{
 	},
 	on_hit_sound = "bows_arrow_hit",
 	on_hit_node = function(self, pos, user, arrow_pos)
-		if self.node.name == "default:glass"
+		local node = self.node.name
+		if (node == "default:glass" or node == "stairs:slab_glass" or node == "stairs:stair_glass"
+		or node == "stairs:stair_outer_glass" or node == "stairs:stair_inner_glass")
 		and not core.is_protected(pos, user:get_player_name()) then
-			core.sound_play("default_break_glass", {
-				pos = pos, gain = 1.0, max_hear_distance = 10}, true)
+			core.sound_play("default_break_glass", {pos = pos, max_hear_distance = 10}, true)
 			core.remove_node(pos)
 			core.add_item(pos, "vessels:glass_fragments")
 		end
@@ -221,6 +222,6 @@ if core.get_modpath("tnt") and enable_tnt then
 			if not core.is_protected(lastpos, user:get_player_name()) then
 				tnt.boom(lastpos, {radius = 1})
 			end
-		end,
+		end
 	})
 end

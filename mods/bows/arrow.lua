@@ -5,16 +5,12 @@ local math_random = math.random
 
 local function on_hit_remove(self)
 
-	core.sound_play(
-		bows.registered_arrows[self.name].on_hit_sound, {
-			pos = self.object:get_pos(),
-			gain = 1.0,
-			max_hear_distance = 12
-		}, true)
-
 	-- chance of dropping arrow
 	local chance = core.registered_items[self.name].drop_chance or 10
 	local pos = self.object:get_pos()
+
+	core.sound_play(bows.registered_arrows[self.name].on_hit_sound,
+			{pos = pos, max_hear_distance = 12}, true)
 
 	if pos and math_random(chance) == 1 then
 

@@ -79,7 +79,80 @@ if core.get_modpath("ethereal") then
 		recipe = {{"caverealms:glow_worm_green"}}
 	})
 
-	-- alias old pro fishing rods
-	core.register_alias("caverealms:angler_rod", "default:steel_ingot")
-	core.register_alias("caverealms:angler_rod_baited", "default:steel_ingot")
+	local ethereal_fish = {
+		"ethereal:fish_chichlid", "ethereal:fish_chichlid", "ethereal:fish_chichlid",
+		"ethereal:fish_chichlid", "ethereal:fish_chichlid", "default:grass_1",
+		"ethereal:fish_bluefin", "ethereal:fish_bluefin", "ethereal:fish_bluefin",
+		"ethereal:fish_bluefin", "ethereal:fish_bluefin", "default:stick",
+		"ethereal:fish_clownfish", "ethereal:fish_clownfish", "ethereal:fish_clownfish",
+		"ethereal:fish_clownfish", "ethereal:fish_clownfish", "farming:string"}
+
+-- Used when right-clicking with fishing rod to check for worm and bait rod
+	local function rod_use(itemstack, placer, pointed_thing)
+
+		local inv = placer:get_inventory()
+
+		if inv:contains_item("main", "caverealms:glow_bait") then
+
+			inv:remove_item("main", "caverealms:glow_bait")
+
+			return ItemStack("caverealms:angler_rod_baited")
+		end
+
+		return itemstack
+	end
+
+	-- Fishing Rod
+	core.register_craftitem("caverealms:angler_rod", {
+		description = "Simple Fishing Rod",
+		inventory_image = "caverealms_angler_rod.png",
+		wield_image = "caverealms_angler_rod.png^[transformFYR90",
+		on_place = rod_use,
+		on_secondary_use = rod_use
+	})
+
+	core.register_craft({
+		output = "caverealms:angler_rod",
+		recipe = {
+			{"","","default:steel_ingot"},
+			{"", "default:steel_ingot", "caverealms:mushroom_gills"},
+			{"default:steel_ingot", "", "caverealms:mushroom_gills"}
+		}
+	})
+
+	-- Pro Fishing Rod (Baited)
+	core.register_craftitem("caverealms:angler_rod_baited", {
+		description = "Baited Simple Fishing Rod (USE on water source)",
+		inventory_image = "caverealms_angler_rod_baited.png",
+		wield_image = "caverealms_angler_rod_baited.png^[transformFYR90",
+		stack_max = 1,
+		liquids_pointable = true,
+
+		on_use = function (itemstack, user, pointed_thing)
+
+			if pointed_thing.type == "node" and math.random(100) < 6
+			and core.get_node(pointed_thing.under).name == "default:water_source" then
+
+				local fish = ethereal_fish[math.random(#ethereal_fish)]
+				local inv = user:get_inventory()
+
+				if inv:room_for_item("main", {name = fish}) then
+
+					inv:add_item("main", {name = fish})
+
+					return ItemStack("caverealms:angler_rod")
+				else
+					core.chat_send_player(user:get_player_name(),
+							"Inventory full, Fish Got Away!")
+				end
+			end
+
+			return itemstack
+		end
+	})
+
+	core.register_craft({
+		output = "caverealms:angler_rod_baited",
+		recipe = {{"caverealms:angler_rod", "caverealms:glow_bait"}}
+	})
 end

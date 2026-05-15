@@ -83,7 +83,7 @@ farming.registered_plants["farming:coffee"] = {
 local spawn_on = {
 	"default:dirt_with_dry_grass", "default:dirt_with_rainforest_litter",
 	"default:dry_dirt_with_dry_grass", "mcl_core:dirt_with_grass",
-	"ethereal:prairie_dirt"
+	"ethereal:prairie_dirt", "ebiomes:dirt_with_japanese_rainforest_litter"
 }
 
 if farming.mapgen == "v6" then

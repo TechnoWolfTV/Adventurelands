@@ -105,7 +105,8 @@ core.register_decoration({
 	deco_type = "simple",
 	place_on = {
 		"default:dirt_with_grass", "default:dirt_with_coniferous_litter",
-		"mcl_core:dirt_with_grass", "ethereal:bamboo_dirt"
+		"mcl_core:dirt_with_grass", "ethereal:bamboo_dirt",
+		"ebiomes:dirt_with_japanese_rainforest_litter"
 	},
 	sidelen = 16,
 	noise_params = {

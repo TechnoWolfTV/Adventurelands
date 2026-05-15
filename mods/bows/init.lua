@@ -129,10 +129,7 @@ function bows.shoot(itemstack, user, pointed_thing)
 	local wear = bows.registered_bows[name].uses
 	local level = 19 + bows.registered_bows[name].level
 
-	bows.tmp = {}
-	bows.tmp.arrow = meta.arrow
-	bows.tmp.user = user
-	bows.tmp.name = meta.arrow
+	bows.tmp = {arrow = meta.arrow, user = user, name = meta.arrow}
 
 	item.arrow = ""
 	item.metadata = core.serialize(meta)

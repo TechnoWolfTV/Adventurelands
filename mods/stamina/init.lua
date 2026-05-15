@@ -5,6 +5,7 @@ local S = core.get_translator("stamina")
 local math_max, math_min = math.max, math.min
 local math_floor, math_random = math.floor, math.random
 local get_node = core.get_node
+local mod_armor = core.get_modpath("3d_armor")
 
 -- clamp values helper
 
@@ -135,9 +136,7 @@ function stamina.change_saturation(player, change)
 
 	local name = player:get_player_name()
 
-	if not damage_enabled or not name or not change or change == 0 then
-		return
-	end
+	if not damage_enabled or not name or not change or change == 0 then return end
 
 	local level = stamina.get_saturation(player) + change
 
@@ -363,6 +362,16 @@ local function health_tick(player, name, data)
 	local air = player:get_breath() or 0
 	local hp = player:get_hp()
 	local h = stamina.get_saturation(player)
+
+	-- if wearing hunger charm increase saturation by 1
+	if mod_armor then
+
+		local level = math_min(armor.def[name].hunger, 4)
+
+		if level > 0 then
+			stamina.update_saturation(player, h + level)
+		end
+	end
 
 	-- damage player by 1 hp if saturation is < 2
 	if h and h < stamina.STARVE_LVL and hp > 0 then
@@ -793,5 +802,23 @@ and core.settings:get_bool("enable_damage")
 and core.settings:get_bool("enable_stamina") ~= false then
 	dofile(core.get_modpath(core.get_current_modname()) .. "/lucky_block.lua")
 end
+
+-- hunger charm
+
+if mod_armor then
+
+	table.insert(armor.elements, "charm")
+	table.insert(armor.attributes, "hunger")
+
+	armor:register_armor("stamina:charm_hunger", {
+		description = S("Hunger Charm\n(wear to slowly increase stamina)"),
+		inventory_image = "stamina_hunger_charm.png",
+	--	armor_groups = {fleshy=100},
+		groups = {armor_charm = 1, armor_hunger = 1},
+		preview = "blank.png",
+		texture = "blank.png"
+	})
+end
+
 
 print("[MOD] Stamina loaded")

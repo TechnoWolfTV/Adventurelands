@@ -92,7 +92,8 @@ farming.registered_plants["farming:asparagus"] = {
 core.register_decoration({
 	name = "farming:asparagus_5",
 	deco_type = "simple",
-	place_on = {"default:dirt_with_grass", "mcl_core:dirt_with_grass"},
+	place_on = {"default:dirt_with_grass", "mcl_core:dirt_with_grass",
+			"ebiomes:dirt_with_grass_med"},
 	sidelen = 16,
 	noise_params = {
 		offset = 0,

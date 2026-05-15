@@ -111,7 +111,8 @@ farming.registered_plants["ethereal:strawberry"] = {
 core.register_decoration({
 	deco_type = "simple",
 	place_on = {
-		"default:dirt_with_grass", "mcl_core:dirt_with_grass", "ethereal:prairie_dirt"
+		"default:dirt_with_grass", "mcl_core:dirt_with_grass", "ethereal:prairie_dirt",
+		"ebiomes:dirt_with_grass_steppe"
 	},
 	sidelen = 16,
 	noise_params = {

@@ -5,7 +5,7 @@ local S = core.get_translator("bakedclay")
 
 -- list of clay colours
 
-local clay = {
+local clays = {
 	{"natural", S("Natural")},
 	{"white", S("White")},
 	{"grey", S("Grey")},
@@ -33,7 +33,7 @@ local stairsplus_compat = core.settings:get_bool("stairsplus_clay_compatibility"
 
 -- scroll through colours
 
-for _, clay in pairs(clay) do
+for _, clay in pairs(clays) do
 
 	-- register node
 
@@ -121,7 +121,7 @@ end
 
 -- Terracotta blocks
 
-for _, clay in pairs(clay) do
+for _, clay in pairs(clays) do
 
 	if clay[1] ~= "natural" then
 

@@ -16,6 +16,7 @@ local kitten_types = {
 -- Kitten by Jordach / BFD
 
 mobs:register_mob("mobs_animal:kitten", {
+	description = S("Kitten"),
 	stepheight = 0.6,
 	type = "animal",
 	specific_attack = {"mobs_animal:rat"},
@@ -45,7 +46,6 @@ mobs:register_mob("mobs_animal:kitten", {
 	walk_chance = 15,
 	run_velocity = 2,
 	runaway = true,
-	jump = false,
 	drops = {
 		{name = "farming:string", chance = 1, min = 0, max = 1}
 	},
@@ -56,6 +56,7 @@ mobs:register_mob("mobs_animal:kitten", {
 		speed_normal = 42,
 		stand_start = 97, stand_end = 192,
 		walk_start = 0, walk_end = 96,
+		run_start = 0, run_end = 96, run_speed = 50,
 		stoodup_start = 0, stoodup_end = 0,
 	},
 	follow = {
@@ -138,8 +139,7 @@ mobs:register_mob("mobs_animal:kitten", {
 
 		core.add_item(pos, "mobs:hairball")
 
-		core.sound_play("default_dig_snappy", {
-				pos = pos, gain = 1.0, max_hear_distance = 5}, true)
+		core.sound_play("default_dig_snappy", {pos = pos, max_hear_distance = 5}, true)
 	end
 })
 

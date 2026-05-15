@@ -80,6 +80,7 @@ for _, col in ipairs(all_colours) do
 	end
 
 	mobs:register_mob("mobs_animal:sheep_" .. col[1], {
+		description = S("@1 Sheep", col[2]),
 		stay_near = {"farming:straw", 10},
 		stepheight = 0.6,
 		type = "animal",
@@ -102,8 +103,7 @@ for _, col in ipairs(all_colours) do
 		walk_velocity = 1,
 		run_velocity = 2,
 		runaway = true,
-		jump = true,
-		jump_height = 6,
+		jump_height = 5,
 		pushable = true,
 		drops = drops_normal,
 		water_damage = 0.01,
@@ -113,6 +113,7 @@ for _, col in ipairs(all_colours) do
 			speed_normal = 15, speed_run = 15,
 			stand_start = 0, stand_end = 80,
 			walk_start = 81, walk_end = 100,
+			run_start = 81, run_end = 100, run_speed = 40,
 			-- no death animation so we'll re-use 2 standing frames at a speed of 1 fps
 			-- and have mob rotate while dying.
 			die_start = 1, die_end = 2, die_speed = 1,
@@ -181,23 +182,9 @@ for _, col in ipairs(all_colours) do
 				textures = parent1.child_texture[1]
 			end
 
-			-- and resize to half height
-			mob:set_properties({
-				textures = {textures},
-				visual_size = {
-					x = parent1.base_size.x * .5, y = parent1.base_size.y * .5
-				},
-				collisionbox = {
-					parent1.base_colbox[1] * .5, parent1.base_colbox[2] * .5,
-					parent1.base_colbox[3] * .5, parent1.base_colbox[4] * .5,
-					parent1.base_colbox[5] * .5, parent1.base_colbox[6] * .5
-				},
-				selectionbox = {
-					parent1.base_selbox[1] * .5, parent1.base_selbox[2] * .5,
-					parent1.base_selbox[3] * .5, parent1.base_selbox[4] * .5,
-					parent1.base_selbox[5] * .5, parent1.base_selbox[6] * .5
-				}
-			})
+			-- set baby mob to half size
+			mobs:scale_mob(ent2, .5, .5)
+			mob:set_properties({textures = {textures}})
 
 			-- tamed and owned by parents' owner
 			ent2.child = true

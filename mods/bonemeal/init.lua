@@ -39,22 +39,35 @@ local deco = {}
 
 local function particle_effect(pos)
 
-	core.add_particlespawner({
+	local def = {
 		amount = 4,
 		time = 0.15,
 		minpos = pos,
 		maxpos = pos,
-		minvel = {x = -1, y = 2, z = -1},
-		maxvel = {x = 1, y = 4, z = 1},
+		minvel = {x = -0.5, y = 1, z = -0.5},
+		maxvel = {x = 0.5, y = 2, z = 0.5},
 		minacc = {x = -1, y = -1, z = -1},
 		maxacc = {x = 1, y = 1, z = 1},
 		minexptime = 1,
 		maxexptime = 1,
-		minsize = 1,
+		minsize = 1.5,
 		maxsize = 3,
 		texture = "bonemeal_particle.png",
 		glow = 5
-	})
+	}
+
+	if core.features.particlespawner_tweenable then
+		def.texture = "bonemeal_particle_animated.png"
+		def.animation = {
+			type = 'vertical_frames', aspect_w = 8, aspect_h = 8, length = 0.5
+		}
+	end
+
+	core.add_particlespawner(def)
+end
+
+local function sfx(pos)
+	core.sound_play("bonemeal_chime", {pos = pos, max_hear_distance = 5}, true)
 end
 
 -- tree type check
@@ -81,40 +94,35 @@ end
 local function check_sapling(pos, sapling_node, strength, light_ok)
 
 	-- what is sapling placed on?
-	local under =  core.get_node({x = pos.x, y = pos.y - 1, z = pos.z})
-
-	local can_grow, grow_on
+	local under =  core.get_node({x = pos.x, y = pos.y - 1, z = pos.z}).name
 
 	-- check list for sapling and function
 	for n = 1, #saplings do
 
 		if saplings[n][1] == sapling_node then
 
-			grow_on = saplings[n][3] or ""
+			local grow_on = saplings[n][3] or ""
+			local can_grow = false
 
-			-- backwards compatibility, add 'group:' to older grouping
-			if grow_on == "soil" or grow_on == "sand" then
-				grow_on = "group:" .. grow_on
-			end
+			if grow_on == under then
+				can_grow = true
+			else
+				local group = grow_on:match("^group:(.+)") -- strip group:
 
-			-- sapling grows on top of specific node group
-			if grow_on:find("group:") then
-
-				local group = grow_on:split(":")[2]
-
-				if core.get_item_group(under.name, group) > 0 then
-					can_grow = true
+				-- backwards compatibility check
+				if not group and (grow_on == "soil" or grow_on == "sand") then
+					group = grow_on
 				end
 
-			-- sapling grows on specific node
-			elseif grow_on == under.name then
-				can_grow = true
+				if group and core.get_item_group(under, group) > 0 then
+					can_grow = true
+				end
 			end
 
 			-- check if we can grow sapling at current light level
-			if can_grow and (light_ok or saplings[n][4] == true) then
+			if can_grow and (light_ok or saplings[n][4]) then
 
-				particle_effect(pos)
+				particle_effect(pos) ; sfx(pos)
 
 				if math.random(5 - strength) == 1 then
 					grow_tree(pos, saplings[n][2])
@@ -130,47 +138,49 @@ end
 
 local function check_crops(pos, nodename, strength, light_ok)
 
-	local mod, crop, stage, nod, def
+	local def = core.registered_nodes[nodename] ; if not def then return end
 
-	-- grow registered crops
-	for n = 1, #crops do
+	-- check if crop has next_plant and enough light
+	if def and def.next_plant and light_ok then
+
+		for g = 1, strength do
+
+			def = core.registered_nodes[core.get_node(pos).name]
+
+			local next_node = def and def.next_plant
+
+			if next_node then
+
+				core.set_node(pos, {name = next_node, param2 = def.place_param2})
+
+				particle_effect(pos)
+			end
+		end
+
+		sfx(pos) ; return true
+	end
+
+	for n = 1, #crops do -- loop through registered crops
 
 		-- check if crop can grow in current light level
-		if (light_ok or crops[n][4] == true)
-		and (nodename:find(crops[n][1])
-		or nodename == crops[n][3]) then
+		-- [1] = crop, [2] = stages, [3] = seed, [4] = can grow in dark
+		if (light_ok or crops[n][4])
+		and (nodename == crops[n][3] or nodename:find(crops[n][1])) then
 
-			-- separate mod and node name
-			mod = nodename:split(":")[1] .. ":"
-			crop = nodename:split(":")[2]
+			-- get stage and set next to place
+			local stage = tonumber(nodename:match("_(%d+)$")) or 0
+			local new_stage = min(stage + strength, crops[n][2])
+			local next_nodename = crops[n][1] .. new_stage
 
-			-- get stage number or set to 0 for seed
-			if crop:split("_")[3] then
-				stage = crop:split("_")[3]
-			else
-				stage = crop:split("_")[2]
-			end
+			if next_nodename == nodename then return end
 
-			stage = tonumber(stage) or 0
+			def = core.registered_nodes[next_nodename]
 
-			stage = min(stage + strength, crops[n][2])
+			if not def then return end
 
-			-- check for place_param setting
-			nod = crops[n][1] .. stage
-			def = core.registered_nodes[nod]
+			core.set_node(pos, {name = next_nodename, param2 = def.place_param2})
 
-			-- make sure crop exists or isn't fully grown already
-			if not def or nod == nodename then
-				return false
-			end
-
-			def = def and def.place_param2 or 0
-
-			core.set_node(pos, {name = nod, param2 = def})
-
-			particle_effect(pos)
-
-			core.get_node_timer(pos):start(10) -- restart any timers
+			particle_effect(pos) ; sfx(pos)
 
 			return true
 		end
@@ -190,8 +200,9 @@ local function check_soil(pos, nodename, strength)
 		{x = pos.x - side, y = pos.y - tall, z = pos.z - side},
 		{x = pos.x + side, y = pos.y + tall, z = pos.z + side}, {nodename})
 
-	-- set default grass and decoration
-	local grass, decor
+	if #dirt == 0 then return end
+
+	local grass, decor = {}, {}
 
 	-- choose grass and decoration to use on dirt patch
 	for n = 1, #deco do
@@ -200,65 +211,42 @@ local function check_soil(pos, nodename, strength)
 		if nodename == deco[n][1] then
 
 			grass = deco[n][2] or {}
-			decor = deco[n][3] or {}
+			decor = deco[n][3] or {} ; break
 		end
 	end
 
-	local pos2, nod, def
+	if #grass == 0 and #decor == 0 then return end
 
-	-- loop through soil
-	for _, n in pairs(dirt) do
+	-- loop through found dirt and place plants
+	for i = 1, #dirt do
 
-		if random(5) == 5 then
+		local p = dirt[i] ; p.y = p.y + 1
+		local nod
 
-			if decor and #decor > 0 then
-
-				-- place random decoration (rare)
-				local dnum = #decor or 1
-
-				nod = decor[random(dnum)] or ""
-			end
-		else
-			if grass and #grass > 0 then
-
-				-- place random grass (common)
-				local dgra = #grass or 1
-
-				nod = #grass > 0 and grass[random(dgra)] or ""
-			end
+		if #decor > 0 and random(5) == 5 then
+			nod = decor[random(#decor)]
+		elseif #grass > 0 then
+			nod = grass[random(#grass)]
 		end
-
-		pos2 = n
-
-		pos2.y = pos2.y + 1
 
 		if nod and nod ~= "" then
 
-			-- get crop param2 value
-			def = core.registered_nodes[nod]
-			def = def and def.place_param2
+			local def = core.registered_nodes[nod]
+			local p2 = (def and def.place_param2) or 0
 
-			-- if param2 not preset then get from existing node
-			if not def then
+			core.set_node(p, {name = nod, param2 = p2})
 
-				local node = core.get_node_or_nil(pos2)
-
-				def = node and node.param2 or 0
-			end
-
-			core.set_node(pos2, {name = nod, param2 = def})
+			particle_effect(p)
 		end
-
-		particle_effect(pos2)
 	end
+	sfx(pos)
 end
 
 -- helper function
 
 local function use_checks(user, pointed_thing)
 
-	-- make sure we use on node
-	if pointed_thing.type ~= "node" then return false end
+	if pointed_thing.type ~= "node" then return end
 
 	-- get position and node info
 	local pos = pointed_thing.under
@@ -266,8 +254,7 @@ local function use_checks(user, pointed_thing)
 	local def = core.registered_items[node.name]
 	local dirt = def and def.groups
 
-	-- does node have groups set
-	if not dirt then return false end
+	if not dirt then return end
 
 	-- if we're using on ground, move position up
 	if dirt.soil or dirt.sand or dirt.can_bonemeal then
@@ -275,9 +262,7 @@ local function use_checks(user, pointed_thing)
 	end
 
 	-- check if protected
-	if core.is_protected(pos, user:get_player_name()) then
-		return false
-	end
+	if core.is_protected(pos, user:get_player_name()) then return end
 
 	return node
 end
@@ -306,6 +291,30 @@ function bonemeal:add_crop(list)
 	end
 end
 
+-- helpers
+
+local function check_for(look_inside, look_for)
+
+	for _,item in pairs(look_inside) do
+
+		if item == look_for then
+--print("-- found dupe item", look_for)
+			return true
+		end
+	end
+end
+
+local function add_new(add_to, items)
+
+	for _,item in pairs(items) do
+
+		if item ~= "" and not check_for(add_to, item) then
+--print("-- added", item)
+			add_to[#add_to + 1] = item
+		end
+	end
+end
+
 -- add grass and flower/plant decoration for specific dirt types
 --  {dirt_node, {grass_nodes}, {flower_nodes}
 -- e.g. {"default:dirt_with_dry_grass", dry_grass, flowers}
@@ -314,55 +323,23 @@ end
 
 function bonemeal:add_deco(list)
 
-	for l = 1, #list do
+	for i = 1, #list do
 
-		for n = 1, #deco do
+		local found
 
-			-- update existing entry
-			if list[l][1] == deco[n][1] then
+		for j = 1, #deco do -- go through existing
 
-				-- adding grass types
-				for _, extra in pairs(list[l][2]) do
+			if list[i][1] == deco[j][1] then
+--print("-- found dupe grass", list[i][1])
+				add_new(deco[j][2], list[i][2]) -- grass
+				add_new(deco[j][3], list[i][3]) -- flowers
 
-					if extra ~= "" then
-
-						for _, entry in pairs(deco[n][2]) do
-
-							if extra == entry then
-								extra = false ; break
-							end
-						end
-					end
-
-					if extra then
-						deco[n][2][#deco[n][2] + 1] = extra
-					end
-				end
-
-				-- adding decoration types
-				for _, extra in ipairs(list[l][3]) do
-
-					if extra ~= "" then
-
-						for __, entry in pairs(deco[n][3]) do
-
-							if extra == entry then
-								extra = false ; break
-							end
-						end
-					end
-
-					if extra then
-						deco[n][3][#deco[n][3] + 1] = extra
-					end
-				end
-
-				list[l] = false ; break
+				found = true ; break
 			end
 		end
 
-		if list[l] then
-			deco[#deco + 1] = list[l]
+		if not found then
+			deco[#deco + 1] = list[i]
 		end
 	end
 end
@@ -414,19 +391,19 @@ function bonemeal:on_use(pos, strength, node)
 
 		default.grow_papyrus(pos, node)
 
-		particle_effect(pos) ; return true
+		particle_effect(pos) ; sfx(pos) ; return true
 
 	elseif node.name == "default:cactus" then
 
 		default.grow_cactus(pos, node)
 
-		particle_effect(pos) ; return true
+		particle_effect(pos) ; sfx(pos) ; return true
 
 	elseif node.name == "default:dry_dirt" and strength == 1 then
 
 		core.set_node(pos, {name = "default:dry_dirt_with_dry_grass"})
 
-		particle_effect(pos) ; return true
+		particle_effect(pos) ; sfx(pos) ; return true
 	end
 
 	-- grow grass and flowers
@@ -459,6 +436,24 @@ end
 
 --= Items
 
+-- Helper
+
+local function on_use(itemstack, user, pointed_thing, strength)
+
+	local node = use_checks(user, pointed_thing) -- do checks and return pos and node
+
+	if node then
+
+		local used = bonemeal:on_use(pointed_thing.under, strength, node)
+
+		if used and not bonemeal.is_creative(user:get_player_name()) then
+			itemstack:take_item()
+		end
+	end
+
+	return itemstack
+end
+
 -- mulch (strength 1)
 
 core.register_craftitem("bonemeal:mulch", {
@@ -466,22 +461,7 @@ core.register_craftitem("bonemeal:mulch", {
 	inventory_image = "bonemeal_mulch.png",
 
 	on_use = function(itemstack, user, pointed_thing)
-
-		-- use helper function to do checks and return position and node
-		local node = use_checks(user, pointed_thing)
-
-		if node then
-
-			-- call global on_use function with strength of 1
-			local used = bonemeal:on_use(pointed_thing.under, 1, node)
-
-			-- take item if not in creative
-			if used and not bonemeal.is_creative(user:get_player_name()) then
-				itemstack:take_item()
-			end
-		end
-
-		return itemstack
+		return on_use(itemstack, user, pointed_thing, 1)
 	end
 })
 
@@ -492,22 +472,7 @@ core.register_craftitem("bonemeal:bonemeal", {
 	inventory_image = "bonemeal_item.png",
 
 	on_use = function(itemstack, user, pointed_thing)
-
-		-- use helper function to do checks and return position and node
-		local node = use_checks(user, pointed_thing)
-
-		if node then
-
-			-- call global on_use function with strength of 2
-			local used = bonemeal:on_use(pointed_thing.under, 2, node)
-
-			-- take item if not in creative
-			if used and not bonemeal.is_creative(user:get_player_name()) then
-				itemstack:take_item()
-			end
-		end
-
-		return itemstack
+		return on_use(itemstack, user, pointed_thing, 2)
 	end
 })
 
@@ -518,22 +483,7 @@ core.register_craftitem("bonemeal:fertiliser", {
 	inventory_image = "bonemeal_fertiliser.png",
 
 	on_use = function(itemstack, user, pointed_thing)
-
-		-- use helper function to do checks and return position and node
-		local node = use_checks(user, pointed_thing)
-
-		if node then
-
-			-- call global on_use function with strength of 3
-			local used = bonemeal:on_use(pointed_thing.under, 3, node)
-
-			-- take item if not in creative
-			if used and not bonemeal.is_creative(user:get_player_name()) then
-				itemstack:take_item()
-			end
-		end
-
-		return itemstack
+		return on_use(itemstack, user, pointed_thing, 3)
 	end
 })
 

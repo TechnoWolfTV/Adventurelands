@@ -90,7 +90,8 @@ farming.registered_plants["farming:artichoke"] = {
 core.register_decoration({
 	deco_type = "simple",
 	place_on = {
-		"default:dirt_with_grass", "mcl_core:dirt_with_grass", "ethereal:grove_dirt"
+		"default:dirt_with_grass", "mcl_core:dirt_with_grass", "ethereal:grove_dirt",
+		"ebiomes:dirt_with_grass_med"
 	},
 	sidelen = 16,
 	noise_params = {

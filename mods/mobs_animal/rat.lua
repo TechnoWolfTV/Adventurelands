@@ -4,6 +4,7 @@ local S = core.get_translator("mobs_animal")
 -- Rat by KPavel and PilzAdam (B3D model by sirrobzeroone)
 
 mobs:register_mob("mobs_animal:rat", {
+	description = S("Rat"),
 	stepheight = 0.6,
 	type = "animal",
 	passive = true,
@@ -23,7 +24,6 @@ mobs:register_mob("mobs_animal:rat", {
 	walk_velocity = 1,
 	run_velocity = 2,
 	runaway = true,
-	jump = true,
 	water_damage = 0,
 	lava_damage = 4,
 	light_damage = 0,

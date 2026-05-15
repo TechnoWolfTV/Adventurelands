@@ -96,7 +96,8 @@ end
 
 -- Check if an entity instance still exists in the world
 local function is_entity_valid(entity)
-	return entity and (entity.obj:is_player() or (entity.obj:get_luaentity() and entity.obj:get_luaentity().name) or false)
+	return entity and (entity.obj:is_player() or
+		(entity.obj:get_luaentity() and entity.obj:get_luaentity().name) or false)
 end
 
 -- Check whether a node was registered by the wield_light mod
@@ -132,6 +133,9 @@ end
 
 -- Add light to active light list and mark position for update
 local function add_light(pos, id, light_level)
+	-- The nodedef might contain floating-point numbers --> round up.
+	light_level = math.floor(light_level + 0.5)
+
 	if not active_lights[pos] then
 		active_lights[pos] = {}
 	end
@@ -276,7 +280,6 @@ local function recalc_light(pos)
 		return
 	end
 
-	-- Limit the light level
 	max_light = math.min(max_light, minetest.LIGHT_MAX)
 
 	-- Get the current light level in this position
@@ -395,9 +398,11 @@ function wielded_light.register_lightable_node(node_name, property_overrides, cu
 	end
 
 	-- Decide the prefix for the lighting node
+	-- e.g. "default:river_water_source" -> "default_river_water_source_"
 	local prefix = custom_prefix or node_name:gsub(":", "_", 1, true) .. "_"
 	if lighting_prefixes[prefix] then
-		error_log("The lighting prefix '%s' cannot be used for '%s' as it is already used for '%s'.", prefix, node_name, lighting_prefixes[prefix])
+		error_log("The lighting prefix '%s' cannot be used for '%s' as it is already used for '%s'.",
+			prefix, node_name, lighting_prefixes[prefix])
 		return
 	end
 	lighting_prefixes[prefix] = node_name
@@ -602,6 +607,32 @@ function wielded_light.track_user_entity(obj, cat, item)
 end
 
 
+-- Compatibility
+local warned_lines = {}
+local function log_deprecated()
+	local caller = debug.getinfo(3, "Sl")
+	local k = caller.source .. ":" .. caller.currentline
+
+	if warned_lines[k] then
+		return -- already warned
+	end
+	warned_lines[k] = true
+
+	local apifunc = debug.getinfo(2, "n").name
+	core.log("warning", "Call to deprecated function \"" .. apifunc .. "\" " .. k)
+end
+
+function wielded_light.update_light(pos, light_level)
+	log_deprecated()
+	-- no-op
+end
+
+function wielded_light.update_light_by_item(stack, pos)
+	log_deprecated()
+	-- no-op
+end
+
+
 -- Setup --
 
 -- Wielded item shining globalstep
@@ -628,6 +659,7 @@ minetest.register_entity(":__builtin:item", item)
 -- Track a player's wielded item
 wielded_light.register_player_lightstep(function (player)
 	wielded_light.track_user_entity(player, "wield", player:get_wielded_item():get_name())
+	wielded_light.track_user_entity(player, "offhand", player:get_inventory():get_stack("offhand", 1):get_name())
 end)
 
 -- Register helper nodes

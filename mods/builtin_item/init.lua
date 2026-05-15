@@ -50,7 +50,17 @@ local function to_unit_vector(dir_vector)
 end
 
 
+local get_id = core.get_node_raw
+local get_id_name = core.get_name_from_content_id
 local get_node = core.get_node
+
+if get_id then get_node = function(pos)
+
+		local id, p1, p2, pos_ok = get_id(pos.x, pos.y, pos.z)
+
+		return {name = get_id_name(id), param1 = p1, param2 = p2, loaded = pos_ok}
+	end
+end
 
 local function node_ok(pos)
 
@@ -65,33 +75,21 @@ end
 local function quick_flow_logic(node, pos_testing, direction)
 
 	local node_testing = node_ok(pos_testing)
-	local param2 = node.param2
-
-	if not core.registered_nodes[node.name].groups.liquid then
-		param2 = 0
-	end
 
 	if core.registered_nodes[node_testing.name].liquidtype ~= "flowing" then
 		return 0
 	end
 
+	local param2 = node.param2
 	local param2_testing = node_testing.param2
 
 	if param2_testing < param2 then
 
-		if (param2 - param2_testing) > 6 then
-			return -direction
-		else
-			return direction
-		end
+		return (param2 - param2_testing) > 6 and -direction or direction
 
 	elseif param2_testing > param2 then
 
-		if (param2_testing - param2) > 6 then
-			return direction
-		else
-			return -direction
-		end
+		return (param2_testing - param2) > 6 and direction or -direction
 	end
 
 	return 0
@@ -115,18 +113,19 @@ end
 local function add_effects(pos)
 
 	core.add_particlespawner({
-		amount = 1,
-		time = 0.25,
-		minpos = pos,
-		maxpos = pos,
-		minvel = {x = -1, y = 2, z = -1},
-		maxvel = {x = 1, y = 4, z = 1},
-		minacc = {x = 0, y = 0, z = 0},
-		maxacc = {x = 0, y = 0, z = 0},
-		minexptime = 1,
+		amount = 3,
+		time = 0.1,
+		minpos = vector.new(pos.x + -0.1, pos.y + -0.1, pos.z + -0.1),
+		maxpos = vector.new(pos.x + 0.1, pos.y + 0.1, pos.z + 0.1),
+		minvel = vector.new(0, 2.5, 0),
+		maxvel = vector.new(0, 2.5, 0),
+		minacc = vector.new(-0.15, -0.02, -0.15),
+		maxacc = vector.new(0.15, -0.01, 0.15),
+		minexptime = 2,
 		maxexptime = 3,
-		minsize = 1,
-		maxsize = 4,
+		minsize = 5,
+		maxsize = 5,
+		collisiondetection = true,
 		texture = "tnt_smoke.png"
 	})
 end
@@ -170,9 +169,7 @@ core.register_entity(":__builtin:item", {
 
 		self.itemstring = stack:to_string()
 
-		if self.itemstring == "" then
-			return
-		end
+		if self.itemstring == "" then return end
 
 		local itemname = stack:is_known() and stack:get_name() or "unknown"
 		local max_count = stack:get_stack_max()
@@ -244,9 +241,7 @@ core.register_entity(":__builtin:item", {
 
 	try_merge_with = function(self, own_stack, object, entity)
 
-		if self.age == entity.age then
-			return false -- Can not merge with itself
-		end
+		if self.age == entity.age then return end -- Can not merge with itself
 
 		local stack = ItemStack(entity.itemstring)
 		local name = stack:get_name()
@@ -255,16 +250,14 @@ core.register_entity(":__builtin:item", {
 		or own_stack:get_meta() ~= stack:get_meta()
 		or own_stack:get_wear() ~= stack:get_wear()
 		or own_stack:get_free_space() == 0 then
-			return false -- Can not merge different or full stack
+			return -- Can not merge different or full stack
 		end
 
 		local count = own_stack:get_count()
 		local total_count = stack:get_count() + count
 		local max_count = stack:get_stack_max()
 
-		if total_count > max_count then
-			return false
-		end
+		if total_count > max_count then return end
 
 		-- Merge the remote stack into this one
 		local pos = object:get_pos()
@@ -377,11 +370,8 @@ core.register_entity(":__builtin:item", {
 		-- destroy item when dropped into lava (if enabled)
 		if destroy_item and def and def.groups and def.groups.lava then
 
-			core.sound_play("builtin_item_lava", {
-				pos = pos,
-				max_hear_distance = 6,
-				gain = 0.5
-			}, true)
+			core.sound_play("builtin_item_lava",
+					{pos = pos, max_hear_distance = 6, gain = 0.5}, true)
 
 			self.itemstring = ""
 			self.object:remove()
@@ -390,8 +380,6 @@ core.register_entity(":__builtin:item", {
 
 			return true
 		end
-
-		return false
 	end,
 
 	step_check_slippery = function(self)
@@ -399,9 +387,7 @@ core.register_entity(":__builtin:item", {
 		-- don't check for slippery if we're not on the ground
 		if self.falling_state or not self.node_under then
 
-			self.slippery_state = false
-
-			return
+			self.slippery_state = false ; return
 		end
 
 		if self.node_under and self.def_under and self.def_under.walkable then
@@ -452,9 +438,7 @@ core.register_entity(":__builtin:item", {
 	step_ground_friction = function(self)
 
 		-- don't apply ground friction when falling!
-		if self.falling_state then
-			return
-		end
+		if self.falling_state then return end
 
 		local vel = self.object:get_velocity()
 
@@ -465,9 +449,7 @@ core.register_entity(":__builtin:item", {
 
 				self.is_moving = false
 
-				local pos = self.object:get_pos()
-
-				self.object:set_pos(pos)
+				self.object:set_pos(self.object:get_pos()) -- this stops drift
 			end
 		else
 			self.is_moving = true
@@ -509,8 +491,6 @@ core.register_entity(":__builtin:item", {
 
 			return true
 		end
-
-		return false
 	end,
 
 	step_check_custom_step = function(self, dtime, moveresult)
@@ -524,28 +504,20 @@ core.register_entity(":__builtin:item", {
 		and custom(self, self.object:get_pos(), dtime, moveresult) == false then
 			return true -- skip further checks if false
 		end
-
-		return false
 	end,
 
 	step_try_collect = function(self)
 
 		-- Don't collect items if falling
-		if self.falling_state then
-			return
-		end
+		if self.falling_state then return end
 
 		-- Check if we should collect items while sliding
-		if self.slippery_state and not items_collect_on_slippery then
-			return
-		end
+		if self.slippery_state and not items_collect_on_slippery then return end
 
 		-- Collect the items around to merge with
 		local own_stack = ItemStack(self.itemstring)
 
-		if own_stack:get_free_space() == 0 then
-			return
-		end
+		if own_stack:get_free_space() == 0 then return end
 
 		local self_pos = self.object:get_pos()
 		local objects = core.get_objects_inside_radius(self_pos, 1.0)
@@ -563,9 +535,7 @@ core.register_entity(":__builtin:item", {
 
 					own_stack = ItemStack(self.itemstring)
 
-					if own_stack:get_free_space() == 0 then
-						return
-					end
+					if own_stack:get_free_space() == 0 then return end
 				end
 			end
 		end
@@ -584,25 +554,17 @@ core.register_entity(":__builtin:item", {
 
 	on_step = function(self, dtime, moveresult)
 
-		-- reset acceleration
-		self.accel = {x = 0, y = 0, z = 0}
+		self.accel = {x = 0, y = 0, z = 0} -- reset acceleration
 
 		-- check item timeout
-		if self:step_check_timeout(dtime) then
-			return -- deleted, stop here
-		end
+		if self:step_check_timeout(dtime) then return end -- deleted, stop here
 
 		-- check custom step function
-		if self:step_check_custom_step(dtime, moveresult) then
-			return -- overriden
-		end
+		if self:step_check_custom_step(dtime, moveresult) then return end -- overriden
 
-		-- do general checks
-		self:step_update_node_state(moveresult, dtime)
+		self:step_update_node_state(moveresult, dtime) -- do general checks
 
-		if self:step_node_inside_checks() then
-			return -- destroyed
-		end
+		if self:step_node_inside_checks() then return end -- destroyed
 
 		-- do physics checks, then apply
 		self:step_water_physics()
@@ -610,19 +572,14 @@ core.register_entity(":__builtin:item", {
 		self:step_ground_friction()
 		self:step_air_drag_physics()
 		self:step_gravity()
-
 		self:step_apply_forces()
-
 		self:step_try_collect() -- merge
 	end,
 
 	on_punch = function(self, hitter, ...)
 
 		if self.itemstring == "" then
-
-			self.object:remove()
-
-			return
+			self.object:remove() ; return
 		end
 
 		if core.item_pickup then
@@ -633,10 +590,7 @@ core.register_entity(":__builtin:item", {
 			local ret = callback(itemstack, hitter,
 					{type = "object", ref = self.object}, ...)
 
-			if not ret then
-				-- Don't modify (and don't reset rotation)
-				return
-			end
+			if not ret then return end -- Don't modify (and don't reset rotation)
 
 			itemstack = ItemStack(ret)
 
@@ -656,10 +610,7 @@ core.register_entity(":__builtin:item", {
 				local left = inv:add_item("main", self.itemstring)
 
 				if left and not left:is_empty() then
-
-					self:set_item(left)
-
-					return
+					self:set_item(left) ; return
 				end
 			end
 

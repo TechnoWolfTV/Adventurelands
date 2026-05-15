@@ -4,12 +4,13 @@ local S = core.get_translator("mobs_animal")
 -- Bee by KrupnoPavel (.b3d model by sirrobzeroone)
 
 mobs:register_mob("mobs_animal:bee", {
+	description = S("Bee"),
 	type = "animal",
 	passive = true,
 	hp_min = 1,
 	hp_max = 2,
 	armor = 100,
-	collisionbox = {-0.2, -0.01, -0.2, 0.2, 0.5, 0.2},
+	collisionbox = {-0.2, 0.2, -0.2, 0.2, 0.5, 0.2},
 	visual = "mesh",
 	mesh = "mobs_bee.b3d",
 	textures = { {"mobs_bee.png"} },
@@ -18,7 +19,6 @@ mobs:register_mob("mobs_animal:bee", {
 	makes_footstep_sound = false,
 	sounds = { random = "mobs_bee" },
 	walk_velocity = 1,
-	jump = true,
 	drops = {
 		{name = "mobs:honey", chance = 2, min = 1, max = 2}
 	},

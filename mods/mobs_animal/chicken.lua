@@ -4,6 +4,7 @@ local S = core.get_translator("mobs_animal")
 -- Chicken by JK Murray and Sirrobzeroone
 
 mobs:register_mob("mobs_animal:chicken", {
+	description = S("Chicken"),
 	stepheight = 0.6,
 	type = "animal",
 	passive = true,
@@ -43,7 +44,7 @@ mobs:register_mob("mobs_animal:chicken", {
 		stand_start = 1, stand_end = 30, stand_speed = 28,
 		stand1_start = 31, stand1_end = 70, stand1_speed = 32,
 		walk_start = 71, walk_end = 90, walk_speed = 24,
-		run_start = 91, run_end = 110, run_speed = 24
+		run_start = 91, run_end = 110, run_speed = 34
 	},
 	follow = {
 		"farming:seed_wheat", "farming:seed_cotton", "farming:seed_barley",
@@ -87,7 +88,7 @@ mobs:register_mob("mobs_animal:chicken", {
 			core.add_item(pos, "mobs:egg")
 
 			core.sound_play("default_place_node_hard",
-					{pos = pos, gain = 1.0, max_hear_distance = 5}, true)
+					{pos = pos, max_hear_distance = 5}, true)
 
 		elseif math.random(100) < 3 then
 			core.add_item(pos, "mobs:chicken_feather")

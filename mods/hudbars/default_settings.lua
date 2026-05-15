@@ -35,7 +35,7 @@ hb.settings.alignment_pattern = hb.load_setting("hudbars_alignment_pattern", "st
 hb.settings.autohide_breath = hb.load_setting("hudbars_autohide_breath", "bool", true)
 hb.settings.hide_labels = hb.load_setting("hudbars_hide_labels", "bool", false)
 
-local sorting = minetest.settings:get("hudbars_sorting")
+local sorting = core.settings:get("hudbars_sorting")
 if sorting ~= nil then
 	hb.settings.sorting = {}
 	hb.settings.sorting_reverse = {}
@@ -45,5 +45,5 @@ if sorting ~= nil then
 	end
 else
 	hb.settings.sorting = { ["health"] = 0, ["armor"] = 1, ["stamina"] = 2, ["breath"] = 3 }
-	hb.settings.sorting_reverse = { [0] = "health", [1] = "armor", [2] = "stamina", [3] = "breath" }
+    hb.settings.sorting_reverse = { [0] = "health", [1] = "armor", [2] = "stamina", [3] = "breath" }
 end
