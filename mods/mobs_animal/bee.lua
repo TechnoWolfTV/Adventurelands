@@ -156,7 +156,7 @@ core.register_craft({
 core.register_node(":mobs:honey_block", {
 	description = S("Honey Block"),
 	tiles = {"mobs_honey_block.png"},
-	groups = {snappy = 3, flammable = 2},
+	groups = {snappy = 3, flammable = 2, fall_damage_add_percent = -80},
 	is_ground_content = false,
 	sounds = mobs.node_sound_dirt_defaults()
 })
@@ -196,7 +196,7 @@ core.register_abm({
 		local inv = meta:get_inventory()
 		local honey = inv:get_stack("beehive", 1):get_count()
 
-		if honey > 11 then return end -- return if hive full
+		if honey > 11 then return end -- hive full
 
 		-- no flowers no honey, nuff said!
 		if #core.find_nodes_in_area_under_air(

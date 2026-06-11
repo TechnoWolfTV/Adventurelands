@@ -6,7 +6,7 @@
 You can do this by using a custom field in your node def instead of the `sounds` key.
 
 ```lua
-minetest.register_node(nodename, {
+core.register_node(nodename, {
     ...
     _sound_def = {
         key = "",
@@ -26,7 +26,7 @@ where:
 add this mod to your mod.confs depends and directly call the `sound_api` as follows
 
 ```lua
-minetest.register_node(nodename, {
+core.register_node(nodename, {
     ...
     sounds = xcompat.sounds.node_sound_stone_defaults(input)
     ...

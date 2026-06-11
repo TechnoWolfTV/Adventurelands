@@ -22,5 +22,5 @@ would closest represent the `steel_ingot` material in the current game.
 The `/src/materials/mineclonia.lua` file shows what the keys of
 `xcompat.materials` resolve to when playing Mineclonia, such as
 `xcompat.materials.steel_ingot` resolving to `mcl_core:iron_ingot`, and
-`xcompat.materials.mesa_crystal` resolving to `mcl_redstone:redstone` if
+`xcompat.materials.mese_crystal` resolving to `mcl_redstone:redstone` if
 supported.

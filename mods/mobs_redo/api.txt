@@ -190,6 +190,7 @@ functions needed for the mob to work properly which contains the following:
       'random'            random sound that plays during gameplay.
       'war_cry'           what you hear when mob starts to attack player.
       'attack'            what you hear when being attacked.
+      'attack_chance'     random chance value of playing attack sound (defaults to 1)
       'shoot_attack'      sound played when mob shoots.
       'damage'            sound heard when mob is hurt.
       'death'             played when mob is killed.

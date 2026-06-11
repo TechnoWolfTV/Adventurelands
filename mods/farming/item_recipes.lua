@@ -79,6 +79,98 @@ core.register_craft({
 	}
 })
 
+-- tortang talong
+
+core.register_craft({
+	output = "farming:tortang_talong",
+	recipe = {
+		{"farming:baking_tray", "group:food_eggplant", "group:food_egg"},
+		{a.skillet, "group:food_rice", "group:food_rice"},
+		{"group:food_oil", "group:food_salt", "group:food_pepper_ground"}
+	},
+	replacements = {
+		{"farming:baking_tray", "farming:baking_tray"},
+		{a.skillet, a.skillet}, {"group:food_oil", "vessels:glass_bottle"}
+	}
+})
+
+-- chapathi
+
+core.register_craft({
+	output = "farming:chapathi 2",
+	recipe = {
+		{"farming:flour", "group:food_glass_water", "farming:rolling_pin"},
+		{"", a.skillet, ""}
+	},
+	replacements = {
+		{a.skillet, a.skillet}, {"farming:rolling_pin", "farming:rolling_pin"},
+		{"group:food_glass_water", a.drinking_glass}
+	}
+})
+
+-- gulab jamun
+
+core.register_craft({
+	output = "farming:gulab_jamun 2",
+	recipe = {
+		{"group:food_sugar", "group:food_flour", "group:food_sugar"},
+		{"", "group:food_milk_glass", ""},
+		{"", a.saucepan, ""}
+	},
+	replacements = {
+		{"group:food_milk_glass", "vessels:drinking_glass"}, {a.saucepan, a.saucepan}
+	}
+})
+
+-- kitkat
+
+core.register_craft({
+	output = "farming:kitkat 2",
+	recipe = {
+		{"group:food_cocoa", "group:food_sugar", "group:food_cocoa"},
+		{"group:food_milk_glass", "group:food_flour", "group:food_milk_glass"}
+	},
+	replacements = {
+		{"group:food_milk_glass", "vessels:drinking_glass 2"}
+	}
+})
+
+-- Laddu
+
+core.register_craft({
+	output = "farming:laddu 2",
+	recipe = {
+		{"group:food_flour", "group:food_butter", "group:food_flour"},
+		{"group:food_sugar", a.saucepan, "group:food_sugar"}
+	},
+	replacements = {
+		{a.saucepan, a.saucepan}
+	}
+})
+
+-- samosa
+
+core.register_craft({
+	output = "farming:samosa 2",
+	recipe = {
+		{"group:food_flour", "group:food_potato", "group:food_chili_powder"},
+		{"", "group:food_oil", ""},
+		{"", a.pot, ""},
+	},
+	replacements = {
+		{a.pot, a.pot}, {"group:food_oil", "vessels:glass_bottle"}
+	}
+})
+
+-- croissant
+
+core.register_craft({
+	output = "farming:croissant 2",
+	recipe = {
+		{"group:food_sugar", "group:food_bread", "group:food_butter"}
+	}
+})
+
 -- garlic bulb
 
 core.register_craft({
@@ -718,6 +810,18 @@ core.register_craft({
 	}
 })
 
+-- Vegan Egg
+
+core.register_craft({
+	output = "farming:egg_vegan",
+	recipe = {
+		{"group:food_cornstarch", "group:food_glass_water", "dye:orange"}
+	},
+	replacements = {
+		{"group:food_cornstarch", a.bowl}, {"group:food_glass_water", a.drinking_glass}
+	}
+})
+
 -- onigiri
 
 core.register_craft({
@@ -811,7 +915,6 @@ core.register_craft( {
 	output = "farming:pepper_ground",
 	recipe = {
 		{"group:food_peppercorn"},
-		{a.glass_bottle},
 		{a.mortar_pestle}
 	},
 	replacements = {{"group:food_mortar_pestle", "farming:mortar_pestle"}}
@@ -1104,6 +1207,18 @@ core.register_craft( {
 		{"farming:hemp_fibre"}
 	}
 })
+
+-- rolling pin
+
+core.register_craft({
+	output = "farming:rolling_pin",
+	recipe = {
+		{"", "", "group:stick"},
+		{"", "group:wood", ""},
+		{"group:stick", "", ""}
+	}
+})
+
 
 -- saucepan
 

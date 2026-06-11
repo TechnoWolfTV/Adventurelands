@@ -14,42 +14,14 @@ end
 
 -- If item_entity_ttl is not set, entity will have default life time
 -- Setting it to -1 disables the feature
+
 local time_to_live = tonumber(core.settings:get("item_entity_ttl")) or 900
 local gravity = tonumber(core.settings:get("movement_gravity")) or 9.81
 local destroy_item = core.settings:get_bool("destroy_item") ~= false
-local source_flow = core.settings:get_bool("builtin_item.source_flow")
 
+-- localize some math functions and get_node
 
--- localize some math functions
-local math_abs, math_sqrt = math.abs, math.sqrt
-local math_random, math_min = math.random, math.min
-
-
--- water flow functions by QwertyMine3, edited by TenPlus1 and Gustavo6046
-local inv_roots = {[0] = 1}
-
-local function to_unit_vector(dir_vector)
-
-	local sum = dir_vector.x * dir_vector.x + dir_vector.z * dir_vector.z
-	local invr_sum
-
-	-- find inverse square root if possible
-	if inv_roots[sum] ~= nil then
-		invr_sum = inv_roots[sum]
-	else
-		-- not found, compute and save the inverse square root
-		invr_sum = 1.0 / math_sqrt(sum)
-		inv_roots[sum] = invr_sum
-	end
-
-	return {
-		x = dir_vector.x * invr_sum,
-		y = dir_vector.y,
-		z = dir_vector.z * invr_sum
-	}
-end
-
-
+local math_abs, math_random, math_min = math.abs, math.random, math.min
 local get_id = core.get_node_raw
 local get_id_name = core.get_name_from_content_id
 local get_node = core.get_node
@@ -71,6 +43,7 @@ local function node_ok(pos)
 	return core.registered_nodes["default:dirt"]
 end
 
+-- water flow functions by QwertyMine3, edited by TenPlus1 and Gustavo6046
 
 local function quick_flow_logic(node, pos_testing, direction)
 
@@ -80,36 +53,34 @@ local function quick_flow_logic(node, pos_testing, direction)
 		return 0
 	end
 
-	local param2 = node.param2
-	local param2_testing = node_testing.param2
+	local diff = node_testing.param2 - node.param2
 
-	if param2_testing < param2 then
+	if diff == 0 then return 0 end
 
-		return (param2 - param2_testing) > 6 and -direction or direction
-
-	elseif param2_testing > param2 then
-
-		return (param2_testing - param2) > 6 and direction or -direction
+	if math_abs(diff) > 6 then
+		return diff > 0 and direction or -direction
 	end
 
-	return 0
+	return diff > 0 and -direction or direction
 end
 
+local inv_roots = {[0] = 0, [1] = 1, [2] = 0.7071, [4] = 0.5, [5] = 0.4472, [8] = 0.3535}
 
 local function quick_flow(pos, node)
 
-	local x, z = 0, 0
+	local x = quick_flow_logic(node, {x = pos.x - 1, y = pos.y, z = pos.z},-1)
+			+ quick_flow_logic(node, {x = pos.x + 1, y = pos.y, z = pos.z}, 1)
+	local z = quick_flow_logic(node, {x = pos.x, y = pos.y, z = pos.z - 1},-1)
+			+ quick_flow_logic(node, {x = pos.x, y = pos.y, z = pos.z + 1}, 1)
 
-	x = x + quick_flow_logic(node, {x = pos.x - 1, y = pos.y, z = pos.z},-1)
-	x = x + quick_flow_logic(node, {x = pos.x + 1, y = pos.y, z = pos.z}, 1)
-	z = z + quick_flow_logic(node, {x = pos.x, y = pos.y, z = pos.z - 1},-1)
-	z = z + quick_flow_logic(node, {x = pos.x, y = pos.y, z = pos.z + 1}, 1)
+	local sum = x * x + z * z
+	local inv = inv_roots[sum] or 0
 
-	return to_unit_vector({x = x, y = 0, z = z})
+	return {x = x * inv, y = 0, z = z * inv}
 end
 
-
 -- particle effects for when item is destroyed
+
 local function add_effects(pos)
 
 	core.add_particlespawner({
@@ -130,6 +101,7 @@ local function add_effects(pos)
 	})
 end
 
+-- default friction settings
 
 local water_force = tonumber(core.settings:get("builtin_item.waterflow_force") or 1.6)
 local water_drag = tonumber(core.settings:get("builtin_item.waterflow_drag") or 0.8)
@@ -138,6 +110,7 @@ local air_drag = tonumber(core.settings:get("builtin_item.air_drag") or 0.4)
 local items_collect_on_slippery = tonumber(
 		core.settings:get("builtin_item.items_collect_on_slippery") or 1) ~= 0
 
+-- entity
 
 core.register_entity(":__builtin:item", {
 
@@ -195,7 +168,7 @@ core.register_entity(":__builtin:item", {
 		end
 
 		-- small random size bias to counter Z-fighting
-		local bias = math_random() * 1e-3
+		local bias = math_random() * 0.001
 
 		self.object:set_properties({
 			is_visible = true,
@@ -255,19 +228,16 @@ core.register_entity(":__builtin:item", {
 
 		local count = own_stack:get_count()
 		local total_count = stack:get_count() + count
-		local max_count = stack:get_stack_max()
 
-		if total_count > max_count then return end
+		if total_count > stack:get_stack_max() then return end
 
 		-- Merge the remote stack into this one
 		local pos = object:get_pos()
 		local self_pos = self.object:get_pos()
-		local x_diff = (self_pos.x - pos.x) / 2
-		local z_diff = (self_pos.z - pos.z) / 2
-		local new_pos = vector.offset(pos, x_diff, 0, z_diff)
 
-		self.object:move_to(new_pos)
 		self.age = 0 -- Reset age
+		self.object:move_to(vector.offset(pos,
+				(self_pos.x - pos.x) / 2, 0, (self_pos.z - pos.z) / 2))
 
 		-- Merge velocities
 		local vel_a = self.object:get_velocity()
@@ -339,22 +309,23 @@ core.register_entity(":__builtin:item", {
 
 	step_node_inside_checks = function(self)
 
-		local pos = self.object:get_pos()
-
-		-- Delete in 'ignore' nodes
-		if (self.node_inside and self.node_inside.name == "ignore")
-		or self.itemstring == "" then
-
-			self.itemstring = ""
+		if self.itemstring == "" then
 			self.object:remove()
-
 			return true
 		end
 
-		local def = self.def_inside
+		-- Delete in 'ignore' nodes
+		if self.node_inside and self.node_inside.name == "ignore" then
+			self.itemstring = ""
+			self.object:remove()
+			return true
+		end
+
+		local def = self.def_inside ; if not def then return end
+		local pos = self.object:get_pos()
 
 		-- item inside block, move to vacant space
-		if def and (def.walkable == nil or def.walkable == true)
+		if def.walkable ~= false
 		and (def.collision_box == nil or def.collision_box.type == "regular")
 		and (def.node_box == nil or def.node_box.type == "regular") then
 
@@ -368,7 +339,7 @@ core.register_entity(":__builtin:item", {
 		end
 
 		-- destroy item when dropped into lava (if enabled)
-		if destroy_item and def and def.groups and def.groups.lava then
+		if destroy_item and def.groups.lava then
 
 			core.sound_play("builtin_item_lava",
 					{pos = pos, max_hear_distance = 6, gain = 0.5}, true)
@@ -386,23 +357,17 @@ core.register_entity(":__builtin:item", {
 
 		-- don't check for slippery if we're not on the ground
 		if self.falling_state or not self.node_under then
-
 			self.slippery_state = false ; return
 		end
 
-		if self.node_under and self.def_under and self.def_under.walkable then
-
-			local slippery = core.get_item_group(self.node_under.name, "slippery")
-
-			self.slippery_state = slippery ~= 0
+		if self.def_under and self.def_under.walkable then
+			self.slippery_state = self.def_under.groups.slippery
 		end
 	end,
 
 	step_water_physics = function(self)
 
-		self.waterflow_state = self.def_inside and
-				(self.def_inside.liquidtype == "flowing" or (source_flow and
-				self.def_inside.liquidtype == "source"))
+		self.waterflow_state = self.def_inside and self.def_inside.liquidtype == "flowing"
 
 		if self.waterflow_state then
 
@@ -445,7 +410,7 @@ core.register_entity(":__builtin:item", {
 		-- this stops the entity drift glitch by re-setting entity pos when not moving
 		if vel.x == 0 and vel.y == 0 and vel.z == 0 then
 
-			if self.is_moving == true then
+			if self.is_moving then
 
 				self.is_moving = false
 
@@ -462,10 +427,9 @@ core.register_entity(":__builtin:item", {
 			-- apply slip factor (tiny friction that depends on the actual block type)
 			if math_abs(vel.x) > 0.2 or math_abs(vel.z) > 0.2 then
 
-				local slippery = core.get_item_group(self.node_under.name, "slippery")
-				local slip_factor = 4.0 / (slippery + 4)
+				local slippery = self.def_under and self.def_under.groups.slippery
 
-				this_dry_friction = slip_factor
+				this_dry_friction = 4.0 / (slippery + 4)
 			end
 		end
 
@@ -495,13 +459,12 @@ core.register_entity(":__builtin:item", {
 
 	step_check_custom_step = function(self, dtime, moveresult)
 
-		-- do custom step function
-		local name = ItemStack(self.itemstring):get_name() or ""
-		local custom = core.registered_items[name]
-			and core.registered_items[name].dropped_step
+		local name = self.itemstring:match("^[^%s]+") or self.itemstring
+		local def = core.registered_items[name]
 
-		if custom
-		and custom(self, self.object:get_pos(), dtime, moveresult) == false then
+		if not (def and def.dropped_step) then return end
+
+		if def.dropped_step(self, self.object:get_pos(), dtime, moveresult) == false then
 			return true -- skip further checks if false
 		end
 	end,

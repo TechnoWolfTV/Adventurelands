@@ -26,5 +26,5 @@ end
 ```
 
 that way in the future nothing will break when support is 
-added and at your convince the first part of the if can be 
-removed
+added and the first part of the if can be 
+removed at your convenience

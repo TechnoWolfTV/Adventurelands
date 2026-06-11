@@ -1,12 +1,15 @@
-## World Data Manager library for Minetest
+## World Data Manager library for Luanti
 
 ### Description:
 
-A [Minetest][] library for managing data files in the world directory.
+A [Luanti] library for managing data files in the world directory.
 
-It takes a little work to read from & write to data in the world directory. `wdata` aims to make that easier by utilizing just two simple methods.
+It takes a little work to read from & write to data in the world directory. `wdata` aims to make
+that easier by utilizing just two simple methods.
 
-This mod is essentially an alternative to Minetest's built-in [StorageRef][] & was created before I realized the implementation existed. Some may still find wdata useful as it does allow for customizing sub-directories & filenames.
+This mod is essentially an alternative to Luanti's built-in [StorageRef] & was created before I
+realized the implementation existed. Some may still find wdata useful as it does allow for
+customizing sub-directories & filenames.
 
 <img src="screenshot.png" alt="icon" width="100px" />
 
@@ -42,13 +45,16 @@ Optional depends: none
 
 ### Links
 
-- [![ContentDB](https://content.minetest.net/packages/AntumDeluge/wdata/shields/title/)](https://content.minetest.net/packages/AntumDeluge/wdata/)
-- [Forum](https://forum.minetest.net/viewtopic.php?t=26804)
-- [Git repo](https://github.com/AntumMT/mod-wdata)
+- [![ContentDB](https://content.luanti.org/packages/AntumDeluge/wdata/shields/title/)](https://content.luanti.org/packages/AntumDeluge/wdata/)
+- [Forum](https://forum.luanti.org/viewtopic.php?t=26804)
+- Git repos:
+    - [Codeberg](https://codeberg.org/AntumLuanti/mod-wdata)
+    - [GitHub](https://github.com/AntumMT/mod-wdata)
+    - [GitLab](https://gitlab.com/AntumMT/mod-wdata)
 - [Reference](https://antummt.github.io/mod-wdata/docs/reference/)
 - [Changelog](changelog.txt)
 - [TODO](TODO.txt)
 
 
-[Minetest]: http://minetest.net/
-[StorageRef]: https://github.com/minetest/minetest/blob/c9144ae/doc/lua_api.txt#L6883
+[Luanti]: https://www.luanti.org/
+[StorageRef]: https://github.com/luanti-org/luanti/blob/c9144ae/doc/lua_api.txt#L6883

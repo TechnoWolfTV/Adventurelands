@@ -10,6 +10,84 @@ core.register_craftitem("farming:flour", {
 	groups = {food_flour = 1, flammable = 1}
 })
 
+-- Tortang Talong
+
+core.register_craftitem("farming:tortang_talong", {
+	description = S("Eggplant Omelette (Tortang Talong)"),
+	inventory_image = "farming_tortang_talong.png",
+	on_use = core.item_eat(10),
+	groups = {compostability = 55}
+})
+
+farming.add_eatable("farming:tortang_talong", 10)
+
+
+-- Chapathi
+
+core.register_craftitem("farming:chapathi", {
+	description = S("Chapathi"),
+	inventory_image = "farming_chapathi.png",
+	on_use = core.item_eat(3),
+	groups = {food_chapathi = 1, compostability = 55}
+})
+
+farming.add_eatable("farming:chapathi", 3)
+
+-- Gulab Jamun
+
+core.register_craftitem("farming:gulab_jamun", {
+	description = S("Gulab Jamun"),
+	inventory_image = "farming_gulab_jamun.png",
+	on_use = core.item_eat(3),
+	groups = {compostability = 55}
+})
+
+farming.add_eatable("farming:gulab_jamun", 3)
+
+-- KitKat
+
+core.register_craftitem("farming:kitkat", {
+	description = S("KitKat"),
+	inventory_image = "farming_kitkat.png",
+	on_use = core.item_eat(5),
+	groups = {compostability = 55}
+})
+
+farming.add_eatable("farming:kitkat", 5)
+
+-- Laddu
+
+core.register_craftitem("farming:laddu", {
+	description = S("Laddu"),
+	inventory_image = "farming_laddu.png",
+	on_use = core.item_eat(5),
+	groups = {compostability = 55}
+})
+
+farming.add_eatable("farming:laddu", 5)
+
+-- Samosa
+
+core.register_craftitem("farming:samosa", {
+	description = S("Samosa"),
+	inventory_image = "farming_samosa.png",
+	on_use = core.item_eat(6),
+	groups = {compostability = 55}
+})
+
+farming.add_eatable("farming:samosa", 6)
+
+-- Croissant
+
+core.register_craftitem("farming:croissant", {
+	description = S("Croissant"),
+	inventory_image = "farming_croissant.png",
+	on_use = core.item_eat(3),
+	groups = {food_bread = 1, compostability = 55}
+})
+
+farming.add_eatable("farming:croissant", 3)
+
 -- Garlic bulb
 
 core.register_craftitem("farming:garlic", {
@@ -139,7 +217,7 @@ core.register_craftitem("farming:chili_powder", {
 	description = S("Chili Powder"),
 	on_use = core.item_eat(-1),
 	inventory_image = "farming_chili_powder.png",
-	groups = {compostability = 45}
+	groups = {food_chili_powder = 1, compostability = 45}
 })
 
 -- Carrot juice
@@ -262,8 +340,7 @@ core.register_node("farming:salt", {
 	is_ground_content = false,
 	sounds = farming.node_sound_defaults(),
 	selection_box = {
-		type = "fixed",
-		fixed = {-0.25, -0.5, -0.25, 0.25, 0.3, 0.25}
+		type = "fixed", fixed = {-0.25, -0.5, -0.25, 0.25, 0.3, 0.25}
 	},
 	-- special function to make salt crystals form inside water
 	dropped_step = function(self, pos, dtime)
@@ -615,6 +692,14 @@ core.register_craftitem("farming:butter_vegan", {
 	description = S("Vegan Butter"),
 	inventory_image = "farming_vegan_butter.png",
 	groups = {food_butter = 1}
+})
+
+-- Vegan Egg
+
+core.register_craftitem("farming:egg_vegan", {
+	description = S("Vegan Egg"),
+	inventory_image = "farming_vegan_egg.png",
+	groups = {food_egg = 1}
 })
 
 -- Onigiri

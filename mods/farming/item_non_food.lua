@@ -9,6 +9,14 @@ core.register_craftitem("farming:water_floorb", {
 	groups = {flammable = 1}
 })
 
+-- rolling pin
+
+core.register_craftitem("farming:rolling_pin", {
+	description = S("Rolling Pin"),
+	inventory_image = "farming_rolling_pin.png",
+	groups = {food_rollingpin = 1, flammable = 2}
+})
+
 -- saucepan
 
 core.register_craftitem("farming:saucepan", {

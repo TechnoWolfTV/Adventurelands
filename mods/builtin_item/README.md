@@ -30,7 +30,7 @@ License: LGPLv2.1+
 
 dropped_step() examples:
 
--- if gunpowder dropped on burning tnt or gunpowder then remove
+-- if gunpowder dropped on burning tnt or gunpowder then play sound and remove
 
 if minetest.registered_items["tnt:gunpowder"] then
 
@@ -38,10 +38,8 @@ if minetest.registered_items["tnt:gunpowder"] then
 
 		dropped_step = function(self, pos)
 
-			if (self.node_inside
-			and self.node_inside.name == "tnt:gunpowder_burning")
-			or (self.node_under
-			and self.node_under.name == "tnt:tnt_burning") then
+			if (self.node_inside and self.node_inside.name == "tnt:gunpowder_burning")
+			or (self.node_under and self.node_under.name == "tnt:tnt_burning") then
 
 				minetest.sound_play("builtin_item_lava", {
 					pos = pos,
@@ -60,7 +58,7 @@ end
 
 
 -- if 2x mese crystal and 2x crystal spike dropped in pool of water_source
--- then merge into a single crystal_ingot.
+-- then remove both and place a single crystal_ingot.
 
 if minetest.registered_items["ethereal:crystal_spike"] then
 
