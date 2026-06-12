@@ -1,7 +1,7 @@
 <div align="center">
     <img src="https://github.com/TechnoWolfTV/Adventurelands/blob/main/menu/icon.png">
     <h1> Adventurelands </h1>
-	<h2> By TechnoWolfTV </h2>
+	<span>By TechnoWolfTV</span>
     <a href="https://content.luanti.org/packages/TechnoWolfTV/adventurelands/"><img src="https://content.luanti.org/packages/TechnoWolfTV/adventurelands/shields/downloads/" alt="ContentDB"></a>
 </div>
 
