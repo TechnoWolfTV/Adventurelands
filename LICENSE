@@ -1,5 +1,4 @@
-ADVENTURELANDS LICENSES
-=======================
+# Adventurelands Licenses
 
 In accordance with GPL requirements of works included in this project, this
 game as a whole is released under AGPLv3. Additionally, specific works within
@@ -99,6 +98,7 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Charcoal
   - Location: ./mods/charcoal/
   - License file: ./mods/charcoal/LICENSE.txt
+  - Changes were made to this work
 - ChatCmdBuilder
   - Location: ./mods/ChatCmdBuilder/
   - License file: ./mods/ChatCmdBuilder/LICENSE
@@ -136,6 +136,7 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Dreambuilder Hotbar
   - Location: ./mods/dreambuilder_hotbar/
   - License file: ./mods/dreambuilder_hotbar/LICENSE
+  - Changes were made to this work
 - Dungeons Plus
   - Location: ./mods/dungeonsplus/
   - License file: ./mods/dungeonsplus/LICENSE
@@ -151,6 +152,7 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Facade
   - Location: ./mods/facade/
   - License file: ./mods/facade/license.txt
+  - Changes were made to this work
 - Factory Bridges
   - Location: ./mods/factory_bridges/
   - License file: ./mods/factory_bridges/LICENSE
@@ -181,6 +183,7 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Hazmat Suit
   - Location: ./mods/hazmat_suit/
   - License file: ./mods/hazmat_suit/LICENSE.md
+  - Changes were made to this work
 - HB Armor (HUD bar for `3d_armor`)
   - Location: ./mods/hbarmor/
   - License file: ./mods/hbarmor/README.md
@@ -208,6 +211,7 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Jelys Pizzaria
   - Location: ./mods/jelys_pizzaria/
   - License file: ./mods/jelys_pizzaria/LICENSE
+  - Changes were made to this work
 - Leads
   - Location: ./mods/hangglider/
   - License file: ./mods/hangglider/LICENCE.md
@@ -224,21 +228,21 @@ made to the below listed works are officially made on or after 5 March 2024.
 - MOB Horse
   - Location: ./mods/mob_horse/
   - License file: ./mods/mob_horse/license.txt
-- ANIMAL MOBS
+- Animal Mobs
   - Location: ./mods/mobs_animal/
   - License file: ./mods/mobs_animal/license.txt
-- MONSTER MOBS
+- Monster Mobs
   - Location: ./mods/mobs_monster/
   - License file: ./mods/mobs_monster/license.txt
-- MOBS REDO
+- Mobs Redo
   - Location: ./mods/mobs_redo/
   - License file: ./mods/mobs_redo/license.txt
-- MOBS SKY
+- Mobs Sky
   - Location: ./mods/mobs_sky/
   - License file: ./mods/mobs_sky/mobs_bat/license.txt
   - License file: ./mods/mobs_sky/mobs_birds/License.txt
   - License file: ./mods/mobs_sky/mobs_butterfly/License.txt
-- MOBS WATER
+- Mobs Water
   - Location: ./mods/mobs_water/
   - License file: ./mods/mobs_water/mobs_crocs/License.txt
   - License file: ./mods/mobs_water/mobs_fish/License.txt
@@ -266,12 +270,15 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Myglass
   - Location: ./mods/myglass/
   - License file: ./mods/myglass/licence.txt
+  - Changes were made to this work
 - Mymillwork
   - Location: ./mods/mymillwork/
   - License file: ./mods/mymillwork/licence.txt
+  - Changes were made to this work
 - Mysheetmetal
   - Location: ./mods/mysheetmetal/
   - License file: ./mods/mysheetmetal/licence.txt
+  - Changes were made to this work
 - New Campfire
   - Location: ./mods/new_campfire/
   - License file: ./mods/new_campfire/LICENSE.txt
@@ -296,6 +303,7 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Ropes
   - Location: ./mods/ropes/
   - License file: ./mods/ropes/LICENSE.md
+  - Changes were made to this work
 - Signs Lib
   - Location: ./mods/signs_lib/
   - License file: ./mods/signs_lib/LICENSE
@@ -341,6 +349,7 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Waffles
   - Location: ./mods/waffles/
   - License file: ./mods/waffles/LICENSE.txt
+  - Changes were made to this work
 - Whitelist
   - Location: ./mods/whitelist/
   - License file: ./mods/whitelist/LICENSE

@@ -1,5 +1,9 @@
-# Adventurelands
-*By TechnoWolfTV*
+<div align="center">
+    <img src="https://github.com/TechnoWolfTV/Adventurelands/blob/main/menu/icon.png">
+    <h1> Adventurelands </h1>
+	<h2> By TechnoWolfTV </h2>
+    <a href="https://content.luanti.org/packages/TechnoWolfTV/adventurelands/"><img src="https://content.luanti.org/packages/TechnoWolfTV/adventurelands/shields/downloads/" alt="ContentDB"></a>
+</div>
 
 A Luanti (formerly Minetest) game featuring exploration, mining, crafting, building and survival with monsters and animals. Adventurelands includes carefully selected mods for an optimal balance between form and function.
 
