@@ -53,6 +53,9 @@ made to the below listed works are officially made on or after 5 March 2024.
 - Bees
   - Location: ./mods/bees/
   - License file: ./mods/bees/license.txt
+- Bible
+  - Location: ./mods/bible/
+  - License file: ./mods/bible/LICENSE.txt
 - Biome Lib
   - Location: ./mods/biome_lib/
   - License file: ./mods/biome_lib/LICENSE
