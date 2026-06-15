@@ -1,5 +1,6 @@
 
 local S = core.get_translator("mobs")
+local FS = function(...) return core.formspec_escape(S(...)) end
 local max_per_block = tonumber(core.settings:get("max_objects_per_block") or 99)
 
 -- helper functions
@@ -46,11 +47,14 @@ core.register_node("mobs:spawner", {
 		local head = S("(mob name) (min light) (max light) (amount)"
 				.. " (player distance) (Y offset)")
 
+		local esc = core.formspec_escape
+
 		-- text entry formspec
 		meta:set_string("formspec", "size[10,3.5]"
-			.. "label[0.15,0.5;" .. core.formspec_escape(head) .. "]"
-			.. "field[1,2.5;8.5,0.8;text;" .. S("Command:")
-			.. ";${command}]")
+			.. "label[0.1,0.3;" .. core.formspec_escape(head) .. "]"
+			.. "field[0.5,1.8;9.5,0.8;text;" .. S("Command:")
+			.. ";${command}]"
+			.. "button_exit[3.5,2.7;3,1;mob_spawner;" .. esc(FS("Done")) .. "]")
 
 		meta:set_string("infotext", S("Spawner Not Active (enter settings)"))
 		meta:set_string("command", spawner_default)

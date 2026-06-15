@@ -17,7 +17,7 @@ end
 -- global table
 
 mobs = {
-	mod = "redo", version = "20260611",
+	mod = "redo", version = "20260613",
 	spawning_mobs = {}, translate = S,
 	node_snow = has(core.registered_aliases["mapgen_snow"])
 			or has("mcl_core:snow") or has("default:snow") or "air",
@@ -690,11 +690,12 @@ function mob_class:item_drop()
 	if not mobs_drop_items or self.child then return end
 
 	local pos = self.object:get_pos()
+	local drops = self.drops
 
 	-- check for drops function
-	self.drops = type(self.drops) == "function" and self.drops(pos) or self.drops
+	if type(drops) == "function" then drops = self.drops(pos) end
 
-	if not self.drops or #self.drops == 0 then return end
+	if not drops or #drops == 0 then return end
 
 	-- was mob killed by player?
 	local death_by_player = self.cause_of_death and self.cause_of_death.puncher
@@ -716,14 +717,12 @@ function mob_class:item_drop()
 		looting = min(looting, 3)
 	end
 
-	local obj, item, num
+	for n = 1, #drops do
 
-	for n = 1, #self.drops do
+		if random(drops[n].chance) == 1 then
 
-		if random(self.drops[n].chance) == 1 then
-
-			num = random(self.drops[n].min or 0, self.drops[n].max or 1) + looting
-			item = self.drops[n].name
+			local num = random(drops[n].min or 1, drops[n].max or 1) + looting
+			local item = drops[n].name
 
 			-- cook items for a hot death
 			if self.cause_of_death.hot then
@@ -737,12 +736,12 @@ function mob_class:item_drop()
 			end
 
 			-- only drop rare items (drops.min = 0) if killed by player
-			if death_by_player or self.drops[n].min ~= 0 then
+			if death_by_player or drops[n].min ~= 0 then
 
-				obj = core.add_item(pos, ItemStack(item .. " " .. num))
+				local obj = core.add_item(pos, ItemStack(item .. " " .. num))
 
 				if obj then
-					obj:set_velocity({x = random() - 0.5, y = 4, z = random() - 0.5})
+					obj:set_velocity({x = random() - 0.5, y = 5, z = random() - 0.5})
 				end
 			end
 		end
@@ -1496,7 +1495,11 @@ function mob_class:apply_path(way, target_pos, add_jump, set_velocity)
 			else -- dig 2 blocks to make door toward player direction
 
 				local yaw1 = self.object:get_yaw() + pi / 2
-				local p1 = {x = s.x + cos(yaw1), y = floor(s.y), z = s.z + sin(yaw1)}
+				local p1 = {
+					x = s.x + cos(yaw1),
+					y = s.y + (prop.collisionbox[2] + 0.25),
+					z = s.z + sin(yaw1)
+				}
 
 				-- dig bottom node first incase of door
 				can_dig_drop(p1) ; p1.y = p1.y + 1 ; can_dig_drop(p1)
@@ -1969,7 +1972,7 @@ function mob_class:do_states(dtime)
 				{x = s.x + 7, y = s.y + 0, z = s.z + 7},
 				{"group:cracky", "group:crumbly", "group:choppy", "group:solid"})
 
-		if #lp > 0 then -- if we found land try to climb out
+		if lp and #lp > 0 then -- if we found land try to climb out
 
 			yaw = self:yaw_to_pos( lp[random(#lp)] )
 
@@ -2132,6 +2135,12 @@ function mob_class:do_states(dtime)
 			self.target_time_lost = 0
 		end
 
+		local ds_var = 0
+
+		if self.attack_type == "dogshoot" then
+			ds_var = self:dogswitch(dtime)
+		end
+
 		if self.attack_type == "explode" then
 
 			self:yaw_to_pos(p)
@@ -2215,9 +2224,8 @@ function mob_class:do_states(dtime)
 				end
 			end
 
-		elseif self.attack_type == "dogfight"
-		or (self.attack_type == "dogshoot" and (self:dogswitch(dtime) == 2
-		or (dist <= self.reach and self:dogswitch() == 0))) then
+		elseif self.attack_type == "dogfight" or (self.attack_type == "dogshoot"
+		and (ds_var == 2 or dist <= self.reach)) then
 
 			-- make sure flying mobs are inside proper medium
 			if self.fly and dist > self.reach and self:flight_check() then
@@ -2365,8 +2373,7 @@ function mob_class:do_states(dtime)
 			end
 
 		elseif self.attack_type == "shoot"
-		or (self.attack_type == "dogshoot" and (self:dogswitch(dtime) == 1
-		or (dist > self.reach and self:dogswitch() == 0))) then
+		or (self.attack_type == "dogshoot" and ds_var == 1) then
 
 			p.y = p.y - 0.5 ; s.y = s.y + 0.5
 

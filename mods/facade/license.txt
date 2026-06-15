@@ -1,11 +1,5 @@
-*Textures from Minetest Game mod: default
-The licenses for such media can be found in the source for Minetest Game
-=========================================
-
-License of source code:
------------------------
-Copyright (C) 2016-2018 TumeniNodes
-
+License of source code
+----------------------
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
 the Free Software Foundation; either version 2.1 of the License, or
@@ -13,31 +7,71 @@ the Free Software Foundation; either version 2.1 of the License, or
 
 http://www.gnu.org/licenses/lgpl-2.1.html
 
-init.lua
-bannerstone.lua
-bannerstone_corner.lua
-carved_stone_a.lua
-carved_stone_a_corner.lua
-column.lua
-column_corner.lua
-corbel.lua
-corbel_corner.lua
-corbel_inner_corner.lua
-rgspro.lua
-rgspro_corner.lua
-rgspro_inner.lua
-corner_bricks.lua
+Copyright (C) 2016-2018 TumeniNodes
+	init.lua
+	materials.lua
+	shapes.lua
+	---- also: ----
+	bannerstone.nbe
+	bannerstone_corner.nbe
+	carved_stone_a.nbe
+	carved_stone_a_corner.nbe
+	column.nbe
+	column_corner.nbe
+	corbel.nbe
+	corbel_corner.nbe
+	corbel_inner_corner.nbe
+	rgspro.nbe
+	rgspro_corner.nbe
+	rgspro_inner.nbe
+	corner_bricks.nbe
 
-bannerstone.nbe
-bannerstone_corner.nbe
-carved_stone_a.nbe
-carved_stone_a_corner.nbe
-column.nbe
-column_corner.nbe
-corbel.nbe
-corbel_corner.nbe
-corbel_inner_corner.nbe
-rgspro.nbe
-rgspro_corner.nbe
-rgspro_inner.nbe
-corner_bricks.nbe
+Copyright (C) 2019 h-v-smacker
+	shaper.lua
+
+
+Special thanks to Napiophelios for taking the time to clean up my [TumeniNodes] sloppy coding style,
+and making it far more efficient. (Thanks Nappy!)
+
+
+License of models
+-----------------
+Attribution - ShareAlike 4.0 International (CC BY-SA 4.0)
+https://creativecommons.org/licenses/by-sa/4.0/
+
+Copyright (C) 2016 - 2018 TumeniNodes
+	bannerstone.obj
+	bannerstone_corner.obj
+	carved_stone_a.obj
+	carved_stone_a_corner.obj
+	column.obj
+	column_corner.obj
+	corbel.obj
+	corbel_corner.obj
+	corbel_inner_corner.obj
+	rgspro.obj
+	rgspro_corner.obj
+	rgspro_inner.obj
+	corner_bricks.obj
+
+
+License of textures
+-------------------
+Attribution - ShareAlike 4.0 International (CC BY-SA 4.0)
+https://creativecommons.org/licenses/by-sa/4.0/
+
+Copyright (C) 2016 - 2018 TumeniNodes
+	facade_bannerstone.png
+	facade_carved_stone_a.png
+	facade_cornerstone.png
+	facade_column.png
+	facade_rgspro.png
+
+Copyright (C) 2019 h-v-smacker
+	/facade_shaper.xcf
+	facade_shaper_back.png
+	facade_shaper_bottom.png
+	facade_shaper_front.png
+	facade_shaper_left.png
+	facade_shaper_right.png
+	facade_shaper_top.png

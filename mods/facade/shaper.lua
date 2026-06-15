@@ -212,7 +212,7 @@ local function check_inventory_move (pos, from_list, from_index, to_list, to_ind
 		return 0
 	end
 
-	return(stack:get_count())
+	return count
 
 end
 
@@ -329,6 +329,7 @@ minetest.register_node("facade:shaper", {
 			"facade_shaper_back.png",
 			"facade_shaper_front.png"},
 	groups = { oddly_breakable_by_hand=2, cracky=3, dig_immediate=1 },
+	is_ground_content = false,
 	paramtype = "light",
 	paramtype2  = "facedir",
 	legacy_facedir_simple = true,

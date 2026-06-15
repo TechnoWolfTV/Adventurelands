@@ -1,44 +1,40 @@
 # Facade
 
-[![](https://github.com/TumeniNodes/facade/workflows/Check%20&%20Release/badge.svg)](https://github.com/TumeniNodes/facade/actions)
+[![](https://github.com/minetest-mods/stoneworks/workflows/luacheck/badge.svg)](https://github.com/minetest-mods/facade/actions)
 [![License](https://img.shields.io/badge/license-LGPLv2.1%2B-blue.svg)](https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html)
 
 Adds decorative clay and stone-type nodes to Minetest Game.
 
-## Dependencies
-- default (included in minetest_game)
-- [mychisel](https://github.com/minetest-mods/mychisel) (**optional dependency!**)
+![Preview](screenshot2.png)
 
-## Requirements
-This requieres MT/MTG 0.4.16+ to run (may work on older versions).
+
+## Dependencies
+- Luanti/Minetest >= 0.4.16
+- default (included in minetest_game)
+- Optional: [mychisel](https://github.com/minetest-mods/mychisel)
+- Optional: [columnia](https://forum.luanti.org/viewtopic.php?t=9892)
+
 
 ## License
-Click [here](https://github.com/TumeniNodes/facade/blob/master/license.txt) to see the license.
+See [license.txt](license.txt) for details.
 
-## Installation
-- Unzip the archive, rename the folder to facade and
-place it in ..minetest/mods/
+- Source code: LGPL 2.1+
+- Media files: CC BY-SA 4.0
 
-- GNU/Linux: If you use a system-wide installation place
-    it in ~/.minetest/mods/.
 
-- If you only want this to be used in a single world, place
-    the folder in ..worldmods/ in your world directory.
+## References
+- [facade ContentDB page](https://content.luanti.org/packages/TumeniNodes/facade/)
+- [Luanti Forums post](https://forum.luanti.org/viewtopic.php?t=18208) for additional information
+- [Mod installation instructions](https://docs.luanti.org/for-players/installing-mods/) (generic)
 
-For further information or help, see:
-https://wiki.minetest.net/Installing_Mods
 
 ## Bugs, suggestions, features & bugfixes.
-Report bugs or suggest ideas by [creating an issue](https://github.com/TumeniNodes/facade/issues/new).    
-If you know how to fix an issue, or want something to be added, consider opening a [pull request](https://github.com/TumeniNodes/facade/compare).
+Report bugs or suggest ideas by [creating an issue](https://github.com/minetest-mods/facade/issues/new).
+If you know how to fix an issue, or want something to be added, consider opening a Pull Request.
+
 
 ## Screenshots
 
-![Preview](https://github.com/TumeniNodes/facade/blob/master/screenshot.png)
-![Preview](https://github.com/TumeniNodes/facade/blob/master/screenshot2.png)
-![Preview](https://github.com/TumeniNodes/facade/blob/master/screenshot3.png)
-![Preview](https://github.com/TumeniNodes/facade/blob/master/screenshot4.png)
-
-
-If you want to get additional info about this mod, go the [Minetest Forums](https://forum.minetest.net/viewtopic.php?f=9&t=18208).     
-Have fun with Facade!
+![Preview](screenshot.png)
+![Preview](screenshot3.png)
+![Preview](screenshot4.png)

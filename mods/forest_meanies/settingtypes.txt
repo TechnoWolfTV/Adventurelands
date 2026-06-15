@@ -1,0 +1,30 @@
+# Forest Meanies configuration
+
+[Forest Meanies]
+
+forest_meanies.notice_range (Notice range) float 22.0 1.0 64.0
+    Distance (nodes) at which a meanie first detects a player.
+
+forest_meanies.aggro_range (Aggro range) float 8.0 1.0 32.0
+    Distance (nodes) at which a meanie switches from stalking to aggressive.
+
+forest_meanies.stalk_velocity (Stalk velocity) float 3.2 0.5 10.0
+    Movement speed while stalking a player.
+
+forest_meanies.patrol_radius (Patrol/orbit radius) float 5.0 1.0 20.0
+    Radius (nodes) of the idle orbit patrol around the home position.
+
+forest_meanies.hunter_chance (Hunter spawn chance) int 10 0 100
+    Percentage chance (0-100) that a spawned meanie is a hunter variant.
+
+forest_meanies.hunter_run_velocity (Hunter run velocity) float 6.0 1.0 20.0
+    Movement speed of the faster hunter variant when chasing a player.
+
+forest_meanies.daylight_burn_level (Daylight burn light level) int 12 0 15
+    Node light level at or above which a meanie begins to burn.
+
+forest_meanies.daylight_burn_damage (Daylight burn damage) int 8 1 100
+    HP damage dealt to a burning meanie per second.
+
+forest_meanies.spawn_chance (Spawn chance divisor) int 8000 1 65535
+    Inverse spawn chance passed to mobs:spawn (higher = rarer).

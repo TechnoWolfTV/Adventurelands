@@ -10,7 +10,8 @@ facade.register_facade_nodes("default", "silver_sandstone", "default:silver_sand
 
 
 if minetest.get_modpath( "bakedclay") then
-   local clay = {
+   local types = {
+      -- Name, Description
       {"white", "White"},
       {"grey", "Grey"},
       {"black", "Black"},
@@ -28,7 +29,7 @@ if minetest.get_modpath( "bakedclay") then
       {"dark_green", "Dark Green"},
    }
 
-   for _, clay in pairs(clay) do
+   for _, clay in pairs(types) do
       facade.register_facade_nodes("baked_clay", clay[1] , "bakedclay:" .. clay[1], clay[2] .. " Baked Clay")
    end
 end

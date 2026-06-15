@@ -518,29 +518,38 @@ end
 
 --Node will be called facade:<subname>_corner_bricks
 function facade.register_corner_bricks(modname, subname, recipeitem, desc)
-	if not string.match(recipeitem,"clay")
-	then	-- do not do for clay things that is ugly
-		minetest.register_node("facade:" .. subname .. "_corner_bricks", {
-			description = desc .. " Corner Bricks",
-			drawtype = "nodebox",
-			tiles = {
-			"" .. modname.. "_" .. subname .. "_brick.png"},
-			paramtype = "light",
-			paramtype2 = "facedir",
-			is_ground_content = false,
-			groups = {cracky = 3, oddly_breakable_by_hand = 2, stone = 1},
-			sounds = default.node_sound_stone_defaults(),
-			node_box = {
-				type = "fixed",
-				fixed = {
-					{-0.5625, -0.5, 0.4375, -0.5, 0, 1},
-					{-0.5, -0.5, 0.4375, 0, 0, 0.5},
-					{-0.5625, 0, 0.5, -0.5, 0.5, 1.5},
-					{-0.5625, 0, 0.4375, 0.5, 0.5, 0.5},
-				},
-			},
-		})
+	if string.match(recipeitem,"clay") then
+		-- do not do for clay things that is ugly
+		return
 	end
+
+	-- Try to use the "brick" texture, otherwise fall back to the original node.
+	-- This is hacky but there is yet (5.17.0-dev) no sane way to check for media files.
+	local tex_path = core.get_modpath(modname) .. "/textures"
+	local brick_texture = modname .. "_" .. subname .. "_brick.png"
+	if not io.open(tex_path .. "/" .. brick_texture, "r") then
+		brick_texture = modname .. "_" .. subname .. ".png"
+	end
+
+	minetest.register_node("facade:" .. subname .. "_corner_bricks", {
+		description = desc .. " Corner Bricks",
+		drawtype = "nodebox",
+		tiles = {brick_texture},
+		paramtype = "light",
+		paramtype2 = "facedir",
+		is_ground_content = false,
+		groups = {cracky = 3, oddly_breakable_by_hand = 2, stone = 1},
+		sounds = default.node_sound_stone_defaults(),
+		node_box = {
+			type = "fixed",
+			fixed = {
+				{-0.5625, -0.5, 0.4375, -0.5, 0, 1},
+				{-0.5, -0.5, 0.4375, 0, 0, 0.5},
+				{-0.5625, 0, 0.5, -0.5, 0.5, 1.5},
+				{-0.5625, 0, 0.4375, 0.5, 0.5, 0.5},
+			},
+		},
+	})
 end
 
 

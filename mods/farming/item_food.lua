@@ -2,6 +2,14 @@
 local S = core.get_translator("farming")
 local a = farming.recipe_items
 
+-- Apple Cider Vinegar
+
+core.register_craftitem("farming:acv", {
+	description = S("Apple Cider Vinegar"),
+	inventory_image = "farming_acv.png",
+	groups = {food_vinegar = 1, flammable = 2}
+})
+
 -- Flour
 
 core.register_craftitem("farming:flour", {
@@ -364,11 +372,9 @@ core.register_node("farming:salt", {
 
 		if not objs or #objs ~= 1 then return end
 
-		local salt, ent = nil, nil
-
 		for k, obj in pairs(objs) do
 
-			ent = obj:get_luaentity()
+			local ent = obj:get_luaentity()
 
 			if ent and ent.name == "__builtin:item"
 			and ent.itemstring == "farming:salt " .. needed then

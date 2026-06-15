@@ -1,19 +1,17 @@
 unused_args = false
 allow_defined_top = true
-max_line_length = 999
-
-ignore = {
-    "clay",
-}
+max_line_length = 110
 
 globals = {
-    "minetest"
+    "minetest",
+    "core",
+    "facade",
 }
 
 read_globals = {
     string = {fields = {"split", "trim"}},
     table = {fields = {"copy", "getn"}},
 
-    "stack", "default",
+    "default",
     "chisel",
 }
