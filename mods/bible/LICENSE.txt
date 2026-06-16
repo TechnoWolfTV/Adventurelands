@@ -1,3 +1,9 @@
+License of code: MIT
+KJV Bible text: Public Domain (1611, crown copyright expired)
+Textures by TechnoWolfTV (CC-by-SA 4.0) unless listed below...
+
+###############################################################################
+
 MIT License
 
 Copyright (c) 2026 TechnoWolfTV
