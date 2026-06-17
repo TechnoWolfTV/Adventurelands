@@ -105,7 +105,8 @@ if core.get_modpath("farming") then
 			{{"farming:carrot", "farming:sugar", "vessels:drinking_glass"},
 					"wine:glass_sparkling_carrot_juice"},
 			{{"farming:blackberry", "farming:sugar", "vessels:drinking_glass"},
-					"wine:glass_sparkling_blackberry_juice"}
+					"wine:glass_sparkling_blackberry_juice"},
+			{{"wine:glass_cider"}, "farming:acv"}
 		})
 	end
 end

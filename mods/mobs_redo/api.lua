@@ -17,7 +17,7 @@ end
 -- global table
 
 mobs = {
-	mod = "redo", version = "20260613",
+	mod = "redo", version = "20260616",
 	spawning_mobs = {}, translate = S,
 	node_snow = has(core.registered_aliases["mapgen_snow"])
 			or has("mcl_core:snow") or has("default:snow") or "air",
@@ -575,7 +575,9 @@ function mob_class:do_stay_near()
 
 	if #nearby_nodes == 0 then return end
 
-	self:yaw_to_pos(nearby_nodes[random(#nearby_nodes)])
+	local yaw = self:yaw_to_pos(nearby_nodes[random(#nearby_nodes)], 0, 1)
+
+	self:set_yaw(yaw, 0)
 	self:set_animation("walk")
 	self:set_velocity(self.walk_velocity)
 
@@ -1974,7 +1976,8 @@ function mob_class:do_states(dtime)
 
 		if lp and #lp > 0 then -- if we found land try to climb out
 
-			yaw = self:yaw_to_pos( lp[random(#lp)] )
+			yaw = self:yaw_to_pos( lp[random(#lp)], 0, 1 )
+			self:set_yaw(yaw, 0)
 
 			self.state = "walk"
 			self.pause_timer = 3
@@ -3608,7 +3611,7 @@ function mobs:spawn_specific(name, nodes, neighbors, min_light, max_light, inter
 			end
 		end
 
-		if mob_area_spawn ~= true then
+		if mob_area_spawn ~= true and ent.base_colbox then
 
 			-- do we have enough height clearance to spawn mob?
 			local height = max(0, ent.base_colbox[5] - ent.base_colbox[2])

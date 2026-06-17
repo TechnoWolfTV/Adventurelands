@@ -4,10 +4,20 @@ local a = farming.recipe_items
 
 -- Apple Cider Vinegar
 
-core.register_craftitem("farming:acv", {
-	description = S("Apple Cider Vinegar"),
+core.register_node("farming:acv", {
+	description = S("Apple Cicer Vinegar"),
+	drawtype = "plantlike",
+	visual_scale = 0.8,
+	tiles = {"farming_acv.png"},
 	inventory_image = "farming_acv.png",
-	groups = {food_vinegar = 1, flammable = 2}
+	wield_image = "farming_acv.png",
+	paramtype = "light",
+	is_ground_content = false,
+	sunlight_propagates = true,
+	walkable = false,
+	selection_box = {type = "fixed", fixed = {-0.15, -0.5, -0.15, 0.15, 0.3, 0.15}},
+	groups = {food_vinegar = 1, vessel = 1, dig_immediate = 3, attached_node = 1},
+	sounds = farming.node_sound_defaults(),
 })
 
 -- Flour

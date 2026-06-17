@@ -79,16 +79,19 @@ core.register_craft({
 	}
 })
 
--- apple cider vinegar
+-- apple cider vinegar (use Wine mod to make if active)
 
-core.register_craft({
-	output = "farming:acv 2",
-	recipe = {
-		{"group:food_apple", "group:food_apple", "group:food_apple"},
-		{a.glass_bottle, a.bucket_water, a.glass_bottle}
-	},
-	replacements = { {a.bucket_water, a.bucket_empty} }
-})
+if not core.get_modpath("wine") then
+
+	core.register_craft({
+		output = "farming:acv 2",
+		recipe = {
+			{"group:food_apple", "group:food_apple", "group:food_apple"},
+			{a.glass_bottle, a.bucket_water, a.glass_bottle}
+		},
+		replacements = { {a.bucket_water, a.bucket_empty} }
+	})
+end
 
 -- tortang talong
 
