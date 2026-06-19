@@ -28,7 +28,6 @@ Beneath and across that surface, there is plenty to find:
 - **Dungeons** generate with loot worth seeking out, rewarding exploration with gear and materials.
 - **Pyramids** hide treasure chambers for those willing to brave their traps.
 - **Abandoned rail corridors** thread through the underground like forgotten mineshafts, complete with track and cargo to recover.
-- **The Backrooms** lurk as an eerie, liminal building set for anyone who wants to construct something unsettling.
 
 Maps and a biome-finder help you chart where you have been and locate the landscapes you are looking for.
 
