@@ -115,6 +115,6 @@ Found a problem or have a suggestion? Please open an issue on the [issue tracker
 
 Adventurelands as a whole is released under the **GNU Affero General Public License v3.0 or later (AGPL-3.0-or-later)**.
 
-The game is made possible by the work of the wider Luanti community. It builds on Minetest Game and incorporates a large number of community mods, each retaining its own license and attribution. The complete list of included works, their locations, and their individual licenses — along with credits — is maintained in the [LICENSE](./LICENSE) file. Please refer to it for full copyright and licensing details.
+The game is made possible by the work of the wider Luanti community. It builds on Minetest Game and incorporates a large number of community mods, each retaining its own license and attribution. The complete list of included works, their locations, and their individual licenses — along with credits — is maintained in the [LICENSE](./LICENSE.md) file. Please refer to it for full copyright and licensing details.
 
 AI tools were used for code completion or minor use cases.
