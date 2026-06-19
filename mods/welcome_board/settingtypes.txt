@@ -1,0 +1,103 @@
+# Welcome Board Mod Settings
+# These settings can be changed in minetest.conf or via the in-game settings menu.
+
+[Welcome Board]
+
+# Controls when the welcome dialog is shown to a player.
+# "first_join"  = only shown the very first time a player joins (recommended for servers)
+# "every_join"  = shown every time a player joins
+# "never"       = disable the auto-popup entirely (dialog still accessible via /welcome)
+welcome_board_show_on (Show popup on) enum first_join first_join,every_join,never
+
+# Delay in seconds before the popup appears after a player joins.
+# A small delay (0.5–1.0) prevents the dialog appearing before the world has loaded.
+welcome_board_delay (Popup delay in seconds) float 0.8 0.0 5.0
+
+# --- GENERAL ---
+
+# The title shown at the very top of the welcome dialog (your server or game name).
+welcome_board_title (Dialog title) string Welcome! Your Adventure Begins Here.
+
+# Subtitle shown beneath the title in smaller text.
+welcome_board_subtitle (Dialog subtitle) string Explore, Build, Craft & Survive
+
+# The name of your game/server, used in personalised greetings.
+welcome_board_server_name (Server/game name) string This World
+
+# --- WELCOME TAB ---
+
+# Heading for the Welcome tab body section.
+welcome_board_welcome_heading (Welcome tab heading) string A New Adventure Awaits
+
+# Body text for the Welcome tab. Use \n for line breaks.
+welcome_board_welcome_body (Welcome tab body) string This world is yours to explore, build, and survive in.\n\nAhead of you lies a Luanti experience featuring exploration across diverse biomes, deep mines full of rare ores, challenging monsters that come alive at night, and a rich crafting system to take you from wooden tools all the way to powerful equipment.\n\nWhether you prefer to build sprawling bases, brave dangerous dungeons, or simply wander and discover — there is something here for you.\n\nUse the tabs above to read tips for new players and to review the server rules. You can reopen this dialog any time with the /welcome command.
+
+# --- TIPS TAB ---
+
+# Whether to show the Tips tab.
+welcome_board_show_tips (Show Tips tab) bool true
+
+# Label for the Tips tab header button.
+welcome_board_tips_tab_label (Tips tab label) string Tips & Guide
+
+# Tips content. Use \n for line breaks.
+welcome_board_tips_body (Tips tab body) string GETTING STARTED\n- Punch a tree trunk to collect Wood.\n- Open your inventory (I or Tab) and craft a Crafting Grid from 4 Wood Planks.\n- Place the crafting grid and make basic tools: a Wooden Pickaxe, Axe, and Sword.\n- Find or craft a Bed and sleep through your first night to avoid monsters.\n\nMINING & RESOURCES\n- Stone tools are stronger than wood — smelt Cobblestone into Stone or mine for Coal first.\n- Iron is found underground roughly 5–30 blocks below the surface.\n- Gold and rare ores are found deeper, below Y=-20.\n- Always carry a Torch! Darkness causes mobs to spawn inside caves.\n\nSURVIVAL\n- Your health recovers slowly when your hunger bar is above half — eat regularly.\n- Monsters (mobs) spawn in the dark. Light up your base with Torches or Lanterns.\n- Falling into deep water is safer than falling onto stone — use water as a landing pad.\n- Craft Armour early — even leather armour dramatically reduces damage taken.\n\nBUILDING & CRAFTING\n- Press I or Tab to open your inventory and access the crafting guide.\n- Almost all recipes can be viewed in the Crafting Guide (the book icon in inventory).\n- You can sleep in a Bed to skip the night and reset your spawn point.\n- Signs can be placed and written on to label your storage chests.\n\nMULTIPLAYER TIPS\n- Be respectful of other players' builds — grief is not tolerated.\n- Use /help to see available commands.\n- Use /spawn to return to the world spawn point at any time.\n- Type /msg <playername> <message> to send a private message to another player.
+
+# --- RULES TAB ---
+
+# Whether to show the Rules tab.
+welcome_board_show_rules (Show Rules tab) bool true
+
+# Label for the Rules tab header button.
+welcome_board_rules_tab_label (Rules tab label) string Server Rules
+
+# Rules content. Use \n for line breaks.
+welcome_board_rules_body (Rules tab body) string Please read and follow these rules. Violation may result in a warning, kick, or permanent ban.\n\n1. BE RESPECTFUL\n   Treat all players with respect. Harassment, hate speech, discrimination, and personal attacks are strictly prohibited.\n\n2. NO GRIEFING\n   Do not destroy, steal from, or interfere with another player's builds or property without their explicit permission.\n\n3. NO CHEATING OR EXPLOITING\n   Using hacked clients, duplication exploits, or unfair advantages is not allowed.\n\n4. NO SPAMMING OR ADVERTISING\n   Do not flood the chat with repeated messages, and do not advertise other servers or websites.\n\n5. KEEP CHAT APPROPRIATE\n   Keep conversation suitable for all ages. Excessive profanity and inappropriate content are not welcome.\n\n6. RESPECT THE ENVIRONMENT\n   Do not build excessively near other players' land without consent. Leave some space between builds.\n\n7. REPORT ISSUES\n   If you witness rule-breaking or find a bug, report it to an admin rather than retaliating or exploiting it.\n\n8. ADMIN DECISIONS ARE FINAL\n   Server staff have final say in disputes. If you disagree with a decision, raise it politely.\n\nBy playing here, you agree to follow these rules. Have fun and enjoy your adventure!
+
+# --- RETURN VISIT MESSAGING ---
+
+# Whether to show a different welcome message to returning players vs. first-time visitors.
+welcome_board_vary_return (Vary message for returning players) bool true
+
+# Greeting prefix for a player's very first join.
+welcome_board_new_player_greeting (New player greeting prefix) string Welcome,
+
+# Greeting prefix for returning players.
+welcome_board_return_greeting (Returning player greeting prefix) string Welcome back,
+
+# --- APPEARANCE ---
+
+# Background color of the dialog panel (RGBA hex, e.g. #1a1a2e for dark navy).
+welcome_board_bg_color (Dialog background color) string #3d3d3dE6
+
+# Title text color (hex).
+welcome_board_title_color (Title text color) string #f0c040
+
+# Subtitle text color (hex).
+welcome_board_subtitle_color (Subtitle text color) string #c2c2c2
+
+# Greeting text color (shown with the player name).
+welcome_board_greeting_color (Greeting text color) string #e0e0e0
+
+# Body text color.
+welcome_board_body_color (Body text color) string #ffffff
+
+# Tab bar background color.
+welcome_board_tab_color (Tab background color) string #323232
+
+# Label on the close button.
+welcome_board_close_label (Close button label) string Let's Play!
+
+# Width of the dialog in formspec units.
+welcome_board_width (Dialog width) float 14.0 8.0 20.0
+
+# Height of the dialog in formspec units.
+welcome_board_height (Dialog height) float 9.5 6.0 16.0
+
+# --- CHAT NOTIFICATION ---
+
+# Whether to also send a brief welcome message to the player in chat when they join.
+welcome_board_chat_notify (Send chat welcome notification) bool true
+
+# The chat message sent to the joining player. Use {player} for their name and {server} for the server name.
+welcome_board_chat_text (Chat welcome text) string {greeting} {player}! Type /welcome to view the welcome guide at any time.
