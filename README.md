@@ -6,7 +6,7 @@
 
 A Luanti (formerly Minetest) game featuring exploration, mining, crafting, building and survival with monsters and animals. Adventurelands includes carefully selected mods for an optimal balance between form and function.
 
-Version: 1.0.56
+Version: 1.0.57
 
 ---
 
@@ -24,7 +24,7 @@ Worlds in Adventurelands are generated procedurally and stretch effectively with
 
 Beneath and across that surface, there is plenty to find:
 
-- **Cavern realms** open up underground, layered with their own stone, growths, and hazards for players who dig deep.
+- **Cave realms** open up underground, layered with their own stone, growths, and hazards for players who dig deep.
 - **Dungeons** generate with loot worth seeking out, rewarding exploration with gear and materials.
 - **Pyramids** hide treasure chambers for those willing to brave their traps.
 - **Abandoned rail corridors** thread through the underground like forgotten mineshafts, complete with track and cargo to recover.
