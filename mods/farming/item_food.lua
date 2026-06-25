@@ -5,7 +5,7 @@ local a = farming.recipe_items
 -- Apple Cider Vinegar
 
 core.register_node("farming:acv", {
-	description = S("Apple Cicer Vinegar"),
+	description = S("Apple Cider Vinegar"),
 	drawtype = "plantlike",
 	visual_scale = 0.8,
 	tiles = {"farming_acv.png"},
@@ -19,6 +19,24 @@ core.register_node("farming:acv", {
 	groups = {food_vinegar = 1, vessel = 1, dig_immediate = 3, attached_node = 1},
 	sounds = farming.node_sound_defaults(),
 })
+
+-- Cinnamon Powder
+
+minetest.register_craftitem("farming:cinnamon_ground", {
+	description = S("Ground Cinnamon"),
+	inventory_image = "farming_cinnamon_ground.png",
+	groups = {food_cinnamon = 1, compostability = 35}
+})
+
+-- Cinnamon Roll
+
+minetest.register_craftitem("farming:cinnamon_roll", {
+	description = S("Cinnamon Roll"),
+	inventory_image = "farming_cinnamon_roll.png",
+	on_use = minetest.item_eat(4)
+})
+
+farming.add_eatable("farming:cinnamon_roll", 4)
 
 -- Flour
 

@@ -1,6 +1,28 @@
 
 local a = farming.recipe_items
 
+-- Cinnamon Powder
+
+core.register_craft({
+	output = "farming:cinnamon_ground",
+	recipe = {
+		{"default:acacia_bush_stem", "farming:baking_tray", "farming:mortar_pestle"}
+	},
+	replacements = {
+		{"farming:mortar_pestle", "farming:mortar_pestle"},
+		{"farming:baking_tray", "farming:baking_tray"}
+	}
+})
+
+-- Cinnamon Roll
+
+minetest.register_craft({
+	output = "farming:cinnamon_roll 2",
+	recipe = {
+		{"group:food_sugar","group:food_cinnamon","group:food_flour"}
+	}
+})
+
 -- flour recipes
 
 core.register_craft({

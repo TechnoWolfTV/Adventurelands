@@ -17,7 +17,7 @@ end
 -- global table
 
 mobs = {
-	mod = "redo", version = "20260616",
+	mod = "redo", version = "20260625",
 	spawning_mobs = {}, translate = S,
 	node_snow = has(core.registered_aliases["mapgen_snow"])
 			or has("mcl_core:snow") or has("default:snow") or "air",
@@ -1931,7 +1931,7 @@ end
 
 function mob_class:dogswitch(dtime)
 
-	if not self.dogshoot_switch or not dtime then return 0 end -- not activated
+	if not self.dogshoot_switch then return 0 end
 
 	self.dogshoot_count = self.dogshoot_count + dtime
 
@@ -2780,7 +2780,7 @@ local function clean_staticdata(self)
 
 		t = type(stat)
 
-		if  t ~= "function" and t ~= "nil" and t ~= "userdata"
+		if  t ~= "function" and t ~= "nil" and t ~= "userdata" and _ ~= "temp"
 		and _ ~= "object" and _ ~= "_cmi_components" then tmp[_] = self[_] end
 	end
 
@@ -2863,6 +2863,8 @@ function mob_class:mob_activate(staticdata, def, dtime)
 			end
 		end
 	end
+
+	self.temp = {} -- temporary values stored here are never saved with mob
 
 	local prop = self.object:get_properties()
 
@@ -3914,7 +3916,7 @@ function mobs:register_egg(mob, desc, background, addegg, no_creative, can_spawn
 
 			on_place = function(itemstack, placer, pointed_thing)
 
-				local pos = pointed_thing.above
+				local pos = pointed_thing.above ; if not pos then return end
 
 				-- does existing on_rightclick function exist?
 				local under = get_node(pointed_thing.under)
@@ -3925,68 +3927,6 @@ function mobs:register_egg(mob, desc, background, addegg, no_creative, can_spawn
 					return def.on_rightclick(
 							pointed_thing.under, under, placer, itemstack, pointed_thing)
 				end
-
-				if pos then
-
-					-- can i spawn in protected areas?
-					if not can_spawn_protect
-					and core.is_protected(pos, placer:get_player_name()) then
-						return
-					end
-
-					if at_limit() then -- have we reached active mob limit
-
-						core.chat_send_player(placer:get_player_name(),
-								S("Active Mob Limit Reached!")
-								.. "  (" .. active_mobs
-								.. " / " .. active_limit .. ")")
-						return
-					end
-
-					pos.y = pos.y + _y
-
-					-- copy egg data back into mob
-					local data = itemstack:get_meta():get_string("")
-					local smob = core.add_entity(pos, mob, data)
-					local ent = smob and smob:get_luaentity()
-
-					if not ent then return end -- sanity check
-
-					if ent.type ~= "monster" then -- set owner if not a monster
-						ent.owner = placer:get_player_name()
-						ent.tamed = true
-					end
-
-					itemstack:take_item() -- since mob is unique, remove egg on spawn
-				end
-
-				return itemstack
-			end
-		})
-	end
-
-	-- register old stackable mob egg
-	core.register_craftitem(":" .. mob, {
-
-		description = desc,
-		inventory_image = invimg,
-		groups = grp,
-
-		on_place = function(itemstack, placer, pointed_thing)
-
-			local pos = pointed_thing.above
-
-			-- does existing on_rightclick function exist?
-			local under = get_node(pointed_thing.under)
-			local def = core.registered_nodes[under.name]
-
-			if def and def.on_rightclick then
-
-				return def.on_rightclick(
-						pointed_thing.under, under, placer, itemstack, pointed_thing)
-			end
-
-			if pos then
 
 				-- can i spawn in protected areas?
 				if not can_spawn_protect
@@ -4005,21 +3945,77 @@ function mobs:register_egg(mob, desc, background, addegg, no_creative, can_spawn
 
 				pos.y = pos.y + _y
 
-				local smob = core.add_entity(pos, mob)
+				-- copy egg data back into mob
+				local data = itemstack:get_meta():get_string("")
+				local smob = core.add_entity(pos, mob, data)
 				local ent = smob and smob:get_luaentity()
 
 				if not ent then return end -- sanity check
 
-				-- don't set owner if monster or sneak pressed
-				if ent.type ~= "monster" and not placer:get_player_control().sneak then
+				if ent.type ~= "monster" then -- set owner if not a monster
 					ent.owner = placer:get_player_name()
 					ent.tamed = true
 				end
 
-				-- if not in creative then take item
-				if not mobs.is_creative(placer:get_player_name()) then
-					itemstack:take_item()
-				end
+				itemstack:take_item() -- since mob is unique, remove egg on spawn
+
+				return itemstack
+			end
+		})
+	end
+
+	-- register old stackable mob egg
+	core.register_craftitem(":" .. mob, {
+
+		description = desc,
+		inventory_image = invimg,
+		groups = grp,
+
+		on_place = function(itemstack, placer, pointed_thing)
+
+			local pos = pointed_thing.above ; if not pos then return end
+
+			-- does existing on_rightclick function exist?
+			local under = get_node(pointed_thing.under)
+			local def = core.registered_nodes[under.name]
+
+			if def and def.on_rightclick then
+
+				return def.on_rightclick(
+						pointed_thing.under, under, placer, itemstack, pointed_thing)
+			end
+
+			-- can i spawn in protected areas?
+			if not can_spawn_protect
+			and core.is_protected(pos, placer:get_player_name()) then
+				return
+			end
+
+			if at_limit() then -- have we reached active mob limit
+
+				core.chat_send_player(placer:get_player_name(),
+						S("Active Mob Limit Reached!")
+						.. "  (" .. active_mobs
+						.. " / " .. active_limit .. ")")
+				return
+			end
+
+			pos.y = pos.y + _y
+
+			local smob = core.add_entity(pos, mob)
+			local ent = smob and smob:get_luaentity()
+
+			if not ent then return end -- sanity check
+
+			-- don't set owner if monster or sneak pressed
+			if ent.type ~= "monster" and not placer:get_player_control().sneak then
+				ent.owner = placer:get_player_name()
+				ent.tamed = true
+			end
+
+			-- if not in creative then take item
+			if not mobs.is_creative(placer:get_player_name()) then
+				itemstack:take_item()
 			end
 
 			return itemstack
