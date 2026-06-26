@@ -15,7 +15,7 @@ Creative Commons Attribution 4.0 International (CC-BY 4.0) unless listed below..
   - License: "Zerove Font" by GGBotNet (https://www.fontspace.com/zerove-font-f128501) CC BY (https://creativecommons.org/publicdomain/zero/1.0/)
 - **Main menu graphics**
   - Locations: `./menu/` `./screenshot.png`
-  - License file: `./menu/LICENSE`
+  - License file: `./menu/LICENSE.md`
 
 ###############################################################################
 

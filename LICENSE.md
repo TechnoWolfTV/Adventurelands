@@ -27,7 +27,7 @@ made to the below listed works are officially made on or after 5 March 2024.
   - License: "Zerove Font" by GGBotNet (https://www.fontspace.com/zerove-font-f128501) CC BY (https://creativecommons.org/publicdomain/zero/1.0/)
 - **Main menu graphics**
   - Locations: `./menu/` `./screenshot.png`
-  - License file: `./menu/LICENSE`
+  - License file: `./menu/LICENSE.md`
 - **3D Armor - Visible Player Armor**
   - Location: `./mods/3d_armor/`
   - License file: `./mods/3d_armor/LICENSE.md`
