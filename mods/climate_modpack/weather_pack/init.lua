@@ -33,4 +33,14 @@ if minetest.get_modpath("lightning") ~= nil then
 	lightning.auto = false
 end
 
+-- Fog weathers
+dofile(modpath.."/weathers/light_fog.lua")
+dofile(modpath.."/weathers/moderate_fog.lua")
+dofile(modpath.."/weathers/heavy_fog.lua")
+
+-- Severe weather
+if minetest.get_modpath("lightning") ~= nil then
+	dofile(modpath.."/weathers/severe_storm.lua")
+end
+
 dofile(modpath.."/abm.lua")

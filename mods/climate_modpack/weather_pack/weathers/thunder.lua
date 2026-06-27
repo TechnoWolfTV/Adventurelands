@@ -69,6 +69,21 @@ local calculate_thunder_strike_delay = function()
 	thunder.next_strike = os.time() + delay
 end
 
+-- Returns true if at least one connected player has enough sky exposure
+-- that a lightning strike would be meaningful (visible or audible).
+-- We use a threshold of < 0.95 shelter so that extremely deep caves
+-- (where neither flash nor sound would register) suppress the strike
+-- entirely, saving the processing cost of a strike nobody experiences.
+-- In practice this threshold is only reached many solid nodes underground.
+local any_player_can_perceive_strike = function()
+	for _, player in ipairs(minetest.get_connected_players()) do
+		if hw_utils.get_shelter_factor(player) < 0.95 then
+			return true
+		end
+	end
+	return false
+end
+
 thunder.render = function(dtime, player)
 	local player_name = player:get_player_name()
 	if happy_weather.is_player_in_weather_area(player_name, "heavy_rain") == false then
@@ -76,7 +91,12 @@ thunder.render = function(dtime, player)
 	end
 
 	if thunder.next_strike <= os.time() then
-		lightning.strike()
+		-- Only strike if at least one player can perceive it.
+		-- This preserves the lightning visual for anyone near a window
+		-- while avoiding pointless strikes when all players are deep underground.
+		if any_player_can_perceive_strike() then
+			lightning.strike()
+		end
 		calculate_thunder_strike_delay()
 	end
 end

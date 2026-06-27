@@ -93,19 +93,23 @@ local set_sky_box = function(player_name)
 	skylayer.add_layer(player_name, sl)
 end
 
-local set_rain_sound = function(player) 
+local set_rain_sound = function(player)
+	-- Start at outdoor gain; shelter system will fade it down if needed.
 	return minetest.sound_play("heavy_rain_drop", {
 		object = player,
 		max_hear_distance = 2,
 		loop = true,
+		gain = 1.0,
 	})
 end
 
 local remove_rain_sound = function(player)
-	local sound = sound_handlers[player:get_player_name()]
+	local pname = player:get_player_name()
+	local sound = sound_handlers[pname]
 	if sound ~= nil then
 		minetest.sound_stop(sound)
-		sound_handlers[player:get_player_name()] = nil
+		sound_handlers[pname] = nil
+		hw_utils.clear_sound_state(pname, "heavy_rain")
 	end
 end
 
@@ -166,7 +170,6 @@ local add_wide_range_rain_particle = function(player)
 		  collisiondetection = true,
 		  collision_removal = true,
 		  vertical = true,
-		  
 		  texture = rain_drop_texture,
 		  playername = player:get_player_name()
 		})
@@ -188,6 +191,10 @@ end
 
 heavy_rain.render = function(dtime, player)
 	display_rain_particles(player)
+
+	local pname = player:get_player_name()
+	sound_handlers[pname] = hw_utils.update_weather_sound(
+		sound_handlers[pname], "heavy_rain", dtime, player)
 end
 
 heavy_rain.start = function()

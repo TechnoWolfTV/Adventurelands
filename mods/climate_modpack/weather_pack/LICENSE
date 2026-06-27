@@ -19,3 +19,64 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+-------------------------------------------------------------------------------
+Modifications by TechnoWolfTV (2025-2026)
+
+The following changes were made to the original weather_pack mod by
+Artūras Norkus (xeranas) and are released under the same MIT License above.
+
+No changes were made to the lightning or moon_phase mods included in this
+modpack. Those remain the original work of their respective authors.
+
+-- Administrative / housekeeping changes --
+
+- Removed deprecated files: depends.txt, description.txt
+- mod.conf: Updated to modern format with the following content:
+    name = weather_pack
+    description = Set of weathers for minetest
+    optional_depends = lightning
+
+-- Weather frequency rebalancing --
+
+All weather types reduced to approximately 25% of their original spawn
+frequency to better suit long-play sessions:
+
+- heavy_rain: local heavy_rain_chance = 0.015 (tropical: 0.1)
+- light_rain:  chance = 0.0375
+- rain:        chance = 0.025
+- snow:        chance = 0.05
+- snowstorm:   chance = 0.0125
+- thunder:     chance = 0.2
+
+-- Shelter-aware sound attenuation --
+
+- utils.lua: Extended with shelter detection system (get_shelter_factor),
+  shelter-aware sound management (update_weather_sound, clear_sound_state),
+  per-weather gain profiles with outdoor/indoor/cave anchor points, and
+  dynamic sound fading via minetest.sound_fade.
+
+- weathers/light_rain.lua, rain.lua, heavy_rain.lua, snowstorm.lua,
+  thunder.lua: Modified to integrate shelter-aware sound attenuation,
+  corrected gain levels, and improved sound lifecycle management.
+
+-- New weather types --
+
+- weathers/light_fog.lua, moderate_fog.lua, heavy_fog.lua: New weather
+  types adding three densities of fog with sky overlay, biome awareness,
+  and shelter-aware particle rendering.
+
+- weathers/severe_storm.lua: New weather type implementing a five-phase
+  severe thunderstorm with progressive sky darkening, rain buildup,
+  dynamic day/night ratio override, escalating lightning frequency,
+  player warning message, and proportional wind-down.
+
+-- New assets --
+
+- textures/weather_pack_fog.png: Original texture by TechnoWolfTV,
+  released under MIT License, used for fog particle rendering.
+
+-- Other --
+
+- init.lua: Updated to load new weather modules.
+-------------------------------------------------------------------------------

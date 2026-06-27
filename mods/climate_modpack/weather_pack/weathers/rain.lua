@@ -86,19 +86,23 @@ local set_sky_box = function(player_name)
 	skylayer.add_layer(player_name, sl)
 end
 
-local set_rain_sound = function(player) 
+local set_rain_sound = function(player)
+	-- Start at outdoor gain; shelter system will fade it down if needed.
 	return minetest.sound_play("rain_drop", {
 		object = player,
 		max_hear_distance = 2,
 		loop = true,
+		gain = 0.7,
 	})
 end
 
 local remove_rain_sound = function(player)
-	local sound = sound_handlers[player:get_player_name()]
+	local pname = player:get_player_name()
+	local sound = sound_handlers[pname]
 	if sound ~= nil then
 		minetest.sound_stop(sound)
-		sound_handlers[player:get_player_name()] = nil
+		sound_handlers[pname] = nil
+		hw_utils.clear_sound_state(pname, "rain")
 	end
 end
 
@@ -167,10 +171,13 @@ end
 
 local particles_number_per_update = 10
 rain.render = function(dtime, player)
-
 	for i=particles_number_per_update, 1,-1 do
 		display_rain_particles(player)
 	end
+
+	local pname = player:get_player_name()
+	sound_handlers[pname] = hw_utils.update_weather_sound(
+		sound_handlers[pname], "rain", dtime, player)
 end
 
 rain.start = function()

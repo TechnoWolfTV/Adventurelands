@@ -25,19 +25,23 @@ local manual_trigger_end = false
 -- Skycolor layer id
 local SKYCOLOR_LAYER = "happy_weather_snowstorm_sky"
 
-local set_weather_sound = function(player) 
+local set_weather_sound = function(player)
+	-- Start at outdoor gain; shelter system will fade it down if needed.
 	return minetest.sound_play("happy_weather_snowstorm", {
 		object = player,
 		max_hear_distance = 2,
 		loop = true,
+		gain = 0.6,
 	})
 end
 
 local remove_weather_sound = function(player)
-	local sound = sound_handlers[player:get_player_name()]
+	local pname = player:get_player_name()
+	local sound = sound_handlers[pname]
 	if sound ~= nil then
 		minetest.sound_stop(sound)
-		sound_handlers[player:get_player_name()] = nil
+		sound_handlers[pname] = nil
+		hw_utils.clear_sound_state(pname, "snowstorm")
 	end
 end
 
@@ -190,6 +194,10 @@ end
 
 snowstorm.render = function(dtime, player)
 	display_particles(player)
+
+	local pname = player:get_player_name()
+	sound_handlers[pname] = hw_utils.update_weather_sound(
+		sound_handlers[pname], "snowstorm", dtime, player)
 end
 
 snowstorm.start = function()
@@ -201,4 +209,3 @@ snowstorm.stop = function()
 end
 
 happy_weather.register_weather(snowstorm)
-
