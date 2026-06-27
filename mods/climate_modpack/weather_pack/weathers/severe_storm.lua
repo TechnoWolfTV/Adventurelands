@@ -306,19 +306,26 @@ severe_storm.is_starting = function(dtime, position)
 	return false
 end
 
+local manual_stopped = false  -- true when stopped via command rather than natural end
+
 severe_storm.is_ending = function(dtime)
-	-- End only after phase 5 completes
+	-- End only after phase 5 completes naturally
 	if phase == 5 then
 		local elapsed = os.time() - phase_start_time
 		if elapsed >= RETREAT_DURATION then
 			phase = 0
+			manual_stopped = false
 			return true
 		end
 	end
+
 	if manual_trigger_end then
 		manual_trigger_end = false
-		stop_storm()
+		manual_stopped = true
+		phase = 0
+		return true
 	end
+
 	return false
 end
 
@@ -331,12 +338,42 @@ severe_storm.add_player = function(player)
 end
 
 severe_storm.remove_player = function(player)
+	local pname = player:get_player_name()
 	stop_rain_sound(player)
-	skylayer.remove_layer(player:get_player_name(), SKYCOLOR_LAYER)
+
+	-- Reset clouds to default before removing layer so they
+	-- don't stay dark and fast after the storm ends
+	local sl = {}
+	sl.name = SKYCOLOR_LAYER
+	sl.clouds_data = {
+		gradient_colors = {
+			{r=220, g=220, b=225},
+			{r=220, g=220, b=225},
+			{r=220, g=220, b=225},
+			{r=220, g=220, b=225},
+			{r=220, g=220, b=225},
+		},
+		density = 0.4,
+		speed = { x = 0, z = 2 }
+	}
+	skylayer.add_layer(pname, sl)
+	skylayer.remove_layer(pname, SKYCOLOR_LAYER)
+
+	-- Explicitly restore engine default sky in case skylayer
+	-- doesn't fully revert the gradient on its own
+	player:set_sky({
+		type = "regular",
+		clouds = true,
+	})
+
+	-- Reset day/night ratio to normal
 	player:override_day_night_ratio(nil)
-	if phase == 0 then
+
+	-- Only hand off to light rain on natural completion, not manual stop
+	if phase == 0 and not manual_stopped then
 		happy_weather.request_to_start("light_rain")
 	end
+	manual_stopped = false
 end
 
 ----------------------------------------------------------------

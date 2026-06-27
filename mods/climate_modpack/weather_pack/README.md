@@ -1,35 +1,65 @@
 weather-pack
 =======================
-Weather mod for Minetest (http://minetest.net/)
+Weather mod for Luanti / Minetest (http://minetest.net/)
+
+Originally authored by xeranas (Artūras Norkus).
+Extended and maintained for Adventurelands by TechnoWolfTV.
 
 Feedback and Improvements
 -----------------------
-* See newest version at https://gitlab.com/zombiebot/weather_pack
+* Original source: https://gitlab.com/zombiebot/weather_pack
 * Register bugs at https://gitlab.com/zombiebot/weather_pack/issues
 * Questions / Discussion at https://forum.minetest.net/viewtopic.php?p=215869
 
 Weathers included
 -----------------------
-* light_rain, rain, heavy_rain
-* snow
-* thunder (works together with heavy_rain)
+* `light_rain` — Light drizzle
+* `rain` — Moderate rain
+* `heavy_rain` — Heavy rain
+* `snow` — Light snowfall
+* `snowstorm` — Blizzard conditions
+* `thunder` — Lightning and thunder (works together with heavy_rain)
+* `light_fog` — Thin atmospheric fog
+* `moderate_fog` — Moderate fog
+* `heavy_fog` — Dense fog
+* `severe_storm` — Multi-phase severe thunderstorm with progressive sky
+  darkening, building rain, escalating lightning, and gradual wind-down
 
 Commands
 -----------------------
-requires `weather_manager` privilege.
+Requires `weather_manager` privilege.
 
-  * `start_weather <weather_code>` 
-  * `stop_weather <weather_code>` 
+  * `start_weather <weather_code>` — Start a weather type
+  * `stop_weather <weather_code>` — Stop a weather type
+  * `weather_status` — Display currently active weather (or "None active")
 
-Be aware that weather may not be visible for player until player is in right biome.
+Available weather codes:
+`light_rain`, `rain`, `heavy_rain`, `thunder`, `snow`, `snowstorm`,
+`light_fog`, `moderate_fog`, `heavy_fog`, `severe_storm`
+
+Be aware that weather may not be visible for a player until they are
+in the right biome. Fog does not appear in dry biomes. Snowstorm only
+appears in frozen biomes.
+
+Shelter System
+-----------------------
+Weather sounds are attenuated based on the player's shelter level.
+Rain and wind sounds fade as players move indoors or underground.
+Thunder remains partially audible even deep indoors, fading gradually
+in caves. Fog particles do not appear indoors but the sky overlay
+remains visible through windows.
 
 Dependencies
 -----------------------
-Thunder weather requires [lightning](https://github.com/minetest-mods/lightning) mod.
+Thunder and severe_storm weather require the
+[lightning](https://github.com/minetest-mods/lightning) mod.
+Both are loaded conditionally and will be skipped if lightning is absent.
+
+Minimum Luanti version: 5.9+
 
 License of source code:
 -----------------------
-MIT
+MIT — see LICENSE file for full details including modification history.
 
 Authors of media files:
 -----------------------
@@ -48,6 +78,10 @@ rcproductions54 (http://freesound.org/people/rcproductions54/):
 
   * `light_rain_drop.ogg` - CC-0 (http://freesound.org/people/rcproductions54/sounds/265045/)
 
-uberhuberman
+uberhuberman:
 
   * `heavy_rain_drop.ogg` - CC BY 3.0 (https://www.freesound.org/people/uberhuberman/sounds/21189/)
+
+TechnoWolfTV:
+
+  * `weather_pack_fog.png` - MIT

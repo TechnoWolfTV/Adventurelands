@@ -26,9 +26,6 @@ Modifications by TechnoWolfTV (2025-2026)
 The following changes were made to the original weather_pack mod by
 Artūras Norkus (xeranas) and are released under the same MIT License above.
 
-No changes were made to the lightning or moon_phase mods included in this
-modpack. Those remain the original work of their respective authors.
-
 -- Administrative / housekeeping changes --
 
 - Removed deprecated files: depends.txt, description.txt
@@ -77,6 +74,12 @@ frequency to better suit long-play sessions:
   released under MIT License, used for fog particle rendering.
 
 -- Other --
+
+- commands.lua: Updated command descriptions to list all available weather
+  codes inline, visible to players via /help start_weather and
+  /help stop_weather in the Luanti client. Added /weather_status command
+  which displays all currently active weather conditions, or "None active"
+  if no weather is running.
 
 - init.lua: Updated to load new weather modules.
 -------------------------------------------------------------------------------
