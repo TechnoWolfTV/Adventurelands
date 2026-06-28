@@ -127,10 +127,17 @@ local add_fog_particle = function(player)
 	random_pos.y = random_pos.y + (math.random() * 3.0 - 1.0)
 
 	if hw_utils.is_outdoor(random_pos) then
+		local wx, wz = (math.random() - 0.5) * 0.4, (math.random() - 0.5) * 0.4
+		if breasy then
+			local w = breasy.get_wind(random_pos)
+			wx = w.x * 0.18
+			wz = w.z * 0.18
+		end
+
 		minetest.add_particle({
 			pos = random_pos,
-			velocity = {x = (math.random() - 0.5) * 0.4, y = 0, z = (math.random() - 0.5) * 0.4},
-			acceleration = {x = 0, y = 0, z = 0},
+			velocity = {x=wx, y=0, z=wz},
+			acceleration = {x=0, y=0, z=0},
 			expirationtime = math.random(6, 10),
 			size = math.random(26, 38),
 			collisiondetection = false,

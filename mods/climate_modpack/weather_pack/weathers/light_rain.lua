@@ -4,12 +4,12 @@
 -- License: MIT
 
 -- Credits: xeranas
+-- Modified by TechnoWolfTV
 ------------------------------
 
 local light_rain = {}
 light_rain.last_check = 0
 light_rain.check_interval = 200
---light_rain.chance = 0.15
 light_rain.chance = 0.0375
 
 -- Weather identification code
@@ -74,7 +74,6 @@ local set_sky_box = function(player_name)
 end
 
 local set_rain_sound = function(player)
-	-- Start at outdoor gain; shelter system will fade it down if needed.
 	return minetest.sound_play("light_rain_drop", {
 		object = player,
 		max_hear_distance = 2,
@@ -103,7 +102,6 @@ light_rain.remove_player = function(player)
 	skylayer.remove_layer(player:get_player_name(), SKYCOLOR_LAYER)
 end
 
--- Random texture getter
 local choice_random_rain_drop_texture = function()
 	local base_name = "happy_weather_light_rain_raindrop_"
 	local number = math.random(1, 4)
@@ -121,10 +119,18 @@ local add_rain_particle = function(player)
 	local random_pos = hw_utils.get_random_pos(player, offset)
 
 	if hw_utils.is_outdoor(random_pos) then
+		-- Get wind vector if breasy is available
+		local wx, wz = 0, 0
+		if breasy then
+			local w = breasy.get_wind(random_pos)
+			wx = w.x
+			wz = w.z
+		end
+
 		minetest.add_particle({
 			pos = {x=random_pos.x, y=random_pos.y, z=random_pos.z},
-			velocity = {x=0, y=-10, z=0},
-			acceleration = {x=0, y=-30, z=0},
+			velocity = {x=wx, y=-10, z=wz},
+			acceleration = {x=wx * 0.1, y=-30, z=wz * 0.1},
 			expirationtime = 2,
 			size = math.random(0.5, 3),
 			collisiondetection = true,
@@ -140,16 +146,14 @@ local display_rain_particles = function(player)
 	if hw_utils.is_underwater(player) then
 		return
 	end
-
 	add_rain_particle(player)
 end
 
 light_rain.in_area = function(position)
-	if hw_utils.is_biome_frozen(position) or 
+	if hw_utils.is_biome_frozen(position) or
 		hw_utils.is_biome_dry(position) then
 		return false
 	end
-
 	if position.y > -10 and position.y < 120 then
 		return true
 	end
@@ -158,7 +162,6 @@ end
 
 light_rain.render = function(dtime, player)
 	display_rain_particles(player)
-
 	local pname = player:get_player_name()
 	sound_handlers[pname] = hw_utils.update_weather_sound(
 		sound_handlers[pname], "light_rain", dtime, player)

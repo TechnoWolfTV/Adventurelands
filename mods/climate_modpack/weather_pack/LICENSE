@@ -44,7 +44,8 @@ frequency to better suit long-play sessions:
 - rain:        chance = 0.025
 - snow:        chance = 0.05
 - snowstorm:   chance = 0.0125
-- thunder:     chance = 0.2
+- thunder:     chance = 0.8 (restored to original — this controls how quickly
+                thunder starts once heavy_rain is active, not spawn frequency)
 
 -- Shelter-aware sound attenuation --
 
@@ -73,13 +74,20 @@ frequency to better suit long-play sessions:
 - textures/weather_pack_fog.png: Original texture by TechnoWolfTV,
   released under MIT License, used for fog particle rendering.
 
+- sounds/severe-storm-rumble.ogg: "Low Rumbling | low-rumbling-176033.mp3"
+  by Musheran (https://opengameart.org/content/low-rumbling)
+  License: CC BY (http://creativecommons.org/publicdomain/zero/1.0/)
+
 -- Other --
 
 - commands.lua: Updated command descriptions to list all available weather
-  codes inline, visible to players via /help start_weather and
-  /help stop_weather in the Luanti client. Added /weather_status command
-  which displays all currently active weather conditions, or "None active"
-  if no weather is running.
+  codes inline, visible to players via /help in the Luanti client. Added
+  /weather_status command showing active and disabled weathers. Added
+  /stop_weather all to stop all active weathers at once. Added
+  /disable_weather and /enable_weather commands (with 'all' support) to
+  persistently enable or disable individual or all weather types across
+  server restarts using mod storage. Intercepted happy_weather.request_to_start
+  and happy_weather.register_weather to enforce disabled state globally.
 
 - init.lua: Updated to load new weather modules.
 -------------------------------------------------------------------------------

@@ -1,9 +1,10 @@
 ----------------------------
--- Happy Weather: Snowfall
+-- Happy Weather: Snowstorm
 
 -- License: MIT
 
 -- Credits: xeranas
+-- Modified by TechnoWolfTV
 ----------------------------
 
 local snowstorm = {}
@@ -12,7 +13,6 @@ local snowstorm = {}
 snowstorm.code = "snowstorm"
 snowstorm.last_check = 0
 snowstorm.check_interval = 300
---snowstorm.chance = 0.05
 snowstorm.chance = 0.0125
 
 -- Keeps sound handler references
@@ -26,7 +26,6 @@ local manual_trigger_end = false
 local SKYCOLOR_LAYER = "happy_weather_snowstorm_sky"
 
 local set_weather_sound = function(player)
-	-- Start at outdoor gain; shelter system will fade it down if needed.
 	return minetest.sound_play("happy_weather_snowstorm", {
 		object = player,
 		max_hear_distance = 2,
@@ -57,7 +56,7 @@ snowstorm.is_starting = function(dtime, position)
 		manual_trigger_start = false
 		return true
 	end
-	
+
 	return false
 end
 
@@ -66,7 +65,6 @@ snowstorm.is_ending = function(dtime)
 		manual_trigger_end = false
 		return true
 	end
-
 	return false
 end
 
@@ -88,7 +86,6 @@ snowstorm.in_area = function(position)
 	if hw_utils.is_biome_frozen(position) == false then
 		return false
 	end
-
 	if position.y > 30 and position.y < 140 then
 		return true
 	end
@@ -107,15 +104,7 @@ end
 
 local rain_drop_texture = "happy_weather_snowstorm.png"
 
-local sign = function (number)
-	if number >= 0 then
-		return 1
-	else
-		return -1
-	end
-end
-
-local add_wide_range_rain_particle = function(player)
+local add_wide_range_particle = function(player)
 	local offset = {
 		front = 7,
 		back = 4,
@@ -124,27 +113,37 @@ local add_wide_range_rain_particle = function(player)
 	}
 
 	local random_pos = hw_utils.get_random_pos(player, offset)
-	local p_pos = player:getpos()
-
-	local look_dir = player:get_look_dir()
 
 	if hw_utils.is_outdoor(random_pos) then
+		-- Use wind direction for snowstorm particles if breasy available
+		local wx, wz = 0, 0
+		if breasy then
+			local w = breasy.get_wind(random_pos)
+			-- Snowstorm uses full wind strength
+			wx = w.x
+			wz = w.z
+		else
+			-- Fallback: original look-direction based velocity
+			local look_dir = player:get_look_dir()
+			local sign = function(n) return n >= 0 and 1 or -1 end
+			wx = sign(look_dir.x) * -10
+			wz = sign(look_dir.z) * -10
+		end
+
 		minetest.add_particle({
 			pos = {x=random_pos.x, y=random_pos.y, z=random_pos.z},
-		  	velocity = {x = sign(look_dir.x) * -10, y = -1, z = sign(look_dir.z) * -10},
-		  	acceleration = {x = sign(look_dir.x) * -10, y = -1, z = sign(look_dir.z) * -10},
-		  	expirationtime = 0.3,
-		  	size = 30,
-		  	collisiondetection = true,
-		  	texture = "happy_weather_snowstorm.png",
-		  	playername = player:get_player_name()
+			velocity = {x=wx, y=-1, z=wz},
+			acceleration = {x=wx * 0.1, y=-1, z=wz * 0.1},
+			expirationtime = 0.3,
+			size = 30,
+			collisiondetection = true,
+			texture = rain_drop_texture,
+			playername = player:get_player_name()
 		})
 	end
 end
 
-
--- Random texture getter
-local choice_random_rain_drop_texture = function()
+local choice_random_snow_texture = function()
 	local base_name = "happy_weather_light_snow_snowflake_"
 	local number = math.random(1, 3)
 	local extension = ".png"
@@ -161,16 +160,26 @@ local add_snow_particle = function(player)
 	local random_pos = hw_utils.get_random_pos(player, offset)
 
 	if hw_utils.is_outdoor(random_pos) then
+		local wx, wz = 0, 0
+		if breasy then
+			local w = breasy.get_wind(random_pos)
+			wx = w.x * 0.6
+			wz = w.z * 0.6
+		else
+			wx = math.random(-5, -2.5)
+			wz = math.random(-5, -2.5)
+		end
+
 		minetest.add_particle({
 			pos = {x=random_pos.x, y=random_pos.y, z=random_pos.z},
-			velocity = {x = math.random(-5,-2.5), y = math.random(-10,-5), z = math.random(-5,-2.5)},
-			acceleration = {x = math.random(-5,-2.5), y=-2.5, z = math.random(-5,-2.5)},
+			velocity = {x=wx, y=math.random(-10, -5), z=wz},
+			acceleration = {x=wx * 0.1, y=-2.5, z=wz * 0.1},
 			expirationtime = 2.0,
 			size = math.random(1, 3),
 			collisiondetection = true,
 			collision_removal = true,
 			vertical = true,
-			texture = choice_random_rain_drop_texture(),
+			texture = choice_random_snow_texture(),
 			playername = player:get_player_name()
 		})
 	end
@@ -183,7 +192,7 @@ local display_particles = function(player)
 
 	local particles_number_per_update = 3
 	for i=particles_number_per_update, 1,-1 do
-		add_wide_range_rain_particle(player)
+		add_wide_range_particle(player)
 	end
 
 	local snow_particles_number_per_update = 10
@@ -194,7 +203,6 @@ end
 
 snowstorm.render = function(dtime, player)
 	display_particles(player)
-
 	local pname = player:get_player_name()
 	sound_handlers[pname] = hw_utils.update_weather_sound(
 		sound_handlers[pname], "snowstorm", dtime, player)

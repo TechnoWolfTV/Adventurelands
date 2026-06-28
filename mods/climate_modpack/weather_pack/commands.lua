@@ -22,48 +22,225 @@ local all_weather_codes = {
 	"severe_storm"
 }
 
+----------------------------------------------------------------
+-- Persistent disable/enable via mod storage
+----------------------------------------------------------------
+local storage = minetest.get_mod_storage()
+
+local function is_disabled(code)
+	return storage:get_string("disabled:" .. code) == "true"
+end
+
+local function set_disabled(code, value)
+	if value then
+		storage:set_string("disabled:" .. code, "true")
+	else
+		storage:set_string("disabled:" .. code, "")
+	end
+end
+
+----------------------------------------------------------------
+-- Intercept happy_weather.request_to_start to enforce disabled state
+----------------------------------------------------------------
+local original_request_to_start = happy_weather.request_to_start
+
+happy_weather.request_to_start = function(code)
+	if is_disabled(code) then
+		return  -- silently block natural triggers
+	end
+	original_request_to_start(code)
+end
+
+-- Also intercept is_starting for each weather by wrapping
+-- happy_weather.register_weather to patch is_starting on registration
+local original_register_weather = happy_weather.register_weather
+
+happy_weather.register_weather = function(weather)
+	local original_is_starting = weather.is_starting
+	weather.is_starting = function(dtime, position)
+		if is_disabled(weather.code) then
+			return false
+		end
+		return original_is_starting(dtime, position)
+	end
+	original_register_weather(weather)
+end
+
+----------------------------------------------------------------
+-- Commands
+----------------------------------------------------------------
+
 minetest.register_chatcommand("start_weather", {
 	params = "<weather_code>",
 	description = "Starts weather by given weather code. " ..
 		"Available codes: " .. weather_codes,
 	privs = {weather_manager = true},
 	func = function(name, param)
-		if param ~= nil then
-			happy_weather.request_to_start(param)
-			minetest.log("action", name .. " requested weather '" .. param .. "' from chat command")
+		if not param or param == "" then
+			minetest.chat_send_player(name, "Usage: /start_weather <weather_code>")
+			return
 		end
+		if is_disabled(param) then
+			minetest.chat_send_player(name, "Weather '" .. param .. "' is currently disabled. Use /enable_weather " .. param .. " first.")
+			return
+		end
+		happy_weather.request_to_start(param)
+		minetest.log("action", name .. " requested weather '" .. param .. "' from chat command")
 	end
 })
 
 minetest.register_chatcommand("stop_weather", {
-	params = "<weather_code>",
-	description = "Ends weather by given weather code. " ..
+	params = "<weather_code|all>",
+	description = "Ends weather by given weather code, or 'all' to stop all active weathers. " ..
 		"Available codes: " .. weather_codes,
 	privs = {weather_manager = true},
 	func = function(name, param)
-		if param ~= nil then
+		if not param or param == "" then
+			minetest.chat_send_player(name, "Usage: /stop_weather <weather_code|all>")
+			return
+		end
+		if param == "all" then
+			local stopped = {}
+			for _, code in ipairs(all_weather_codes) do
+				if happy_weather.is_weather_active(code) then
+					happy_weather.request_to_end(code)
+					table.insert(stopped, code)
+				end
+			end
+			if #stopped == 0 then
+				minetest.chat_send_player(name, "No active weathers to stop.")
+			else
+				minetest.chat_send_player(name, "Stopped: " .. table.concat(stopped, ", "))
+			end
+			minetest.log("action", name .. " stopped all weather from chat command")
+		else
 			happy_weather.request_to_end(param)
 			minetest.log("action", name .. " requested weather '" .. param .. "' ending from chat command")
 		end
 	end
 })
 
-minetest.register_chatcommand("weather_status", {
-	params = "",
-	description = "Displays currently active weather conditions.",
+minetest.register_chatcommand("disable_weather", {
+	params = "<weather_code|all>",
+	description = "Disables a weather type so it cannot start naturally or manually. " ..
+		"Use 'all' to disable all weathers. Persists between restarts. " ..
+		"Available codes: " .. weather_codes,
 	privs = {weather_manager = true},
 	func = function(name, param)
-		local active = {}
-		for _, code in ipairs(all_weather_codes) do
-			if happy_weather.is_weather_active(code) then
-				table.insert(active, code)
-			end
+		if not param or param == "" then
+			minetest.chat_send_player(name, "Usage: /disable_weather <weather_code|all>")
+			return
 		end
-		if #active == 0 then
-			minetest.chat_send_player(name, "Weather status: None active.")
+		if param == "all" then
+			local disabled = {}
+			for _, code in ipairs(all_weather_codes) do
+				if not is_disabled(code) then
+					set_disabled(code, true)
+					table.insert(disabled, code)
+				end
+				-- Stop if active
+				if happy_weather.is_weather_active(code) then
+					happy_weather.request_to_end(code)
+				end
+			end
+			if #disabled == 0 then
+				minetest.chat_send_player(name, "All weathers were already disabled.")
+			else
+				minetest.chat_send_player(name, "Disabled: " .. table.concat(disabled, ", "))
+			end
+			minetest.log("action", name .. " disabled all weather")
 		else
-			minetest.chat_send_player(name, "Weather status: " .. table.concat(active, ", "))
+			-- Validate code
+			local valid = false
+			for _, code in ipairs(all_weather_codes) do
+				if code == param then valid = true; break end
+			end
+			if not valid then
+				minetest.chat_send_player(name, "Unknown weather code: '" .. param .. "'. Available: " .. weather_codes)
+				return
+			end
+			set_disabled(param, true)
+			-- Stop if currently active
+			if happy_weather.is_weather_active(param) then
+				happy_weather.request_to_end(param)
+				minetest.chat_send_player(name, "Weather '" .. param .. "' disabled and stopped.")
+			else
+				minetest.chat_send_player(name, "Weather '" .. param .. "' disabled.")
+			end
+			minetest.log("action", name .. " disabled weather '" .. param .. "'")
 		end
 	end
 })
 
+minetest.register_chatcommand("enable_weather", {
+	params = "<weather_code|all>",
+	description = "Re-enables a previously disabled weather type. " ..
+		"Use 'all' to enable all weathers. " ..
+		"Available codes: " .. weather_codes,
+	privs = {weather_manager = true},
+	func = function(name, param)
+		if not param or param == "" then
+			minetest.chat_send_player(name, "Usage: /enable_weather <weather_code|all>")
+			return
+		end
+		if param == "all" then
+			local enabled = {}
+			for _, code in ipairs(all_weather_codes) do
+				if is_disabled(code) then
+					set_disabled(code, false)
+					table.insert(enabled, code)
+				end
+			end
+			if #enabled == 0 then
+				minetest.chat_send_player(name, "All weathers were already enabled.")
+			else
+				minetest.chat_send_player(name, "Enabled: " .. table.concat(enabled, ", "))
+			end
+			minetest.log("action", name .. " enabled all weather")
+		else
+			-- Validate code
+			local valid = false
+			for _, code in ipairs(all_weather_codes) do
+				if code == param then valid = true; break end
+			end
+			if not valid then
+				minetest.chat_send_player(name, "Unknown weather code: '" .. param .. "'. Available: " .. weather_codes)
+				return
+			end
+			set_disabled(param, false)
+			minetest.chat_send_player(name, "Weather '" .. param .. "' enabled.")
+			minetest.log("action", name .. " enabled weather '" .. param .. "'")
+		end
+	end
+})
+
+minetest.register_chatcommand("weather_status", {
+	params = "",
+	description = "Displays currently active weather conditions and any disabled weathers.",
+	privs = {weather_manager = true},
+	func = function(name, param)
+		local active = {}
+		local disabled = {}
+
+		for _, code in ipairs(all_weather_codes) do
+			if happy_weather.is_weather_active(code) then
+				table.insert(active, code)
+			end
+			if is_disabled(code) then
+				table.insert(disabled, code)
+			end
+		end
+
+		if #active == 0 then
+			minetest.chat_send_player(name, "Active weather: None")
+		else
+			minetest.chat_send_player(name, "Active weather: " .. table.concat(active, ", "))
+		end
+
+		if #disabled == 0 then
+			minetest.chat_send_player(name, "Disabled weather: None")
+		else
+			minetest.chat_send_player(name, "Disabled weather: " .. table.concat(disabled, ", "))
+		end
+	end
+})

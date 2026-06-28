@@ -110,7 +110,7 @@ end
 
 -- Fog haze particles: large soft wisps that overlap and blend.
 -- Non-vertical so they lie flat in the air like real fog layers.
--- Varying height offset so they stack at different altitudes.
+-- Drift direction follows wind if breasy is available.
 local add_fog_particle = function(player)
 	local offset = {
 		front = 10,
@@ -120,14 +120,21 @@ local add_fog_particle = function(player)
 	}
 
 	local random_pos = hw_utils.get_random_pos(player, offset)
-	-- Vary height so wisps layer at different levels
 	random_pos.y = random_pos.y + (math.random() * 2.0 - 1.0)
 
 	if hw_utils.is_outdoor(random_pos) then
+		local wx, wz = (math.random() - 0.5) * 0.4, (math.random() - 0.5) * 0.4
+		if breasy then
+			local w = breasy.get_wind(random_pos)
+			-- Light fog drifts very gently with wind
+			wx = w.x * 0.12
+			wz = w.z * 0.12
+		end
+
 		minetest.add_particle({
 			pos = random_pos,
-			velocity = {x = (math.random() - 0.5) * 0.4, y = 0, z = (math.random() - 0.5) * 0.4},
-			acceleration = {x = 0, y = 0, z = 0},
+			velocity = {x=wx, y=0, z=wz},
+			acceleration = {x=0, y=0, z=0},
 			expirationtime = math.random(5, 9),
 			size = math.random(16, 24),
 			collisiondetection = false,

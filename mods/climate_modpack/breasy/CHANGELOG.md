@@ -1,0 +1,57 @@
+# Changelog
+
+## 2.0.3
+
+- Fix unintended cut-off to zero on slower wind speeds.
+
+## 2.0.2
+
+- Fix accidental definition of a global.
+- Removed the mention of particles in features list.
+- Add a non documented and experimental get_occluded_wind function.
+
+## 2.0.1
+
+- Likely fixed the wind vector nan source.
+
+## 2.0.0
+
+- Removed the add function since this is not a physics library.
+- Wind vector now represents meters per second.
+- Found and fixed the `nan` source.
+- Defined `breasy` global instead of doing dofile every time.
+
+## 1.0.2
+
+- Fix bug where very small wind values would cause Infinity or NaN.
+
+## 1.0.1
+
+- Use get_modpath instead of string directly.
+
+## 1.0.0
+
+- Have add wind second param act like multiply/factor.
+
+## 0.0.2
+
+- Add some default biome defs.
+- Reduce velocity added when already moving with wind.
+- Make force applied by wind increase exponentially with wind speed.
+- Persist particle toggle to settings.
+
+## 0.0.1
+
+- Fix biome register example.
+- Increase wind particle size.
+- Improve docs slightly.
+- Update to better screenshot.
+
+## 0.0.0
+
+* Provides a **location-based wind system** with direction and speed.
+* Wind **slowly rotates** over time, completing configurable oscillations (e.g., ~2 switches per in‑game day).
+* **Perlin noise** introduces minor natural variation for both direction and speed.
+* **Biome influence**: modders can register biome-specific factors (`wind.register_biome`) to scale local wind speed.
+* **Altitude attenuation**: wind weakens below sea level, gradually vanishing toward `MIN_Y`.
+* Offers a **Wind:add()** helper to apply wind force to objects considering their density.

@@ -1,15 +1,15 @@
 ------------------------------
--- Happy Weather: Light Rain
+-- Happy Weather: Snow
 
 -- License: MIT
 
 -- Credits: xeranas
+-- Modified by TechnoWolfTV
 ------------------------------
 
 local snow = {}
 snow.last_check = 0
 snow.check_interval = 200
---snow.chance = 0.2
 snow.chance = 0.05
 
 -- Weather identification code
@@ -75,8 +75,7 @@ snow.remove_player = function(player)
 	skylayer.remove_layer(player:get_player_name(), SKYCOLOR_LAYER)
 end
 
--- Random texture getter
-local choice_random_rain_drop_texture = function()
+local choice_random_snow_texture = function()
 	local base_name = "happy_weather_light_snow_snowflake_"
 	local number = math.random(1, 3)
 	local extension = ".png"
@@ -93,16 +92,29 @@ local add_particle = function(player)
 	local random_pos = hw_utils.get_random_pos(player, offset)
 
 	if hw_utils.is_outdoor(random_pos) then
+		-- Wind influence: snow drifts gently with wind
+		local wx, wz = 0, 0
+		if breasy then
+			local w = breasy.get_wind(random_pos)
+			-- Scale wind effect down for light snow — it drifts gently
+			wx = w.x * 0.4
+			wz = w.z * 0.4
+		else
+			-- Fallback: gentle random drift
+			wx = math.random(-1, -0.5)
+			wz = math.random(-1, -0.5)
+		end
+
 		minetest.add_particle({
 			pos = {x=random_pos.x, y=random_pos.y, z=random_pos.z},
-			velocity = {x = math.random(-1,-0.5), y = math.random(-2,-1), z = math.random(-1,-0.5)},
-			acceleration = {x = math.random(-1,-0.5), y=-0.5, z = math.random(-1,-0.5)},
+			velocity = {x=wx, y=math.random(-2, -1), z=wz},
+			acceleration = {x=wx * 0.1, y=-0.5, z=wz * 0.1},
 			expirationtime = 2.0,
 			size = math.random(0.5, 2),
 			collisiondetection = true,
 			collision_removal = true,
 			vertical = true,
-			texture = choice_random_rain_drop_texture(),
+			texture = choice_random_snow_texture(),
 			playername = player:get_player_name()
 		})
 	end
@@ -112,7 +124,6 @@ local display_particles = function(player)
 	if hw_utils.is_underwater(player) then
 		return
 	end
-
 	add_particle(player)
 end
 
@@ -127,7 +138,6 @@ snow.in_area = function(position)
 	if hw_utils.is_biome_frozen(position) == false then
 		return false
 	end
-
 	if position.y > -10 and position.y < 120 then
 		return true
 	end

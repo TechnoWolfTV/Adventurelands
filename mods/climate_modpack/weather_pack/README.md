@@ -29,9 +29,11 @@ Commands
 -----------------------
 Requires `weather_manager` privilege.
 
-  * `start_weather <weather_code>` — Start a weather type
-  * `stop_weather <weather_code>` — Stop a weather type
-  * `weather_status` — Display currently active weather (or "None active")
+  * `start_weather <weather_code>` — Start a weather type (blocked if disabled)
+  * `stop_weather <weather_code|all>` — Stop a weather type, or stop all active weathers
+  * `disable_weather <weather_code|all>` — Disable a weather type so it cannot start naturally or manually; persists between restarts
+  * `enable_weather <weather_code|all>` — Re-enable a previously disabled weather type; persists between restarts
+  * `weather_status` — Display currently active weather and any disabled weathers
 
 Available weather codes:
 `light_rain`, `rain`, `heavy_rain`, `thunder`, `snow`, `snowstorm`,
@@ -54,6 +56,10 @@ Dependencies
 Thunder and severe_storm weather require the
 [lightning](https://github.com/minetest-mods/lightning) mod.
 Both are loaded conditionally and will be skipped if lightning is absent.
+
+Wind-driven particles require the
+[breasy](https://content.luanti.org/packages/Bas080/breasy/) mod (optional).
+If absent, particles fall back to default behaviour with no wind effect.
 
 Minimum Luanti version: 5.9+
 
@@ -85,3 +91,8 @@ uberhuberman:
 TechnoWolfTV:
 
   * `weather_pack_fog.png` - MIT
+
+Musheran (https://opengameart.org/content/low-rumbling):
+
+  * `sounds/severe-storm-rumble.ogg` - CC BY (http://creativecommons.org/publicdomain/zero/1.0/)
+    Original: "Low Rumbling | low-rumbling-176033.mp3"

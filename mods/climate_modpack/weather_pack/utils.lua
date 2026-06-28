@@ -203,6 +203,7 @@ local SOUND_PROFILES = {
 	heavy_rain  = { base_gain = 1.0,  indoor_gain = 0.35, cave_gain = 0.0  },
 	snowstorm   = { base_gain = 0.6,  indoor_gain = 0.08, cave_gain = 0.0  },
 	thunder     = { base_gain = 1.0,  indoor_gain = 0.6,  cave_gain = 0.15 },
+	rumble      = { base_gain = 0.54, indoor_gain = 0.32, cave_gain = 0.08 },
 }
 
 -- Interpolate gain from a profile given a shelter_factor in [0.0, 1.0].

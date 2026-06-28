@@ -120,6 +120,8 @@ made to the below listed works are officially made on or after 5 March 2024.
   - License file: `./mods/cleaner/LICENSE.txt`
 - **Climate Modpack**
   - Location: `./mods/climate_modpack/`
+	- Breasy
+    - License file: `./mods/climate_modpack/breasy/LICENSE.txt`
     - Lightning
     - License file: `./mods/climate_modpack/lightning/README.md`
     - Moon Phase
