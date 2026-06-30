@@ -132,7 +132,7 @@ local add_rain_particle = function(player)
 			velocity = {x=wx, y=-10, z=wz},
 			acceleration = {x=wx * 0.1, y=-30, z=wz * 0.1},
 			expirationtime = 2,
-			size = math.random(0.5, 3),
+			size = hw_utils.random_float(0.5, 3),
 			collisiondetection = true,
 			collision_removal = true,
 			vertical = true,

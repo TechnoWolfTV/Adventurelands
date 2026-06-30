@@ -61,6 +61,13 @@ snowstorm.is_starting = function(dtime, position)
 end
 
 snowstorm.is_ending = function(dtime)
+	if snowstorm.last_check + snowstorm.check_interval < os.time() then
+		snowstorm.last_check = os.time()
+		if math.random() < 0.5 then
+			return true
+		end
+	end
+
 	if manual_trigger_end then
 		manual_trigger_end = false
 		return true
@@ -166,8 +173,8 @@ local add_snow_particle = function(player)
 			wx = w.x * 0.6
 			wz = w.z * 0.6
 		else
-			wx = math.random(-5, -2.5)
-			wz = math.random(-5, -2.5)
+			wx = hw_utils.random_float(-5, -2.5)
+			wz = hw_utils.random_float(-5, -2.5)
 		end
 
 		minetest.add_particle({

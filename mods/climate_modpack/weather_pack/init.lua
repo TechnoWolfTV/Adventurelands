@@ -36,7 +36,7 @@ end
 -- Fog weathers
 dofile(modpath.."/weathers/light_fog.lua")
 dofile(modpath.."/weathers/moderate_fog.lua")
-dofile(modpath.."/weathers/heavy_fog.lua")
+dofile(modpath.."/weathers/dense_fog.lua")
 
 -- Severe weather
 if minetest.get_modpath("lightning") ~= nil then

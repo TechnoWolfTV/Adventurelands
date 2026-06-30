@@ -501,7 +501,7 @@ local function start_storm()
 
 	local weathers_to_end = {
 		"light_rain", "rain", "heavy_rain", "thunder",
-		"light_fog", "moderate_fog", "heavy_fog"
+		"light_fog", "moderate_fog", "dense_fog"
 	}
 	for _, code in ipairs(weathers_to_end) do
 		happy_weather.request_to_end(code)
@@ -578,7 +578,11 @@ pds_severe_thunderstorm.in_area = function(position)
 end
 
 pds_severe_thunderstorm.add_player = function(player)
-	start_storm()
+	-- Only initialize the phase machine once; additional players joining
+	-- mid-storm should NOT reset it back to phase 1.
+	if phase == 0 then
+		start_storm()
+	end
 end
 
 pds_severe_thunderstorm.remove_player = function(player)
@@ -671,8 +675,9 @@ pds_severe_thunderstorm.render = function(dtime, player)
 			sound_handles[pname], sound_profile, dtime, player)
 
 		-- Particles
-		local shelter = hw_utils.get_shelter_factor(player)
-		if shelter < 0.6 then
+		-- Particles are gated per-position via is_outdoor() below, not by the
+		-- player's overall shelter, so rain stays visible through a window.
+		do
 			local count, size, texture = rain_particles_for_progress(build_t)
 			for i = 1, count do
 				local rpos = hw_utils.get_random_pos(player, {front=10, back=5, top=8})
@@ -715,8 +720,9 @@ pds_severe_thunderstorm.render = function(dtime, player)
 				rumble_handles[pname], "rumble", dtime, player)
 		end
 
-		local shelter = hw_utils.get_shelter_factor(player)
-		if shelter < 0.6 then
+		-- Particles are gated per-position via is_outdoor() below, not by the
+		-- player's overall shelter, so rain stays visible through a window.
+		do
 			for i = 1, 10 do
 				local rpos = hw_utils.get_random_pos(player, {front=10, back=5, top=8})
 				if hw_utils.is_outdoor(rpos) then
@@ -755,8 +761,9 @@ pds_severe_thunderstorm.render = function(dtime, player)
 		sound_handles[pname] = hw_utils.update_weather_sound(
 			sound_handles[pname], sound_profile, dtime, player)
 
-		local shelter = hw_utils.get_shelter_factor(player)
-		if shelter < 0.6 then
+		-- Particles are gated per-position via is_outdoor() below, not by the
+		-- player's overall shelter, so rain stays visible through a window.
+		do
 			local count, size, texture = rain_particles_for_progress(reversed_t)
 			for i = 1, count do
 				local rpos = hw_utils.get_random_pos(player, {front=10, back=5, top=8})

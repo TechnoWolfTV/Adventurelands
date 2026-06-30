@@ -13,12 +13,12 @@ minetest.register_privilege("weather_manager", {
 })
 
 local weather_codes = "light_rain, rain, heavy_rain, thunder, snow, snowstorm, " ..
-	"light_fog, moderate_fog, heavy_fog, severe_thunderstorm, pds_severe_thunderstorm"
+	"light_fog, moderate_fog, dense_fog, severe_thunderstorm, pds_severe_thunderstorm"
 
 local all_weather_codes = {
 	"light_rain", "rain", "heavy_rain", "thunder",
 	"snow", "snowstorm",
-	"light_fog", "moderate_fog", "heavy_fog",
+	"light_fog", "moderate_fog", "dense_fog",
 	"severe_thunderstorm", "pds_severe_thunderstorm"
 }
 
@@ -54,7 +54,7 @@ local SUPPRESSED_DURING_SEVERE_STORM = {
 	thunder = true,
 	light_fog = true,
 	moderate_fog = true,
-	heavy_fog = true,
+	dense_fog = true,
 }
 
 ----------------------------------------------------------------
@@ -128,7 +128,7 @@ minetest.register_chatcommand("stop_weather", {
 			local stopped = {}
 			for _, code in ipairs(all_weather_codes) do
 				if happy_weather.is_weather_active(code) then
-					happy_weather.request_to_end(code)
+					happy_weather.force_end(code)
 					table.insert(stopped, code)
 				end
 			end
@@ -139,7 +139,7 @@ minetest.register_chatcommand("stop_weather", {
 			end
 			minetest.log("action", name .. " stopped all weather from chat command")
 		else
-			happy_weather.request_to_end(param)
+			happy_weather.force_end(param)
 			minetest.log("action", name .. " requested weather '" .. param .. "' ending from chat command")
 		end
 	end
@@ -165,7 +165,7 @@ minetest.register_chatcommand("disable_weather", {
 				end
 				-- Stop if active
 				if happy_weather.is_weather_active(code) then
-					happy_weather.request_to_end(code)
+					happy_weather.force_end(code)
 				end
 			end
 			if #disabled == 0 then
@@ -187,7 +187,7 @@ minetest.register_chatcommand("disable_weather", {
 			set_disabled(param, true)
 			-- Stop if currently active
 			if happy_weather.is_weather_active(param) then
-				happy_weather.request_to_end(param)
+				happy_weather.force_end(param)
 				minetest.chat_send_player(name, "Weather '" .. param .. "' disabled and stopped.")
 			else
 				minetest.chat_send_player(name, "Weather '" .. param .. "' disabled.")
@@ -250,7 +250,14 @@ minetest.register_chatcommand("weather_status", {
 
 		for _, code in ipairs(all_weather_codes) do
 			if happy_weather.is_weather_active(code) then
-				table.insert(active, code)
+				local duration = happy_weather.get_active_duration(code)
+				if duration then
+					local minutes = math.floor(duration / 60)
+					local seconds = duration % 60
+					table.insert(active, code .. " (" .. minutes .. "m " .. seconds .. "s)")
+				else
+					table.insert(active, code)
+				end
 			end
 			if is_disabled(code) then
 				table.insert(disabled, code)

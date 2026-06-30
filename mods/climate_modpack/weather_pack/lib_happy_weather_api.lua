@@ -141,6 +141,24 @@ happy_weather.is_weather_active = function(weather_code)
 	return false
 end
 
+-- Returns seconds since the given weather became active, or nil if it
+-- isn't currently active.
+happy_weather.get_active_duration = function(weather_code)
+	if #active_weathers == 0 then
+		return nil
+	end
+
+	for k, weather_ in ipairs(active_weathers) do
+		if weather_.code == weather_code then
+			if weather_.activated_at == nil then
+				return nil
+			end
+			return os.time() - weather_.activated_at
+		end
+	end
+	return nil
+end
+
 -- Requests weaher to start
 happy_weather.request_to_start = function(weather_code, position)
 	if #registered_weathers == 0 then
@@ -164,6 +182,28 @@ happy_weather.request_to_end = function(weather_code)
 	for k, weather_ in ipairs(active_weathers) do
 		if weather_.code == weather_code and weather_.stop ~= nil then
 			weather_.stop()
+			return
+		end
+	end
+end
+
+-- Requests weather to end IMMEDIATELY, bypassing any graceful/taper logic
+-- a weather type may implement on top of its normal stop(). Intended for
+-- admin commands only (/stop_weather, /disable_weather) -- nothing in
+-- normal weather-to-weather interaction should call this. Falls back to
+-- the normal stop() for weather types that don't define a force_stop().
+happy_weather.force_end = function(weather_code)
+	if #active_weathers == 0 then
+		return
+	end
+
+	for k, weather_ in ipairs(active_weathers) do
+		if weather_.code == weather_code then
+			if weather_.force_stop ~= nil then
+				weather_.force_stop()
+			elseif weather_.stop ~= nil then
+				weather_.stop()
+			end
 			return
 		end
 	end
@@ -253,12 +293,14 @@ end
 -- Perform clean-up callbacks calls sets flags upon weaher end
 local prepare_ending = function(weather_obj)
 	weather_obj.active = false
+	weather_obj.activated_at = nil
 	remove_active_weather(weather_obj.code)
 end
 
 -- Perform weather setup for certain player
 local prepare_starting = function(weather_obj)
 	weather_obj.active = true
+	weather_obj.activated_at = os.time()
 	weather_obj.affected_players = {}
 	add_active_weather(weather_obj)
 end
@@ -353,6 +395,33 @@ minetest.register_globalstep(function(dtime)
 
 		if activate_weather then
 			prepare_starting(weather_)
+		end
+	end
+end)
+
+----------------------------------------------------------------
+-- Disconnect cleanup
+--
+-- A disconnecting player drops out of minetest.get_connected_players()
+-- immediately, so the globalstep loop above never gets a chance to call
+-- weather_remove_player / remove_player for them. Without this, every
+-- weather type's affected_players list (and any per-player state a
+-- weather file tracks, e.g. sound handles) would permanently retain a
+-- stale entry for that player for as long as the weather stays active.
+-- This hook runs each weather's normal remove_player cleanup and prunes
+-- bookkeeping for any weather the player was currently affected by.
+----------------------------------------------------------------
+minetest.register_on_leaveplayer(function(player)
+	local pname = player:get_player_name()
+	for _, weather_ in ipairs(active_weathers) do
+		if is_player_affected(weather_.affected_players, pname) then
+			weather_remove_player(weather_, player)
+			remove_player(weather_.affected_players, pname)
+		end
+	end
+	for i = #meta_plawpos, 1, -1 do
+		if meta_plawpos[i].name == pname then
+			table.remove(meta_plawpos, i)
 		end
 	end
 end)

@@ -101,8 +101,8 @@ local add_particle = function(player)
 			wz = w.z * 0.4
 		else
 			-- Fallback: gentle random drift
-			wx = math.random(-1, -0.5)
-			wz = math.random(-1, -0.5)
+			wx = hw_utils.random_float(-1, -0.5)
+			wz = hw_utils.random_float(-1, -0.5)
 		end
 
 		minetest.add_particle({
@@ -110,7 +110,7 @@ local add_particle = function(player)
 			velocity = {x=wx, y=math.random(-2, -1), z=wz},
 			acceleration = {x=wx * 0.1, y=-0.5, z=wz * 0.1},
 			expirationtime = 2.0,
-			size = math.random(0.5, 2),
+			size = hw_utils.random_float(0.5, 2),
 			collisiondetection = true,
 			collision_removal = true,
 			vertical = true,

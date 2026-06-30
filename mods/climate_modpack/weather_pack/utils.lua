@@ -10,8 +10,15 @@ if not minetest.global_exists("hw_utils") then
 	hw_utils = {}
 end
 
+-- math.random only accepts integer bounds; this is for cases that need a
+-- continuous float in [min, max] (e.g. particle size, fractional velocity).
+hw_utils.random_float = function(min, max)
+	return min + math.random() * (max - min)
+end
+
 local mg_name = minetest.get_mapgen_setting("mg_name")
 
+-- outdoor check based on node light level
 -- outdoor check based on node light level
 hw_utils.is_outdoor = function(pos, offset_y)
 	if offset_y == nil then

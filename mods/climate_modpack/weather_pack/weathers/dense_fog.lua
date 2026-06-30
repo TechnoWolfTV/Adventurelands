@@ -1,20 +1,20 @@
 ------------------------------
--- Happy Weather: Moderate Fog
+-- Happy Weather: Dense Fog
 
 -- License: MIT
 
 -- Credits: TechnoWolfTV / xeranas
 ------------------------------
 
-local moderate_fog = {}
-moderate_fog.last_check = 0
-moderate_fog.check_interval = 200
+local dense_fog = {}
+dense_fog.last_check = 0
+dense_fog.check_interval = 400
 
--- Roughly half as common as light fog
-moderate_fog.chance = 0.015
+-- Roughly half as common as moderate fog
+dense_fog.chance = 0.0075
 
 -- Weather identification code
-moderate_fog.code = "moderate_fog"
+dense_fog.code = "dense_fog"
 
 -- Manual triggers flags
 local manual_trigger_start = false
@@ -22,33 +22,33 @@ local manual_trigger_end   = false
 local force_trigger_end    = false
 
 -- Skycolor layer id
-local SKYCOLOR_LAYER = "happy_weather_moderate_fog_sky"
+local SKYCOLOR_LAYER = "happy_weather_dense_fog_sky"
 
--- Moderate fog: noticeably whiter/greyer sky, denser clouds
+-- Dense fog: sky is nearly white-grey, very dim and flat
 local FOG_SKY_COLOR = {
 	gradient_colors = {
 		{r=0,   g=0,   b=0  },
-		{r=155, g=158, b=160},
-		{r=185, g=188, b=190},
-		{r=155, g=158, b=160},
+		{r=130, g=133, b=135},
+		{r=165, g=168, b=170},
+		{r=130, g=133, b=135},
 		{r=0,   g=0,   b=0  }
 	}
 }
 
 local FOG_CLOUD_COLOR = {
 	gradient_colors = {
-		{r=125, g=128, b=130},
-		{r=160, g=163, b=165},
-		{r=185, g=188, b=190},
-		{r=160, g=163, b=165},
-		{r=125, g=128, b=130}
+		{r=100, g=103, b=105},
+		{r=135, g=138, b=140},
+		{r=165, g=168, b=170},
+		{r=135, g=138, b=140},
+		{r=100, g=103, b=105}
 	},
-	density = 0.75
+	density = 1.0
 }
 
-local FOG_DISTANCE        = 50
-local FOG_START           = 0.3
-local FOG_LIGHT_TARGET    = 0.85
+local FOG_DISTANCE        = 20
+local FOG_START           = 0.1
+local FOG_LIGHT_TARGET    = 0.75
 local FOG_TRANSITION_TIME = 10
 
 local weather_active_since = nil
@@ -87,16 +87,18 @@ local clear_fog_effect = function(player)
 	player:override_day_night_ratio(nil)
 end
 
-moderate_fog.is_starting = function(dtime, position)
-	if moderate_fog.last_check + moderate_fog.check_interval < os.time() then
-		moderate_fog.last_check = os.time()
+dense_fog.is_starting = function(dtime, position)
+	if dense_fog.last_check + dense_fog.check_interval < os.time() then
+		dense_fog.last_check = os.time()
+		-- Incompatible with rain, heavy rain, and snowstorm
 		if happy_weather.is_weather_active("heavy_rain") or
+		   happy_weather.is_weather_active("rain") or
 		   happy_weather.is_weather_active("snowstorm") then
 			return false
 		end
-		-- Displace light fog if it's running
-		if math.random() < moderate_fog.chance then
+		if math.random() < dense_fog.chance then
 			happy_weather.request_to_end("light_fog")
+			happy_weather.request_to_end("moderate_fog")
 			return true
 		end
 	end
@@ -109,7 +111,7 @@ moderate_fog.is_starting = function(dtime, position)
 	return false
 end
 
-moderate_fog.is_ending = function(dtime)
+dense_fog.is_ending = function(dtime)
 	local now = os.time()
 
 	if force_trigger_end then
@@ -119,16 +121,17 @@ moderate_fog.is_ending = function(dtime)
 		return true
 	end
 
-	if moderate_fog.last_check + moderate_fog.check_interval < now then
-		moderate_fog.last_check = now
+	if dense_fog.last_check + dense_fog.check_interval < now then
+		dense_fog.last_check = now
 		if not ending_requested then
 			if happy_weather.is_weather_active("heavy_rain") or
+			   happy_weather.is_weather_active("rain") or
 			   happy_weather.is_weather_active("snowstorm") then
 				ending_requested = true
-			elseif math.random() < 0.4 then
-				-- Sometimes lifts to light fog rather than clearing entirely
-				if math.random() < 0.5 then
-					happy_weather.request_to_start("light_fog")
+			elseif math.random() < 0.35 then
+				-- Dense fog usually lifts to moderate rather than clearing instantly
+				if math.random() < 0.7 then
+					happy_weather.request_to_start("moderate_fog")
 				end
 				ending_requested = true
 			end
@@ -159,7 +162,7 @@ local set_sky_box = function(player_name)
 	skylayer.add_layer(player_name, sl)
 end
 
-moderate_fog.add_player = function(player)
+dense_fog.add_player = function(player)
 	local pname = player:get_player_name()
 	active_player_count = active_player_count + 1
 	if weather_active_since == nil then
@@ -172,7 +175,7 @@ moderate_fog.add_player = function(player)
 	set_sky_box(pname)
 end
 
-moderate_fog.remove_player = function(player)
+dense_fog.remove_player = function(player)
 	local pname = player:get_player_name()
 	clear_fog_effect(player)
 	skylayer.remove_layer(pname, SKYCOLOR_LAYER)
@@ -190,7 +193,7 @@ moderate_fog.remove_player = function(player)
 	end
 end
 
-moderate_fog.in_area = function(position)
+dense_fog.in_area = function(position)
 	if hw_utils.is_biome_dry(position) then
 		return false
 	end
@@ -200,7 +203,7 @@ moderate_fog.in_area = function(position)
 	return false
 end
 
-moderate_fog.render = function(dtime, player)
+dense_fog.render = function(dtime, player)
 	local pname = player:get_player_name()
 	local now   = os.time()
 
@@ -242,15 +245,15 @@ moderate_fog.render = function(dtime, player)
 	apply_fog_effect(player, fog_t)
 end
 
-moderate_fog.start = function()
+dense_fog.start = function()
 	manual_trigger_start = true
 end
 
-moderate_fog.stop = function()
+dense_fog.stop = function()
 	manual_trigger_end = true
 end
 
-moderate_fog.force_stop = function()
+dense_fog.force_stop = function()
 	force_trigger_end = true
 end
 
@@ -262,4 +265,4 @@ minetest.register_on_leaveplayer(function(player)
 	player_sheltered[pname] = nil
 end)
 
-happy_weather.register_weather(moderate_fog)
+happy_weather.register_weather(dense_fog)
