@@ -40,7 +40,8 @@ dofile(modpath.."/weathers/heavy_fog.lua")
 
 -- Severe weather
 if minetest.get_modpath("lightning") ~= nil then
-	dofile(modpath.."/weathers/severe_storm.lua")
+	dofile(modpath.."/weathers/severe_thunderstorm.lua")
+	dofile(modpath.."/weathers/pds_severe_thunderstorm.lua")
 end
 
 dofile(modpath.."/abm.lua")

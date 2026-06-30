@@ -64,17 +64,27 @@ frequency to better suit long-play sessions:
   types adding three densities of fog with sky overlay, biome awareness,
   and shelter-aware particle rendering.
 
-- weathers/severe_storm.lua: New weather type implementing a five-phase
-  severe thunderstorm with progressive sky darkening, rain buildup,
-  dynamic day/night ratio override, escalating lightning frequency,
-  player warning message, and proportional wind-down.
+- weathers/pds_severe_thunderstorm.lua: New weather type implementing a
+  five-phase "Particularly Dangerous Situation" severe thunderstorm with
+  progressive sky darkening, ominous green sky hue, rain buildup, dynamic
+  day/night ratio override, a low rumble sound during onslaught, escalating
+  lightning frequency, and proportional wind-down. The full-intensity tier
+  of severe weather (rare).
+
+- weathers/severe_thunderstorm.lua: New weather type implementing a
+  five-phase severe thunderstorm — a less intense counterpart to
+  pds_severe_thunderstorm with no green sky hue, no rumble sound, reduced
+  sky/cloud darkness, reduced lightning frequency during onslaught, and
+  shorter phase durations. The moderate-intensity, more common tier of
+  severe weather.
 
 -- New assets --
 
 - textures/weather_pack_fog.png: Original texture by TechnoWolfTV,
   released under MIT License, used for fog particle rendering.
 
-- sounds/severe-storm-rumble.ogg: "Low Rumbling | low-rumbling-176033.mp3"
+- sounds/severe-storm-rumble.ogg: Used during pds_severe_thunderstorm
+  onslaught phase only. "Low Rumbling | low-rumbling-176033.mp3"
   by Musheran (https://opengameart.org/content/low-rumbling)
   License: CC BY (http://creativecommons.org/publicdomain/zero/1.0/)
 

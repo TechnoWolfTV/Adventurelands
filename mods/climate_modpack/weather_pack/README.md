@@ -22,8 +22,12 @@ Weathers included
 * `light_fog` — Thin atmospheric fog
 * `moderate_fog` — Moderate fog
 * `heavy_fog` — Dense fog
-* `severe_storm` — Multi-phase severe thunderstorm with progressive sky
-  darkening, building rain, escalating lightning, and gradual wind-down
+* `severe_thunderstorm` — Multi-phase severe thunderstorm. Bad weather, but
+  not utterly terrifying: moderate sky darkening, building rain, and
+  reduced-frequency lightning during onslaught. No green sky, no rumble.
+* `pds_severe_thunderstorm` — "Particularly Dangerous Situation" tier.
+  The rare, full-intensity severe thunderstorm with an ominous green sky,
+  full darkness, a low rumble during onslaught, and frequent close lightning.
 
 Commands
 -----------------------
@@ -33,11 +37,11 @@ Requires `weather_manager` privilege.
   * `stop_weather <weather_code|all>` — Stop a weather type, or stop all active weathers
   * `disable_weather <weather_code|all>` — Disable a weather type so it cannot start naturally or manually; persists between restarts
   * `enable_weather <weather_code|all>` — Re-enable a previously disabled weather type; persists between restarts
-  * `weather_status` — Display currently active weather and any disabled weathers
+  * `weather_status` — Display active, enabled, and disabled weather, one category per line, comma-separated
 
 Available weather codes:
 `light_rain`, `rain`, `heavy_rain`, `thunder`, `snow`, `snowstorm`,
-`light_fog`, `moderate_fog`, `heavy_fog`, `severe_storm`
+`light_fog`, `moderate_fog`, `heavy_fog`, `severe_thunderstorm`, `pds_severe_thunderstorm`
 
 Be aware that weather may not be visible for a player until they are
 in the right biome. Fog does not appear in dry biomes. Snowstorm only
@@ -53,9 +57,9 @@ remains visible through windows.
 
 Dependencies
 -----------------------
-Thunder and severe_storm weather require the
+Thunder, severe_thunderstorm, and pds_severe_thunderstorm weather require the
 [lightning](https://github.com/minetest-mods/lightning) mod.
-Both are loaded conditionally and will be skipped if lightning is absent.
+All three are loaded conditionally and will be skipped if lightning is absent.
 
 Wind-driven particles require the
 [breasy](https://content.luanti.org/packages/Bas080/breasy/) mod (optional).

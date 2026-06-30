@@ -1,29 +1,31 @@
 ----------------------------------------------------------------
--- Happy Weather: Severe Storm
+-- Happy Weather: Severe Thunderstorm
 --
--- A multi-phase severe storm with dramatic sky darkening,
--- building rain, and escalating thunder/lightning.
+-- The "lesser" tier of severe weather — bad, but not utterly
+-- terrifying like PDS Severe Thunderstorm. No green sky, no
+-- rumble sound, lighter darkness, less frequent strikes during
+-- onslaught, and shorter phase durations.
 --
 -- Phases:
---   1. Approach  (180s) sky darkens, distant thunder, no rain
---   2. Build     (180s) light→rain→heavy rain, thunder builds
---   3. Onslaught (3-8min) full intensity
---   4. Unwind    (180s) heavy→rain→light rain, mirrors Build
---   5. Retreat   (180s) light rain stops, sky lightens, mirrors Approach
+--   1. Approach  (90s)  sky darkens, distant thunder, no rain
+--   2. Build     (90s)  light→rain→heavy rain, thunder builds
+--   3. Onslaught (3-5min) full intensity (reduced from PDS)
+--   4. Unwind    (90s)  heavy→rain→light rain, mirrors Build
+--   5. Retreat   (90s)  light rain stops, sky lightens, mirrors Approach
 --
 -- License: MIT
 -- Credits: TechnoWolfTV / xeranas
 ----------------------------------------------------------------
 
-local severe_storm = {}
-severe_storm.code = "severe_storm"
-severe_storm.last_check = 0
-severe_storm.check_interval = 400
+local severe_thunderstorm = {}
+severe_thunderstorm.code = "severe_thunderstorm"
+severe_thunderstorm.last_check = 0
+severe_thunderstorm.check_interval = 400
 
--- Roughly one fifth the chance of heavy rain
-severe_storm.chance = 0.003
+-- Averages ~22 in-game days — twice as rare as heavy_rain
+severe_thunderstorm.chance = 0.015
 
-local SKYCOLOR_LAYER = "happy_weather_severe_storm_sky"
+local SKYCOLOR_LAYER = "happy_weather_severe_thunderstorm_sky"
 
 local manual_trigger_start = false
 local manual_trigger_end = false
@@ -36,14 +38,7 @@ local manual_trigger_end = false
 local sound_handles = {}   -- [pname] = handle
 local sound_files   = {}   -- [pname] = "light_rain_drop"|"rain_drop"|"heavy_rain_drop"
 
--- Rumble sound — plays during onslaught phase only
-local rumble_handles     = {}  -- [pname] = handle
-local rumble_fading_out  = {}  -- [pname] = true when fading out in phase 4
-local rumble_fadein_end  = {}  -- [pname] = os.time() when fade-in completes
-local RUMBLE_GAIN        = 0.51
-local RUMBLE_FADE_IN     = 15.0   -- seconds to fade in
-local RUMBLE_FADE_OUT    = 15.0   -- seconds to fade out
-local RUMBLE_FADE_STEPS  = 30     -- number of steps for manual fade
+-- NOTE: No rumble sound for severe_thunderstorm — that's a PDS-only feature.
 
 ----------------------------------------------------------------
 -- Phase state machine
@@ -52,17 +47,18 @@ local phase = 0
 local phase_start_time = 0
 local onslaught_duration = 0
 
-local APPROACH_DURATION    = 180
-local BUILD_DURATION       = 180
-local DISSIPATION_DURATION = 90   -- kept for reference, phases 4+5 are 180 each
-local UNWIND_DURATION      = 180
-local RETREAT_DURATION     = 180
+local APPROACH_DURATION    = 90
+local BUILD_DURATION       = 90
+local DISSIPATION_DURATION = 45   -- kept for reference, phases 4+5 are 90 each
+local UNWIND_DURATION      = 90
+local RETREAT_DURATION     = 90
 
--- Thunder delay ranges per phase
+-- Thunder delay ranges per phase.
+-- Phase 3 (onslaught) frequency reduced ~33% vs PDS (delays increased ~33%)
 local PHASE_THUNDER = {
 	[1] = { min_delay = 35, max_delay = 65 },  -- distant, infrequent
 	[2] = { min_delay = 15, max_delay = 30 },  -- building
-	[3] = { min_delay =  2, max_delay =  7 },  -- frequent, close
+	[3] = { min_delay =  3, max_delay =  9 },  -- reduced ~33% from PDS (2-7s)
 	[4] = { min_delay = 15, max_delay = 30 },  -- mirrors phase 2
 	[5] = { min_delay = 35, max_delay = 65 },  -- mirrors phase 1
 }
@@ -81,16 +77,17 @@ local SKY_NORMAL_COLORS = {
 	{r=15,  g=15,  b=20  },  -- midnight
 }
 
+-- Storm colors reduced ~33% darkness from PDS (lighter, less terrifying)
 local SKY_STORM_COLORS = {
-	{r=5,  g=5,  b=8  },
-	{r=18, g=20, b=28 },
-	{r=22, g=25, b=32 },
-	{r=18, g=20, b=28 },
-	{r=5,  g=5,  b=8  },
+	{r=8,  g=8,  b=12 },
+	{r=32, g=38, b=52 },
+	{r=41, g=50, b=64 },
+	{r=32, g=38, b=52 },
+	{r=8,  g=8,  b=12 },
 }
 
 local CLOUD_NORMAL = {r=112, g=110, b=119}  -- matches heavy_rain cloud color at onset
-local CLOUD_STORM  = {r=18,  g=18,  b=22 }
+local CLOUD_STORM  = {r=65,  g=64,  b=70 }  -- reduced ~33% from PDS, then a further 25%
 
 local function lerp_color(a, b, t)
 	return {
@@ -126,29 +123,20 @@ end
 
 -- Returns sky darkening intensity 0.0 (normal) → 1.0 (full onslaught)
 -- Drives sky gradient and day/night ratio ONLY.
--- Delayed 90s into phase 1 so green appears against a still-normal sky.
--- Ramps faster to compensate: covers same 0→1 range in 270s instead of 360s.
--- Phase 1: 0-90s = 0.0, 90-180s = 0.0→0.5 (at 1.333x rate)
--- Phase 2: 0.5→1.0 (at 1.333x rate)
--- Phase 3: 1.0
--- Phase 4: mirrors phase 2 in reverse
--- Phase 5: mirrors phase 1 in reverse
-local SKY_DELAY = 90  -- seconds into phase 1 before darkening begins
-
+-- Darkening begins immediately at the start of phase 1 and ramps
+-- continuously through phase 2, reaching full target right at the
+-- start of phase 3 (onslaught). Mirrors in reverse for phase 4/5.
 local function get_sky_intensity()
 	if phase == 0 then return 0.0 end
 
 	if phase == 1 then
 		local elapsed = os.time() - phase_start_time
-		if elapsed < SKY_DELAY then return 0.0 end
-		-- Remaining time in phase 1 after delay: APPROACH_DURATION - SKY_DELAY = 90s
-		-- Must cover 0.0→0.5 in 90s instead of 180s → rate * (90/180) = 0.5/90
-		local t = math.min((elapsed - SKY_DELAY) / (APPROACH_DURATION - SKY_DELAY), 1.0)
-		return t * 0.5
+		-- 0.0 → 0.5 over the full APPROACH_DURATION
+		return math.min(elapsed / APPROACH_DURATION, 1.0) * 0.5
 
 	elseif phase == 2 then
 		local elapsed = os.time() - phase_start_time
-		-- Must cover 0.5→1.0 in 180s, same as before
+		-- 0.5 → 1.0 over the full BUILD_DURATION
 		return 0.5 + math.min(elapsed / BUILD_DURATION, 1.0) * 0.5
 
 	elseif phase == 3 then
@@ -156,57 +144,28 @@ local function get_sky_intensity()
 
 	elseif phase == 4 then
 		local elapsed = os.time() - phase_start_time
+		-- 1.0 → 0.5 over the full UNWIND_DURATION
 		return 1.0 - math.min(elapsed / UNWIND_DURATION, 1.0) * 0.5
 
 	elseif phase == 5 then
 		local elapsed = os.time() - phase_start_time
-		-- Mirror of phase 1: 0.5→0.0, fade completes at SKY_DELAY from end
-		local t = math.min(elapsed / (RETREAT_DURATION - SKY_DELAY), 1.0)
-		return math.max(0.0, 0.5 - t * 0.5)
+		-- 0.5 → 0.0 over the full RETREAT_DURATION
+		return 0.5 - math.min(elapsed / RETREAT_DURATION, 1.0) * 0.5
 	end
 	return 0.0
 end
 
 -- Returns green tint intensity 0.0 (none) → 1.0 (full ominous green)
 -- Timeline:
---   Phase 1, 0-90s:     0.0 (nothing)
---   Phase 1, 90-180s:   0.0 → 1.0 (full green by end of phase 1)
---   Phase 2, 0-60s:     1.0 (holds at full green while light rain starts)
---   Phase 2, 60-120s:   1.0 → 0.5 (fades as sky darkens)
---   Phase 2, 120-180s:  0.5 → 0.0 (fades out as darkness takes over)
---   Phase 3+:           0.0 (pure dark storm sky)
+-- NOTE: severe_thunderstorm has NO green sky — that's a PDS-only feature.
+-- This always returns 0.0 so apply_green() becomes a no-op everywhere,
+-- keeping the surrounding sky logic identical to PDS without duplicating it.
 local function get_green_intensity()
-	if phase == 0 or phase >= 3 then return 0.0 end
-	local elapsed = os.time() - phase_start_time
-
-	if phase == 1 then
-		local GREEN_START = 60
-		local GREEN_PEAK  = 90
-		if elapsed < GREEN_START then return 0.0 end
-		if elapsed >= GREEN_PEAK then return 1.0 end
-		local t = (elapsed - GREEN_START) / (GREEN_PEAK - GREEN_START)
-		return t  -- 0.0 → 1.0 over 30 seconds
-
-	elseif phase == 2 then
-		local t = math.min(elapsed / BUILD_DURATION, 1.0)
-		if t < 0.33 then
-			-- 0→0.33 (first 60s): hold at 1.0
-			return 1.0
-		elseif t < 0.66 then
-			-- 0.33→0.66: green fades from 1.0 to 0.5
-			return 1.0 - ((t - 0.33) / 0.33) * 0.5
-		else
-			-- 0.66→1.0: green fades from 0.5 to 0.0
-			return 0.5 - ((t - 0.66) / 0.34) * 0.5
-		end
-
-	elseif phase == 4 or phase == 5 then
-		return 0.0
-	end
 	return 0.0
 end
 
--- Green tint color to blend into sky — yellow-green like real severe weather
+-- Green tint color to blend into sky — unused since get_green_intensity
+-- always returns 0.0 for severe_thunderstorm, but kept for structural parity.
 local GREEN_TINT = {r = 35, g = 55, b = 0}
 
 -- Blend green tint into a sky color by intensity
@@ -241,7 +200,7 @@ local function update_sky(player_name, storm_intensity, sky_intensity)
 	   math.abs(green_t - last_g) < SKY_CHANGE_THRESHOLD then
 		-- Still update lighting ratio even if sky hasn't changed
 		local current_ratio = minetest.time_to_day_night_ratio(minetest.get_timeofday())
-		local target_ratio  = lerp(current_ratio, 0.35, sky_intensity)
+		local target_ratio  = lerp(current_ratio, 0.652, sky_intensity)  -- reduced ~33% from PDS, then a further 20%
 		player:override_day_night_ratio(target_ratio)
 		return
 	end
@@ -273,21 +232,12 @@ local function update_sky(player_name, storm_intensity, sky_intensity)
 		cloud_color_intensity = lerp(0.8, 1.0, t)
 	end
 
-	-- Cloud density on a custom slow curve driven by storm_intensity:
-	-- Phase 1 (storm_intensity 0→0.5): stays thin at 0.45, sky remains open
-	-- Phase 2 first half (storm_intensity 0.5→0.75): 0.45 → 0.7
-	-- Phase 2 second half (storm_intensity 0.75→1.0): 0.7 → 1.0
-	-- Phase 3+: 1.0
-	local cloud_density
-	if storm_intensity <= 0.5 then
-		cloud_density = 0.45
-	elseif storm_intensity <= 0.75 then
-		local t = (storm_intensity - 0.5) / 0.25
-		cloud_density = lerp(0.45, 0.7, t)
-	else
-		local t = (storm_intensity - 0.75) / 0.25
-		cloud_density = lerp(0.7, 1.0, t)
-	end
+	-- Cloud density on a custom slow curve driven by storm_intensity.
+	-- Ceiling reduced ~33% from PDS (max 0.67 instead of 1.0) so the sky
+	-- never fully closes over during onslaught.
+	-- Continuous ramp from normal density (0.4) at phase 1 start to the
+	-- 0.67 ceiling at phase 3 start — no flat plateau, no sudden jump.
+	local cloud_density = lerp(0.4, 0.67, storm_intensity)
 
 	-- Sky gradient uses sky_intensity (delayed start, no green brightening issue)
 	local faded = {}
@@ -313,7 +263,7 @@ local function update_sky(player_name, storm_intensity, sky_intensity)
 
 	-- Dim outdoor lighting using sky_intensity (delayed, matches sky darkening)
 	local current_ratio = minetest.time_to_day_night_ratio(minetest.get_timeofday())
-	local target_ratio  = lerp(current_ratio, 0.35, sky_intensity)
+	local target_ratio  = lerp(current_ratio, 0.652, sky_intensity)  -- reduced ~33% from PDS, then a further 20%
 	player:override_day_night_ratio(target_ratio)
 end
 
@@ -384,73 +334,8 @@ local function stop_rain_sound(player)
 	end
 end
 
-local function start_rumble(player)
-	local pname = player:get_player_name()
-	if rumble_handles[pname] then return end  -- already playing
-
-	-- Start silent
-	local handle = minetest.sound_play("severe-storm-rumble", {
-		object = player,
-		max_hear_distance = 2,
-		loop = true,
-		gain = 0.0,
-	})
-	rumble_handles[pname] = handle
-	rumble_fading_out[pname] = false
-	rumble_fadein_end[pname] = os.time() + RUMBLE_FADE_IN
-
-	-- Manual step-based fade-in: increment gain every (RUMBLE_FADE_IN / STEPS) seconds
-	local step_time = RUMBLE_FADE_IN / RUMBLE_FADE_STEPS
-	local gain_step = RUMBLE_GAIN / RUMBLE_FADE_STEPS
-	for i = 1, RUMBLE_FADE_STEPS do
-		local target_gain = gain_step * i
-		minetest.after(step_time * i, function()
-			-- Only fade if this handle is still the active one for this player
-			if rumble_handles[pname] == handle and not rumble_fading_out[pname] then
-				minetest.sound_fade(handle, step_time, target_gain)
-			end
-		end)
-	end
-end
-
-local function stop_rumble(player)
-	local pname = player:get_player_name()
-	if not rumble_handles[pname] then return end
-	local handle = rumble_handles[pname]
-	rumble_fading_out[pname] = true
-	rumble_handles[pname] = nil
-	hw_utils.clear_sound_state(pname, "rumble")
-
-	-- Manual step-based fade-out: decrement gain every (RUMBLE_FADE_OUT / STEPS) seconds
-	local step_time = RUMBLE_FADE_OUT / RUMBLE_FADE_STEPS
-	local gain_step = RUMBLE_GAIN / RUMBLE_FADE_STEPS
-	for i = 1, RUMBLE_FADE_STEPS do
-		local target_gain = RUMBLE_GAIN - (gain_step * i)
-		minetest.after(step_time * i, function()
-			if target_gain > 0 then
-				minetest.sound_fade(handle, step_time, target_gain)
-			else
-				minetest.sound_stop(handle)
-			end
-		end)
-	end
-	-- Safety stop after full fade duration
-	minetest.after(RUMBLE_FADE_OUT + 0.5, function()
-		minetest.sound_stop(handle)
-	end)
-end
-
-local function kill_rumble(player)
-	-- Immediate stop with no fade, used on remove_player
-	local pname = player:get_player_name()
-	if rumble_handles[pname] then
-		minetest.sound_stop(rumble_handles[pname])
-		rumble_handles[pname] = nil
-	end
-	rumble_fading_out[pname] = nil
-	rumble_fadein_end[pname] = nil
-	hw_utils.clear_sound_state(pname, "rumble")
-end
+-- NOTE: start_rumble / stop_rumble / kill_rumble intentionally omitted —
+-- severe_thunderstorm has no rumble sound (PDS-only feature).
 
 ----------------------------------------------------------------
 -- Lightning
@@ -484,7 +369,7 @@ local function advance_phase()
 	phase = phase + 1
 	phase_start_time = os.time()
 	if phase == 3 then
-		onslaught_duration = 180 + math.random(0, 300)
+		onslaught_duration = 180 + math.random(0, 120)  -- 3-5 min (reduced from PDS 3-8 min)
 	end
 	if PHASE_THUNDER[phase] then
 		schedule_next_strike()
@@ -496,10 +381,11 @@ local function start_storm()
 	phase_start_time = os.time()
 	onslaught_duration = 0
 	next_strike_time = os.time() + 20  -- first distant rumble after 20s
+	hw_utils.set_severe_storm_active(true)
 
 	local weathers_to_end = {
 		"light_rain", "rain", "heavy_rain", "thunder",
-		"snow", "snowstorm", "light_fog", "moderate_fog", "heavy_fog"
+		"light_fog", "moderate_fog", "heavy_fog"
 	}
 	for _, code in ipairs(weathers_to_end) do
 		happy_weather.request_to_end(code)
@@ -518,16 +404,22 @@ end
 ----------------------------------------------------------------
 -- Happy Weather lifecycle
 ----------------------------------------------------------------
-severe_storm.is_starting = function(dtime, position)
-	if severe_storm.last_check + severe_storm.check_interval < os.time() then
-		severe_storm.last_check = os.time()
+severe_thunderstorm.is_starting = function(dtime, position)
+	if severe_thunderstorm.last_check + severe_thunderstorm.check_interval < os.time() then
+		severe_thunderstorm.last_check = os.time()
 		if phase > 0 then return false end
-		if math.random() < severe_storm.chance then
+		-- Don't start if the other severe storm tier is already active
+		if hw_utils.is_severe_storm_active() then return false end
+		if math.random() < severe_thunderstorm.chance then
 			return true
 		end
 	end
 	if manual_trigger_start then
 		manual_trigger_start = false
+		if phase == 0 and hw_utils.is_severe_storm_active() then
+			-- Other tier is running — silently ignore manual trigger
+			return false
+		end
 		return true
 	end
 	return false
@@ -535,13 +427,14 @@ end
 
 local manual_stopped = false  -- true when stopped via command rather than natural end
 
-severe_storm.is_ending = function(dtime)
+severe_thunderstorm.is_ending = function(dtime)
 	-- End only after phase 5 completes naturally
 	if phase == 5 then
 		local elapsed = os.time() - phase_start_time
 		if elapsed >= RETREAT_DURATION then
 			phase = 0
 			manual_stopped = false
+			hw_utils.set_severe_storm_active(false)
 			return true
 		end
 	end
@@ -550,6 +443,7 @@ severe_storm.is_ending = function(dtime)
 		manual_trigger_end = false
 		manual_stopped = true
 		phase = 0
+		hw_utils.set_severe_storm_active(false)
 		return true
 	end
 
@@ -558,18 +452,22 @@ end
 
 local render_timer = {}
 
-severe_storm.in_area = function(position)
+severe_thunderstorm.in_area = function(position)
+	-- Severe storms don't occur in frozen or dry biomes
+	if hw_utils.is_biome_frozen(position) or
+		hw_utils.is_biome_dry(position) then
+		return false
+	end
 	return position.y > -10 and position.y < 200
 end
 
-severe_storm.add_player = function(player)
+severe_thunderstorm.add_player = function(player)
 	start_storm()
 end
 
-severe_storm.remove_player = function(player)
+severe_thunderstorm.remove_player = function(player)
 	local pname = player:get_player_name()
 	stop_rain_sound(player)
-	kill_rumble(player)
 	last_sky_intensity[pname] = nil
 	last_sky_green[pname] = nil
 	render_timer[pname] = nil
@@ -612,7 +510,7 @@ end
 ----------------------------------------------------------------
 -- Render
 ----------------------------------------------------------------
-severe_storm.render = function(dtime, player)
+severe_thunderstorm.render = function(dtime, player)
 	local pname = player:get_player_name()
 	local now = os.time()
 
@@ -690,15 +588,7 @@ severe_storm.render = function(dtime, player)
 		sound_handles[pname] = hw_utils.update_weather_sound(
 			sound_handles[pname], "heavy_rain", dtime, player)
 
-		-- Start rumble if not already playing
-		start_rumble(player)
-		-- Keep rumble shelter-aware using dedicated rumble profile
-		-- Skip shelter adjustment during fade-in to avoid interrupting it
-		if rumble_handles[pname] and
-		   (not rumble_fadein_end[pname] or os.time() >= rumble_fadein_end[pname]) then
-			rumble_handles[pname] = hw_utils.update_weather_sound(
-				rumble_handles[pname], "rumble", dtime, player)
-		end
+		-- No rumble sound for severe_thunderstorm (PDS-only feature)
 
 		local shelter = hw_utils.get_shelter_factor(player)
 		if shelter < 0.6 then
@@ -729,10 +619,7 @@ severe_storm.render = function(dtime, player)
 
 	elseif phase == 4 then
 		-- Unwind: mirrors Build in reverse
-		-- Trigger rumble fade-out once at phase 4 start
-		if rumble_handles[pname] and not rumble_fading_out[pname] then
-			stop_rumble(player)
-		end
+		-- (no rumble to fade out — PDS-only feature)
 		local unwind_t = math.min(elapsed / UNWIND_DURATION, 1.0)
 		local reversed_t = 1.0 - unwind_t  -- treat as if counting down build progress
 		local wanted_file, sound_profile = rain_type_for_progress(reversed_t)
@@ -778,12 +665,12 @@ severe_storm.render = function(dtime, player)
 	end
 end
 
-severe_storm.start = function()
+severe_thunderstorm.start = function()
 	manual_trigger_start = true
 end
 
-severe_storm.stop = function()
+severe_thunderstorm.stop = function()
 	manual_trigger_end = true
 end
 
-happy_weather.register_weather(severe_storm)
+happy_weather.register_weather(severe_thunderstorm)

@@ -13,13 +13,13 @@ minetest.register_privilege("weather_manager", {
 })
 
 local weather_codes = "light_rain, rain, heavy_rain, thunder, snow, snowstorm, " ..
-	"light_fog, moderate_fog, heavy_fog, severe_storm"
+	"light_fog, moderate_fog, heavy_fog, severe_thunderstorm, pds_severe_thunderstorm"
 
 local all_weather_codes = {
 	"light_rain", "rain", "heavy_rain", "thunder",
 	"snow", "snowstorm",
 	"light_fog", "moderate_fog", "heavy_fog",
-	"severe_storm"
+	"severe_thunderstorm", "pds_severe_thunderstorm"
 }
 
 ----------------------------------------------------------------
@@ -40,13 +40,35 @@ local function set_disabled(code, value)
 end
 
 ----------------------------------------------------------------
+-- Weather codes suppressed while a severe storm (either tier) is active.
+-- Rain and fog types are suppressed since severe storms take over the sky
+-- and supersede them. Thunder is suppressed so it doesn't layer additional
+-- uncoordinated lightning on top of the severe storm's own strikes.
+-- Snow/snowstorm are intentionally excluded — severe storms are biome
+-- restricted away from frozen areas, so there's no overlap to guard against.
+----------------------------------------------------------------
+local SUPPRESSED_DURING_SEVERE_STORM = {
+	light_rain = true,
+	rain = true,
+	heavy_rain = true,
+	thunder = true,
+	light_fog = true,
+	moderate_fog = true,
+	heavy_fog = true,
+}
+
+----------------------------------------------------------------
 -- Intercept happy_weather.request_to_start to enforce disabled state
+-- and severe storm suppression
 ----------------------------------------------------------------
 local original_request_to_start = happy_weather.request_to_start
 
 happy_weather.request_to_start = function(code)
 	if is_disabled(code) then
 		return  -- silently block natural triggers
+	end
+	if SUPPRESSED_DURING_SEVERE_STORM[code] and hw_utils.is_severe_storm_active() then
+		return  -- silently block while severe storm is active
 	end
 	original_request_to_start(code)
 end
@@ -59,6 +81,9 @@ happy_weather.register_weather = function(weather)
 	local original_is_starting = weather.is_starting
 	weather.is_starting = function(dtime, position)
 		if is_disabled(weather.code) then
+			return false
+		end
+		if SUPPRESSED_DURING_SEVERE_STORM[weather.code] and hw_utils.is_severe_storm_active() then
 			return false
 		end
 		return original_is_starting(dtime, position)
@@ -216,10 +241,11 @@ minetest.register_chatcommand("enable_weather", {
 
 minetest.register_chatcommand("weather_status", {
 	params = "",
-	description = "Displays currently active weather conditions and any disabled weathers.",
+	description = "Displays currently active, enabled, and disabled weather conditions.",
 	privs = {weather_manager = true},
 	func = function(name, param)
 		local active = {}
+		local enabled = {}
 		local disabled = {}
 
 		for _, code in ipairs(all_weather_codes) do
@@ -228,19 +254,21 @@ minetest.register_chatcommand("weather_status", {
 			end
 			if is_disabled(code) then
 				table.insert(disabled, code)
+			else
+				table.insert(enabled, code)
 			end
 		end
 
-		if #active == 0 then
-			minetest.chat_send_player(name, "Active weather: None")
-		else
-			minetest.chat_send_player(name, "Active weather: " .. table.concat(active, ", "))
+		local function format_line(label, list)
+			if #list == 0 then
+				return label .. ": None"
+			end
+			return label .. ": " .. table.concat(list, ", ")
 		end
 
-		if #disabled == 0 then
-			minetest.chat_send_player(name, "Disabled weather: None")
-		else
-			minetest.chat_send_player(name, "Disabled weather: " .. table.concat(disabled, ", "))
-		end
+		minetest.chat_send_player(name, "--- Weather Status ---")
+		minetest.chat_send_player(name, format_line("Active", active))
+		minetest.chat_send_player(name, format_line("Enabled", enabled))
+		minetest.chat_send_player(name, format_line("Disabled", disabled))
 	end
 })

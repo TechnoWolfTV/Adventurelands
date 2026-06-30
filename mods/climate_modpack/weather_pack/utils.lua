@@ -203,7 +203,7 @@ local SOUND_PROFILES = {
 	heavy_rain  = { base_gain = 1.0,  indoor_gain = 0.35, cave_gain = 0.0  },
 	snowstorm   = { base_gain = 0.6,  indoor_gain = 0.08, cave_gain = 0.0  },
 	thunder     = { base_gain = 1.0,  indoor_gain = 0.6,  cave_gain = 0.15 },
-	rumble      = { base_gain = 0.54, indoor_gain = 0.32, cave_gain = 0.08 },
+	rumble      = { base_gain = 0.51, indoor_gain = 0.31, cave_gain = 0.08 },
 }
 
 -- Interpolate gain from a profile given a shelter_factor in [0.0, 1.0].
@@ -300,3 +300,23 @@ minetest.register_on_leaveplayer(function(player)
 	sound_update_timers[pname] = nil
 	sound_last_shelter[pname] = nil
 end)
+
+----------------------------------------------------------------
+-- Severe storm active flag
+--
+-- Set by severe_thunderstorm.lua and pds_severe_thunderstorm.lua
+-- when they start/stop. Used to suppress competing rain/fog/thunder
+-- weather from starting (or restarting mid-storm) while a severe
+-- storm is in progress. Snow/snowstorm are intentionally excluded
+-- since severe storms are biome-restricted away from frozen areas
+-- and there's no overlap scenario to guard against.
+----------------------------------------------------------------
+local severe_storm_active = false
+
+hw_utils.set_severe_storm_active = function(active)
+	severe_storm_active = active
+end
+
+hw_utils.is_severe_storm_active = function()
+	return severe_storm_active
+end
