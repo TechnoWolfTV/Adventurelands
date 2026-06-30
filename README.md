@@ -6,7 +6,7 @@
 
 A Luanti (formerly Minetest) game featuring exploration, mining, crafting, building and survival with monsters and animals. Adventurelands includes carefully selected mods for an optimal balance between form and function.
 
-Version: 1.0.61
+Version: 1.0.62
 
 ---
 

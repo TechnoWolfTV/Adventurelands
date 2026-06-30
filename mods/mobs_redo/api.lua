@@ -17,7 +17,7 @@ end
 -- global table
 
 mobs = {
-	mod = "redo", version = "20260625",
+	mod = "redo", version = "20260629",
 	spawning_mobs = {}, translate = S,
 	node_snow = has(core.registered_aliases["mapgen_snow"])
 			or has("mcl_core:snow") or has("default:snow") or "air",
@@ -316,8 +316,9 @@ local function check_for(look_for, look_inside)
 		if type(str) == "string" and str:sub(1, 6) == "group:" then
 
 			local group = str:match("^group:(.*)$") or ""
+			local def = core.registered_items[look_for]
 
-			if core.get_item_group(look_for, group) ~= 0 then return true end
+			if def and def.groups[group] and def.groups[group] ~= 0 then return true end
 		end
 	end
 end
@@ -2451,9 +2452,18 @@ function mob_class:falling(pos)
 		if d > 6 then -- stay consistent with player fall damage
 
 			local damage = d - 6
-			local add = core.get_item_group(self.standing_on, "fall_damage_add_percent")
+			local prop = self.object:get_properties()
+			local y_level = prop.collisionbox[2]
+			local pos = self.object:get_pos()
 
-			if add ~= 0 then
+			-- get current block below mob to check for fall damage modifier
+			self.standing_on = node_ok(
+					{x = pos.x, y = pos.y + y_level - 0.25, z = pos.z}, "air").name
+
+			local def = core.registered_nodes[self.standing_on]
+			local add = def and def.groups.fall_damage_add_percent
+
+			if add and add ~= 0 then
 				damage = damage + damage * (add / 100)
 			end
 
