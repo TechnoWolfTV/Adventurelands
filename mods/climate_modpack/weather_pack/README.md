@@ -16,6 +16,8 @@ Weathers included
 * `light_rain` — Light drizzle
 * `rain` — Moderate rain
 * `heavy_rain` — Heavy rain
+* `overcast` — Overcast sky with no precipitation
+* `clear` — Cloudless blue sky
 * `snow` — Light snowfall
 * `snowstorm` — Blizzard conditions
 * `thunder` — Lightning and thunder (works together with heavy_rain)
@@ -29,6 +31,28 @@ Weathers included
   The rare, full-intensity severe thunderstorm with an ominous green sky,
   full darkness, a low rumble during onslaught, and frequent close lightning.
 
+Spawn Frequencies
+-----------------------
+All chances are approximate. Each weather rolls independently on its own
+check interval; a roll only succeeds if that weather's conditions are met
+(right biome, no conflicting weather active, etc.).
+
+| Weather                    | Chance  | Check Interval |
+|----------------------------|---------|----------------|
+| thunder                    | 0.8     | 100s           |
+| snow                       | 0.05    | 200s           |
+| light_rain                 | 0.0375  | 200s           |
+| rain                       | 0.025   | 300s           |
+| overcast                   | 0.025   | 300s           |
+| clear                      | 0.025   | 300s           |
+| light_fog                  | 0.025   | 300s           |
+| heavy_rain                 | 0.015   | 200s           |
+| moderate_fog               | 0.015   | 200s           |
+| severe_thunderstorm        | 0.015   | 400s           |
+| snowstorm                  | 0.0125  | 300s           |
+| pds_severe_thunderstorm    | 0.0075  | 400s           |
+| dense_fog                  | 0.0075  | 400s           |
+
 Commands
 -----------------------
 Requires `weather_manager` privilege.
@@ -40,7 +64,7 @@ Requires `weather_manager` privilege.
   * `weather_status` — Display active (with elapsed time), enabled, and disabled weather, one category per line, comma-separated
 
 Available weather codes:
-`light_rain`, `rain`, `heavy_rain`, `thunder`, `snow`, `snowstorm`,
+`light_rain`, `rain`, `heavy_rain`, `overcast`, `clear`, `thunder`, `snow`, `snowstorm`,
 `light_fog`, `moderate_fog`, `dense_fog`, `severe_thunderstorm`, `pds_severe_thunderstorm`
 
 Be aware that weather may not be visible for a player until they are

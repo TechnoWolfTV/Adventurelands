@@ -12,11 +12,11 @@ minetest.register_privilege("weather_manager", {
 	give_to_singleplayer = false
 })
 
-local weather_codes = "light_rain, rain, heavy_rain, thunder, snow, snowstorm, " ..
+local weather_codes = "light_rain, rain, heavy_rain, overcast, clear, thunder, snow, snowstorm, " ..
 	"light_fog, moderate_fog, dense_fog, severe_thunderstorm, pds_severe_thunderstorm"
 
 local all_weather_codes = {
-	"light_rain", "rain", "heavy_rain", "thunder",
+	"light_rain", "rain", "heavy_rain", "overcast", "clear", "thunder",
 	"snow", "snowstorm",
 	"light_fog", "moderate_fog", "dense_fog",
 	"severe_thunderstorm", "pds_severe_thunderstorm"
@@ -51,6 +51,8 @@ local SUPPRESSED_DURING_SEVERE_STORM = {
 	light_rain = true,
 	rain = true,
 	heavy_rain = true,
+	overcast = true,
+	clear = true,
 	thunder = true,
 	light_fog = true,
 	moderate_fog = true,

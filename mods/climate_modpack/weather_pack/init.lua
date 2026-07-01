@@ -23,6 +23,8 @@ dofile(modpath.."/utils.lua")
 dofile(modpath.."/weathers/light_rain.lua")
 dofile(modpath.."/weathers/rain.lua")
 dofile(modpath.."/weathers/heavy_rain.lua")
+dofile(modpath.."/weathers/overcast.lua")
+dofile(modpath.."/weathers/clear.lua")
 dofile(modpath.."/weathers/snow.lua")
 dofile(modpath.."/weathers/snowstorm.lua")
 

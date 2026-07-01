@@ -80,6 +80,14 @@ frequency to better suit long-play sessions:
 
 -- Modifications to existing weather types --
 
+- weathers/overcast.lua: New weather type applying heavy_rain's sky and
+  cloud colors with no rain, sound, or lighting changes. Sky-only overcast
+  effect. Frequency matches rain (chance 0.025, check_interval 300s).
+
+- weathers/clear.lua: New weather type that disables clouds and lets
+  Luanti's default blue sky render unmodified. No sky layer, no particles,
+  no sound, no lighting changes. Frequency matches overcast.
+
 - weathers/heavy_rain.lua: Sky, sound, and rain particles all fade in over
   10 seconds on entry and out over 10 seconds on exit instead of switching
   instantly. Minimum active duration enforced before any end request is
