@@ -226,22 +226,19 @@ core.register_entity(":__builtin:item", {
 			return -- Can not merge different or full stack
 		end
 
-		local count = own_stack:get_count()
-		local total_count = stack:get_count() + count
+		local total_count = stack:get_count() + own_stack:get_count()
 
 		if total_count > stack:get_stack_max() then return end
 
 		-- Merge the remote stack into this one
-		local pos = object:get_pos()
-		local self_pos = self.object:get_pos()
+		local pos, self_pos = object:get_pos(), self.object:get_pos()
 
 		self.age = 0 -- Reset age
 		self.object:move_to(vector.offset(pos,
 				(self_pos.x - pos.x) / 2, 0, (self_pos.z - pos.z) / 2))
 
 		-- Merge velocities
-		local vel_a = self.object:get_velocity()
-		local vel_b = object:get_velocity()
+		local vel_a, vel_b = self.object:get_velocity(), object:get_velocity()
 
 		self.object:set_velocity({
 			x = (vel_a.x + vel_b.x) / 2,
@@ -422,15 +419,12 @@ core.register_entity(":__builtin:item", {
 
 		local this_dry_friction = dry_friction
 
-		if self.slippery_state then
+		-- apply slip factor (tiny friction that depends on the actual block type)
+		if self.slippery_state and (math_abs(vel.x) > 0.2 or math_abs(vel.z) > 0.2) then
 
-			-- apply slip factor (tiny friction that depends on the actual block type)
-			if math_abs(vel.x) > 0.2 or math_abs(vel.z) > 0.2 then
+			local slippery = self.def_under and self.def_under.groups.slippery
 
-				local slippery = self.def_under and self.def_under.groups.slippery
-
-				this_dry_friction = 4.0 / (slippery + 4)
-			end
+			this_dry_friction = 4.0 / (slippery + 4)
 		end
 
 		self.accel.x = self.accel.x - vel.x * this_dry_friction

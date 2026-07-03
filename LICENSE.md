@@ -155,6 +155,7 @@ made to the below listed works are officially made on or after 5 March 2024.
 - **Dungeons Plus**
   - Location: `./mods/dungeonsplus/`
   - License file: `./mods/dungeonsplus/LICENSE`
+  - Changes were made to this work
 - **Edit Skin**
   - Location: `./mods/edit_skin/`
   - License file: `./mods/edit_skin/LICENSE.txt`
@@ -240,7 +241,11 @@ made to the below listed works are officially made on or after 5 March 2024.
   - Location: `./mods/minetest_game/`
   - License files: `./mods/minetest_game/**/license.txt`
   - Changes were made to this work
-- **MOB Horse**
+- **Minislots**
+  - Location: `./mods/minislots/`
+  - License files: `./mods/minislots/LICENSE`
+  - Changes were made to this work
+- **Mob Horse**
   - Location: `./mods/mob_horse/`
   - License file: `./mods/mob_horse/license.txt`
 - **Animal Mobs**
@@ -403,6 +408,10 @@ made to the below listed works are officially made on or after 5 March 2024.
 - **Xcompat**
   - Location: `./mods/xcompat/`
   - License file: `./mods/xcompat/LICENSE`
+- **Zombies**
+  - Location: `./mods/zombies/`
+  - License file: `./mods/zombies/license.txt`
+  - Changes were made to this work
 
 ---
 

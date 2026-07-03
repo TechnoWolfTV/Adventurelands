@@ -50,7 +50,12 @@ end
 --  DUNGEON MAPPING  --
 -- ----------------- --
 
-local mgdungeons = core.settings:get("mg_flags"):find("dungeons") and true or false
+-- Modified by TechnoWolfTV (2026-07-02): read mg_flags via
+-- core.get_mapgen_setting so the world's active mapgen flags are used
+-- (core.settings:get crashed when unset and could disagree with the
+-- world), and treat "nodungeons" as dungeons disabled. See LICENSE.
+local mgflags = core.get_mapgen_setting("mg_flags") or ""
+local mgdungeons = (mgflags:find("dungeons") and not mgflags:find("nodungeons")) and true or false
 local function noop() end
 
 local surfaces = {

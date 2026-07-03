@@ -7,3 +7,21 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+---
+
+Modification notice (July 2, 2026):
+
+This copy of dungeonsplus has been modified by TechnoWolfTV for the
+Adventurelands game. Change from upstream (init.lua, line 53):
+
+  The mapgen dungeon detection previously read `mg_flags` from
+  core.settings (minetest.conf only), which crashed when the setting was
+  absent and silently disabled the mod when minetest.conf disagreed with
+  the world's actual mapgen flags. It now uses
+  core.get_mapgen_setting("mg_flags"), which reflects the active
+  world/map_meta value, and correctly treats the "nodungeons" flag as
+  dungeons being disabled.
+
+Original work Copyright © 2025 EmptyStar <https://github.com/EmptyStar>,
+MIT License as stated above. Modifications are released under the same
+MIT License.
