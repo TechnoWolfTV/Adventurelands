@@ -287,3 +287,23 @@ minislots.register_machine({
 		paylines_img_padding = 0.3		-- extra blank space to add below pay lines graphic
 	}
 })
+
+-- Crafting recipe for the Golden 7's Deluxe slot machine.
+--
+-- Materials:
+--   4x gold block     (= 36 gold ingots) -- gold cabinet trim and coin mechanism
+--   1x mese block     (= 9 mese crystals)-- advanced RNG electronics
+--   1x obsidian glass                    -- toughened display window
+--   1x diamond block  (= 9 diamonds)     -- precision high-grade components
+--   1x 100 Mg note                       -- larger seed float for the bigger machine
+--   1x acacia wood                       -- cabinet body
+--
+core.register_craft({
+	output = "minislots:golden7s_deluxe",
+	recipe = {
+		{"default:goldblock",    "default:mese",    "default:goldblock"},
+		{"default:goldblock",    "default:obsidian_glass","default:goldblock"},
+		{"default:diamondblock",  "currency:minegeld_100", "default:acacia_wood"},
+	},
+})
+core.log("action", "[Minislots] Registered crafting recipe for minislots:golden7s_deluxe")

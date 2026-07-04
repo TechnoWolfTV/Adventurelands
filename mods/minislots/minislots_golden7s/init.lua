@@ -195,3 +195,23 @@ minislots.register_machine({
 		paylines_img_padding = 0.25-- extra blank space to add below pay lines graphic
 	}
 })
+
+-- Crafting recipe for the Golden 7's slot machine.
+--
+-- Materials:
+--   4x gold block                       -- gold cabinet trim and coin mechanism
+--   1x mese block                       -- RNG electronics
+--   1x obsidian glass                   -- toughened display window
+--   1x diamond                          -- precision components
+--   1x 50 Mg note                       -- seed float (money built into the machine)
+--   1x acacia wood                      -- cabinet body
+--
+core.register_craft({
+	output = "minislots:golden7s",
+	recipe = {
+		{"default:goldblock",    "default:mese",    "default:goldblock"},
+		{"default:goldblock",    "default:obsidian_glass","default:goldblock"},
+		{"default:diamond",       "currency:minegeld_50",  "default:acacia_wood"},
+	},
+})
+core.log("action", "[Minislots] Registered crafting recipe for minislots:golden7s")

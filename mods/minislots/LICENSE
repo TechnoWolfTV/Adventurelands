@@ -156,6 +156,19 @@ unless otherwise stated.
         Golden 7s: lineheight 0.65->0.52, textheight 0.45->0.38.
         Golden 7s Deluxe: lineheight 0.50->0.43, textheight 0.35->0.30.
 
+    minislots_golden7s/init.lua  -- crafting recipe
+    minislots_golden7s_deluxe/init.lua  -- crafting recipe
+      - Added shaped 3x3 crafting recipes (absent from the original proof-of-concept).
+        Golden 7s: 4x default:goldblock, 1x default:mese,
+          1x default:obsidian_glass, 1x default:diamond,
+          1x currency:minegeld_50, 1x default:acacia_wood.
+        Golden 7s Deluxe: 4x default:goldblock, 1x default:mese,
+          1x default:obsidian_glass, 1x default:diamondblock,
+          1x currency:minegeld_100, 1x default:acacia_wood.
+        The currency note is a seed float -- money built into the machine.
+        The Deluxe is gated behind a diamond block, making it
+        a genuine end-game crafting goal.
+
 ###############################################################################
 
 

@@ -44,6 +44,37 @@ It is not a mod and is never loaded by the game. If you want to edit the
 original artwork, the work files are available in the upstream repository:
 https://github.com/mt-mods/minislots
 
+## Crafting Recipes
+
+Both machines use shaped 3×3 recipes and display correctly in Unified Inventory.
+The Minegeld note is the seed float — money built into the machine on assembly.
+
+**Golden 7's**
+
+| | Left | Centre | Right |
+|---|---|---|---|
+| **Top** | `default:goldblock` | `default:mese` | `default:goldblock` |
+| **Mid** | `default:goldblock` | `default:obsidian_glass` | `default:goldblock` |
+| **Bot** | `default:diamond` | `currency:minegeld_50` | `default:acacia_wood` |
+
+Cost breakdown: 4× gold block, 1× mese block, 1× obsidian glass, 1× diamond,
+1× 50 Mg note, 1× acacia wood plank.
+
+**Golden 7's Deluxe**
+
+| | Left | Centre | Right |
+|---|---|---|---|
+| **Top** | `default:goldblock` | `default:mese` | `default:goldblock` |
+| **Mid** | `default:goldblock` | `default:obsidian_glass` | `default:goldblock` |
+| **Bot** | `default:diamondblock` | `currency:minegeld_100` | `default:acacia_wood` |
+
+Cost breakdown: 4× gold block, 1× mese block, 1× obsidian glass, 1× diamond block,
+1× 100 Mg note, 1× acacia wood plank.
+
+The Deluxe is a serious end-game investment, requiring a full diamond block and
+obsidian glass among its materials. Both machines can
+be picked up and re-placed without losing their balance, statistics, or casino name.
+
 ## Server Administration Commands
 
 Three chat commands are available to server operators (requires `server` privilege):
@@ -345,3 +376,36 @@ WHETHER TANGIBLE OR INTANGIBLE, PHYSICAL OR ELECTRONIC.
 NO CLAIMS REGARDING THE FITNESS OF THIS PROJECT FOR ANY PURPOSE ARE HEREIN
 MADE, AND NO WARRANTY OR GUARANTEE OF ANY KIND IS OFFERED BY ANY PARTY.  SEE
 ALSO, "LICENSE" IN THE MAIN PROJECT DIRECTORY.
+
+---
+
+### Additional Notes (added by the TechnoWolfTV fork)
+
+The following notes supplement — and do not modify — the disclaimer above.
+
+This modpack is a work of interactive fiction that *simulates* the appearance
+of casino slot machines for entertainment within the game world. It is not a
+gambling product:
+
+- **No real money is involved.** There is no mechanism in this modpack to
+  purchase in-game currency with real-world money, and no mechanism to convert
+  in-game winnings into real-world money, goods, or anything of real value.
+  The in-game "Minegeld" is provided by a separate fictional-currency mod and
+  has no cash value.
+- **No real-value prizes.** Nothing won, lost, or wagered in these machines
+  has any value outside the game world.
+- **Server operators:** you are responsible for how you deploy this modpack.
+  Do not connect the in-game currency to anything of real-world value — for
+  example by selling in-game currency for real money, allowing players to cash
+  out, tying wagers to real-money donations or perks, or bridging the currency
+  to cryptocurrency or other tradeable real-value assets. Doing so may cause
+  the deployment to be treated as real gambling under the laws of your
+  jurisdiction, which vary by country and region. The authors and contributors
+  of this modpack accept no responsibility for such use.
+- **Content note.** Because this modpack simulates gambling, server operators
+  and parents may wish to consider its suitability for younger or vulnerable
+  players, and any applicable content-rating or platform requirements.
+
+Nothing in these notes is legal advice. If you are unsure whether deploying
+this modpack in a particular way is lawful where you are, consult a qualified
+lawyer in your jurisdiction.
