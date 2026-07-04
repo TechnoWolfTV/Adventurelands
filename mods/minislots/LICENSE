@@ -156,6 +156,74 @@ unless otherwise stated.
         Golden 7s: lineheight 0.65->0.52, textheight 0.45->0.38.
         Golden 7s Deluxe: lineheight 0.50->0.43, textheight 0.35->0.30.
 
+    minislots_engine/engine.lua  (pass 5 -- sound system)
+      - Added sound triggers in cycle_states: a spinning loop starts with the
+        spin and loops continuously through the entire spin cycle, stopping
+        only once all reels have settled; a reel-stop sound fires once as each
+        reel locks in, played over the still-looping spin sound; win sounds
+        play on entering win states (small win / large win / jackpot each use
+        a different sound). The spin loop is also stopped on any interruption
+        (watchdog timeout, maintenance eject) to avoid an orphaned loop.
+      - Added a coin-insert sound in allow_metadata_inventory_put.
+      - Added a per-player sound mute toggle. Sounds are delivered per-player
+        (core.sound_play with to_player) and the mute flag simply suppresses
+        this modpack's own sounds for that player; it never alters the Luanti
+        client's master volume or any other mod's audio. The mute state is
+        persisted per-player in mod storage across sessions and machines.
+      - Added a "Sound On/Off" image_button to each machine's main UI
+        (generate_display), on the Help/Pays row. It is an image_button (plain
+        button[] elements do not render in this image-based formspec). Clicking
+        it toggles the player's mute flag and confirms the new state in chat.
+        jackpot_win_threshold was added to each machine definition so the
+        jackpot fanfare fires on the correct top-tier win.
+
+    minislots_engine/sounds/  (new directory -- all assets CC0)
+      All sound assets are dedicated to the public domain under the Creative
+      Commons Zero (CC0) license. No attribution is required, but the
+      following credits are provided in the spirit of good practice:
+
+      minislots_spin_loop.ogg
+        Source: "ES_Slot Machine 41 - SFX Producer" by simbakademzeb1
+        URL: https://freesound.org/people/simbakademzeb1/sounds/681107/
+        License: Creative Commons 0
+
+      minislots_reel_stop.ogg
+        Source: "Pleasing Bell Sound Effect" by Spring Spring
+        URL: https://opengameart.org/content/pleasing-bell-sound-effect
+        License: Creative Commons 0
+
+      minislots_coin_insert.ogg
+        Source: "Coin Drop" by Vinrax
+        URL: https://opengameart.org/content/coin-drop
+        License: Creative Commons 0
+
+      minislots_win.ogg
+        Source: "Win sound effect" by Listener
+        URL: https://opengameart.org/content/win-sound-effect
+        License: Creative Commons 0
+
+      minislots_win_jingle.ogg
+        Source: "Win Jingle" by Fupi
+        URL: https://opengameart.org/content/win-jingle
+        License: Creative Commons 0
+
+      minislots_jackpot.ogg
+        Source: "Hyper-Ultra-Fanfare" by Zane Little Music
+        URL: https://opengameart.org/content/hyper-ultra-fanfare
+        License: Creative Commons 0
+
+      All audio files were trimmed (dead air removed), volume-normalized for
+      consistent playback levels (EBU R128), and encoded to OGG Vorbis format
+      as required by the Luanti engine.
+
+    minislots_golden7s/textures/minislots_golden7s_button_sound.png
+    minislots_golden7s_deluxe/textures/minislots_golden7s_deluxe_button_sound.png
+      The "Sound On/Off" mute-toggle button image was created for this fork by
+      TechnoWolfTV, in the visual style of the machines' existing buttons. Like
+      all of this fork's original contributions it is released under the same
+      terms as the modpack (see the modification notice above and the original
+      license terms below).
+
     minislots_golden7s/init.lua  -- crafting recipe
     minislots_golden7s_deluxe/init.lua  -- crafting recipe
       - Added shaped 3x3 crafting recipes (absent from the original proof-of-concept).

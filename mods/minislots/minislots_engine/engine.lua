@@ -146,8 +146,48 @@ local words_magnitudes = {
 minislots.player_last_machine_def = {}
 minislots.player_last_machine_pos = {}
 
+-- Mod storage: used for maintenance flag, player sound prefs, etc.
+-- Must be obtained at load time; core.get_mod_storage() is not valid in callbacks.
+local minislots_storage = core.get_mod_storage()
+
+-- Per-player mute preference (persisted in mod storage under "snd_mute_<name>").
+-- Active spin-loop sound handles, keyed by core.hash_node_position(pos).
+local spin_handles = {}
+
+function minislots.is_player_muted(name)
+	return minislots_storage:get_string("snd_mute_"..name) == "true"
+end
+
+function minislots.set_player_mute(name, muted)
+	minislots_storage:set_string("snd_mute_"..name, muted and "true" or "false")
+end
+
+-- Play a sound directly to a specific player (not spatial/positional).
+-- Using to_player ensures the sound reaches the player regardless of their
+-- physical distance from the machine node. Silent if the player has muted.
+-- Returns the sound handle (or nil if muted).
+function minislots.play_sound(player_name, snd_name, pos, looped)
+	if minislots.is_player_muted(player_name) then return nil end
+	return core.sound_play(snd_name, {
+		to_player = player_name,
+		gain = 1.0,
+		loop = looped or false,
+	})
+end
+
+-- Stop the spinning sound loop for a machine at pos.
+function minislots.stop_spin_sound(pos)
+	local key = core.hash_node_position(pos)
+	if spin_handles[key] then
+		core.sound_stop(spin_handles[key])
+		spin_handles[key] = nil
+	end
+end
+
 core.register_on_leaveplayer(function(player)
 	local name = player:get_player_name()
+	local pos = minislots.player_last_machine_pos[name]
+	if pos then minislots.stop_spin_sound(pos) end
 	minislots.player_last_machine_def[name] = nil
 	minislots.player_last_machine_pos[name] = nil
 end)
@@ -627,6 +667,10 @@ function minislots.register_machine(mdef)
 						return
 					end
 				end
+				-- Always regenerate the stored formspec on right-click of an idle
+				-- machine. This guarantees the current UI (including the sound
+				-- mute button) is present even on machines whose stored formspec
+				-- predates a mod update.
 				local spin = core.deserialize(meta:get_string("spin"))
 				local linebet = meta:get_int("linebet")
 				local maxlines = meta:get_int("maxlines")
@@ -640,6 +684,7 @@ function minislots.register_machine(mdef)
 						linebet = linebet,
 						maxlines = maxlines,
 						pos = pos,
+						player_name = player_name,
 						admin = default.can_interact_with_node(clicker, pos)
 					})
 				)
@@ -809,7 +854,7 @@ function minislots.register_machine(mdef)
 				-- credited in allow_metadata_inventory_put, so just accept
 				-- it without disturbing the running machine
 				core.show_formspec(player_name, "minislots:cash_intake",
-					minislots.generate_cashslot_form(def, pos, balance))
+					minislots.generate_cashslot_form(def, pos, balance, player_name))
 				return
 			end
 			timer:stop()
@@ -823,11 +868,12 @@ function minislots.register_machine(mdef)
 					balance = balance,
 					linebet = linebet,
 					maxlines = maxlines,
+					player_name = player_name,
 					admin = default.can_interact_with_node(player, pos)
 				})
 			)
 			core.show_formspec(player_name, "minislots:cash_intake",
-				minislots.generate_cashslot_form(def, pos, balance))
+				minislots.generate_cashslot_form(def, pos, balance, player_name))
 		end,
 		allow_metadata_inventory_put = function(pos, listname, index, stack, player)
 			-- refuse money while the machine is in maintenance
@@ -855,6 +901,9 @@ function minislots.register_machine(mdef)
 						balance = balance + amount
 						meta:set_int("balance", balance)
 						meta:set_int("money_in", meta:get_int("money_in") + amount)
+						-- coin insert sound
+						local pname = player:get_player_name()
+						minislots.play_sound(pname, "minislots_coin_insert", pos, false)
 						return allowed
 					end
 				end
@@ -922,11 +971,23 @@ function minislots.register_machine(mdef)
 				end
 			elseif fields.cslot then
 				core.show_formspec(player_name, "minislots:cash_intake",
-					minislots.generate_cashslot_form(def, pos, balance))
+					minislots.generate_cashslot_form(def, pos, balance, player_name))
 				return
 			elseif fields.help then
 				core.show_formspec(player_name, "minislots:help_screen",
 					minislots.generate_paytable_form(def))
+				return
+			elseif fields.snd_mute then
+				-- toggle this player's machine-sound mute flag. Only affects
+				-- this mod's sounds (play_sound honors the flag); the player's
+				-- Luanti client volume is untouched. We confirm via chat because
+				-- the button lives in the shared node-meta formspec and cannot
+				-- show per-player state in its label.
+				local now_muted = not minislots.is_player_muted(player_name)
+				minislots.set_player_mute(player_name, now_muted)
+				core.chat_send_player(player_name, now_muted
+					and "[Minislots] Machine sounds are now OFF for you."
+					or  "[Minislots] Machine sounds are now ON for you.")
 				return
 			elseif fields.cout then
 				if at_rest and balance > 0 and balance <= def.maxbalance then
@@ -967,6 +1028,7 @@ function minislots.register_machine(mdef)
 								maxlines = maxlines,
 								last_cashout = last_cashout,
 								pos = pos,
+								player_name = player_name,
 								casino_name = casino_name,
 								admin = default.can_interact_with_node(sender, pos)
 							})
@@ -1106,6 +1168,13 @@ function minislots.cycle_states(pos)
 		meta:set_int("total_bets", meta:get_int("total_bets")+linebet*maxlines)
 		state = "spinning_fast_0"
 		timeout = def.reel_fast_timeout
+		-- start the spinning loop sound (stop any stale handle first so every
+		-- spin begins from a clean state, then loop for the whole spin cycle)
+		if last_right_clicker ~= "" then
+			minislots.stop_spin_sound(pos)
+			local key = core.hash_node_position(pos)
+			spin_handles[key] = minislots.play_sound(last_right_clicker, "minislots_spin_loop", pos, true)
+		end
 	elseif string.find(state, "spinning_fast_") then
 		local c = tonumber(string.sub(state, 15))
 		c = c + 2
@@ -1138,11 +1207,23 @@ function minislots.cycle_states(pos)
 		end
 	elseif string.find(state, "reels_stopping_") then
 		local sr = tonumber(string.sub(state, 16))
+		-- Fire the stop sound once as each reel locks in. The spin loop keeps
+		-- playing underneath (it is stopped later, once ALL reels have settled).
+		-- Reels lock one per inter_reel_steps frames, starting at slow_stop_cutover.
+		local steps_in = sr - def.constants.slow_stop_cutover
+		if steps_in >= 0 and steps_in % def.inter_reel_steps == 0 then
+			local reel_idx = math.floor(steps_in / def.inter_reel_steps)
+			if reel_idx < def.constants.numreels and last_right_clicker ~= "" then
+				minislots.play_sound(last_right_clicker, "minislots_reel_stop", pos, false)
+			end
+		end
 		sr = sr + 1
 		if sr <= def.constants.last_step then
 			state = "reels_stopping_"..sr
 			timeout = def.reel_slow_timeout
 		else
+			-- all reels have stopped: cut the spin loop now
+			minislots.stop_spin_sound(pos)
 			if numscatter >= def.min_scatter or numbonus >= def.min_bonus then
 				state = "stopped"
 				timeout = 0.1
@@ -1179,12 +1260,35 @@ function minislots.cycle_states(pos)
 		if numbonus >= def.min_bonus then
 			state = "bonus_win"
 			timeout = def.line_timeout
+			if last_right_clicker ~= "" then
+				minislots.play_sound(last_right_clicker, "minislots_win_jingle", pos, false)
+			end
 		elseif numscatter >= def.min_scatter then
 			state = "scatter_win"
 			timeout = def.line_timeout
+			if last_right_clicker ~= "" then
+				minislots.play_sound(last_right_clicker, "minislots_win", pos, false)
+			end
 		elseif #allwins > 0 then
 			state = "win_1"
 			timeout = def.line_timeout
+			-- pick win sound by win value relative to linebet:
+			--   jackpot symbol (def.jackpot_win_threshold or 200x): fanfare
+			--   big win (>= 50x linebet total): jingle
+			--   small win: win
+			if last_right_clicker ~= "" and allwins[1] then
+				local top_val = allwins[1].value  -- base value, before linebet multiply
+				local jackpot_threshold = def.jackpot_win_threshold or 200
+				local snd
+				if top_val >= jackpot_threshold then
+					snd = "minislots_jackpot"
+				elseif top_val * linebet >= 50 then
+					snd = "minislots_win_jingle"
+				else
+					snd = "minislots_win"
+				end
+				minislots.play_sound(last_right_clicker, snd, pos, false)
+			end
 		end
 	elseif state == "bonus_win" then
 		if numscatter >= def.min_scatter then
@@ -1226,6 +1330,7 @@ function minislots.cycle_states(pos)
 
 	if meta:get_int("spin_timestamp") < (os.time() - 60) then
 		core.get_node_timer(pos):stop()
+		minislots.stop_spin_sound(pos)
 		state = "stopped"
 		meta:set_string("state", state)
 		meta:set_string("formspec",
@@ -1236,6 +1341,7 @@ function minislots.cycle_states(pos)
 				balance = balance,
 				linebet = linebet,
 				maxlines = maxlines,
+				player_name = last_right_clicker ~= "" and last_right_clicker or nil,
 				admin = admin
 			})
 		)
@@ -1251,6 +1357,7 @@ function minislots.cycle_states(pos)
 			balance = balance,
 			linebet = linebet,
 			maxlines = maxlines,
+			player_name = last_right_clicker ~= "" and last_right_clicker or nil,
 			admin = admin
 		})
 	)
@@ -1590,6 +1697,31 @@ function minislots.generate_display(def, options)
 		if admin then button_admin = def.constants.buttonadmin_dis end
 	end
 
+	-- Machine sound mute toggle, placed on the Help/Pays row in the gap
+	-- between the Help button and the cash-slot indicator. This only silences
+	-- THIS mod's machine sounds (play_sound checks the per-player mute flag);
+	-- it never touches the player's Luanti client volume or other mods.
+	-- The button always renders (the stored node-meta formspec is shared by all
+	-- viewers, and mute is per-player, so we show a neutral label and resolve
+	-- the actual per-player state when it is clicked).
+	local button_mute = ""
+	if not last_cashout then
+		-- Mute toggle as an image_button (plain button[] does not render in
+		-- this image-based formspec). Uses the same gray/gold aesthetic as the
+		-- Help button. Positioned on the Help/Pays row, right of the Help button.
+		local mx = (def.geometry.button_help_posx + def.geometry.button_help_sizex + 0.25)
+					* horizscale - hanchor
+		local my = def.geometry.button_help_posy * vertscale - vanchor
+		local bw = def.geometry.button_help_sizex
+		local bh = def.geometry.button_help_sizey
+		button_mute =
+			"image["..mx..","..my..";"..bw..","..bh..";"..
+			def.constants.basename.."button_sound.png]"..
+			"image_button["..mx..","..my..";"..
+			(bw * spincouthelp_scalex)..","..(bh * spincouthelp_scaley)..";"..
+			def.constants.emptyimg..";snd_mute;]"
+	end
+
 	if not last_cashout then
 		upper_screen =
 			def.constants.behindreels..
@@ -1599,7 +1731,8 @@ function minislots.generate_display(def, options)
 			bonuses..
 			cash_slot..
 			button_admin..
-			button_help
+			button_help..
+			button_mute
 	else
 		local maxw = 6
 		local maxmw = 2.25
@@ -1916,7 +2049,7 @@ function minislots.generate_admin_form(def, pos, balance)
 	return formspec
 end
 
-function minislots.generate_cashslot_form(def, pos, balance)
+function minislots.generate_cashslot_form(def, pos, balance, player_name)
 	local spos = pos.x .. "," .. pos.y .. "," ..pos.z
 	local formspec =
 		"size[8,7]"..
@@ -2003,8 +2136,6 @@ end
 -- Global enable / disable  (maintenance mode)
 --###############################################
 
-local minislots_storage = core.get_mod_storage()
-
 -- Returns true when machines are open for play (default: enabled).
 function minislots.is_enabled()
 	return minislots_storage:get_string("enabled") ~= "false"
@@ -2053,6 +2184,7 @@ local function forced_cashout(pos, player)
 	meta:set_int("balance", 0)
 	meta:set_string("state", "stopped")
 	core.get_node_timer(pos):stop()
+	minislots.stop_spin_sound(pos)
 
 	-- rebuild the formspec so the machine shows 0 balance if reopened
 	local node = core.get_node(pos)

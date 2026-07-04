@@ -129,7 +129,9 @@ minislots.register_machine({
 	wild_doesnt_match = {
 		jackpot = true
 	},
-	wild_multiplier = 1,-- For every wild that contributes to a line win, multiply win by this
+	wild_multiplier = 1,
+	-- jackpot fanfare fires when a line win's base value reaches this threshold
+	jackpot_win_threshold = 350,-- For every wild that contributes to a line win, multiply win by this
 										-- (so one wild mult. by this, two mult. by twice this, etc)
 
 	geometry = {-- all measures are in Minetest formspec "inventory slots" units

@@ -44,6 +44,22 @@ It is not a mod and is never loaded by the game. If you want to edit the
 original artwork, the work files are available in the upstream repository:
 https://github.com/mt-mods/minislots
 
+## Sound Effects
+
+Both machines include sound effects: a continuous spinning-reel loop, a
+bell as each reel stops, coin insert, and distinct sounds for small wins,
+large wins, and jackpots. Each player can mute or unmute the machine sounds
+using the "Sound On/Off" button on the machine's main screen (next to the
+Help / Pays button). Clicking it toggles that player's machine audio and
+confirms the new state in chat. The setting is saved per-player and persists
+across all machines and server sessions.
+
+Muting affects only this modpack's machine sounds, for that player only. It
+never changes the player's Luanti client volume or any other mod's audio.
+
+All sound assets are CC0 (public domain). The "Sound On/Off" button image was
+created for this fork by TechnoWolfTV. See the LICENSE file for full credits.
+
 ## Crafting Recipes
 
 Both machines use shaped 3×3 recipes and display correctly in Unified Inventory.
