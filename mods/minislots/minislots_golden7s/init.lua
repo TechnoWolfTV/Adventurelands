@@ -104,8 +104,9 @@ minislots.register_machine({
 	maxbalance = 3260000,	-- 65535 50 Mg notes, minus maximum possible payout, minus a fudge amount
 	currency_min = 1,			-- smallest and largest denominations of minegeld to allow
 	currency_max = 100,
-	bet_initiates_spin = true,-- Most machines initiate a spin when the user presses a "Bet n" button, using
-									-- the selected bet value.
+	bet_initiates_spin = false,-- When false, pressing a "Bet n" button only sets the
+									-- line bet; the player presses SPIN separately to spin.
+									-- (Set true to make a bet button immediately spin.)
 
 									-- timings should be an even multiple of the step interval (usually 0.1s)
 	reel_fast_timeout = 0.2,-- time between "frames" while spinning fast, medium speed, or slow

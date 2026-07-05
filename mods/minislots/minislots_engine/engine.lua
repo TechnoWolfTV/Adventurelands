@@ -888,6 +888,16 @@ function minislots.register_machine(mdef)
 					mg = tonumber(string.sub(sn, 19))
 					if not mg then mg = 1 end
 				else
+					-- WARNING: "cent" notes have a fractional value (0.05, 0.10,
+					-- 0.25 Mg). The machine balance is stored as an integer
+					-- (meta:set_int floors), so any fractional amount inserted
+					-- would be silently floored away and lost -- short-changing
+					-- the player. This is SAFE as shipped only because both
+					-- machines set currency_min = 1, so the check below rejects
+					-- every cent note before any balance math runs. If you lower
+					-- currency_min below 1 to accept cent notes, you MUST switch
+					-- the balance to a fixed-point/cents integer representation
+					-- first, or players will lose the fractional part.
 					mg = tonumber(string.sub(sn, 24)) / 100
 				end
 				if mg < def.currency_min or mg > def.currency_max then return 0 end
@@ -990,6 +1000,18 @@ function minislots.register_machine(mdef)
 					or  "[Minislots] Machine sounds are now ON for you.")
 				return
 			elseif fields.cout then
+				-- NOTE (extreme-balance edge case): this guard requires
+				-- balance <= def.maxbalance. Deposits are capped at maxbalance,
+				-- but a very large multi-line win can push the balance slightly
+				-- ABOVE maxbalance (the cap leaves headroom for a single win, but
+				-- not for the theoretical maximum simultaneous multi-line jackpot).
+				-- If that ever happens, this button would refuse until the balance
+				-- is brought back under the cap (e.g. by spinning). No money is
+				-- lost -- the balance stays intact and survives dig/replace -- it
+				-- is only a usability corner case, and requires a machine loaded to
+				-- near maxbalance (tens of thousands of notes) to reach at all.
+				-- If you want cashout to always succeed, relax this to just
+				-- `at_rest and balance > 0` and rely on the room_for_item checks.
 				if at_rest and balance > 0 and balance <= def.maxbalance then
 					local last_cashout = balance
 					local fifties = math.floor(last_cashout/50)

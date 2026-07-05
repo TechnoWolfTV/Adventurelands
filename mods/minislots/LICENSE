@@ -8,174 +8,20 @@ unless otherwise stated.
 
                           MODIFICATION NOTICE
 
-  Modified 2026-07-03.
+  Modified 2026 by TechnoWolfTV.
 
   Original work by Vanessa "VanessaE" Dannenberg and the mt-mods team.
-  The LGPL v3 and CC-BY-SA 4.0 licenses above apply to all original content
-  and remain unmodified.
+  The LGPL v3 and CC-BY-SA 4.0 licenses (declared above and reproduced in
+  full below) apply to all original content and remain unmodified.
 
-  In accordance with section 5.d of the GNU GPL v3 (as incorporated by
-  the LGPL v3), the following changes were made to files in this modpack
-  by TechnoWolfTV, 2026. These modifications do not alter the original
-  authorship or the licenses above.
+  In accordance with section 5.d of the GNU GPL v3 (as incorporated by the
+  LGPL v3), this is a modified version of the original work. A detailed,
+  file-by-file description of every change made in this fork is provided in
+  the accompanying CHANGELOG.md. These modifications do not alter the
+  original authorship or the licenses above.
 
-    minislots_engine/engine.lua  (pass 1 -- bug fixes)
-      - Fixed bet and payline selection buttons being stuck at 1: the
-        button value was parsed from the output of core.serialize() using
-        fixed character offsets, which broke after Luanti's serializer
-        format changed. Values are now read directly from the field keys.
-      - Fixed bet-initiated spins never recording a spin timestamp, which
-        caused the 60-second watchdog to abort the spin after taking the
-        bet.
-      - Fixed cash-out clearing the machine balance before confirming the
-        player had inventory room, which could destroy the money. Fixed
-        the last_cashout statistic recording 0 instead of the amount paid.
-      - Fixed closing the form or inserting money mid-spin discarding
-        pending winnings or disturbing a running spin.
-      - Gated bet/lines/spin/cashout handling behind an at-rest state
-        check and removed the unconditional timer stop, preventing a
-        forged mid-spin field from re-multiplying a payout or freezing
-        the machine.
-      - Fixed check_win awarding the last-listed matching combination
-        rather than the highest-value one.
-      - Guarded the bitmap font routines (str_width_pix, print_string)
-        against characters outside the font table, which previously
-        crashed on non-ASCII input.
-      - Fixed the casino-name save handler: corrected an always-true
-        field comparison, stopped formspec escapes from compounding on
-        each edit, and stripped unrenderable characters.
-      - Added recovery for machines stuck in a win state with a dead
-        timer (reset to idle on right-click).
-      - Added an on_leaveplayer handler to clear the per-player caches,
-        fixing a slow memory leak.
-      - Removed the dead Minetest 5.0.x code path (the modpack requires
-        5.2.0) and assorted unused/redundant locals and stale comments.
-
-    minislots_engine/mod.conf
-      - Declared "creative" as an optional dependency, since the engine
-        references it during node digging.
-
-    minislots_engine/engine.lua  (pass 2 -- maintenance mode & more fixes)
-      - Added /disable_minislots, /enable_minislots, and /minislots_status
-        server commands (require "server" privilege). State persists via
-        mod storage across server restarts. When disabled, the machine's
-        stored node-meta formspec is overwritten with a maintenance screen
-        so right-clicking opens the maintenance notice rather than the
-        playable UI (which is what caused the disable to appear non-
-        functional in earlier versions). on_receive_fields also blocks all
-        game actions and re-asserts the maintenance screen. The disable
-        command actively sweeps all loaded machines; enable restores them.
-        Players at machines are automatically cashed out and ejected via a
-        globalstep (in-flight spins finish first; overflow currency drops
-        at the machine). Admins (server priv) bypass all maintenance gates.
-      - Fixed allow_metadata_inventory_put refusing an entire item stack
-        when only part of it would overflow maxbalance; now accepts as many
-        items as fit.
-      - Removed the always-true `if stackmeta then` guard in after_place_node
-        (get_meta() never returns nil; dead code).
-      - Fixed the machine lockout being cleared when the admin closes the
-        admin form; lockout now persists until explicitly unlocked.
-      - Fixed win cycling leaving a machine permanently stuck in win_1 state
-        when there is exactly one winning line and no scatter/bonus.
-
-    minislots_engine/engine.lua  (pass 3 -- correctness fixes)
-      - initiate_bonus now receives linebet as a third argument and allwins
-        as a fourth argument, so bonus payouts can scale with the player's
-        wager and reflect the actual number of bonus symbols that appeared.
-      - Fixed wild multiplier formula from linear (value * wildcount * mult)
-        to the correct exponential form (value * mult^wildcount), matching
-        the README description and real-slot behaviour.
-      - Removed dead 'local balance = 0' assignment in after_place_node
-        that was immediately overwritten; fixed shadow re-declaration of
-        the state variable in on_metadata_inventory_put.
-
-    minislots_engine/engine.lua  (pass 4 -- maintenance disable fix)
-      - Fixed /disable_minislots having no effect when right-clicking a
-        machine: Luanti opens a node's stored formspec metadata before
-        on_rightclick runs, so the playable UI appeared regardless of the
-        maintenance flag. The disable command now overwrites the stored
-        formspec on all loaded machines; on_rightclick overwrites it on any
-        machine opened while disabled; on_receive_fields blocks and
-        re-asserts the maintenance screen for all actions. The maintenance
-        screen's internal marker was moved from a visible label to the
-        button element name so it no longer appears on screen.
-      - Added a visible chat notice to server-privilege players who open a
-        machine while maintenance mode is active, so the admin bypass is
-        not mistaken for the disable being broken.
-
-    minislots_golden7s/init.lua  -- odds rebalance
-    minislots_golden7s_deluxe/init.lua  -- odds rebalance
-
-      The original payout tables resulted in >100% RTP (the house lost
-      money on every spin). The root causes and final configurations are
-      documented below.
-
-      Root causes identified:
-
-      1. "Any mixed 7s" and "any mixed bars" list-match entries, combined
-         with nil-reel partial matches for cherry and bell, gave very high
-         hit rates. With only 16 reel positions, list matches covering
-         3+ symbols plus wild hit on ~25% of reel stops per reel.
-      2. wild_multiplier: a value of 2 (tried during rebalancing) added
-         ~97% RTP by itself via exponential compounding. Kept at 1 (pure
-         substitute, no boost).
-      3. The bonus initiate_bonus function returned a flat value (123 /
-         400) regardless of line bet, contributing enormous RTP at low
-         bet sizes. Both machines now return a linebet-proportional value.
-      4. The "half-stop" mechanic (half_stops_weight=25) causes ~12% of
-         reel stops to land between symbols (nil), which analytical
-         probability models failed to account for. RTP was therefore
-         re-calibrated empirically by running the actual spin_reels() and
-         check_win() engine functions over millions of simulated spins.
-         Empirical measurement is the only reliable method for this engine.
-
-      Golden 7s final configuration (~90% RTP, house edge ~10%):
-        Payouts (x line bet): lemon=7, melon=9, cherry=12, bell=19,
-          bar=31, 2bar=61, 3bar=94, 7=61, 77=125, 777=217, jackpot=350.
-        scatter: min=3, value=3. bonus: 31 * linebet (flat, scales).
-        wild_multiplier=1. Hit frequency ~12.5%, medium volatility.
-        RTP stable across all line bet values.
-
-      Golden 7s Deluxe final configuration (~89% RTP, house edge ~11%):
-        Payouts scaled x1.37 from prior values, preserving the tiered
-        2/3/4/5-of-a-kind structure. Jackpot 400x. Mixed bar/7 list
-        matches pay 23x and 73x respectively. scatter: min=4, value=4.
-        bonus: 7 * bonus_count * linebet (proportional).
-        wild_multiplier=1. Hit frequency ~31%, lower volatility.
-        RTP stable across all line bet values.
-
-      Paytable accuracy: with wild_multiplier=1, every value shown in the
-      in-game paytable is the exact payout. Wild is described as a pure
-      substitute. There are no hidden payouts.
-
-    minislots_golden7s/init.lua  -- paytable layout fix
-    minislots_golden7s_deluxe/init.lua  -- paytable layout fix
-      - Reduced paytable_lineheight and paytable_textheight on both machines
-        so all entries fit cleanly within the background panel without
-        overflowing the right or bottom edges.
-        Golden 7s: lineheight 0.65->0.52, textheight 0.45->0.38.
-        Golden 7s Deluxe: lineheight 0.50->0.43, textheight 0.35->0.30.
-
-    minislots_engine/engine.lua  (pass 5 -- sound system)
-      - Added sound triggers in cycle_states: a spinning loop starts with the
-        spin and loops continuously through the entire spin cycle, stopping
-        only once all reels have settled; a reel-stop sound fires once as each
-        reel locks in, played over the still-looping spin sound; win sounds
-        play on entering win states (small win / large win / jackpot each use
-        a different sound). The spin loop is also stopped on any interruption
-        (watchdog timeout, maintenance eject) to avoid an orphaned loop.
-      - Added a coin-insert sound in allow_metadata_inventory_put.
-      - Added a per-player sound mute toggle. Sounds are delivered per-player
-        (core.sound_play with to_player) and the mute flag simply suppresses
-        this modpack's own sounds for that player; it never alters the Luanti
-        client's master volume or any other mod's audio. The mute state is
-        persisted per-player in mod storage across sessions and machines.
-      - Added a "Sound On/Off" image_button to each machine's main UI
-        (generate_display), on the Help/Pays row. It is an image_button (plain
-        button[] elements do not render in this image-based formspec). Clicking
-        it toggles the player's mute flag and confirms the new state in chat.
-        jackpot_win_threshold was added to each machine definition so the
-        jackpot fanfare fires on the correct top-tier win.
+  New assets added by this fork are credited immediately below; the fork's
+  supplementary disclaimer and conditions of use follow thereafter.
 
     minislots_engine/sounds/  (new directory -- all assets CC0)
       All sound assets are dedicated to the public domain under the Creative
@@ -213,8 +59,9 @@ unless otherwise stated.
         License: Creative Commons 0
 
       All audio files were trimmed (dead air removed), volume-normalized for
-      consistent playback levels (EBU R128), and encoded to OGG Vorbis format
-      as required by the Luanti engine.
+      consistent playback levels (EBU R128), peak-balanced so no single sound
+      stands out, and encoded to OGG Vorbis format as required by the Luanti
+      engine.
 
     minislots_golden7s/textures/minislots_golden7s_button_sound.png
     minislots_golden7s_deluxe/textures/minislots_golden7s_deluxe_button_sound.png
@@ -224,18 +71,67 @@ unless otherwise stated.
       terms as the modpack (see the modification notice above and the original
       license terms below).
 
-    minislots_golden7s/init.lua  -- crafting recipe
-    minislots_golden7s_deluxe/init.lua  -- crafting recipe
-      - Added shaped 3x3 crafting recipes (absent from the original proof-of-concept).
-        Golden 7s: 4x default:goldblock, 1x default:mese,
-          1x default:obsidian_glass, 1x default:diamond,
-          1x currency:minegeld_50, 1x default:acacia_wood.
-        Golden 7s Deluxe: 4x default:goldblock, 1x default:mese,
-          1x default:obsidian_glass, 1x default:diamondblock,
-          1x currency:minegeld_100, 1x default:acacia_wood.
-        The currency note is a seed float -- money built into the machine.
-        The Deluxe is gated behind a diamond block, making it
-        a genuine end-game crafting goal.
+    -------------------------------------------------------------------------
+    DISCLAIMER AND CONDITIONS OF USE
+
+    The following disclaimer accompanies this modpack. The first part is the
+    original project disclaimer, reproduced verbatim; the "Additional Notes"
+    that follow were added by the TechnoWolfTV fork and supplement -- but do
+    not modify -- it. This text is duplicated here (it also appears in
+    README.md) so that it travels with the work for anyone who redistributes
+    or deploys the modpack.
+
+    THIS IS A SLOT MACHINE "MINI GAME" PROJECT FOR THE LUANTI/MINETEST OPEN
+    SOURCE GAME ENGINE/PLATFORM.  IT IS NOT IN ANY WAY, SHAPE, OR FORM
+    ASSOCIATED WITH, REGULATED BY, OR OTHERWISE UNDER THE CONTROL OR INFLUENCE
+    OF ANY LOCAL, COUNTY, STATE, OR FEDERAL GAMING AGENCY, COMMISSION, OR
+    OFFICE.
+
+    THE "CURRENCY" USED BY THIS PROJECT IS ENTIRELY FICTIONAL, EXISTING ONLY
+    WITHIN THE ONLINE WORLD FOR WHICH IT WAS CREATED, AND NO PART OF THIS
+    PROJECT SEEKS TO MAKE IT CONVERTIBLE, EXCHANGEABLE, OR OTHERWISE NEGOTIABLE
+    FROM OR INTO ANY LEGAL TENDER CURRENCY OR OTHER VALUABLE ASSETS OF ANY KIND
+    OR ORIGIN, WHETHER TANGIBLE OR INTANGIBLE, PHYSICAL OR ELECTRONIC.
+
+    NO CLAIMS REGARDING THE FITNESS OF THIS PROJECT FOR ANY PURPOSE ARE HEREIN
+    MADE, AND NO WARRANTY OR GUARANTEE OF ANY KIND IS OFFERED BY ANY PARTY.
+
+    Additional Notes (added by the TechnoWolfTV fork)
+
+    The following notes supplement -- and do not modify -- the disclaimer above.
+
+    This modpack is a work of interactive fiction that simulates the appearance
+    of casino slot machines for entertainment within the game world. It is not
+    a gambling product:
+
+      - No real money is involved. There is no mechanism in this modpack to
+        purchase in-game currency with real-world money, and no mechanism to
+        convert in-game winnings into real-world money, goods, or anything of
+        real value. The in-game "Minegeld" is provided by a separate
+        fictional-currency mod and has no cash value.
+
+      - No real-value prizes. Nothing won, lost, or wagered in these machines
+        has any value outside the game world.
+
+      - Server operators: you are responsible for how you deploy this modpack.
+        Do not connect the in-game currency to anything of real-world value --
+        for example by selling in-game currency for real money, allowing
+        players to cash out, tying wagers to real-money donations or perks, or
+        bridging the currency to cryptocurrency or other tradeable real-value
+        assets. Doing so may cause the deployment to be treated as real
+        gambling under the laws of your jurisdiction, which vary by country and
+        region. The authors and contributors of this modpack accept no
+        responsibility for such use.
+
+      - Content note. Because this modpack simulates gambling, server operators
+        and parents may wish to consider its suitability for younger or
+        vulnerable players, and any applicable content-rating or platform
+        requirements.
+
+    Nothing in these notes is legal advice. If you are unsure whether deploying
+    this modpack in a particular way is lawful where you are, consult a
+    qualified lawyer in your jurisdiction.
+    -------------------------------------------------------------------------
 
 ###############################################################################
 
