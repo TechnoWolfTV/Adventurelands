@@ -17,7 +17,7 @@ end
 -- global table
 
 mobs = {
-	mod = "redo", version = "20260629",
+	mod = "redo", version = "20260707",
 	spawning_mobs = {}, translate = S,
 	node_snow = has(core.registered_aliases["mapgen_snow"])
 			or has("mcl_core:snow") or has("default:snow") or "air",
@@ -838,7 +838,7 @@ function mob_class:check_for_death(cmi_cause)
 	-- reset vars
 	self.attack = nil
 	self.following = nil
-	self.v_start = false ; self.timer = 0 ; self.blinktimer = 0
+	self.v_start = false ; self.blinktimer = 0
 	self.passive = true
 	self.state = "die"
 	self.fly = false
@@ -1953,7 +1953,7 @@ function mob_class:stop_attack()
 
 	self.attack = nil
 	self.following = nil
-	self.v_start = false ; self.timer = 0 ; self.blinktimer = 0
+	self.v_start = false ; self.blinktimer = 0
 	self.path.way = nil
 	self:set_velocity(0)
 	self.state = "stand"
@@ -2157,7 +2157,7 @@ function mob_class:do_states(dtime)
 			if not self.v_start and dist <= self.reach and in_sight then
 
 				self.v_start = true
-				self.timer = 0
+				self.explode_timer = 0
 				self.blinktimer = 0
 				self:mob_sound(self.sounds.fuse)
 
@@ -2170,7 +2170,7 @@ function mob_class:do_states(dtime)
 --print("=== explosion timer stopped")
 
 				self.v_start = false
-				self.timer = 0
+				self.explode_timer = 0
 				self.blinktimer = 0
 				self.blinkstatus = false
 				self.object:set_texture_mod("")
@@ -2192,7 +2192,7 @@ function mob_class:do_states(dtime)
 
 			if self.v_start then
 
-				self.timer = self.timer + dtime
+				self.explode_timer = (self.explode_timer or 0) + dtime
 				self.blinktimer = (self.blinktimer or 0) + dtime
 
 				if self.blinktimer > 0.2 then
@@ -2210,9 +2210,9 @@ function mob_class:do_states(dtime)
 					self.blinkstatus = not self.blinkstatus
 				end
 
---print("=== explosion timer", self.timer)
+--print("=== explosion timer", self.explode_timer)
 
-				if self.timer > self.explosion_timer then
+				if self.explode_timer > self.explosion_timer then
 
 					-- dont damage anything if area protected or near water
 					if core.find_node_near(s, 1, {"group:water"})
@@ -2385,10 +2385,12 @@ function mob_class:do_states(dtime)
 
 			self:yaw_to_pos(p) ; self:set_velocity(0)
 
-			if self.shoot_interval and self.timer > self.shoot_interval
-			and random(100) <= 60 then
+			self.shoot_timer = (self.shoot_timer or 0) + dtime
 
-				self.timer = 0
+			if self.shoot_timer > self.shoot_interval
+			and random(100) <= self.shoot_chance then
+
+				self.shoot_timer = 0
 				self:set_animation("shoot")
 				self:mob_sound(self.sounds.shoot_attack) -- attack sound
 
@@ -3101,7 +3103,6 @@ function mob_class:on_step(dtime, moveresult)
 
 		if self.pause_timer <= 0 and (self.order == "stand" or self.state == "stand") then
 
-			self.pause_timer = 0
 			self:set_velocity(0)
 			self:set_animation("stand", true)
 		end
@@ -3112,6 +3113,7 @@ function mob_class:on_step(dtime, moveresult)
 	-- run custom function (defined in mob lua file) - when false skip going any further
 	if self.do_custom and self:do_custom(dtime, moveresult) == false then return end
 
+	-- has no real use but kept for backwards compatibility
 	self.timer = self.timer + dtime
 
 	if self.timer > 100 then self.timer = 1 end -- never go over 100
@@ -3231,7 +3233,8 @@ function mobs:register_mob(name, def)
 		armor = def.armor,
 		arrow = def.arrow,
 		arrow_override = def.arrow_override,
-		shoot_interval = def.shoot_interval,
+		shoot_interval = def.shoot_interval or 2,
+		shoot_chance = def.shoot_chance or 80,
 		homing = def.homing,
 		sounds = def.sounds,
 		animation = def.animation,
@@ -4190,14 +4193,47 @@ end
 
 -- feeding, taming, breeding and naming (thx blert2112)
 
-local mob_obj, mob_sta = {}, {}
+local mob_nametag = {}
 
 function mobs:feed_tame(self, clicker, feed_count, breed, tame)
 
 	local name = clicker:get_player_name()
+	local item = clicker:get_wielded_item()
+
+	-- rename tamed mob with nametag
+	if item:get_name() == "mobs:nametag"
+	and (name == self.owner or core.check_player_privs(name, "protection_bypass")) then
+
+		-- store mob and nametag itemstack in external table
+		mob_nametag[name] = {object = self, itemstack = item}
+
+		local tag = self._nametag or ""
+		local esc = core.formspec_escape
+
+		core.show_formspec(name, "mobs_nametag", "size[8,4]"
+			.. "field[0.5,1;7.5,0;name;" .. esc(FS("Enter name:")) .. ";" .. esc(tag) .. "]"
+			.. "button_exit[2.5,3.5;3,1;mob_rename;" .. esc(FS("Rename")) .. "]")
+
+		return true
+	end
+
+	if not self.follow then return end
+
+	-- sneak & right-click mob to show what it eats/follows
+	if clicker:get_player_control().sneak then
+
+		if type(self.follow) == "string" then
+			self.follow = {self.follow}
+		end
+
+		core.chat_send_player(name, S("@1 follows:", self.name:split(":")[2])
+			.. "\n- " .. table.concat(self.follow, "\n- "))
+
+		return
+	end
 
 	-- can eat/tame with item in hand
-	if self.follow and self:follow_holding(clicker) then
+	if self:follow_holding(clicker) then
 
 		-- take item when not using creative
 		if not mobs.is_creative(name) then
@@ -4215,12 +4251,11 @@ function mobs:feed_tame(self, clicker, feed_count, breed, tame)
 
 		self.object:set_hp(self.health)
 
-		if self.child then -- make children grow quicker
+		if self.child then -- make children grow quicker, deduct 10% of time to adulthood
 
-			-- deduct 10% of the time to adulthood
 			self.hornytimer = floor(self.hornytimer + (
 					(CHILD_GROW_TIME - self.hornytimer) * 0.1))
---print ("====", self.hornytimer)
+
 			return true
 		end
 
@@ -4240,8 +4275,8 @@ function mobs:feed_tame(self, clicker, feed_count, breed, tame)
 
 				if not self.tamed then
 
-					core.chat_send_player(name, S("@1 has been tamed!",
-							self.name:split(":")[2]))
+					core.chat_send_player(name,
+							S("@1 has been tamed!", self.name:split(":")[2]))
 				end
 
 				self.tamed = true
@@ -4257,71 +4292,36 @@ function mobs:feed_tame(self, clicker, feed_count, breed, tame)
 
 		self:update_tag() ; return true
 	end
-
-	local item = clicker:get_wielded_item()
-
-	-- only tames mobs can be named with nametag
-	if item:get_name() == "mobs:nametag"
-	and (name == self.owner or core.check_player_privs(name, "protection_bypass")) then
-
-		-- store mob and nametag stack in external variables
-		mob_obj[name] = self ; mob_sta[name] = item
-
-		local prop = self.object:get_properties()
-		local tag = self._nametag or ""
-		local esc = core.formspec_escape
-
-		core.show_formspec(name, "mobs_nametag", "size[8,4]"
-			.. "field[0.5,1;7.5,0;name;" .. esc(FS("Enter name:")) .. ";" .. esc(tag) .. "]"
-			.. "button_exit[2.5,3.5;3,1;mob_rename;" .. esc(FS("Rename")) .. "]")
-
-		return true
-	end
-
-	-- sneak & right-click mob to show what it eats/follows
-	if self.follow and clicker:get_player_control().sneak then
-
-		if type(self.follow) == "string" then
-			self.follow = {self.follow}
-		end
-
-		core.chat_send_player(name, S("@1 follows:", self.name:split(":")[2])
-			.. "\n- " .. table.concat(self.follow, "\n- "))
-	end
 end
 
 -- inspired by blockmen's nametag mod
 
 core.register_on_player_receive_fields(function(player, formname, fields)
 
-	-- right-clicked with nametag and name entered?
-	if formname == "mobs_nametag" and fields.name and fields.name ~= "" then
+	local name = player:get_player_name()
 
-		local name = player:get_player_name()
+	if not mob_nametag[name] then return end
 
-		if not mob_obj[name] or not mob_obj[name].object then return end
-
-		local item = player:get_wielded_item() -- make sure nametag is being used
-
-		if item:get_name() ~= "mobs:nametag" then return end
-
-		-- limit name entered to 64 characters
-		if fields.name:len() > 64 then fields.name = fields.name:sub(1, 64) end
-
-		mob_obj[name]:update_tag(fields.name) -- update nametag
-
-		if not mobs.is_creative(name) then -- take nametag if not using creative
-
-			mob_sta[name]:take_item()
-
-			player:set_wielded_item(mob_sta[name])
-		end
-
-		mob_obj[name] = nil ; mob_sta[name] = nil -- reset external vars
+	if formname ~= "mobs_nametag" or not fields.name then
+		mob_nametag[name] = nil ; return
 	end
+
+	-- limit name entered to 64 characters
+	if fields.name:len() > 64 then fields.name = fields.name:sub(1, 64) end
+
+	mob_nametag[name].object:update_tag(fields.name) -- update nametag
+
+	if not mobs.is_creative(name) then -- take nametag if not using creative
+
+		mob_nametag[name].itemstack:take_item()
+
+		player:set_wielded_item(mob_nametag[name].itemstack)
+	end
+
+	mob_nametag[name] = nil
 end)
 
--- compatibility function for old mobs entities to new mobs_redo modpack
+-- compatibility function for mobs that have been renamed
 
 function mobs:alias_mob(old_name, new_name)
 

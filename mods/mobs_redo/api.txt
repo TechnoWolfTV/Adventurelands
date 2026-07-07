@@ -152,8 +152,10 @@ functions needed for the mob to work properly which contains the following:
    'dogshoot_count2_max' contains how many seconds before switching from shoot
                          to dogfight.
    'shoot_interval'      has the number of seconds between shots.
-   'shoot_offset'         holds the y position added as to where the
-                         arrow/fireball appears on mob.
+   'shoot_chance'        chance out of 100 that mob will shoot arrow every shot,
+                         Default is 80.
+   'shoot_offset'        holds the y position offset as to where the arrow or
+                         fireball aims towards target.
    'homing'              When True arrows will follow player when visible.
    'punch_interval'      the number of seconds between punches (default: 1)
    'specific_attack'     has a table of entity names that mob can also attack
