@@ -13,6 +13,12 @@ welcome_board_show_on (Show popup on) enum first_join first_join,every_join,neve
 # A small delay (0.5–1.0) prevents the dialog appearing before the world has loaded.
 welcome_board_delay (Popup delay in seconds) float 0.8 0.0 5.0
 
+# Maximum characters shown per page in the dialog. Longer content is automatically
+# split into multiple pages with navigation controls. Keeps rendering fast and
+# prevents lag from very long content. Lower = more pages but lighter rendering.
+welcome_board_chars_per_page (Maximum characters per page) int 3000 500 10000
+
+
 # --- GENERAL ---
 
 # The title shown at the very top of the welcome dialog (your server or game name).

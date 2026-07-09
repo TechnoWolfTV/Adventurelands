@@ -32,6 +32,8 @@ Shows a private popup window to players when they join your world or server. The
 - [Customising Content](#customising-content)
   - [Line Breaks in minetest.conf](#line-breaks-in-minetestconf)
   - [Editing config.lua directly](#editing-configlua-directly)
+- [In-Game Editing (Authors)](#in-game-editing-authors)
+- [Pagination](#pagination)
 - [Colour Reference](#colour-reference)
 - [Integration with Other Mods](#integration-with-other-mods)
 - [File Structure](#file-structure)
@@ -50,7 +52,9 @@ Shows a private popup window to players when they join your world or server. The
 - **`/welcome_reset` admin command** — reset a player's first-join flag so they see the dialog again.
 - **Chat notification** — optional coloured chat message sent to the joining player.
 - **Fully themed appearance** — background colour, title colour, body colour, accent bars, and close button label all configurable.
-- **All content editable via `minetest.conf`** — no Lua knowledge required to customise text.
+- **Content editable two ways** — set defaults via `minetest.conf`/`config.lua`, or edit live in-game (requires the `welcome_board_author` or `server` privilege).
+- **In-game header editing** — authors can edit the title, subtitle, and greetings via an Edit Header dialog.
+- **Automatic pagination** — long content is split into fast-rendering pages, preventing lag.
 - **Ships with complete default content** — ready to use out of the box with appropriate tips, rules, and welcome text. Just change the server name and you're done.
 
 ---
@@ -102,8 +106,15 @@ The dialog is built using Luanti's **formspec** system. It is sent directly to t
 The dialog has:
 - A **header area** with your title, subtitle, and a personalised greeting.
 - A **tab bar** for navigating between content sections.
-- A **scrollable text area** that displays the content for the active tab.
+- A **page-control row** with previous/next arrows and a page indicator (shown
+  only when content spans multiple pages).
+- A **content area** that displays the current page of text.
 - A **close button** at the bottom.
+
+The **Help** button (top-right) is visible to every player and opens an in-game
+guide. For authors — players with the `welcome_board_author` **or** `server`
+privilege — the header area also shows an **Edit Header** button, and the
+page-control row shows an **Edit** button.
 
 Clicking the close button (or pressing Escape) dismisses the dialog. The player can reopen it at any time using `/welcome`.
 
@@ -226,6 +237,92 @@ All settings can be placed in `minetest.conf` (in your Luanti user data director
 
 ---
 
+## In-Game Editing (Authors)
+
+Welcome Board content can be edited live in-game by players who hold the
+`welcome_board_author` **or** `server` privilege — no file editing or server
+restart required.
+
+### Granting author access
+
+Editing is allowed for any player who holds **either** of these privileges:
+
+- **`server`** — server owners and admins can edit out of the box, no extra
+  setup required.
+- **`welcome_board_author`** — a dedicated privilege for delegating *just* content
+  editing to a trusted player, without granting them full server control.
+
+The `welcome_board_author` privilege is **never granted automatically** — not to
+singleplayer, and not even to admins with `give_to_admin`. Grant it explicitly:
+
+```
+/grant <playername> welcome_board_author
+```
+
+This is a deliberate safety boundary: you can let a community manager or builder
+edit the welcome text and rules without handing them `server` (which also allows
+changing settings, shutting down the server, and more). Revoke it any time with
+`/revoke <playername> welcome_board_author`.
+
+Players without either privilege can still read every tab and open the **Help**
+button — they simply won't see the Edit buttons.
+
+### How editing works
+
+1. Open the board with `/welcome`.
+2. Authors see three controls: an **Edit** button in the page-control row of each
+   tab (edits that tab's body), an **Edit Header** button top-right (edits the
+   title, subtitle, and greetings), and a **Help** button (opens an in-game
+   author guide covering editing, reverting, and pages).
+3. Click **Edit** to turn the read-only display into an editable text box showing
+   the full content of that tab.
+4. Make changes, then click **Save** (or **X** to cancel).
+5. Edits are stored in the world's mod storage and persist across restarts.
+
+The editable box shows the text exactly as it will appear. What you type is what
+players see — there are no special codes to learn.
+
+### Content storage model
+
+Content resolves in this order:
+
+1. An **override** saved by an in-game author (in mod storage), if present.
+2. Otherwise, the **default** from `config.lua` / `minetest.conf`.
+
+This means your configured defaults always remain intact underneath. To discard
+an in-game edit and return a field to its configured default, use:
+
+```
+/welcome_revert <field>
+```
+
+Valid fields: `title`, `subtitle`, `welcome_heading`, `welcome_body`,
+`tips_body`, `rules_body`, `new_player_greeting`, `return_greeting`, or `all` to
+revert everything. Requires the `welcome_board_author` privilege.
+
+## Pagination
+
+To keep rendering fast and prevent any lag from very long content, the dialog
+automatically splits body text into pages. Each page holds up to
+`welcome_board_chars_per_page` characters (default **3000**), breaking only at
+line boundaries so text is never cut mid-line.
+
+Navigation arrows (`<` and `>`) and a "Page X / N" indicator appear at the top of
+the content area whenever content spans more than one page.
+
+### Over-limit editing
+
+When an author saves content longer than one page, the mod does **not** silently
+reflow it. Instead it shows a confirmation dialog:
+
+> This content is 3,140 characters, over the 3000-character limit. It will be
+> automatically split into 2 pages when saved. Save and split, or keep editing?
+
+Choose **Save & Split** to accept the automatic pagination, or **Keep Editing**
+to return to the editor and trim the content yourself. A live character counter
+below the edit box shows your current length (e.g. `3140 / 3000`) and turns red
+when you are over the limit.
+
 ## Chat Commands
 
 ### /welcome
@@ -258,6 +355,17 @@ The target player must be **online** when you run this command, as player metada
 /welcome_reset Steve
 ```
 
+### /welcome_revert
+
+```
+/welcome_revert <field>
+```
+
+Reverts a single Welcome Board field (or `all`) to its configured default,
+discarding any in-game author edit. Requires the `welcome_board_author` or
+`server` privilege. Valid fields: `title`, `subtitle`, `welcome_heading`, `welcome_body`,
+`tips_body`, `rules_body`, `new_player_greeting`, `return_greeting`, `all`.
+
 ---
 
 ## Enabling / Disabling Individual Tabs
@@ -281,6 +389,23 @@ When only one tab is present, the tab header bar is still rendered but shows onl
 ---
 
 ## Customising Content
+
+There are **two ways** to change the board's content, and they work together as
+layers:
+
+1. **Defaults** — set via `minetest.conf` or `config.lua` (described in this
+   section). These define what everyone sees out of the box and what
+   `/welcome_revert` falls back to. This is the right method for server owners
+   setting up their content, and for pre-configured game distributions.
+2. **In-game overrides** — edited live by players with the `welcome_board_author`
+   or `server` privilege (see [In-Game Editing](#in-game-editing-authors)). These
+   sit *on top of* the defaults for quick tweaks without file access.
+
+Content resolves as: **in-game override → configured default**. If no author has
+edited a field in-game, the configured default below is what shows. Neither
+method is obsolete — the config method is the foundation, and in-game editing is
+a convenience layer above it. Use `minetest.conf`/`config.lua` to establish your
+baseline; use in-game editing for live adjustments.
 
 ### Line Breaks in minetest.conf
 
@@ -359,21 +484,28 @@ However, you can integrate it with other mods by editing `init.lua`:
 
 ```
 welcome_board/
-├── init.lua            # Main entry point: callbacks, commands, dialog display logic
-├── config.lua          # Settings loader — all configurable values live here
-├── formspec.lua        # Formspec builder — constructs the dialog UI string
+├── init.lua            # Main entry point: callbacks, commands, editing, pagination
+├── config.lua          # Settings loader — all default content values live here
+├── formspec.lua        # Formspec builder — dialog UI, edit mode, page controls
+├── storage.lua         # Content persistence — config defaults vs author overrides
+├── pagination.lua      # Splits long content into fixed-length pages
 ├── settingtypes.txt    # Declares all settings for the Luanti settings GUI
 ├── mod.conf            # Mod metadata (name, description, min version)
+├── textures/
+│   └── welcome_board_bg.png   # 9-sliced semi-transparent panel background
 └── README.md           # This file
 ```
 
 | File | Purpose |
 |---|---|
-| `init.lua` | Registers `on_joinplayer`, `on_player_receive_fields`, and chat commands. Decides when and how to show the dialog. |
-| `config.lua` | Loads every configurable value from `minetest.conf` with fallback defaults. Import this with `dofile` at the top of `init.lua`. |
-| `formspec.lua` | Pure function that takes the config and player state and returns a formspec string. Handles tab layout, colours, sizing, and content switching. |
+| `init.lua` | Registers `on_joinplayer`, `on_player_receive_fields`, chat commands, and the `welcome_board_author` privilege. Routes the main, header, help, and confirmation dialogs, and handles in-game editing. |
+| `config.lua` | Loads every configurable value from `minetest.conf` with fallback defaults. |
+| `formspec.lua` | Builds all dialogs: main board (view/edit), header editor, author Help, and the split-confirmation. Handles tab layout, pagination controls, and text display. |
+| `storage.lua` | Content persistence layer — resolves each field as an author override (mod storage) on top of the config default. |
+| `pagination.lua` | Splits long content into fixed-length pages at line boundaries. |
 | `settingtypes.txt` | Declares settings to Luanti's settings GUI. Does not affect runtime behaviour — it's purely for the GUI description. |
 | `mod.conf` | Standard Luanti mod metadata file. |
+| `textures/welcome_board_bg.png` | The 9-sliced, semi-transparent panel background. |
 
 ---
 

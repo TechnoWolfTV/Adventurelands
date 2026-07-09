@@ -37,6 +37,9 @@ cfg.show_on = get_str("welcome_board_show_on", "first_join")
 -- Delay before popup appears (seconds)
 cfg.delay = get_float("welcome_board_delay", 0.8, 0.0, 5.0)
 
+-- Maximum characters per page before content is split into multiple pages
+cfg.chars_per_page = get_float("welcome_board_chars_per_page", 3000, 500, 10000)
+
 -- General
 cfg.title        = get_str("welcome_board_title",       "Welcome! Your Adventure Begins Here.")
 cfg.subtitle     = get_str("welcome_board_subtitle",    "Explore, Build, Craft & Survive")
@@ -45,7 +48,7 @@ cfg.server_name  = get_str("welcome_board_server_name", "This World")
 -- Welcome tab
 cfg.welcome_heading = get_str("welcome_board_welcome_heading", "A New Adventure Awaits")
 cfg.welcome_body    = unescape(get_str("welcome_board_welcome_body",
-    "This world is yours to explore, build, and survive in.\n\n" ..
+    "This world is yours to explore, build, and survive in.\n" ..
     "Ahead of you lies a Luanti experience featuring exploration across diverse biomes, " ..
     "deep mines full of rare ores, challenging monsters that come alive at night, and a rich crafting " ..
     "system to take you from wooden tools all the way to powerful equipment.\n\n" ..
