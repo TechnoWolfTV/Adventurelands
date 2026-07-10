@@ -2,7 +2,7 @@
 
 **A polished, fully configurable welcome dialog mod for Luanti (formerly Minetest).**
 
-Shows a private popup window to players when they join your world or server. The dialog features multiple tabs (Welcome, Tips & Guide, Server Rules), personalised greetings for new vs. returning players, a `/welcome` command to reopen it at any time, and extensive customisation via `minetest.conf`.
+Shows a private popup window to players when they join your world or server. The dialog features multiple tabs (Welcome, Announcements, Player Guide, Server Rules), personalised greetings for new vs. returning players, a `/welcome` command to reopen it at any time, and extensive customisation via `minetest.conf`.
 
 ---
 
@@ -44,11 +44,11 @@ Shows a private popup window to players when they join your world or server. The
 ## Features
 
 - **Private popup dialog** — only the joining player sees it; no broadcast to others.
-- **Three content tabs** — Welcome, Tips & Guide, and Server Rules (each independently toggleable).
+- **Four content tabs** — Welcome, Announcements, Player Guide, and Server Rules (each independently toggleable).
 - **Personalised greeting** — different greeting text for first-time visitors vs. returning players.
 - **First-join / every-join / never** modes — full control over when the popup appears.
 - **Configurable delay** — small delay before showing the popup so the world finishes loading first.
-- **`/welcome` command** — players can reopen the dialog at any time; supports `/welcome tips` and `/welcome rules` to jump to a specific tab.
+- **`/welcome` command** — players can reopen the dialog at any time; supports `/welcome announcements`, `/welcome guide`, and `/welcome rules` to jump to a specific tab.
 - **`/welcome_reset` admin command** — reset a player's first-join flag so they see the dialog again.
 - **Chat notification** — optional coloured chat message sent to the joining player.
 - **Fully themed appearance** — background colour, title colour, body colour, accent bars, and close button label all configurable.
@@ -75,7 +75,7 @@ Shows a private popup window to players when they join your world or server. The
 
 ## Quick Start
 
-Out of the box, the mod works with no configuration at all. Players will see a welcome popup on their **first join only**, with three tabs containing default Adventurelands-themed content.
+Out of the box, the mod works with no configuration at all. Players will see a welcome popup on their **first join only**, with four tabs containing sensible default content.
 
 To personalise it for your server, add any of the following to your `minetest.conf`:
 
@@ -199,9 +199,12 @@ All settings can be placed in `minetest.conf` (in your Luanti user data director
 
 | Setting | Default | Description |
 |---|---|---|
-| `welcome_board_show_tips` | `true` | Set to `false` to hide the Tips tab entirely. |
-| `welcome_board_tips_tab_label` | `Tips & Guide` | The label shown on the Tips tab button. |
-| `welcome_board_tips_body` | *(see below)* | Content of the Tips tab. Use `\n` for line breaks. |
+| `welcome_board_show_announcements` | `true` | Set to `false` to hide the Announcements tab entirely. |
+| `welcome_board_announcements_tab_label` | `Announcements` | The label shown on the Announcements tab button. |
+| `welcome_board_announcements_body` | *(see below)* | Content of the Announcements tab. Use `\n` for line breaks. Edit in-game as news changes. |
+| `welcome_board_show_tips` | `true` | Set to `false` to hide the Player Guide tab entirely. |
+| `welcome_board_tips_tab_label` | `Player Guide` | The label shown on the Player Guide tab button. |
+| `welcome_board_tips_body` | *(see below)* | Content of the Player Guide tab. Use `\n` for line breaks. |
 
 ### Content — Rules Tab
 
@@ -297,7 +300,7 @@ an in-game edit and return a field to its configured default, use:
 ```
 
 Valid fields: `title`, `subtitle`, `welcome_heading`, `welcome_body`,
-`tips_body`, `rules_body`, `new_player_greeting`, `return_greeting`, or `all` to
+`announcements_body`, `tips_body`, `rules_body`, `new_player_greeting`, `return_greeting`, or `all` to
 revert everything. Requires the `welcome_board_author` privilege.
 
 ## Pagination
@@ -329,15 +332,17 @@ when you are over the limit.
 
 ```
 /welcome
-/welcome tips
+/welcome announcements
+/welcome guide
 /welcome rules
 ```
 
 Opens the welcome dialog. Any player can use this command at any time.
 
 - `/welcome` — opens the dialog on the Welcome tab.
-- `/welcome tips` — opens the dialog directly on the Tips tab (if enabled).
-- `/welcome rules` — opens the dialog directly on the Rules tab (if enabled).
+- `/welcome announcements` — opens the dialog directly on the Announcements tab (if enabled).
+- `/welcome guide` — opens the dialog directly on the Player Guide tab (if enabled).
+- `/welcome rules` — opens the dialog directly on the Server Rules tab (if enabled).
 
 No special privileges are required.
 
@@ -364,7 +369,7 @@ The target player must be **online** when you run this command, as player metada
 Reverts a single Welcome Board field (or `all`) to its configured default,
 discarding any in-game author edit. Requires the `welcome_board_author` or
 `server` privilege. Valid fields: `title`, `subtitle`, `welcome_heading`, `welcome_body`,
-`tips_body`, `rules_body`, `new_player_greeting`, `return_greeting`, `all`.
+`announcements_body`, `tips_body`, `rules_body`, `new_player_greeting`, `return_greeting`, `all`.
 
 ---
 
@@ -373,7 +378,7 @@ discarding any in-game author edit. Requires the `welcome_board_author` or
 Each tab beyond the first "Welcome" tab can be independently enabled or disabled:
 
 ```ini
-# Disable the Tips tab (only Welcome and Rules will appear)
+# Disable the Player Guide tab
 welcome_board_show_tips = false
 
 # Disable the Rules tab (only Welcome and Tips will appear)

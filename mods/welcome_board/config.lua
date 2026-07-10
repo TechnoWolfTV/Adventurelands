@@ -54,13 +54,20 @@ cfg.welcome_body    = unescape(get_str("welcome_board_welcome_body",
     "system to take you from wooden tools all the way to powerful equipment.\n\n" ..
     "Whether you prefer to build sprawling bases, brave dangerous dungeons, or simply wander and " ..
     "discover — there is something here for you.\n\n" ..
-    "Use the tabs above to read tips for new players and to review the server rules. " ..
-    "You can reopen this dialog any time with the /welcome command."
+    "Use the tabs above to check announcements, read the player guide, and review " ..
+    "the server rules. You can reopen this dialog any time with the /welcome command."
 ))
 
--- Tips tab
+-- Announcements tab
+cfg.show_announcements      = get_bool("welcome_board_show_announcements", true)
+cfg.announcements_tab_label = get_str("welcome_board_announcements_tab_label", "Announcements")
+cfg.announcements_body      = unescape(get_str("welcome_board_announcements_body",
+    "Nothing new to report right now. Enjoy your adventure!"
+))
+
+-- Player Guide tab
 cfg.show_tips      = get_bool("welcome_board_show_tips", true)
-cfg.tips_tab_label = get_str("welcome_board_tips_tab_label", "Tips & Guide")
+cfg.tips_tab_label = get_str("welcome_board_tips_tab_label", "Player Guide")
 cfg.tips_body      = unescape(get_str("welcome_board_tips_body",
     "GETTING STARTED\n" ..
     "- Punch a tree trunk to collect Wood.\n" ..

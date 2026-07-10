@@ -23,6 +23,9 @@ local function get_tabs(c)
     local tabs = {
         { label = "Welcome", field = "welcome_body" },
     }
+    if c.show_announcements then
+        table.insert(tabs, { label = c.announcements_tab_label, field = "announcements_body" })
+    end
     if c.show_tips  then
         table.insert(tabs, { label = c.tips_tab_label,  field = "tips_body" })
     end
@@ -298,7 +301,7 @@ end
 -- Help panel — visible to all players; explains editing (which needs a priv).
 -- ---------------------------------------------------------------------------
 local function build_help(c)
-    local w, h = 12, 9.5
+    local w, h = 12, 10
     local help_text = table.concat({
         "Editing the Welcome Board requires the 'welcome_board_author' or 'server'\n",
         "privilege. If you don't have it, you can still read every tab, but the Edit\n",
@@ -312,7 +315,7 @@ local function build_help(c)
         "\n",
         "REVERTING TO DEFAULTS\n",
         "- Use the chat command /welcome_revert <field> to restore a field to its default.\n",
-        "- Fields: title, subtitle, welcome_heading, welcome_body, tips_body, rules_body,\n",
+        "- Fields: title, subtitle, welcome_heading, welcome_body, announcements_body, tips_body, rules_body,\n",
         "  new_player_greeting, return_greeting, or 'all' to reset everything.\n",
         "\n",
         "PAGES\n",
@@ -328,10 +331,14 @@ local function build_help(c)
         "- Your text displays exactly as you type it — what you see is what players get.\n",
         "\n",
         "TIPS\n",
-        "- Keep each tab focused: Welcome for a greeting, Tips for gameplay help, Rules\n",
-        "  for server rules.\n",
+        "- Keep each tab focused: Welcome for a greeting, Announcements for news,\n",
+        "  Player Guide for gameplay help, and Server Rules for your rules.\n",
         "- The character counter below the edit box turns red if you go over the page\n",
         "  limit, and tells you how many pages it will become.\n",
+        "\n",
+        "MORE OPTIONS\n",
+        "- For advanced customisation — colours, sizing, default content, which tabs\n",
+        "  appear, and every available setting — see the mod's README.md file.\n",
     })
 
     local f = {

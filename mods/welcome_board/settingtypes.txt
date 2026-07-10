@@ -38,15 +38,26 @@ welcome_board_welcome_heading (Welcome tab heading) string A New Adventure Await
 # Body text for the Welcome tab. Use \n for line breaks.
 welcome_board_welcome_body (Welcome tab body) string This world is yours to explore, build, and survive in.\n\nAhead of you lies a Luanti experience featuring exploration across diverse biomes, deep mines full of rare ores, challenging monsters that come alive at night, and a rich crafting system to take you from wooden tools all the way to powerful equipment.\n\nWhether you prefer to build sprawling bases, brave dangerous dungeons, or simply wander and discover — there is something here for you.\n\nUse the tabs above to read tips for new players and to review the server rules. You can reopen this dialog any time with the /welcome command.
 
-# --- TIPS TAB ---
+# --- ANNOUNCEMENTS TAB ---
 
-# Whether to show the Tips tab.
-welcome_board_show_tips (Show Tips tab) bool true
+# Whether to show the Announcements tab.
+welcome_board_show_announcements (Show Announcements tab) bool true
 
-# Label for the Tips tab header button.
-welcome_board_tips_tab_label (Tips tab label) string Tips & Guide
+# Label for the Announcements tab header button.
+welcome_board_announcements_tab_label (Announcements tab label) string Announcements
 
-# Tips content. Use \n for line breaks.
+# Announcements content. Use \n for line breaks. Edit this in-game as news changes.
+welcome_board_announcements_body (Announcements tab body) string Nothing new to report right now. Enjoy your adventure!
+
+# --- PLAYER GUIDE TAB ---
+
+# Whether to show the Player Guide tab.
+welcome_board_show_tips (Show Player Guide tab) bool true
+
+# Label for the Player Guide tab header button.
+welcome_board_tips_tab_label (Player Guide tab label) string Player Guide
+
+# Player Guide content. Use \n for line breaks.
 welcome_board_tips_body (Tips tab body) string GETTING STARTED\n- Punch a tree trunk to collect Wood.\n- Open your inventory (I or Tab) and craft a Crafting Grid from 4 Wood Planks.\n- Place the crafting grid and make basic tools: a Wooden Pickaxe, Axe, and Sword.\n- Find or craft a Bed and sleep through your first night to avoid monsters.\n\nMINING & RESOURCES\n- Stone tools are stronger than wood — smelt Cobblestone into Stone or mine for Coal first.\n- Iron is found underground roughly 5–30 blocks below the surface.\n- Gold and rare ores are found deeper, below Y=-20.\n- Always carry a Torch! Darkness causes mobs to spawn inside caves.\n\nSURVIVAL\n- Your health recovers slowly when your hunger bar is above half — eat regularly.\n- Monsters (mobs) spawn in the dark. Light up your base with Torches or Lanterns.\n- Falling into deep water is safer than falling onto stone — use water as a landing pad.\n- Craft Armour early — even leather armour dramatically reduces damage taken.\n\nBUILDING & CRAFTING\n- Press I or Tab to open your inventory and access the crafting guide.\n- Almost all recipes can be viewed in the Crafting Guide (the book icon in inventory).\n- You can sleep in a Bed to skip the night and reset your spawn point.\n- Signs can be placed and written on to label your storage chests.\n\nMULTIPLAYER TIPS\n- Be respectful of other players' builds — grief is not tolerated.\n- Use /help to see available commands.\n- Use /spawn to return to the world spawn point at any time.\n- Type /msg <playername> <message> to send a private message to another player.
 
 # --- RULES TAB ---

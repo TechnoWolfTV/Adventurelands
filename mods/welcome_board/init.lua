@@ -301,9 +301,10 @@ end)
 -- /welcome — open the dialog any time
 -- ---------------------------------------------------------------------------
 minetest.register_chatcommand("welcome", {
-    description = "Open the Welcome Board (Welcome, Tips, and Rules tabs). "
-        .. "Optionally jump to a tab: /welcome tips  or  /welcome rules. "
-        .. "Players with 'welcome_board_author' or 'server' can also edit it here.",
+    description = "Open the Welcome Board (Welcome, Announcements, Player Guide, "
+        .. "and Rules tabs). Jump to a tab: /welcome announcements, /welcome guide, "
+        .. "or /welcome rules. Players with 'welcome_board_author' or 'server' can "
+        .. "also edit it here.",
     func = function(name, param)
         local player = minetest.get_player_by_name(name)
         if not player then return false, "You must be in-game." end
@@ -313,7 +314,9 @@ minetest.register_chatcommand("welcome", {
         local tab = 1
         local tabs = fs.get_tabs(cfg)
         for i, t in ipairs(tabs) do
+            if param == "announcements" and t.field == "announcements_body" then tab = i end
             if param == "tips"  and t.field == "tips_body"  then tab = i end
+            if param == "guide" and t.field == "tips_body"  then tab = i end
             if param == "rules" and t.field == "rules_body" then tab = i end
         end
         show_dialog(player, { tab = tab, reset_page = true })
@@ -348,7 +351,7 @@ minetest.register_chatcommand("welcome_reset", {
 minetest.register_chatcommand("welcome_revert", {
     description = "Revert an edited Welcome Board field to its default. "
         .. "Requires the 'welcome_board_author' or 'server' privilege. "
-        .. "Fields: title, subtitle, welcome_heading, welcome_body, tips_body, "
+        .. "Fields: title, subtitle, welcome_heading, welcome_body, announcements_body, tips_body, "
         .. "rules_body, new_player_greeting, return_greeting, all",
     func = function(name, param)
         if not is_author(name) then
@@ -366,7 +369,7 @@ minetest.register_chatcommand("welcome_revert", {
             return true, ("Field '%s' reverted to default."):format(param)
         end
         return false, "Unknown field. Options: title, subtitle, welcome_heading, "
-            .. "welcome_body, tips_body, rules_body, new_player_greeting, "
+            .. "welcome_body, announcements_body, tips_body, rules_body, new_player_greeting, "
             .. "return_greeting, all"
     end,
 })

@@ -17,7 +17,7 @@ end
 -- global table
 
 mobs = {
-	mod = "redo", version = "20260707",
+	mod = "redo", version = "20260710",
 	spawning_mobs = {}, translate = S,
 	node_snow = has(core.registered_aliases["mapgen_snow"])
 			or has("mcl_core:snow") or has("default:snow") or "air",
@@ -315,7 +315,7 @@ local function check_for(look_for, look_inside)
 
 		if type(str) == "string" and str:sub(1, 6) == "group:" then
 
-			local group = str:match("^group:(.*)$") or ""
+			local group = str:sub(7)
 			local def = core.registered_items[look_for]
 
 			if def and def.groups[group] and def.groups[group] ~= 0 then return true end
@@ -835,13 +835,12 @@ function mob_class:check_for_death(cmi_cause)
 	self:item_drop() -- drop items
 	self:mob_sound(self.sounds.death) -- play death sound
 
-	-- reset vars
+	-- reset vars and fall
 	self.attack = nil
 	self.following = nil
 	self.v_start = false ; self.blinktimer = 0
-	self.passive = true
 	self.state = "die"
-	self.fly = false
+	self.object:set_acceleration({x = 0, y = -9.5, z = 0})
 
 	local pos = self.object:get_pos() ; if not pos then return end
 
@@ -868,15 +867,14 @@ function mob_class:check_for_death(cmi_cause)
 	end
 
 	-- did we find a death animation
-	if self:death_anim() then return true
-	else -- otherwise remove mob and show particle effect
+	if self:death_anim() then return true end
 
-		if use_cmi then cmi.notify_die(self.object, cmi_cause) end
+	-- otherwise remove mob and show particle effect
+	if use_cmi then cmi.notify_die(self.object, cmi_cause) end
 
-		remove_mob(self, true)
+	remove_mob(self, true)
 
-		effect(pos, 20, "mobs_tnt_smoke.png")
-	end
+	effect(pos, 20, "mobs_tnt_smoke.png")
 
 	return true
 end
@@ -939,7 +937,7 @@ function mob_class:is_at_cliff()
 
 	local def = core.registered_nodes[bnode.name]
 
-	return (not def and def.walkable)
+	return (def and not def.walkable)
 end
 
 -- check for nodes or groups inside mob collision area
@@ -2012,9 +2010,7 @@ function mob_class:do_states(dtime)
 			if obj_pos then
 				self:yaw_to_pos(obj_pos, 0, 8) -- look at player
 			else
-				yaw = yaw + random() - 0.5
-
-				self:set_yaw(yaw, 8) -- random turn
+				self:set_yaw(yaw + random() - 0.5, 8) -- random turn
 			end
 		end
 
@@ -2045,9 +2041,7 @@ function mob_class:do_states(dtime)
 
 		if self.randomly_turn and random(100) <= 30 then
 
-			yaw = yaw + random() - 0.5
-
-			self:set_yaw(yaw, 4)
+			self:set_yaw(yaw + random() - 0.5, 4)
 
 			-- for flying/swimming mobs randomly move up and down also
 			if self.fly_in and not self.following then
@@ -2098,8 +2092,7 @@ function mob_class:do_states(dtime)
 			self.state = "stand"
 			self:set_animation("stand")
 
-			yaw = yaw + random(-1, 1) * 1.5 -- try to turn so we are not stuck
-			yaw = self:set_yaw(yaw, 4)
+			yaw = self:set_yaw(yaw + random(-1, 1) * 1.5, 4) -- turn so we arent stuck
 		else
 			self:set_velocity(self.run_velocity)
 			self:set_animation("walk")
@@ -2139,11 +2132,7 @@ function mob_class:do_states(dtime)
 			self.target_time_lost = 0
 		end
 
-		local ds_var = 0
-
-		if self.attack_type == "dogshoot" then
-			ds_var = self:dogswitch(dtime)
-		end
+		local ds_var = (self.attack_type == "dogshoot") and self:dogswitch(dtime) or 0
 
 		if self.attack_type == "explode" then
 
@@ -2198,6 +2187,7 @@ function mob_class:do_states(dtime)
 				if self.blinktimer > 0.2 then
 
 					self.blinktimer = 0
+					self.blinkstatus = not self.blinkstatus
 
 					if self.blinkstatus then
 						self.object:set_texture_mod(self.texture_mods)
@@ -2206,8 +2196,6 @@ function mob_class:do_states(dtime)
 						self.object:set_texture_mod(self.texture_mods .. "^[brighten")
 						self.object:set_properties({glow = (self.glow or 0) + 3})
 					end
-
-					self.blinkstatus = not self.blinkstatus
 				end
 
 --print("=== explosion timer", self.explode_timer)
@@ -2387,19 +2375,20 @@ function mob_class:do_states(dtime)
 
 			self.shoot_timer = (self.shoot_timer or 0) + dtime
 
-			if self.shoot_timer > self.shoot_interval
-			and random(100) <= self.shoot_chance then
+			if self.shoot_timer > self.shoot_interval then
 
 				self.shoot_timer = 0
-				self:set_animation("shoot")
-				self:mob_sound(self.sounds.shoot_attack) -- attack sound
 
-				local p = self.object:get_pos()
-				local prop = self.object:get_properties()
+				if core.registered_entities[self.arrow]
+				and random(100) <= self.shoot_chance then
 
-				p.y = p.y + (prop.collisionbox[2] + prop.collisionbox[5]) / 2
+					self:set_animation("shoot")
+					self:mob_sound(self.sounds.shoot_attack)
 
-				if core.registered_entities[self.arrow] then
+					local p = self.object:get_pos()
+					local prop = self.object:get_properties()
+
+					p.y = p.y + (prop.collisionbox[2] + prop.collisionbox[5]) / 2
 
 					local obj = core.add_entity(p, self.arrow)
 					local ent = obj:get_luaentity()
@@ -2408,7 +2397,7 @@ function mob_class:do_states(dtime)
 					-- check for arrow custom override
 					if self.arrow_override then self.arrow_override(ent, self) end
 
-					local v = ent.velocity or 1 -- or set to default
+					local v = ent.velocity or 1
 
 					ent.owner_id = tostring(self.object) -- add unique owner id to arrow
 
@@ -2486,13 +2475,13 @@ end
 
 local dis_damage_kb = settings:get_bool("mobs_disable_damage_kb")
 
-function mob_class:on_punch(hitter, tflp, tool_capabilities, dir, damage)
+function mob_class:on_punch(hitter, tflp, tool_caps, dir, damage)
 
 	-- mob health and nil check
 	if self.health <= 0 or not hitter then return true end
 
 	-- error checking when mod profiling is enabled
-	if not tool_capabilities then
+	if not tool_caps then
 		core.log("warning",	"[mobs] Mod profiling enabled, damage not enabled")
 		return true
 	end
@@ -2527,22 +2516,23 @@ function mob_class:on_punch(hitter, tflp, tool_capabilities, dir, damage)
 	-- calculate mob damage
 	local damage = 0
 	local armor = self.object:get_armor_groups() or {}
+	local punch_interval = tool_caps.full_punch_interval or 1.4
 	local tmp
 
 	-- quick error check incase it ends up 0
 	if tflp == 0 then tflp = 0.2 end
 
 	if use_cmi then
-		damage = cmi.calculate_damage(self.object, hitter, tflp, tool_capabilities, dir)
+		damage = cmi.calculate_damage(self.object, hitter, tflp, tool_caps, dir)
 	else
 
-		for group,_ in pairs( (tool_capabilities.damage_groups or {}) ) do
+		for group,_ in pairs( (tool_caps.damage_groups or {}) ) do
 
-			tmp = tflp / (tool_capabilities.full_punch_interval or 1.4)
+			tmp = tflp / punch_interval
 
 			if tmp < 0 then tmp = 0.0 elseif tmp > 1 then tmp = 1.0 end
 
-			damage = damage + (tool_capabilities.damage_groups[group] or 0)
+			damage = damage + (tool_caps.damage_groups[group] or 0)
 					* tmp * ((armor[group] or 0) / 100.0)
 		end
 	end
@@ -2554,15 +2544,13 @@ function mob_class:on_punch(hitter, tflp, tool_capabilities, dir, damage)
 		hit_item = hitter:get_luaentity().name
 	end
 
-	for n = 1, #self.immune_to do -- check for toll immunity or special damage
+	for n = 1, #self.immune_to do -- check for tool immunity or special damage
 
-		if self.immune_to[n][1] == hit_item then
-
-			damage = self.immune_to[n][2] or 0 ; break
+		local immune = self.immune_to[n]
 
 		-- if "all" then no tools deal damage unless it's specified in list
-		elseif self.immune_to[n][1] == "all" then
-			damage = self.immune_to[n][2] or 0
+		if immune[1] == hit_item or immune[1] == "all" then
+			damage = self.immune_to[n][2] or 0 ; break
 		end
 	end
 
@@ -2582,7 +2570,7 @@ function mob_class:on_punch(hitter, tflp, tool_capabilities, dir, damage)
 
 	-- custom punch function (if false returned, do not continue)
 	if self.do_punch and not self:do_punch(
-			hitter, tflp, tool_capabilities, dir, damage) == false then
+			hitter, tflp, tool_caps, dir, damage) == false then
 		return true
 	end
 
@@ -2598,22 +2586,17 @@ function mob_class:on_punch(hitter, tflp, tool_capabilities, dir, damage)
 	end
 
 	if use_cmi
-	and cmi.notify_punch(self.object, hitter, tflp, tool_capabilities, dir, damage) then
+	and cmi.notify_punch(self.object, hitter, tflp, tool_caps, dir, damage) then
 		return true
 	end
-
-	-- add weapon wear
-	local punch_interval = tool_capabilities.full_punch_interval or 1.4
 
 	-- toolrank support
 	local wear = floor((punch_interval / 75) * 9000)
 
 	-- check for punch_attack_uses being 0 to negate wear
-	if tool_capabilities.punch_attack_uses == 0 then
+	if tool_caps.punch_attack_uses == 0 then
 		wear = 0
-	end
-
-	if mobs.is_creative(hitter:get_player_name()) then
+	elseif mobs.is_creative(hitter:get_player_name()) then
 		wear = use_tr and 1 or 0
 	end
 
@@ -2638,21 +2621,18 @@ function mob_class:on_punch(hitter, tflp, tool_capabilities, dir, damage)
 		-- blood_particles
 		if not disable_blood and self.blood_amount > 0 then
 
-			local pos = self.object:get_pos()
+			local bpos = table.copy(self.object:get_pos())
 			local blood = self.blood_texture
-			local amount = self.blood_amount
+			local amount = damage > 10 and self.blood_amount * 2 or self.blood_amount
 
-			pos.y = pos.y + (-prop.collisionbox[2] + prop.collisionbox[5]) * .5
-
-			-- lots of damage = more blood :)
-			if damage > 10 then amount = self.blood_amount * 2 end
+			bpos.y = bpos.y + (-prop.collisionbox[2] + prop.collisionbox[5]) * .5
 
 			-- select blood texture
 			if type(self.blood_texture) == "table" then
 				blood = self.blood_texture[random(#self.blood_texture)]
 			end
 
-			effect(pos, amount, blood, 1, 2, 1.75, nil, nil, true)
+			effect(bpos, amount, blood, 1, 2, 1.75, nil, nil, true)
 		end
 
 		-- add healthy afterglow when hit (can cause lag with larger textures)
@@ -2686,8 +2666,7 @@ function mob_class:on_punch(hitter, tflp, tool_capabilities, dir, damage)
 		end
 
 		-- exit here if dead, check for tools with fire damage
-		local hot = tool_capabilities and tool_capabilities.damage_groups
-				and tool_capabilities.damage_groups.fire
+		local hot = tool_caps.damage_groups and tool_caps.damage_groups.fire
 
 		-- check for any fire enchants also
 		if use_mc2 and (enchants.flame or enchants.fire_aspect) then
@@ -2707,17 +2686,16 @@ function mob_class:on_punch(hitter, tflp, tool_capabilities, dir, damage)
 		if v then
 
 			local kb = dis_damage_kb and 1 or (damage or 1)
-			local up = (v.y > 0 or self.fly) and 0 or 2
 
-			dir = dir or {x = 0, y = 0, z = 0} -- nil check
+			kb = tool_caps.damage_groups["knockback"] or kb
 
-			-- use tool knockback value or default
-			kb = tool_capabilities.damage_groups["knockback"] or kb
-
-			-- check for knockback enchantment
-			if use_mc2 and enchants.knockback then
+			if use_mc2 and enchants.knockback then -- check for knockback enchantment
 				kb = kb + 3 * enchants.knockback
 			end
+
+			local up = (v.y > 0 or self.fly) and 0 or 2
+
+			dir = dir or {x = 0, y = 0, z = 0}
 
 			self.object:set_velocity({x = dir.x * kb, y = up, z = dir.z * kb})
 
@@ -2756,15 +2734,14 @@ function mob_class:on_punch(hitter, tflp, tool_capabilities, dir, damage)
 
 		-- alert others to the attack
 		local objs = core.get_objects_inside_radius(hitter:get_pos(), self.view_range)
-		local ent
 
 		for n = 1, #objs do
 
-			ent = objs[n] and objs[n]:get_luaentity()
+			local ent = objs[n] and objs[n]:get_luaentity()
 
 			if ent and ent._cmi_is_mob then
 
-				-- only alert members of same mob and assigned helper
+				-- only alert members of same mob or assigned helper
 				if ent.group_attack and ent.state ~= "attack"
 				and not (is_player(hitter) and ent.owner == hitter_name)
 				and (ent.name == self.name or ent.name == self.group_helper) then
@@ -2899,11 +2876,10 @@ function mob_class:mob_activate(staticdata, def, dtime)
 	self.object:set_properties({visual_size = vis_size,
 			collisionbox = colbox, selectionbox = selbox})
 
-	-- is there a specific texture if gotten
-	if self.gotten and def.gotten_texture then textures = def.gotten_texture end
-
-	-- specific mesh if gotten
-	if self.gotten and def.gotten_mesh then mesh = def.gotten_mesh end
+	if self.gotten then
+		textures = def.gotten_texture or textures
+		mesh = def.gotten_mesh or mesh
+	end
 
 	-- set child objects to half size
 	if self.child then
@@ -2926,13 +2902,8 @@ function mob_class:mob_activate(staticdata, def, dtime)
 		following = false -- currently following path?
 	}
 
-	local armor -- Armor groups (immortal = 1 for custom damage handling)
-
-	if type(self.armor) == "table" then
-		armor = table_copy(self.armor)
-	else
-		armor = {fleshy = self.armor, immortal = 1}
-	end
+	local armor = type(self.armor) == "table" and table_copy(self.armor)
+			or {fleshy = self.armor, immortal = 1} -- immortal for custom damage
 
 	self.object:set_armor_groups(armor)
 
@@ -2943,7 +2914,7 @@ function mob_class:mob_activate(staticdata, def, dtime)
 	self.standing_on = "air"
 	self.state = self.state or "stand"
 
-	self:set_yaw((random(0, 360) - 180) / 180 * pi, 6) -- set random yaw and stand
+	self:set_yaw((random(0, 360) - 180) / 180 * pi, 6) -- stand at random yaw
 	self:set_animation("stand")
 
 	if type(self.texture_mods) ~= "string" then
