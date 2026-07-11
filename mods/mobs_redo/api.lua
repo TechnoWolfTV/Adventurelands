@@ -1731,27 +1731,24 @@ function mob_class:general_attack()
 		end
 	end
 
-	local p, sp, dist, min_player
-	local min_dist = self.view_range + 1
+	local min_dist, min_target = self.view_range + 1
 
-	for _,player in pairs(objs) do
+	for _, target in pairs(objs) do
 
-		p = player:get_pos() ; sp = s
+		local p = target:get_pos()
+		local dist = get_distance(p, s)
 
-		dist = get_distance(p, s)
+		-- choose closest entity to attack while looking higher for better sights
+		if dist ~= 0 and dist < min_dist and self:line_of_sight(
+				{x = s.x, y = s.y + 1, z = s.z}, {x = p.x, y = p.y + 1, z = p.z}) then
 
-		-- aim higher to make looking up hills more realistic
-		p.y = p.y + 1 ; sp.y = sp.y + 1
-
-		-- choose closest entity to attack
-		if dist ~= 0 and dist < min_dist and self:line_of_sight(sp, p) then
 			min_dist = dist
-			min_player = player
+			min_target = target
 		end
 	end
 
-	if min_player and random(100) > self.attack_chance then -- attack!
-		self:do_attack(min_player)
+	if min_target and random(100) > self.attack_chance then -- attack!
+		self:do_attack(min_target)
 	end
 end
 
@@ -1762,7 +1759,7 @@ function mob_class:do_runaway_from()
 	if not self.runaway_from or self.state == "flop" then return end
 
 	local s = self.object:get_pos() ; if not s then return end
-	local p, sp, dist, pname, player, obj, min_player, name
+	local target, min_target, name
 	local min_dist = self.view_range + 1
 	local objs = core.get_objects_inside_radius(s, self.view_range)
 
@@ -1770,18 +1767,18 @@ function mob_class:do_runaway_from()
 
 		if is_player(objs[n]) then
 
-			pname = objs[n]:get_player_name()
+			local pname = objs[n]:get_player_name()
 
 			if self.owner == pname or is_invisible(self, pname) then
 				name = ""
 			else
-				player = objs[n] ; name = "player"
+				target = objs[n] ; name = "player"
 			end
 		else
-			obj = objs[n]:get_luaentity()
+			local obj = objs[n]:get_luaentity()
 
 			if obj then
-				player = obj.object ; name = obj.name or ""
+				target = obj.object ; name = obj.name or ""
 			end
 		end
 
@@ -1789,25 +1786,22 @@ function mob_class:do_runaway_from()
 		if name ~= "" and name ~= self.name
 		and (self.runaway_from and check_for(name, self.runaway_from)) then
 
-			sp = s
-			p = player and player:get_pos() or s
-
-			-- aim higher to make looking up hills more realistic
-			p.y = p.y + 1 ; sp.y = sp.y + 1
-
-			dist = get_distance(p, s)
+			local p = target and target:get_pos() or s
+			local dist = get_distance(p, s)
 
 			-- choose closest entity to runaway from
-			if dist < min_dist and self:line_of_sight(sp, p) then
+			if dist < min_dist and self:line_of_sight(
+					{x = s.x, y = s.y + 1, z = s.z}, {x = p.x, y = p.y + 1, z = p.z}) then
+
 				min_dist = dist
-				min_player = player
+				min_target = target
 			end
 		end
 	end
 
-	if min_player then
+	if min_target then
 
-		self:yaw_to_pos(min_player:get_pos(), 3) -- opposite dir
+		self:yaw_to_pos(min_target:get_pos(), 3) -- opposite dir
 
 		self.state = "runaway"
 		self.runaway_timer = 3
@@ -1816,12 +1810,13 @@ function mob_class:do_runaway_from()
 		return
 	end
 
-	-- check for nodes to runaway from
-	objs = core.find_node_near(s, self.view_range, self.runaway_from, true)
+	-- check for nodes to runaway from when seen
+	local p = core.find_node_near(s, self.view_range, self.runaway_from, true)
 
-	if objs then
+	if p and self:line_of_sight(
+			{x = s.x, y = s.y + 1, z = s.z}, {x = p.x, y = p.y + 1, z = p.z}) then
 
-		self:yaw_to_pos(objs, 3) -- opposite dir
+		self:yaw_to_pos(p, 3) -- opposite dir
 		self.state = "runaway"
 		self.runaway_timer = 3
 		self.following = nil
