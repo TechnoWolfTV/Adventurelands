@@ -275,9 +275,7 @@ end
 
 function mobs:scale_mob(self, w, h, perma)
 
-	local prop = self and self.object:get_properties()
-
-	if not prop or not w or not h then return end
+	if not w or not h then return end
 
 	local vis_size = {x = self.base_size.x * w, y = self.base_size.y * h}
 
@@ -507,6 +505,20 @@ function mob_class:line_of_sight(pos1, pos2)
 	return true
 end
 
+-- are we flying in what we are suppose to? (taikedz)
+
+function mob_class:flight_check()
+
+	local def = core.registered_nodes[self.standing_in] ; if not def then return end
+
+	-- are we standing inside what we should be to fly/swim ?
+	if check_for(self.standing_in, self.fly_in) then return true end
+
+	-- stops mobs getting stuck inside stairs or plantlike nodes
+	return def.drawtype ~= "airlike" and def.drawtype ~= "liquid"
+			and def.drawtype ~= "flowingliquid"
+end
+
 -- if not flying in set medium, find some nearby to move to
 
 function mob_class:attempt_flight_correction(override)
@@ -532,20 +544,6 @@ function mob_class:attempt_flight_correction(override)
 	self.object:set_velocity(vdirection(pos, escape_target))
 
 	return true
-end
-
--- are we flying in what we are suppose to? (taikedz)
-
-function mob_class:flight_check()
-
-	local def = core.registered_nodes[self.standing_in] ; if not def then return end
-
-	-- are we standing inside what we should be to fly/swim ?
-	if check_for(self.standing_in, self.fly_in) then return true end
-
-	-- stops mobs getting stuck inside stairs or plantlike nodes
-	return def.drawtype ~= "airlike" and def.drawtype ~= "liquid"
-			and def.drawtype ~= "flowingliquid"
 end
 
 -- turn to face position
@@ -1104,8 +1102,8 @@ function mob_class:do_jump()
 	ndef = core.registered_nodes[self.looking_at] -- what node are we looking at?
 
 	-- jump if we have space above to, or are a jumping mob
-	if (not blocked and (ndef.drawtype == "normal" or ndef.drawtype:find("glasslike")))
-	or self.walk_chance == 0 then
+	if self.walk_chance == 0 or (not blocked
+	and (ndef.drawtype == "normal" or ndef.drawtype:sub(1, 5) == "glass")) then
 
 		vel.y = self.jump_height
 
@@ -1376,7 +1374,7 @@ function mob_class:replace(pos)
 		local newnode = with
 
 		-- pass node name when using table or groups
-		if type(oldnode) == "table" or oldnode:find("group:") then
+		if type(oldnode) == "table" or oldnode:sub(1, 6) == "group:" then
 			oldnode = get_node(pos).name
 		end
 
@@ -1402,7 +1400,7 @@ function mob_class:check_item_pickup(pos)
 
 			for k,v in pairs(self.pick_up) do
 
-				if self.on_pick_up and l.itemstring:find(v) then
+				if self.on_pick_up and l.itemstring:find(v, 1, true) then
 
 					local r = self.on_pick_up(self, l)
 
