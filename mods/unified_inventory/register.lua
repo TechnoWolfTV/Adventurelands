@@ -337,9 +337,9 @@ ui.register_page("craftguide", {
 		local label = F(craft_type.description)
 
 		-- Append the cook time to the craft type label
-		if craft.type == "cooking" then
+		if craft.type == "cooking" or craft.type == "fuel" then
 			local res = core.get_craft_result({
-				method = "cooking",
+				method = craft.type,
 				width = 1,
 				items = { ItemStack(craft.items[1]) }
 			})

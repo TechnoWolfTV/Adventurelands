@@ -1,5 +1,4 @@
 local S = core.get_translator("unified_inventory")
-local F = core.formspec_escape
 local ui = unified_inventory
 
 local recipes_initialized = false
@@ -52,6 +51,18 @@ local function register_normal_craft_recipes()
 				end
 			end
 		end
+	end
+end
+
+local function register_fuel_recipes()
+	if not core.features.get_all_craft_recipes_fuel then
+		-- Broken API, Luanti < 5.17.0-dev
+		return
+	end
+
+	local recipes = core.get_all_craft_recipes("")
+	for i, recipe in ipairs(recipes or {}) do
+		ui.register_craft(recipe)
 	end
 end
 
@@ -166,6 +177,7 @@ core.after(0.01, function()
 
 	-- Index all craftable craft recipes. This depends on 'init_matching_cache'
 	register_normal_craft_recipes()
+	register_fuel_recipes()
 	for _, name in ipairs(ui.items_list) do
 		register_dig_drops(name)
 	end
@@ -295,6 +307,8 @@ function ui.register_craft(options)
 		return
 	end
 
+	options.method = nil -- unused, compat.
+
 	if recipes_initialized then
 		-- If you're getting this warning, do use either:
 		--   a)  unified_inventory.register_craft(...)
@@ -328,14 +342,17 @@ function ui.register_craft(options)
 		options.output = {}
 		for _, itemstack in ipairs(outputs) do
 			itemstack = ItemStack(itemstack)
+			-- Discard empty outputs
 			if not itemstack:is_empty() then
 				table.insert(options.output, itemstack)
 			end
 		end
 	end
 
-	-- Pre-filter: discard empty outputs
-	for _, itemstack in ipairs(options.output) do
+	-- Fuels have no output. Run the callback with empty output.
+	local fake_output = #options.output > 0 and options.output or { ItemStack("") }
+
+	for _, itemstack in ipairs(fake_output) do
 		local item_name = itemstack:get_name()
 		if not ui.crafts_for.recipe[item_name] then
 			ui.crafts_for.recipe[item_name] = {}
@@ -344,7 +361,7 @@ function ui.register_craft(options)
 	end
 
 	-- Run callbacks
-	for _, itemstack in ipairs(options.output) do
+	for _, itemstack in ipairs(fake_output) do
 		local item_name = itemstack:get_name()
 		for _, callback in ipairs(ui.craft_registered_callbacks) do
 			callback(item_name, options)
@@ -373,7 +390,7 @@ end
 
 
 ui.register_craft_type("normal", {
-	description = F(S("Crafting")),
+	description = S("Crafting"),
 	icon = "ui_craftgrid_icon.png",
 	width = 3,
 	height = 3,
@@ -389,7 +406,7 @@ ui.register_craft_type("normal", {
 
 
 ui.register_craft_type("shapeless", {
-	description = F(S("Mixing")),
+	description = S("Mixing"),
 	icon = "ui_craftgrid_icon.png",
 	width = 3,
 	height = 3,
@@ -402,25 +419,34 @@ ui.register_craft_type("shapeless", {
 	uses_crafting_grid = true,
 })
 
+local have_default_furnace = core.get_modpath("default") or core.get_modpath("mcl_furnaces")
 
-ui.register_craft_type("cooking", {
-	description = F(S("Cooking")),
-	icon = "default_furnace_front.png",
+ui.register_craft_type("fuel", {
+	description = S("Burning"),
+	icon = have_default_furnace and "default_furnace_fire_fg.png" or nil,
 	width = 1,
 	height = 1,
 })
 
+ui.register_craft_type("cooking", {
+	description = S("Cooking"),
+	icon = have_default_furnace and "default_furnace_front_active.png" or nil,
+	width = 1,
+	height = 1,
+})
+
+local have_default_tools = core.get_modpath("default") or core.get_modpath("mcl_tools")
 
 ui.register_craft_type("digging", {
-	description = F(S("Digging")),
-	icon = "default_tool_steelpick.png",
+	description = S("Digging"),
+	icon = have_default_tools and "default_tool_steelpick.png" or nil,
 	width = 1,
 	height = 1,
 })
 
 ui.register_craft_type("digging_chance", {
 	description = "Digging (by chance)",
-	icon = "default_tool_steelpick.png^[transformFY.png",
+	icon = have_default_tools and "default_tool_steelpick.png^[transformFY.png" or nil,
 	width = 1,
 	height = 1,
 })
