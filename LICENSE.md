@@ -145,6 +145,7 @@ made to the below listed works are officially made on or after 5 March 2024.
 - **Digtron**
   - Location: `./mods/digtron/`
   - License file: `./mods/digtron/LICENSE.txt`
+  - Changes were made to this work
 - **Discovery Maps**
   - Location: `./mods/discovery_maps/`
   - License file: `./mods/discovery_maps/LICENSE`
