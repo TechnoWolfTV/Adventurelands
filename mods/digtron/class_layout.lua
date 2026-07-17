@@ -423,8 +423,81 @@ local set_meta_with_retry = function(meta, meta_table)
 	return true
 end
 
+-- Groups whose snapshot must contain an inventory table:
+-- 2 = storage, 4 = builder, 5 = fuel, 6 = combined storage/fuel, 7 = battery holder.
+local groups_with_inventory = {[2]=true, [4]=true, [5]=true, [6]=true, [7]=true}
+
+-- Safety check run BEFORE write_layout_image destroys anything.
+-- The digtron move code assumes its whole working area is loaded and that every
+-- captured snapshot holds complete metadata. When an auto-controller runs far from
+-- any player, or bores into terrain that is still being generated, those assumptions
+-- can break: a snapshot may be taken from map that isn't fully loaded and then written
+-- back as empty metadata, silently wiping the machine's inventories and controller
+-- settings (the "inventory list \"stop\" ... doesn't exist" symptom).
+-- Returns ok(bool), reason(string). On failure the caller MUST NOT modify the world.
+function digtron.DigtronLayout.validate_layout_image(self)
+	-- create() sets this when the flood fill touched an "ignore" (unloaded) node.
+	if self.ignore_touching then
+		return false, "digtron is adjacent to unloaded (ignore) nodes"
+	end
+
+	for i, node_image in ipairs(self.all) do
+		local pos = node_image.pos
+		local name = node_image.node and node_image.node.name or "?"
+
+		-- 1. Destination block must be loaded. Writing into an unloaded block can be
+		--    discarded or re-emerged out from under us, desyncing node vs metadata.
+		if minetest.get_node_or_nil(pos) == nil then
+			return false, string.format("destination block not loaded at %s (node %d = %s)",
+				minetest.pos_to_string(pos), i, name)
+		end
+
+		-- 2. The snapshot must actually contain a metadata table.
+		local meta = node_image.meta
+		if meta == nil or meta.fields == nil then
+			return false, string.format("empty metadata snapshot for node %d (%s) at %s",
+				i, name, minetest.pos_to_string(pos))
+		end
+
+		-- 3. Inventory-bearing modules must have a non-empty inventory table in the
+		--    snapshot. An empty one here is exactly what blanks a storage/battery box.
+		local group = minetest.get_item_group(name, "digtron")
+		if groups_with_inventory[group] then
+			if meta.inventory == nil or next(meta.inventory) == nil then
+				return false, string.format("missing inventory in snapshot for %s (group %d) at %s",
+					name, group, minetest.pos_to_string(pos))
+			end
+		end
+	end
+
+	-- 4. The controller is always self.all[1] (inserted first in create()). Its fields
+	--    (cycles/period/offset/slope, formspec, and for the auto-controller the "stop"
+	--    list) are what go blank in the observed failure, so reject an empty snapshot.
+	local controller_image = self.all[1]
+	if controller_image ~= nil then
+		local cmeta = controller_image.meta
+		local cfields = cmeta and cmeta.fields or nil
+		if cfields == nil or next(cfields) == nil then
+			return false, string.format("controller metadata snapshot is empty at %s",
+				minetest.pos_to_string(controller_image.pos))
+		end
+	end
+
+	return true
+end
+
 local air_node = {name="air"}
 function digtron.DigtronLayout.write_layout_image(self, player)
+	-- Refuse to write (and therefore refuse to first destroy the machine) if the
+	-- snapshot or the target area looks unsafe. Leaving the machine untouched means
+	-- the auto-controller simply retries later instead of destroying itself.
+	local ok, reason = self:validate_layout_image()
+	if not ok then
+		minetest.log("warning", "[Digtron] aborting move to avoid corrupting the machine: "
+			.. tostring(reason) .. " (controller at " .. minetest.pos_to_string(self.controller) .. ")")
+		return false
+	end
+
 	-- destroy the old digtron
 	local oldpos, _ = self.old_pos_pointset:pop()
 	while oldpos ~= nil do
@@ -432,7 +505,8 @@ function digtron.DigtronLayout.write_layout_image(self, player)
 		local old_meta = minetest.get_meta(oldpos):to_table()
 
 		if not set_node_with_retry(oldpos, air_node) then
-			minetest.log("error", "DigtronLayout.write_layout_image failed to destroy old Digtron node, aborting write.")
+			minetest.log("error", "[Digtron] write_layout_image failed to destroy old Digtron node at "
+				.. minetest.pos_to_string(oldpos) .. ", aborting write (machine may now be damaged).")
 			return false
 		end
 
@@ -450,7 +524,8 @@ function digtron.DigtronLayout.write_layout_image(self, player)
 		local old_node = minetest.get_node(new_pos)
 
 		if not (set_node_with_retry(new_pos, new_node) and set_meta_with_retry(minetest.get_meta(new_pos), node_image.meta)) then
-			minetest.log("error", "DigtronLayout.write_layout_image failed to write a Digtron node, aborting write.")
+			minetest.log("error", "[Digtron] write_layout_image failed to write a Digtron node at "
+				.. minetest.pos_to_string(new_pos) .. ", aborting write (machine may now be damaged).")
 			return false
 		end
 
@@ -468,6 +543,80 @@ function digtron.DigtronLayout.write_layout_image(self, player)
 	dug_nodes_count = 0
 	placed_nodes_count = 0
 	return true
+end
+
+
+---------------------------------------------------------------------------------------------
+-- Force-loading the working area of a running (unattended) Digtron.
+--
+-- When no player is nearby, the machine's own mapblocks can be unloaded, reloaded from disk,
+-- or generated (by mapgen mods such as dungeonsplus) out from under it between the moment it
+-- images itself and the moment it writes itself one node over. That desyncs node vs metadata
+-- and blanks modules (the observed "storage/battery won't open, controller fields blank" bug).
+-- Standing on the machine avoids this because a player keeps the blocks loaded; this does the
+-- same thing directly with forceload, and makes the machine wait for not-yet-generated blocks
+-- before it moves into them.
+
+local forceload_owned = {}   -- hash(mapblock origin) -> {pos = origin, expiry = gametime}
+local FORCELOAD_TTL = 20     -- seconds; refreshed every cycle, reclaimed after a machine stops
+
+local function free_forceload(h)
+	minetest.forceload_free_block(forceload_owned[h].pos, true)
+	forceload_owned[h] = nil
+end
+
+-- Reclaim forceloads whose owning machine has stopped refreshing them, so a machine that
+-- finishes or is removed doesn't leak against the engine's forceload budget.
+local sweep_accumulator = 0
+minetest.register_globalstep(function(dtime)
+	sweep_accumulator = sweep_accumulator + dtime
+	if sweep_accumulator < 3 then return end
+	sweep_accumulator = 0
+	local now = minetest.get_gametime()
+	for h, rec in pairs(forceload_owned) do
+		if rec.expiry < now then
+			free_forceload(h)
+		end
+	end
+end)
+
+-- Force-load (and, if necessary, emerge) every mapblock covering the machine plus a one-node
+-- margin, so the row it is about to move into is included and held stable through the write.
+-- Returns true when every needed block is loaded and it is safe to proceed; false means
+-- "not ready yet, retry" (the caller turns this into the normal unloaded-retry path).
+function digtron.DigtronLayout.forceload_working_area(self)
+	local min = self.extents_min
+	local max = self.extents_max
+	-- expand by one node, then snap outward to mapblock (16-node) origins
+	local bminx, bminy, bminz = math.floor((min.x-1)/16)*16, math.floor((min.y-1)/16)*16, math.floor((min.z-1)/16)*16
+	local bmaxx, bmaxy, bmaxz = math.floor((max.x+1)/16)*16, math.floor((max.y+1)/16)*16, math.floor((max.z+1)/16)*16
+
+	-- count first so a very large machine can bail out instead of blowing the forceload budget
+	local count = ((bmaxx-bminx)/16 + 1) * ((bmaxy-bminy)/16 + 1) * ((bmaxz-bminz)/16 + 1)
+	if count > 12 then
+		-- max_forceloaded_blocks defaults to 16; don't get stuck, just run unprotected as before
+		minetest.log("info", "[Digtron] working area spans " .. count
+			.. " mapblocks; skipping forceload (raise max_forceloaded_blocks for machines this large).")
+		return true
+	end
+
+	local now = minetest.get_gametime()
+	local all_ready = true
+	for bx = bminx, bmaxx, 16 do
+	for by = bminy, bmaxy, 16 do
+	for bz = bminz, bmaxz, 16 do
+		local p = {x = bx, y = by, z = bz}
+		minetest.forceload_block(p, true) -- best effort; keeps the block loaded while we own it
+		forceload_owned[minetest.hash_node_position(p)] = {pos = p, expiry = now + FORCELOAD_TTL}
+		if minetest.get_node_or_nil(p) == nil then
+			-- not generated/loaded yet: trigger generation and wait for a later cycle
+			all_ready = false
+			minetest.emerge_area(p, {x = bx+15, y = by+15, z = bz+15})
+		end
+	end
+	end
+	end
+	return all_ready
 end
 
 

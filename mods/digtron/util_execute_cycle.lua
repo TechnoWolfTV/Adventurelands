@@ -49,6 +49,17 @@ local function neighbour_test(layout, status_text, dir)
 		return S("Digtron is adjacent to unloaded nodes.") .. "\n" .. status_text, 1
 	end
 
+	-- Keep the working area loaded and generated while an auto-controller runs unattended, so
+	-- mapblock churn (unload/reload, or mapgen mods generating under it) can't corrupt the
+	-- machine mid-move. If the terrain ahead isn't ready yet this returns the normal
+	-- unloaded-retry code so the controller waits and tries again, rather than digging blind.
+	if digtron.config.forceload_while_running
+		and minetest.get_node(layout.controller).name == "digtron:auto_controller" then
+		if not layout:forceload_working_area() then
+			return S("Digtron is loading the terrain ahead...") .. "\n" .. status_text, 1
+		end
+	end
+
 	if layout.water_touching == true then
 		minetest.sound_play("sploosh", {gain=1.0, pos=layout.controller})
 	end

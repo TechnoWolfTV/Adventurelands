@@ -67,3 +67,4 @@ setting("float", "marker_crate_good_duration", 3.0, "Duration that 'good' crate 
 setting("float", "marker_crate_bad_duration", 9.0, "Duration that 'bad' crate markers last")
 
 setting("bool", "emerge_unloaded_mapblocks", true, "When Digtron encounters unloaded map blocks, emerge them.")
+setting("bool", "forceload_while_running", true, "Force-load the working area under a running auto-controller so mapblock churn can't corrupt it when no player is nearby. Set false to disable.")
