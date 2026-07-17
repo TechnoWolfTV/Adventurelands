@@ -88,24 +88,22 @@ See also: [LICENSE.txt](LICENSE.txt).
 An auto-controller left running unattended (with the player far away) while drilling into
 terrain that a mapgen mod — e.g. `dungeonsplus` — is still generating could have its own and
 its modules' metadata wiped mid-move: storage/battery boxes would no longer open and the
-control module's fields would go blank. The machine's own mapblocks were being unloaded,
-reloaded, or generated out from under it between the moment it imaged itself and the moment it
-wrote itself one node over, desyncing node vs metadata.
+control module's fields would go blank. Cause: mapgen is allowed to rewrite the outermost
+shell of mapblocks bordering the chunk it generates ("overgeneration"), so blocks the machine
+occupied could be partially rewritten mid-move, desyncing node vs metadata. (Mechanism
+identified by SmallJoker in the upstream issue.)
 
 ### What changed
 
-* **`class_layout.lua`**
-    * Added a per-cycle *force-load* of the machine's working area (its mapblocks plus the
-      one-node margin it is about to move into), so those blocks stay loaded and generated
-      through the write — programmatically doing what riding the machine already did. Blocks
-      that aren't generated yet are emerged and the cycle waits/retries instead of digging
-      into unstable ground. Force-loads left behind are released on a short timer.
-    * Added a pre-write validation guard that aborts (and logs) a move if the captured layout
-      snapshot or a destination block looks unsafe, rather than partially writing.
-* **`util_execute_cycle.lua`** — calls the force-load step from `neighbour_test`, gated to the
-  auto-controller.
-* **`config.lua`** — adds the setting `digtron_forceload_while_running` (default `true`; set
-  `false` in `minetest.conf` to disable).
+* **`class_layout.lua`** — added `mapgen_safe_to_move(dir)`: before moving, the machine checks
+  for ungenerated (`ignore`) map out to one full mapblock (+16 nodes) in the movement
+  direction and refuses to advance while mapgen may still manipulate that region. Ungenerated
+  blocks are emerged (respecting the existing `digtron_emerge_unloaded_mapblocks` setting), so
+  an unattended machine waits briefly and proceeds once generation completes.
+* **`util_execute_cycle.lua`** — calls the check from `neighbour_test`; when unsafe, the cycle
+  retries with the status "Digtron is waiting for map generation ahead...".
+* **`config.lua`** — adds the setting `digtron_wait_for_mapgen` (default `true`; set `false`
+  in `minetest.conf` to disable).
 * **`nodes/node_controllers.lua`** — hardening for a separate path: a monotonic run-token so
   stale/duplicate `minetest.after` cycle callbacks can't run twice against one machine, and a
   missing `on_timer` on the auto-controller so it clears its own `waiting` flag after an
@@ -113,8 +111,9 @@ wrote itself one node over, desyncing node vs metadata.
 
 ### New setting
 
-* `digtron_forceload_while_running` (bool, default `true`) — force-load the working area under
-  a running auto-controller so mapblock churn can't corrupt it when no player is nearby.
+* `digtron_wait_for_mapgen` (bool, default `true`) — before moving, require the map within one
+  mapblock (16 nodes) in the movement direction to be generated, so mapgen overgeneration
+  cannot corrupt the machine.
 
 These changes are offered upstream in the issue linked above; this local copy exists so
 Adventurelands players are covered until an official fix lands.

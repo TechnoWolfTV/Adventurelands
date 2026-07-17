@@ -49,15 +49,12 @@ local function neighbour_test(layout, status_text, dir)
 		return S("Digtron is adjacent to unloaded nodes.") .. "\n" .. status_text, 1
 	end
 
-	-- Keep the working area loaded and generated while an auto-controller runs unattended, so
-	-- mapblock churn (unload/reload, or mapgen mods generating under it) can't corrupt the
-	-- machine mid-move. If the terrain ahead isn't ready yet this returns the normal
-	-- unloaded-retry code so the controller waits and tries again, rather than digging blind.
-	if digtron.config.forceload_while_running
-		and minetest.get_node(layout.controller).name == "digtron:auto_controller" then
-		if not layout:forceload_working_area() then
-			return S("Digtron is loading the terrain ahead...") .. "\n" .. status_text, 1
-		end
+	-- Mapgen may still rewrite the outermost shell of mapblocks bordering an ungenerated chunk
+	-- ("overgeneration"), which can corrupt the machine mid-move. Refuse to advance while
+	-- "ignore" is within one mapblock (+16 nodes) in the movement direction; the guard emerges
+	-- the region (if emerging is enabled) and the controller retries once it has generated.
+	if digtron.config.wait_for_mapgen and not layout:mapgen_safe_to_move(dir) then
+		return S("Digtron is waiting for map generation ahead...") .. "\n" .. status_text, 1
 	end
 
 	if layout.water_touching == true then
