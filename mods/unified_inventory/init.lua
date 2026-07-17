@@ -23,9 +23,7 @@ unified_inventory = {
 	registered_craft_types = {},
 	crafts_for = {usage = {}, recipe = {} },
 	players = {},
-	items_list_size = 0,
 	items_list = {},
-	filtered_items_list_size = {},
 	filtered_items_list = {},
 	pages = {},
 	buttons = {},
@@ -51,7 +49,7 @@ unified_inventory = {
 		"background9[0,0;1,1;ui_formbg_9_sliced.png;true;16]"
 	),
 
-	version = 7
+	version = 8
 }
 
 local ui = unified_inventory

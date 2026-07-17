@@ -169,8 +169,7 @@ core.after(0.01, function()
 	end
 
 	table.sort(ui.items_list)
-	ui.items_list_size = #ui.items_list
-	print("Unified Inventory. Inventory size: "..ui.items_list_size)
+	print("Unified Inventory. Inventory size: " .. #ui.items_list)
 
 	-- Step 1: Initialize cache for looking up groups
 	unified_inventory.init_matching_cache()
@@ -383,9 +382,20 @@ function ui.craft_type_defaults(name, options)
 	return options
 end
 
+ui.registered_crafting_tools = {
+	--[[
+		key: (string) craft type name
+		value: {
+			[item_name] = true,
+			...
+		}
+	]]
+}
 
 function ui.register_craft_type(name, options)
 	ui.registered_craft_types[name] = ui.craft_type_defaults(name, options)
+
+	ui.registered_crafting_tools[name] = ui.registered_crafting_tools[name] or {}
 end
 
 
@@ -450,6 +460,21 @@ ui.register_craft_type("digging_chance", {
 	width = 1,
 	height = 1,
 })
+
+function ui.register_crafting_tool(type_name, item_name)
+	assert(type(type_name) == "string")
+	assert(type(item_name) == "string")
+
+	local tools = ui.registered_crafting_tools[type_name]
+	if not tools then
+		-- Type yet not registered
+		tools = {}
+		ui.registered_crafting_tools[type_name] = tools
+	end
+
+	tools[item_name] = true
+end
+
 
 ---------------- GUI registrations ----------------
 

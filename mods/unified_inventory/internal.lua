@@ -391,6 +391,7 @@ function ui.apply_filter(player, filter)
 	local registered_items = core.registered_items
 	local lfilter = string.lower(filter)
 	local ffilter
+	local fsort = function(t) return t; end
 
 	if lfilter:sub(1, 6) == "group:" then
 		-- Group filter: all groups of the item must match
@@ -403,6 +404,37 @@ function ui.apply_filter(player, filter)
 				end
 			end
 			return true
+		end
+	elseif lfilter:sub(1, 5) == "type:" then
+		local type_name = lfilter:sub(6)
+		local recipes_list = type_name == "fuel" and ui.crafts_for.usage or ui.crafts_for.recipe
+
+		local tools = ui.registered_crafting_tools[type_name] or {}
+		local tools_flat = {}
+
+		ffilter = function(name)
+			if tools[name] then
+				-- Prepend later
+				table.insert(tools_flat, name)
+				return false
+			end
+
+			local recipes = recipes_list[name] or {}
+			-- WARNING! O(n²) complexity. It is still fast enough (for now?).
+			for _, recipe in pairs(recipes) do
+				if recipe.type == type_name then
+					return true
+				end
+			end
+			return false
+		end
+
+		fsort = function(items)
+			-- Appending a long list is faster than inserting in front
+			for _, v in ipairs(items) do
+				tools_flat[#tools_flat + 1] = v
+			end
+			return tools_flat
 		end
 	else
 		-- Name filter: fuzzy match item names and descriptions
@@ -417,6 +449,9 @@ function ui.apply_filter(player, filter)
 			if not fgroupfilter(def) then
 				return false
 			end
+			if #lfilter == 0 then
+				return true
+			end
 
 			local lname = string.lower(name)
 			-- Strip escapes to only match visible text (and not textdomains)
@@ -427,6 +462,7 @@ function ui.apply_filter(player, filter)
 		end
 	end
 
+	local t_start = core.get_us_time()
 	local filtered_items = {}
 
 	local category = ui.current_category[player_name] or 'all'
@@ -455,7 +491,15 @@ function ui.apply_filter(player, filter)
 		end
 	end
 
-	ui.filtered_items_list_size[player_name] = #filtered_items
+	filtered_items = fsort(filtered_items)
+
+	local measure_time = false -- luacheck trickery
+	if measure_time then
+		print(("[u_i] apply_filter(?, '%s') took %.1f ms"):format(
+			filter, (core.get_us_time() - t_start) / 1000)
+		)
+	end
+
 	ui.filtered_items_list[player_name] = filtered_items
 	ui.current_index[player_name] = 1
 	ui.activefilter[player_name] = filter

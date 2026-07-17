@@ -17,7 +17,7 @@ end
 -- global table
 
 mobs = {
-	mod = "redo", version = "20260710",
+	mod = "redo", version = "20260717",
 	spawning_mobs = {}, translate = S,
 	node_snow = has(core.registered_aliases["mapgen_snow"])
 			or has("mcl_core:snow") or has("default:snow") or "air",
@@ -3322,7 +3322,7 @@ end
 local function can_spawn(pos, name)
 
 	local ent = core.registered_entities[name] ; if not ent then return end
-	local box = ent.base_colbox
+	local box = ent.base_colbox ; if not box then return end
 
 	local width_x = max(1, ceil(box[4] - box[1]))
 	local width_z = max(1, ceil(box[6] - box[3]))
