@@ -9,7 +9,11 @@ work follows the other listed works.
 In accordance with GPL requirements to indicate changes to works, all changes
 made to the below listed works are officially made on or after 5 March 2024.
 
-**AI-assisted:** AI tools were used for code completion or minor use cases.
+**AI disclosure:** AI tools were used in developing this game. Across most of
+the project this has been limited to code completion and minor edits. Notable
+exceptions include Adventurelands Bridges, Bible, Climate Modpack, Digtron,
+Dungeons Plus, Forest Meanies, Grant Privs, Minislots, Ranged Weapons,
+Welcome Board, Zombies.
 
 ## Included Works
 
@@ -323,7 +327,7 @@ made to the below listed works are officially made on or after 5 March 2024.
   - Changes were made to this work
 - **Ranged Weapons**
   - Location: `./mods/rangedweapons/`
-  - License file: `./mods/rangedweapons/licence.txt`
+  - License file: `./mods/rangedweapons/license.txt`
   - Changes were made to this work
 - **Ropes**
   - Location: `./mods/ropes/`

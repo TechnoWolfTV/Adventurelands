@@ -38,7 +38,7 @@ Survival is the default rhythm of the game. Hunger and stamina matter, so you wi
 To stay alive and equipped you can:
 
 - **Craft and wear armor**, from wood and cactus up through steel, bronze, gold, diamond, and mithril, with shields and a clear armor HUD to track your protection.
-- **Arm yourself** with bows and an array of tools, including specialized blazing tools and the occasional explosive surprise.
+- **Arm yourself** with bows, an extensive firearms system (pistols, rifles, shotguns, explosives and energy weapons, with ammunition crafting and weapon skills), specialized blazing tools, and the occasional explosive surprise. Server admins can disable individual weapons, ammunition or components at runtime with the in-game `/rwadmin` panel.
 - **Carry light into the dark** — wielded tools and torches actually illuminate the area around you, so spelunking feels less like guesswork.
 - **Suit up for hazards** with protective gear such as a hazmat suit for the nastier environments you build or discover.
 
@@ -95,7 +95,7 @@ Small touches add up to a world with mood. Dynamic weather and lightning sweep a
 
 ## Multiplayer and servers
 
-Adventurelands is built to be played together as well as alone. It includes the tooling server operators expect: area protection so players can claim and defend their builds, WorldEdit for large-scale terraforming and construction, player banning and whitelisting, privilege management, and assorted administrative and cleanup commands. Setting up a shared world for friends or a public community is well supported out of the box.
+Adventurelands is built to be played together as well as alone. It includes the tooling server operators expect: area protection so players can claim and defend their builds, WorldEdit for large-scale terraforming and construction, player banning and whitelisting, privilege management, an in-game panel for disabling individual firearms, ammunition or components without a restart, and assorted administrative and cleanup commands. Setting up a shared world for friends or a public community is well supported out of the box.
 
 ## Installation
 
@@ -117,4 +117,8 @@ Adventurelands as a whole is released under the **GNU Affero General Public Lice
 
 The game is made possible by the work of the wider Luanti community. It builds on Minetest Game and incorporates a large number of community mods, each retaining its own license and attribution. The complete list of included works, their locations, and their individual licenses — along with credits — is maintained in the [LICENSE](./LICENSE.md) file. Please refer to it for full copyright and licensing details.
 
-AI tools were used for code completion or minor use cases.
+**AI disclosure:** AI tools were used in developing this game. Across most of
+the project this has been limited to code completion and minor edits. Notable
+exceptions include Adventurelands Bridges, Bible, Climate Modpack, Digtron,
+Dungeons Plus, Forest Meanies, Grant Privs, Minislots, Ranged Weapons,
+Welcome Board, Zombies.
