@@ -321,6 +321,10 @@ made to the below listed works are officially made on or after 5 March 2024.
   - Location: `./mods/plantlife_modpack/`
   - License file: `./mods/plantlife_modpack/LICENSE`
   - Changes were made to this work
+- **Ranged Weapons**
+  - Location: `./mods/rangedweapons/`
+  - License file: `./mods/rangedweapons/licence.txt`
+  - Changes were made to this work
 - **Ropes**
   - Location: `./mods/ropes/`
   - License file: `./mods/ropes/LICENSE.md`

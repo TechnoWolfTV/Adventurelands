@@ -1,0 +1,36 @@
+cc-by-sa 4.0
+
+Creative Commons Attribution-ShareAlike 4.0 International
+Full terms: https://creativecommons.org/licenses/by-sa/4.0/legalcode
+Summary:    https://creativecommons.org/licenses/by-sa/4.0/
+
+
+ORIGINAL WORK
+
+  rangedweapons, by daviddoesminetest and contributors.
+  https://github.com/daviddoesminetest/rangedweapons
+  https://forum.minetest.net/viewtopic.php?f=9&t=15173
+
+  Licensed under CC BY-SA 4.0. All original credit belongs to the upstream
+  authors.
+
+
+MODIFICATIONS
+
+  Modified by TechnoWolfTV, 2026.
+
+  Changes include an added in-game admin panel (admin/), fixes to the original
+  code, and six sound files re-encoded from stereo to mono. See CHANGELOG.md
+  in this mod's directory for the full list of what was changed.
+
+  These modifications are adapted material under CC BY-SA 4.0 and are released
+  under the same license, CC BY-SA 4.0, as required by the ShareAlike condition
+  in section 3(b).
+
+
+DISCLAIMER
+
+  Unless otherwise separately undertaken by the Licensor, to the extent
+  possible, the Licensor offers the Licensed Material as-is and as-available,
+  and makes no representations or warranties of any kind concerning the
+  Licensed Material.
