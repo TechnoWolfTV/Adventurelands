@@ -22,6 +22,7 @@ dofile(modpath .. "/crafting.lua")
 dofile(modpath .. "/enforce.lua")
 dofile(modpath .. "/ui.lua")
 dofile(modpath .. "/guide.lua")
+dofile(modpath .. "/skills_ui.lua")
 
 core.register_on_mods_loaded(function()
 	local rwa = rangedweapons_admin

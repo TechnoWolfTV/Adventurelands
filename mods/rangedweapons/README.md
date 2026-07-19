@@ -45,6 +45,12 @@ this mod's controls are discoverable by guessing.
 Returns every round to your inventory. Upstream had no way to empty a gun at
 all; rounds only left by being fired.
 
+**Gun Skills tab** (optional, needs Unified Inventory)
+
+Adds a button to the inventory showing all nine weapon skills and their current
+percentages. Optional in the strict sense — if Unified Inventory is not
+installed, nothing registers and `/gunskills` works exactly as before.
+
 ## What was fixed
 
 Upstream bugs, in brief:
@@ -60,6 +66,9 @@ Upstream bugs, in brief:
   destroyed the rounds instead of dropping them.
 - **Two settings that did nothing**, because the names read in code never
   matched the names declared in `settingtypes.txt`.
+- **`/gunskills` showed another player's skills** on a multiplayer server. It
+  looped over everyone connected and displayed whichever player the loop
+  reached last.
 - **Per-tick overhead** in the weapon globalstep, which repeated the same
   lookup thirteen times per player per server step.
 - Deprecated engine calls, a latent divide-by-zero, and eleven variables
@@ -77,6 +86,9 @@ Two new options in `settingtypes.txt`, both optional:
   keeps working.
 - `rangedweapons_ammo_stack_max` (default 0) — force every ammunition type to
   one stack size. `0` keeps upstream's per-ammo values.
+- `rangedweapons_skill_messages` (default off) — whether gun skill gains and
+  losses are announced in chat. Skills change constantly, so the commentary is
+  off by default; the skills themselves work exactly as before.
 
 ## Layout
 

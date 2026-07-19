@@ -75,7 +75,9 @@ function rangedweapons_gain_skill(player, skill, chance)
 		local skill_num = p_meta:get_int(skill)
 		if skill_num < max_gun_efficiency then
 			p_meta:set_int(skill, skill_num + 1)
-			core.chat_send_player(name, core.colorize("#25c200", "You've improved your skill with this type of gun!"))
+			if rangedweapons_skill_messages() then
+				core.chat_send_player(name, core.colorize("#25c200", "You've improved your skill with this type of gun!"))
+			end
 		end
 	end
 end

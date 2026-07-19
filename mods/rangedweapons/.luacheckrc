@@ -18,7 +18,9 @@ globals = {
 	"rangedweapons_hud",
 	"rangedweapons_admin",
 	"rangedweapons_ammo_allowed",
-	"rangedweapons_item_active"
+	"rangedweapons_item_active",
+	"rangedweapons_skill_messages",
+	"rangedweapons_get_skills"
 }
 
 read_globals = {

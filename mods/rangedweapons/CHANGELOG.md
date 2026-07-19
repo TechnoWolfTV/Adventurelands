@@ -94,6 +94,16 @@ Handled on all three right-click paths, since loaded shotguns and bolt-action
 rifles bind right-click to shell ejection rather than reload. Unloading also
 works on a disabled gun, so ammunition can always be recovered.
 
+### Optional Unified Inventory tab
+
+If Unified Inventory is installed, a **Gun Skills** button appears in the
+inventory and opens a tab showing all nine weapon skills with their icons and
+current percentages. Purely optional — declared as an `optional_depends` and
+registered only if that mod is present, so `/gunskills` works exactly as
+before without it.
+
+Both views read the same accessor, so they cannot disagree.
+
 ### Commands
 
 | Command | Privilege | Effect |
@@ -117,6 +127,12 @@ crafted, used as a crafting ingredient, or loaded into a gun, and rounds
 already chambered will not fire. Placed explosive barrels stop detonating.
 Turn it off for gradual behaviour, where disabling only stops an item being
 produced and existing stock keeps working until it runs out.
+
+**`rangedweapons_skill_messages`** (default off). Upstream announced every gun
+skill gain and loss in chat. Skills drift constantly, so the running commentary
+is noise during normal play; it is now silent by default while the skills
+themselves rise and fall exactly as before. Players check their levels with
+`/gunskills`, or the Gun Skills tab. Set to `true` for the old behaviour.
 
 **`rangedweapons_ammo_stack_max`** (default 0). Forces every ammunition type to
 the same stack size. `0` keeps upstream's per-ammo values, which scale
@@ -179,6 +195,14 @@ running upstream's own luacheck configuration, and manual review.
 applied to the wrong player on any server with more than one person online.
 Now stored per-player with cleanup on leave. Affects `init.lua`,
 `cooldown_stuff.lua`, `ammo.lua`.
+
+### Multiplayer: `/gunskills` showed someone else's skills
+
+The command looped over every connected player, read each one's metadata, and
+showed the *caller* a form built from whichever player the loop happened to
+reach last. Alone it looked correct; on a server you saw another player's
+numbers. It now reads the caller's own skills, and handles the caller not being
+in game.
 
 ### Crash: `eject_shell` nil dereference — serious
 
@@ -336,7 +360,7 @@ luacheck .
 | | files | warnings | errors |
 |---|---|---|---|
 | upstream | 51 | 53 | 0 |
-| this build | 58 | 49 | 0 |
+| this build | 59 | 45 | 0 |
 
 The `admin/` directory contributes zero warnings. The remainder are
 pre-existing upstream style notes — trailing whitespace and two shadowed

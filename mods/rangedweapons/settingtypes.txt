@@ -92,3 +92,9 @@ rangedweapons_ammo_stack_max (Uniform Ammo Stack Size) int 0 0 60000
 #    Off, disabling only stops an item being produced. Existing stock keeps
 #    working until it runs out.
 rangedweapons_admin_strict (Disabled items are completely inert) bool true
+
+#    Announce every gun skill gain and loss in chat. Skills drift constantly,
+#    so this is off by default; players can check their levels at any time
+#    with /gunskills, or from the Gun Skills tab if Unified Inventory is
+#    installed.
+rangedweapons_skill_messages (Announce skill changes in chat) bool false

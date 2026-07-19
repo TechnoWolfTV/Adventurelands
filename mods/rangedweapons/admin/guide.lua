@@ -72,7 +72,11 @@ local GUIDE = {
 	{"h", "Skills"},
 	{"p", "Using a category of weapon improves your skill with it over time,"},
 	{"p", "which makes that whole category more accurate for you. Skills can"},
-	{"p", "also degrade. Check yours with /gunskills."},
+	{"p", "also degrade. This happens quietly in the background."},
+	{"", ""},
+	{"p", "Check your levels any time with /gunskills. If the server has"},
+	{"p", "Unified Inventory, there is also a Gun Skills button in your"},
+	{"p", "inventory showing the same figures."},
 	{"", ""},
 
 	{"h", "Safe zones"},
