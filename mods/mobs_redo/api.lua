@@ -17,7 +17,7 @@ end
 -- global table
 
 mobs = {
-	mod = "redo", version = "20260717",
+	mod = "redo", version = "20260721",
 	spawning_mobs = {}, translate = S,
 	node_snow = has(core.registered_aliases["mapgen_snow"])
 			or has("mcl_core:snow") or has("default:snow") or "air",
@@ -916,26 +916,23 @@ function mob_class:is_at_cliff()
 	if self.driver or self.fear_height == 0 then return end -- 0 for no fear of heights
 
 	local yaw = self.object:get_yaw() ; if not yaw then return end
-	local prop = self.object:get_properties()
-	local dir_x = -sin(yaw) * (prop.collisionbox[4] + 0.5)
-	local dir_z = cos(yaw) * (prop.collisionbox[4] + 0.5)
+	local cb = self.object:get_properties().collisionbox
+	local dir_x, dir_z = -sin(yaw) * (cb[4] + 0.5), cos(yaw) * (cb[4] + 0.5)
 	local pos = self.object:get_pos()
-	local ypos = pos.y + prop.collisionbox[2] -- just above floor
+	local ypos = pos.y + cb[2] -- foot level
 
-	local free_fall, blocker = core.line_of_sight(
-			{x = pos.x + dir_x, y = ypos, z = pos.z + dir_z},
-			{x = pos.x + dir_x, y = ypos - self.fear_height, z = pos.z + dir_z})
+	for i = 1, self.fear_height do -- check each node going down
 
-	if free_fall then return true end -- check for straight drop
+		local check_pos = {x = pos.x + dir_x, y = ypos - i, z = pos.z + dir_z}
+		local bnode = get_node(check_pos)
+		local def = core.registered_nodes[bnode.name]
 
-	local bnode = node_ok(blocker, "air")
+		if is_node_dangerous(self, bnode.name) then return true end
 
-	-- will we drop onto dangerous node?
-	if is_node_dangerous(self, bnode.name) then return true end
+		if def and def.walkable then return end -- can step down onto something
+	end
 
-	local def = core.registered_nodes[bnode.name]
-
-	return (def and not def.walkable)
+	return true -- straight drop with no obstructions
 end
 
 -- check for nodes or groups inside mob collision area

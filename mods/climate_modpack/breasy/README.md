@@ -1,5 +1,19 @@
 # Breasy
 
+> **Downstream modification notice**
+>
+> This copy has been modified by TechnoWolfTV (2026-07-22) for the
+> Adventurelands `climate_modpack` and is **not** the pristine upstream
+> release. One change was made, to `init.lua`: a fix for NaN wind vectors
+> returned by `breasy.get_wind()`, which crashed the server when passed to
+> `add_particle`. See `CHANGELOG.md` entry `2.0.3-tw1` and the inline comments
+> in `init.lua`.
+>
+> The modification is licensed under the LGPL 2.1, the same terms as the
+> original. Upstream: https://content.luanti.org/packages/Bas080/breasy/
+> Please report the underlying bug upstream rather than to Adventurelands.
+
+
 A mod that will tell you what the wind is like at a position.
 
 ```lua

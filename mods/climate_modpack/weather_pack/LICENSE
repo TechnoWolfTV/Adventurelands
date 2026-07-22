@@ -131,4 +131,27 @@ frequency to better suit long-play sessions:
 - sounds/severe-storm-rumble.ogg: Used during pds_severe_thunderstorm
   onslaught only. "Low Rumbling" by Musheran (opengameart.org).
   License: CC BY (creativecommons.org/publicdomain/zero/1.0/)
+
+-- API modernization and crash hardening (2026-07) --
+
+- utils.lua, lib_happy_weather_api.lua: Replaced deprecated player:getpos()
+  with player:get_pos() (7 call sites).
+
+- lib_sky_layer_api.lua: Replaced the deprecated positional set_sky()
+  signature with the modern table form in set_default_sky() and
+  update_sky_details(). The clouds argument moves from the 4th positional
+  parameter to a named field. The deprecated positional form also controlled
+  sun/moon/star visibility as an undocumented side effect ("regular" showed
+  them, any other type hid them); the table form does not, so that behaviour
+  is now applied explicitly via apply_celestial_visibility().
+
+- utils.lua: Added hw_utils.get_wind(), a validating wrapper around
+  breasy.get_wind(). Non-finite wind vectors (NaN or infinity) are replaced
+  with zero wind and logged at most once per 60 seconds. A non-finite value
+  reaching minetest.add_particle() aborts the globalstep and shuts down the
+  server.
+
+- weathers/*.lua: All 13 breasy.get_wind() call sites now route through
+  hw_utils.get_wind(). Direct calls to breasy.get_wind() should not be
+  reintroduced.
 -------------------------------------------------------------------------------

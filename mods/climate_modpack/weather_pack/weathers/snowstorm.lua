@@ -125,7 +125,7 @@ local add_wide_range_particle = function(player)
 		-- Use wind direction for snowstorm particles if breasy available
 		local wx, wz = 0, 0
 		if breasy then
-			local w = breasy.get_wind(random_pos)
+			local w = hw_utils.get_wind(random_pos)
 			-- Snowstorm uses full wind strength
 			wx = w.x
 			wz = w.z
@@ -169,7 +169,7 @@ local add_snow_particle = function(player)
 	if hw_utils.is_outdoor(random_pos) then
 		local wx, wz = 0, 0
 		if breasy then
-			local w = breasy.get_wind(random_pos)
+			local w = hw_utils.get_wind(random_pos)
 			wx = w.x * 0.6
 			wz = w.z * 0.6
 		else

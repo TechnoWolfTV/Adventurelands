@@ -5,8 +5,18 @@ _G.breasy = wind
 local modname = core.get_modpath("breasy")
 local setting_prefix = modname .. "_"
 
-local global_factor = 10
+-- Raised from 10 to 10.6 by TechnoWolfTV (2026-07-22) to compensate for the
+-- speed rescale in wind.get_wind(); see NOISE_AMPLITUDE below. The rescale
+-- narrows the speed distribution slightly, lowering mean wind speed by about
+-- 5.5%. This restores the previous average. Revert to 10 for the raw rescaled
+-- values.
+local global_factor = 10.6
 local almost_zero = 1e-4
+
+-- Theoretical amplitude of the speed/direction noises configured below:
+-- 3 octaves at persistence 0.5 sum to 1 + 0.5 + 0.25 = 1.75, so the raw noise
+-- spans roughly [-1.75, 1.75], NOT [-1, 1]. See wind.get_wind().
+local NOISE_AMPLITUDE = 1.75
 
 local biomes = dofile(modname .. "/biomes.lua")
 
@@ -104,7 +114,23 @@ function wind.get_wind(pos)
 	-- speed
 	local s = noise_speed:get_3d({ x = x, y = z, z = t })
 
-	local speed = ((s + 1) * 0.5) ^ 1.4
+	-- Modified by TechnoWolfTV (2026-07-22) -- see CHANGELOG.md "2.0.3-tw1".
+	--
+	-- The original line was:  local speed = ((s + 1) * 0.5) ^ 1.4
+	--
+	-- That assumed `s` spans [-1, 1], so (s + 1) * 0.5 would land in [0, 1].
+	-- It does not: with 3 octaves at persistence 0.5 the noise spans roughly
+	-- [-1.75, 1.75]. Whenever s < -1 the base went negative, and a negative
+	-- base raised to a fractional power (1.4) is NaN. The `almost_zero` guard
+	-- below cannot catch that, because every comparison against NaN is false,
+	-- so the NaN propagated out of this function and crashed callers that fed
+	-- it to add_particle ("Invalid float value for 'x'").
+	--
+	-- Dividing by NOISE_AMPLITUDE first makes the [0, 1] assumption actually
+	-- true, which fixes the NaN *and* the low-speed cut-off that 2.0.3 was
+	-- trying to address. math.max is a belt-and-braces backstop in case the
+	-- engine ever returns a sample outside the theoretical amplitude.
+	local speed = math.max(0, (s / NOISE_AMPLITUDE + 1) * 0.5) ^ 1.4
 
 	-- no need to continue if the speed is very low.
 	if speed <= almost_zero then
@@ -117,7 +143,10 @@ function wind.get_wind(pos)
 
 	local dir = vector.normalize(vector.new(dx, 0, dz))
 
-	-- local speed = (s + 1) * 0.5 -- [0,1]
+	-- Upstream left the pre-2.0.3 formula here as a comment:
+	--   local speed = (s + 1) * 0.5 -- [0,1]
+	-- Retained for history, but note the "[0,1]" annotation was incorrect --
+	-- that is the range error this file's NaN bug originated from.
 
 	-- biome influence
 	speed = speed * get_biome_factor(pos)

@@ -684,7 +684,7 @@ pds_severe_thunderstorm.render = function(dtime, player)
 				if hw_utils.is_outdoor(rpos) then
 					local wx, wz = 0, 0
 					if breasy then
-						local w = breasy.get_wind(rpos)
+						local w = hw_utils.get_wind(rpos)
 						wx = w.x * 0.5
 						wz = w.z * 0.5
 					end
@@ -728,7 +728,7 @@ pds_severe_thunderstorm.render = function(dtime, player)
 				if hw_utils.is_outdoor(rpos) then
 					local wx, wz = 0, 0
 					if breasy then
-						local w = breasy.get_wind(rpos)
+						local w = hw_utils.get_wind(rpos)
 						wx = w.x
 						wz = w.z
 					end
@@ -770,7 +770,7 @@ pds_severe_thunderstorm.render = function(dtime, player)
 				if hw_utils.is_outdoor(rpos) then
 					local wx, wz = 0, 0
 					if breasy then
-						local w = breasy.get_wind(rpos)
+						local w = hw_utils.get_wind(rpos)
 						wx = w.x * 0.5
 						wz = w.z * 0.5
 					end

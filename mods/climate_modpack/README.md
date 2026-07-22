@@ -13,12 +13,12 @@ Adventurelands by TechnoWolfTV.
   See `weather_pack/LICENSE` for full details.
 
 - **breasy** — Location-based wind system used to direct weather particles.
-  Author: Bas080. Included unmodified.
-  See `breasy/LICENSE.txt`.
+  Author: Bas080. Modified by TechnoWolfTV: one crash fix in `init.lua`
+  (NaN wind vectors). See `breasy/CHANGELOG.md` and `breasy/LICENSE.txt`.
 
 - **lightning** — Lightning strike effects and sounds.
-  Author: Auke Kok (sofar). Included unmodified.
-  See `lightning/README.md`.
+  Author: Auke Kok (sofar). Modified by TechnoWolfTV: deprecated-API updates
+  in `init.lua` only. See `lightning/README.md`.
 
 - **moon_phase** — Realistic moon cycle with sky integration.
   Included unmodified.

@@ -95,7 +95,7 @@ local add_particle = function(player)
 		-- Wind influence: snow drifts gently with wind
 		local wx, wz = 0, 0
 		if breasy then
-			local w = breasy.get_wind(random_pos)
+			local w = hw_utils.get_wind(random_pos)
 			-- Scale wind effect down for light snow — it drifts gently
 			wx = w.x * 0.4
 			wz = w.z * 0.4

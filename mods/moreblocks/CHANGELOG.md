@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-07-21
+
+## Added
+
+- [Add `place_rotated` mod support.](https://github.com/minetest-mods/moreblocks/pull/208)
+
+## Changed
+
+- [Tweak various crafting recipes.](https://github.com/minetest-mods/moreblocks/pull/221)
+  - Change recipe for shrub -> stick and make it 2x shrubs (on top of each other) -> stick so it doesn't override shrub -> brown dye.
+  - Tweak copper patina block recipe and have 1x bucket water with 4x copper blocks on each side.
+  - Remove the 9x copper ingot to 1x patina recipe, as 9x copper already makes a copper block.
+- [Add cooking recipe to turn copper patina back into normal copper.](https://github.com/minetest-mods/moreblocks/pull/223)
+- [Conserve left-over microblocks in circular saw crafting.](https://github.com/minetest-mods/moreblocks/pull/207)
+- [Make circular saw and all cut nodes considered as non-ground content by default.](https://github.com/minetest-mods/moreblocks/pull/204)
+  - The few nodes that were registered as ground content shouldn't be considered ground content.
+  - By default, make cut nodes non ground content but allow mods to register theirs as ground content if they want to.
+- [Make compressed nodes compatible with `compression_api`.](https://github.com/minetest-mods/moreblocks/pull/196)
+- [Make the dependency on the `default` mod optional.](https://github.com/minetest-mods/moreblocks/pull/182)
+
+## Fixed
+
+- [Fix errors caused by stack swapping in circular saw.](https://github.com/minetest-mods/moreblocks/pull/217)
+  - This requires a [semi-recent engine bug fix](https://github.com/luanti-org/luanti/pull/13919) to work correctly, so make sure to update to the Luanti 5.8.0 or newer.
+- [Fix incorrect circular saw cost due to index mismatch.](http://github.com/minetest-mods/moreblocks/pull/219)
+- [Fix stair placement error caused by unexpected `param2` values.](https://github.com/minetest-mods/moreblocks/pull/215)
+- [Fix detail tile from `glasslike` nodes being removed after registration.](https://github.com/minetest-mods/moreblocks/pull/206)
+- [Fixed circular saw item duplication bug.](https://github.com/minetest-mods/moreblocks/pull/173)
+- [Strip palettes on registration to prevent warnings on startup.](https://github.com/minetest-mods/moreblocks/pull/220)
+  - Stairs+ does not make use of the `palette` node definition.
+
 ## [2.2.0] - 2021-06-28
 
 ### Changed
@@ -133,7 +164,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Initial versioned release.
 
-[Unreleased]: https://github.com/minetest-mods/moreblocks/compare/v2.2.0...HEAD
+[Unreleased]: https://github.com/minetest-mods/moreblocks/compare/v2.3.0...HEAD
+[2.3.0]: https://github.com/minetest-mods/moreblocks/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/minetest-mods/moreblocks/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/minetest-mods/moreblocks/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/minetest-mods/moreblocks/compare/v1.3.0...v2.0.0

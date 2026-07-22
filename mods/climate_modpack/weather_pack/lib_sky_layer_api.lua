@@ -125,8 +125,32 @@ core.reset_sky = function(player)
 	core.set_default_clouds(player)
 end
 
+-- The deprecated positional set_sky() implicitly controlled sun, moon and
+-- star visibility as a side effect: "regular" showed them, any other type
+-- hid them. The modern table form does NOT touch them at all, so converting
+-- to it silently left the sun visible through storm skies. This helper
+-- restores the old behaviour explicitly.
+--
+-- set_sun/set_moon/set_stars preserve every field not named in the table, so
+-- passing only `visible` leaves textures, scale and star count untouched.
+local function apply_celestial_visibility(player, sky_type)
+	local visible = (sky_type == "regular")
+	player:set_sun({visible = visible, sunrise_visible = visible})
+	player:set_moon({visible = visible})
+	player:set_stars({visible = visible})
+end
+
 core.set_default_sky = function(player)
-	player:set_sky(nil, "regular", nil)
+	-- Modern table form. Was: player:set_sky(nil, "regular", nil)
+	-- The legacy positional signature is deprecated. Semantics are unchanged:
+	-- base_color is omitted (ignored for "regular" anyway), no textures, and
+	-- clouds are stated explicitly because the legacy 4th argument defaulted
+	-- to true when omitted.
+	player:set_sky({
+		type = "regular",
+		clouds = true,
+	})
+	apply_celestial_visibility(player, "regular")
 end
 
 core.set_default_clouds = function(player)
@@ -222,7 +246,18 @@ core.update_sky_details = function(player, sky_layer)
 	if sky_data.clouds ~= nil then
 		clouds = sky_data.clouds
 	end
-	player:set_sky(bgcolor, sky_type, sky_data.textures, clouds)	
+	-- Modern table form. Was:
+	--   player:set_sky(bgcolor, sky_type, sky_data.textures, clouds)
+	-- The legacy positional signature is deprecated. The 4th positional
+	-- argument (clouds) becomes a named field here. A nil bgcolor or nil
+	-- textures simply omits that key, which matches the legacy defaults.
+	player:set_sky({
+		base_color = bgcolor,
+		type = sky_type,
+		textures = sky_data.textures,
+		clouds = clouds,
+	})
+	apply_celestial_visibility(player, sky_type)
 end
 
 core.update_clouds_details = function(player, sky_layer)

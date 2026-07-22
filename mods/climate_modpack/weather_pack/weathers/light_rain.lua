@@ -122,7 +122,7 @@ local add_rain_particle = function(player)
 		-- Get wind vector if breasy is available
 		local wx, wz = 0, 0
 		if breasy then
-			local w = breasy.get_wind(random_pos)
+			local w = hw_utils.get_wind(random_pos)
 			wx = w.x
 			wz = w.z
 		end

@@ -43,7 +43,18 @@ local revertsky = function()
 		local player = minetest.get_player_by_name(playername)
 		-- check if the player is still online
 		if player then
-			player:set_sky(sky.bgcolor, sky.type, sky.textures)
+			-- Modified by TechnoWolfTV (2026-07-22): modern set_sky table form.
+			-- Was: player:set_sky(sky.bgcolor, sky.type, sky.textures)
+			-- `sky` is now the full table captured by get_sky(true) below, so
+			-- the restore also preserves sky_color and fog, which the old
+			-- three-value form silently discarded.
+			player:set_sky(sky)
+			-- Restore celestial visibility to match the sky type being
+			-- restored, mirroring the old positional set_sky() side effect.
+			local visible = (sky.type == "regular")
+			player:set_sun({visible = visible, sunrise_visible = visible})
+			player:set_moon({visible = visible})
+			player:set_stars({visible = visible})
 		end
 	end
 
@@ -56,7 +67,8 @@ minetest.register_globalstep(revertsky)
 local function choose_pos(pos)
 	if not pos then
 		local playerlist = minetest.get_connected_players()
-		local playercount = table.getn(playerlist)
+		-- Modified by TechnoWolfTV (2026-07-22): table.getn is deprecated Lua.
+		local playercount = #playerlist
 
 		-- nobody on
 		if playercount == 0 then
@@ -146,13 +158,29 @@ lightning.strike = function(pos)
 
 		-- only affect players inside effect_range
 		if distance < lightning.effect_range then
-			local sky = {}
-			sky.bgcolor, sky.type, sky.textures = player:get_sky()
+			-- Modified by TechnoWolfTV (2026-07-22): calling get_sky() with
+			-- no argument is deprecated. get_sky(true) returns the full
+			-- parameter table instead of three loose values.
+			local sky = player:get_sky(true)
 
 			local name = player:get_player_name()
 			if ps[name] == nil then
 				ps[name] = sky
-				player:set_sky(0xffffff, "plain", {})
+				-- Modern set_sky table form. clouds is stated explicitly
+				-- because the omitted legacy 4th argument defaulted to true.
+				player:set_sky({
+					base_color = 0xffffff,
+					type = "plain",
+					textures = {},
+					clouds = true,
+				})
+				-- The deprecated positional set_sky() hid the sun, moon and
+				-- stars for any non-"regular" type as a side effect. The table
+				-- form does not, so it is done explicitly here to keep the
+				-- strike flash looking as it did before.
+				player:set_sun({visible = false, sunrise_visible = false})
+				player:set_moon({visible = false})
+				player:set_stars({visible = false})
 			end
 		end
 	end

@@ -16,6 +16,65 @@ hw_utils.random_float = function(min, max)
 	return min + math.random() * (max - min)
 end
 
+---------------------------------------
+-- Safe wind accessor
+--
+-- breasy is a third-party mod (Bas080, LGPL 2.1) and has a documented history
+-- of emitting non-finite wind vectors -- see its CHANGELOG entries for 1.0.2,
+-- 2.0.0, 2.0.1 and 2.0.3. A NaN or infinity reaching add_particle is not a
+-- cosmetic glitch: the engine rejects the value and aborts the globalstep,
+-- which takes the server down.
+--
+-- Every weather file must call hw_utils.get_wind(pos) instead of
+-- breasy.get_wind(pos) directly. On a bad value this returns zero wind, so
+-- particles fall vertically for that tick rather than vanishing -- particle
+-- density stays constant and the degradation is invisible in normal play.
+--
+-- With the breasy range fix in place this should never fire. If the warning
+-- below ever appears in debug.txt, treat it as a regression in breasy and
+-- report it upstream; do not simply silence it.
+---------------------------------------
+
+local WIND_WARN_INTERVAL = 60   -- seconds between repeated warnings
+local wind_last_warn = nil      -- os.time() of last warning, nil = never
+local wind_bad_count = 0        -- bad vectors suppressed since last warning
+
+-- math.isfinite() exists only in Luanti 5.16.0+, and modpack.conf declares a
+-- minimum of 5.9, so the check is done by hand. NaN fails the equality test
+-- against itself; infinities fail the magnitude test.
+local function is_finite(v)
+	return type(v) == "number" and v == v and v > -math.huge and v < math.huge
+end
+
+hw_utils.get_wind = function(pos)
+	if not breasy then
+		return {x = 0, y = 0, z = 0}
+	end
+
+	local w = breasy.get_wind(pos)
+
+	if type(w) == "table" and is_finite(w.x) and is_finite(w.y) and is_finite(w.z) then
+		return w
+	end
+
+	-- Bad vector: count it, and warn at most once per WIND_WARN_INTERVAL.
+	-- Throttling matters here because a failure during a severe storm would
+	-- otherwise log thousands of lines per second.
+	wind_bad_count = wind_bad_count + 1
+	local now = os.time()
+	if wind_last_warn == nil or (now - wind_last_warn) >= WIND_WARN_INTERVAL then
+		minetest.log("warning",
+			"[weather_pack] breasy.get_wind() returned a non-finite vector; " ..
+			"substituting zero wind. Occurrences since last message: " ..
+			tostring(wind_bad_count) ..
+			". This indicates a bug in the breasy mod.")
+		wind_last_warn = now
+		wind_bad_count = 0
+	end
+
+	return {x = 0, y = 0, z = 0}
+end
+
 local mg_name = minetest.get_mapgen_setting("mg_name")
 
 -- outdoor check based on node light level
@@ -34,7 +93,7 @@ end
 -- checks if player is undewater. This is needed in order to
 -- turn off weather particles generation.
 hw_utils.is_underwater = function(player)
-	local ppos = player:getpos()
+	local ppos = player:get_pos()
 	local offset = player:get_eye_offset()
 	local player_eye_pos = {
 		x = ppos.x + offset.x, 
@@ -51,7 +110,7 @@ end
 -- it is costly to generate many particles around player so goal is focus mainly on front view.  
 hw_utils.get_random_pos = function(player, offset)
 	local look_dir = player:get_look_dir()
-	local player_pos = player:getpos()
+	local player_pos = player:get_pos()
 
 	local random_pos_x = 0
 	local random_pos_y = 0

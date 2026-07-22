@@ -96,7 +96,7 @@ end
 local add_meta_plawpos = function(weather_code, player)
 	local meta = {}
 	meta.code = weather_code
-	meta.pos = player:getpos()
+	meta.pos = player:get_pos()
 	meta.name = player:get_player_name()
 	
 	remove_meta_plawpos(weather_code, player:get_player_name())
@@ -315,7 +315,7 @@ local is_outside_recent_weather = function(weather_code, player)
 		return false
 	end
 
-	local ppos = player:getpos()
+	local ppos = player:get_pos()
 	local d = ((ppos.x - pos.x)^2 + (ppos.y - pos.y)^2 + (ppos.z - pos.z)^2)^0.5
 	return MAX_DISTANCE_FROM_WEATHER - d < 0
 end
@@ -324,7 +324,7 @@ end
 -- While still active weather can or can not affect players based on area they are
 local render_if_in_area = function(weather_obj, dtime, player)
 	if is_player_affected(weather_obj.affected_players, player:get_player_name()) then
-		if weather_in_area(weather_obj, player:getpos()) then
+		if weather_in_area(weather_obj, player:get_pos()) then
 			weather_render(weather_obj, dtime, player)
 			add_meta_plawpos(weather_obj.code, player)
 		else
@@ -337,7 +337,7 @@ local render_if_in_area = function(weather_obj, dtime, player)
 			end
 		end
 	else
-		if weather_in_area(weather_obj, player:getpos()) then
+		if weather_in_area(weather_obj, player:get_pos()) then
 			add_player(weather_obj.affected_players, player)
 			weather_add_player(weather_obj, player)
 		end
@@ -383,7 +383,7 @@ minetest.register_globalstep(function(dtime)
 
 			-- Weaher is not active checking if it about to start
 			else
-				if weather_is_starting(weather_, dtime, player:getpos()) then
+				if weather_is_starting(weather_, dtime, player:get_pos()) then
 					activate_weather = true
 				end
 			end	
