@@ -11,7 +11,8 @@
 >
 > The modification is licensed under the LGPL 2.1, the same terms as the
 > original. Upstream: https://content.luanti.org/packages/Bas080/breasy/
-> Please report the underlying bug upstream rather than to Adventurelands.
+> The underlying bug has been reported upstream: https://github.com/bas080/breasy/issues/1
+> Please direct further discussion of it there rather than to Adventurelands.
 
 
 A mod that will tell you what the wind is like at a position.

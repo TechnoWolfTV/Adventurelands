@@ -20,7 +20,8 @@ with no intended change in behaviour:
 
 Modifications are released under the same LGPL 2.1 terms as the original.
 Upstream: https://github.com/minetest-mods/lightning
-Please report upstream bugs there rather than to Adventurelands.
+These changes have been reported upstream: https://github.com/minetest-mods/lightning/issues/21
+Please direct further discussion of them there rather than to Adventurelands.
 
 ===============================================================================
 

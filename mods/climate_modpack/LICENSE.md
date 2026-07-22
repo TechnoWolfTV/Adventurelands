@@ -14,7 +14,7 @@ in that mod's files. weather_pack is extensively modified by TechnoWolfTV.
 - **Modified by:** TechnoWolfTV (2026-07-22), under the same LGPL 2.1 terms.
   One change to `init.lua`: fixes NaN wind vectors returned by `get_wind()`,
   which crashed the server via `add_particle`. See `./breasy/CHANGELOG.md`
-  entry `2.0.3-tw1`.
+  entry `2.0.3-tw1`. Reported upstream: https://github.com/bas080/breasy/issues/1
 
 ---
 
@@ -25,7 +25,7 @@ in that mod's files. weather_pack is extensively modified by TechnoWolfTV.
 - **Modified by:** TechnoWolfTV (2026-07-22), under the same LGPL 2.1 terms.
   Deprecated-API updates to `init.lua` only (`table.getn`, `get_sky`,
   `set_sky`), with no intended change in behaviour. See the modification
-  notice at the top of `./lightning/README.md`.
+  notice at the top of `./lightning/README.md`. Reported upstream: https://github.com/minetest-mods/lightning/issues/21
 
 ---
 

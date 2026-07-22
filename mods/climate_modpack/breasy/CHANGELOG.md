@@ -6,6 +6,8 @@ Modified by TechnoWolfTV, 2026-07-22, for the Adventurelands climate_modpack.
 Not authored or endorsed by Bas080. Licensed under the LGPL 2.1, same as the
 original.
 
+Reported upstream: https://github.com/bas080/breasy/issues/1
+
 - Fix NaN wind vectors returned by `wind.get_wind()`.
 
   The speed curve assumed the noise sample `s` spans [-1, 1]. With 3 octaves
