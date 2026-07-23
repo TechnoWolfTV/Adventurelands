@@ -6,7 +6,7 @@
 
 A Luanti (formerly Minetest) game featuring exploration, mining, crafting, building and survival with monsters and animals. Adventurelands includes carefully selected mods for an optimal balance between form and function.
 
-Version: 1.0.76
+Version: 1.0.77
 
 ---
 
@@ -99,13 +99,15 @@ Adventurelands is built to be played together as well as alone. It includes the 
 
 ## Installation
 
-This game requires Luanti to run (version 5.9 or later). You will need to install Luanti first. Only stable versions of Luanti are officially supported. If you are downloading the package zip file, download the .zip package and extract the folder inside. Rename the extracted folder to, "adventurelands" and move it to the games folder under your Luanti installation as luanti/games/adventurelands.
+This game requires Luanti 5.12 or later to run. You will need to install Luanti first. Only stable versions of Luanti are officially supported. If you are downloading the package zip file, download the .zip package and extract the folder inside. Rename the extracted folder to, "adventurelands" and move it to the games folder under your Luanti installation as luanti/games/adventurelands.
 
 The easiest way to install and keep the game updated is directly through Luanti's built-in content browser, which pulls from [ContentDB](https://content.luanti.org/packages/TechnoWolfTV/adventurelands/). For installation help in general, see the official [installing guide](https://content.luanti.org/help/installing/).
 
 ## Compatibility
 
-Adventurelands targets current stable releases of Luanti, version 5.9 and later. Because it is a full game (not a mod or modpack), you do not add it to an existing world's mod list — you select it as the game when creating a new world. No additional dependencies are required; everything needed is included.
+Adventurelands is developed and tested against the current stable release of Luanti. Versions between 5.12 and current are expected to work but are not actively tested. It will not run on versions earlier than 5.12.
+
+Because it is a full game (not a mod or modpack), you do not add it to an existing world's mod list — you select it as the game when creating a new world. No additional dependencies are required; everything needed is included.
 
 ## Bugs and feedback
 

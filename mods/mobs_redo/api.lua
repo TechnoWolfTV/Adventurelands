@@ -17,7 +17,7 @@ end
 -- global table
 
 mobs = {
-	mod = "redo", version = "20260721",
+	mod = "redo", version = "20260723",
 	spawning_mobs = {}, translate = S,
 	node_snow = has(core.registered_aliases["mapgen_snow"])
 			or has("mcl_core:snow") or has("default:snow") or "air",
@@ -610,6 +610,12 @@ function mobs:effect(pos, amount, texture, min_size, max_size, radius, grav, glo
 	effect(pos, amount, texture, min_size, max_size, radius, grav, glow, fall)
 end
 
+local function tpart(pos, time) -- for testing only
+
+	core.add_particle({pos = pos, texture = "mobs_heart_particle.png", glow = 5,
+		expirationtime = time, size = 4, collisiondetection = false, vertical = false})
+end
+
 -- Thx Wuzzy for easy settings
 
 local HORNY_TIME = 30
@@ -919,7 +925,7 @@ function mob_class:is_at_cliff()
 	local cb = self.object:get_properties().collisionbox
 	local dir_x, dir_z = -sin(yaw) * (cb[4] + 0.5), cos(yaw) * (cb[4] + 0.5)
 	local pos = self.object:get_pos()
-	local ypos = pos.y + cb[2] -- foot level
+	local ypos = pos.y + cb[2] + 0.25-- foot level
 
 	for i = 1, self.fear_height do -- check each node going down
 
@@ -1612,15 +1618,10 @@ function mob_class:smart_mobs(s, p, dist, dtime)
 
 		for _,pos in pairs(self.path.way) do
 
-			core.add_particle({pos = pos, texture = "mobs_heart_particle.png",
-					expirationtime = 2, size = 4, collisiondetection = false,
-					vertical = false})
+			tpart(pos, 2)
 
 			if height > 1 then
-				pos.y = pos.y + 1
-				core.add_particle({pos = pos, texture = "mobs_heart_particle.png",
-					expirationtime = 2, size = 4, collisiondetection = false,
-					vertical = false})
+				pos.y = pos.y + 1 ; tpart(pos, 2)
 			end
 		end
 	end]]
@@ -1732,10 +1733,11 @@ function mob_class:general_attack()
 
 		local p = target:get_pos()
 		local dist = get_distance(p, s)
+		local ey = self.base_colbox[5] * 0.9 -- mob eye level
 
 		-- choose closest entity to attack while looking higher for better sights
 		if dist ~= 0 and dist < min_dist and self:line_of_sight(
-				{x = s.x, y = s.y + 1, z = s.z}, {x = p.x, y = p.y + 1, z = p.z}) then
+				{x = s.x, y = s.y + ey, z = s.z}, {x = p.x, y = p.y + .5, z = p.z}) then
 
 			min_dist = dist
 			min_target = target
@@ -3103,6 +3105,33 @@ function mob_class:on_step(dtime, moveresult)
 
 		self:do_runaway_from()
 		self:do_stay_near()
+		self:follow_teleport()
+	end
+end
+
+-- when mob ordered to follow player who is out of range, teleport to if not attacking
+
+function mob_class:follow_teleport()
+
+	if self.order == "follow" and self.state ~= "attack" and not self.following then
+
+		if self.owner and self.owner ~= "" then
+
+			local player = core.get_player_by_name(self.owner)
+
+			if player then
+
+				local pos = player:get_pos()
+
+				if get_distance(self.object:get_pos(), pos) > (self.view_range * 2) then
+
+					pos.y = pos.y - self.base_colbox[2] -- dont teleport into the ground
+
+					self.object:move_to(pos, true)
+					self:mob_sound("default_dirt_footstep")
+				end
+			end
+		end
 	end
 end
 
