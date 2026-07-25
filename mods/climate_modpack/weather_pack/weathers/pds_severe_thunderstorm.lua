@@ -57,6 +57,21 @@ local APPROACH_DURATION    = 180
 local BUILD_DURATION       = 180
 local DISSIPATION_DURATION = 90   -- kept for reference, phases 4+5 are 180 each
 local UNWIND_DURATION      = 180
+
+-- Storm wind multiplier (TechnoWolfTV): ambient breasy wind is amplified during
+-- the storm, following the phase envelope. Ambient (breasy) behaviour is
+-- untouched outside these phases -- a multiplier of ONSET/PEAK on a calm patch
+-- is still calm, so the author's original wind is preserved; the storm only
+-- amplifies wind that already exists.
+--   Phase 1 Approach : no particles, nothing to show
+--   Phase 2 Build    : first drops already blow at ONSET, ramp ONSET -> PEAK
+--   Phase 3 Onslaught: hold PEAK
+--   Phase 4 Unwind   : ramp PEAK -> 1.0 (seamless hand-back to pure breasy)
+--   Phase 5 Retreat  : no particles, pure breasy resumes
+-- Tune these two by eye in-game; 1.0 = ambient with no amplification.
+local WIND_ONSET = 1.4   -- multiplier at the first visible rain (storm heralds itself)
+local WIND_PEAK  = 3.5   -- multiplier sustained through onslaught (higher than severe_thunderstorm: pds onslaught is longer/darker/noisier, so wind needs more punch to read)
+
 local RETREAT_DURATION     = 180
 
 -- Thunder delay ranges per phase
@@ -618,13 +633,25 @@ pds_severe_thunderstorm.remove_player = function(player)
 		clouds = true,
 	})
 
+	-- Restore sun/moon/stars. The storm hid them via the sky system's
+	-- celestial handling, and the modern table-form set_sky() above does NOT
+	-- touch celestial visibility -- so without this they stay hidden after the
+	-- storm, leaving a sunless daytime sky. Done explicitly here rather than
+	-- relying on the skylayer reset path, whose ordering vs this raw set_sky()
+	-- is not guaranteed. (TechnoWolfTV)
+	player:set_sun({visible = true, sunrise_visible = true})
+	player:set_moon({visible = true})
+	player:set_stars({visible = true})
+
 	-- Reset day/night ratio to normal
 	player:override_day_night_ratio(nil)
 
-	-- Only hand off to light rain on natural completion, not manual stop
-	if phase == 0 and not manual_stopped then
-		happy_weather.request_to_start("light_rain")
-	end
+	-- Storm ends cleanly without forcing any follow-up weather. (Previously
+	-- this handed off to light_rain on natural completion, but that made
+	-- light_rain's brighter sky layer instantly override the retreat-phase
+	-- sky before it finished brightening -- skylayer has no priority system,
+	-- so the most recently added layer wins. Removed by TechnoWolfTV.)
+	-- manual_stopped is still cleared below to keep the flag consistent.
 	manual_stopped = false
 end
 
@@ -685,8 +712,8 @@ pds_severe_thunderstorm.render = function(dtime, player)
 					local wx, wz = 0, 0
 					if breasy then
 						local w = hw_utils.get_wind(rpos)
-						wx = w.x * 0.5
-						wz = w.z * 0.5
+						wx = w.x * (WIND_ONSET + build_t * (WIND_PEAK - WIND_ONSET))
+						wz = w.z * (WIND_ONSET + build_t * (WIND_PEAK - WIND_ONSET))
 					end
 					minetest.add_particle({
 						pos = rpos,
@@ -729,8 +756,8 @@ pds_severe_thunderstorm.render = function(dtime, player)
 					local wx, wz = 0, 0
 					if breasy then
 						local w = hw_utils.get_wind(rpos)
-						wx = w.x
-						wz = w.z
+						wx = w.x * WIND_PEAK
+						wz = w.z * WIND_PEAK
 					end
 					minetest.add_particle({
 						pos = rpos,
@@ -771,8 +798,8 @@ pds_severe_thunderstorm.render = function(dtime, player)
 					local wx, wz = 0, 0
 					if breasy then
 						local w = hw_utils.get_wind(rpos)
-						wx = w.x * 0.5
-						wz = w.z * 0.5
+						wx = w.x * (1.0 + reversed_t * (WIND_PEAK - 1.0))
+						wz = w.z * (1.0 + reversed_t * (WIND_PEAK - 1.0))
 					end
 					minetest.add_particle({
 						pos = rpos,

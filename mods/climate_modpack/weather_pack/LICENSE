@@ -154,4 +154,30 @@ frequency to better suit long-play sessions:
 - weathers/*.lua: All 13 breasy.get_wind() call sites now route through
   hw_utils.get_wind(). Direct calls to breasy.get_wind() should not be
   reintroduced.
+
+-- Severe storm wind envelope + celestial cleanup fix (2026-07) --
+
+- weathers/severe_thunderstorm.lua, weathers/pds_severe_thunderstorm.lua:
+  Both severe storms now amplify ambient breasy wind on a per-phase envelope
+  instead of a flat factor. Two tunables per file: WIND_ONSET (multiplier at
+  the first visible rain, so the storm's opening drops already blow) and
+  WIND_PEAK (multiplier sustained through onslaught). The multiplier ramps
+  WIND_ONSET -> WIND_PEAK across Build, holds WIND_PEAK through Onslaught, and
+  descends WIND_PEAK -> 1.0 across Unwind, handing back to unmodified breasy
+  wind. Because it multiplies ambient wind, a calm patch stays calm -- breasy's
+  own behaviour is preserved, only amplified. severe_thunderstorm uses
+  WIND_ONSET 1.4 / WIND_PEAK 2.5; pds_severe_thunderstorm uses 1.4 / 3.5 (a
+  stronger peak, as its onslaught is longer, darker and noisier).
+
+- weathers/severe_thunderstorm.lua, weathers/pds_severe_thunderstorm.lua:
+  remove_player() now restores sun/moon/star visibility. The storms hide the
+  celestial bodies while active; the modern table-form set_sky() used in
+  cleanup does not re-enable them, which previously left a sunless daytime sky
+  after a storm. Now set explicitly during teardown.
+
+- weathers/severe_thunderstorm.lua, weathers/pds_severe_thunderstorm.lua:
+  Removed the automatic hand-off to light_rain on natural storm completion.
+  light_rain added its own sky layer which, since skylayer has no priority
+  system, immediately overrode the retreat-phase sky before it finished
+  brightening -- a visible snap. Storms now end cleanly to ambient weather.
 -------------------------------------------------------------------------------

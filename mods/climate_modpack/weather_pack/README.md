@@ -27,9 +27,13 @@ Weathers included
 * `severe_thunderstorm` — Multi-phase severe thunderstorm. Bad weather, but
   not utterly terrifying: moderate sky darkening, building rain, and
   reduced-frequency lightning during onslaught. No green sky, no rumble.
+  Wind builds as the storm approaches, peaks during onslaught, and eases off
+  as it passes.
 * `pds_severe_thunderstorm` — "Particularly Dangerous Situation" tier.
   The rare, full-intensity severe thunderstorm with an ominous green sky,
   full darkness, a low rumble during onslaught, and frequent close lightning.
+  Wind follows the same rise-peak-fall envelope as severe_thunderstorm but
+  hits harder at the climax.
 
 Spawn Frequencies
 -----------------------

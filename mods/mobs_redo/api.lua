@@ -17,7 +17,7 @@ end
 -- global table
 
 mobs = {
-	mod = "redo", version = "20260723",
+	mod = "redo", version = "20260725",
 	spawning_mobs = {}, translate = S,
 	node_snow = has(core.registered_aliases["mapgen_snow"])
 			or has("mcl_core:snow") or has("default:snow") or "air",
@@ -920,6 +920,11 @@ end
 function mob_class:is_at_cliff()
 
 	if self.driver or self.fear_height == 0 then return end -- 0 for no fear of heights
+
+	-- if path already blocked, dont check for cliff
+	if core.registered_nodes[self.looking_at].walkable or self.facing_fence then
+		return
+	end
 
 	local yaw = self.object:get_yaw() ; if not yaw then return end
 	local cb = self.object:get_properties().collisionbox
