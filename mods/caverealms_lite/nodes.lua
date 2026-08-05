@@ -155,8 +155,7 @@ core.register_node("caverealms:glow_gem", {
 	buildable_to = true,
 	visual_scale = 0.75,
 	selection_box = {
-		type = "fixed",
-		fixed = {-0.5, -0.5, -0.5, 0.5, -5/16, 0.5}
+		type = "fixed", fixed = {-0.5, -0.5, -0.5, 0.5, -5/16, 0.5}
 	}
 })
 
@@ -176,8 +175,7 @@ core.register_node("caverealms:salt_gem", {
 	buildable_to = true,
 	visual_scale = 0.75,
 	selection_box = {
-		type = "fixed",
-		fixed = {-0.5, -0.5, -0.5, 0.5, -5/16, 0.5}
+		type = "fixed", fixed = {-0.5, -0.5, -0.5, 0.5, -5/16, 0.5}
 	}
 })
 
@@ -197,8 +195,7 @@ core.register_node("caverealms:spike", {
 	buildable_to = true,
 	visual_scale = 0.75,
 	selection_box = {
-		type = "fixed",
-		fixed = {-0.5, -0.5, -0.5, 0.5, -5/16, 0.5}
+		type = "fixed", fixed = {-0.5, -0.5, -0.5, 0.5, -5/16, 0.5}
 	}
 })
 
@@ -447,7 +444,7 @@ else
 		}},
 		inventory_image = "fire_basic_flame.png",
 		light_source = 14,
-		groups = {igniter = 2, dig_immediate = 3, hot = 3, not_in_creative_inventory = 1},
+		groups = {igniter = 2, dig_immediate = 3, hot = 3},
 		paramtype = "light",
 		drop = "",
 		walkable = false,

@@ -5,12 +5,12 @@ local S = minetest.get_translator("new_campfire")
 
 new_campfire = {}
 
-new_campfire.cooking = 1        -- nil - not cooked, 1 - cooked
-new_campfire.limited = 1        -- nil - unlimited campfire, 1 - limited
-new_campfire.flames_ttl = 30    -- Time in seconds until a fire burns down into embers
-new_campfire.embers_ttl = 60    -- seconds until embers burn out completely leaving ash and an empty fireplace.
-new_campfire.flare_up = 2       -- seconds from adding a stick to embers before it flares into a fire again
-new_campfire.stick_time = new_campfire.flames_ttl/2;   -- How long does the stick increase. In sec.
+new_campfire.cooking = 1 -- nil - not cooked, 1 - cooked
+new_campfire.limited = 1 -- nil - unlimited campfire, 1 - limited
+new_campfire.flames_ttl = 30 -- Time in seconds until a fire burns down into embers
+new_campfire.embers_ttl = 60 -- seconds until embers burn out completely leaving ash and an empty fireplace.
+new_campfire.flare_up = 2 -- seconds from adding a stick to embers before it flares into a fire again
+new_campfire.stick_time = new_campfire.flames_ttl/2; -- How long does the stick increase. In sec.
 
 -- FUNCTIONS
 local function fire_particles_on(pos) -- 3 layers of fire
@@ -97,14 +97,13 @@ local function indicator(maxVal, curVal)
 	local percent_val = math.floor(curVal / maxVal * 100)
 	local v = math.min(math.ceil(percent_val / 10), 10)
 
-	return "\n"
-	       ..string.sub("▓▓▓▓▓▓▓▓▓▓", 1, v*utf8_len_1)
-	       ..string.sub("▒▒▒▒▒▒▒▒▒▒", 1, (10-v)*utf8_len_2)
-	       .." "..percent_val.."%"
+	return
+		"\n"..string.sub("▓▓▓▓▓▓▓▓▓▓", 1, v*utf8_len_1)..
+		string.sub("▒▒▒▒▒▒▒▒▒▒", 1, (10-v)*utf8_len_2).." "..percent_val.."%"
 end
 
 local function effect(pos, texture, vlc, acc, time, size)
-	local id = minetest.add_particle({
+	minetest.add_particle({
 		pos = pos,
 		velocity = vlc,
 		acceleration = acc,
@@ -151,8 +150,8 @@ local function cooking(pos, itemstack)
 			effect(
 				{x = pos.x, y = pos.y+0.2, z = pos.z},
 				texture,
-				{x=0, y=0, z=0},
-				{x=0, y=0, z=0},
+				{x = 0, y = 0, z = 0},
+				{x = 0, y = 0, z = 0},
 				cooked.time,
 				4
 			)
@@ -163,15 +162,15 @@ local function cooking(pos, itemstack)
 					local item = cooked.item:to_table().name
 					minetest.after(cooked.time/2, function(item)
 						if meta:get_int("it_val") > 0 then
-							minetest.add_item({x=pos.x, y=pos.y+0.2, z=pos.z}, item)
+							minetest.add_item({x = pos.x, y = pos.y+0.2, z = pos.z}, item)
 							meta:set_int('cooked_time', 0);
 							meta:set_int('cooked_cur_time', 0);
 						else
-							minetest.add_item({x=pos.x, y=pos.y+0.2, z=pos.z}, name)
+							minetest.add_item({x = pos.x, y = pos.y+0.2, z = pos.z}, name)
 						end
 					end, item)
 				else
-					minetest.add_item({x=pos.x, y=pos.y+0.2, z=pos.z}, name)
+					minetest.add_item({x = pos.x, y = pos.y+0.2, z = pos.z}, name)
 				end
 			end)
 
@@ -185,15 +184,14 @@ end
 
 local function add_stick(pos, itemstack)
 	local meta = minetest.get_meta(pos)
-	local name = itemstack:get_name()
 	if itemstack:get_definition().groups.stick == 1 then
 		local it_val = meta:get_int("it_val") + (new_campfire.flames_ttl);
 		meta:set_int('it_val', it_val);
 		effect(
 			pos,
 			"default_stick.png",
-			{x=0, y=-1, z=0},
-			{x=0, y=0, z=0},
+			{x = 0, y = -1, z = 0},
+			{x = 0, y = 0, z = 0},
 			1,
 			6
 		)
@@ -220,22 +218,22 @@ end
 
 local sbox = {
 	type = 'fixed',
-	fixed = { -8/16, -8/16, -8/16, 8/16, -6/16, 8/16},
+	fixed = {-8/16, -8/16, -8/16, 8/16, -6/16, 8/16},
 }
 
 local grille_sbox = {
 	type = "fixed",
-	fixed = { -8/16, -8/16, -8/16, 8/16, 2/16, 8/16 },
+	fixed = {-8/16, -8/16, -8/16, 8/16, 2/16, 8/16},
 }
 
 local grille_cbox = {
 	type = "fixed",
 	fixed = {
-		{ -8/16,  1/16, -8/16,  8/16, 2/16,  8/16 },
-		{ -8/16, -8/16, -8/16, -7/16, 1/16, -7/16 },
-		{  8/16, -8/16,  8/16,  7/16, 1/16,  7/16 },
-		{  8/16, -8/16, -8/16,  7/16, 1/16, -7/16 },
-		{ -8/16, -8/16,  8/16, -7/16, 1/16,  7/16 }
+		{-8/16, 1/16, -8/16, 8/16, 2/16, 8/16},
+		{-8/16, -8/16, -8/16, -7/16, 1/16, -7/16},
+		{8/16, -8/16, 8/16, 7/16, 1/16, 7/16},
+		{8/16, -8/16, -8/16, 7/16, 1/16, -7/16},
+		{-8/16,-8/16, 8/16, -7/16, 1/16, 7/16}
 	}
 }
 
@@ -254,7 +252,7 @@ minetest.register_node('new_campfire:fireplace', {
 	buildable_to = false,
 	sunlight_propagates = false,
 	paramtype = 'light',
-	groups = {dig_immediate=3, flammable=0, not_in_creative_inventory=1},
+	groups = {dig_immediate = 3, flammable = 0, not_in_creative_inventory = 1},
 	is_ground_content = false,
 	selection_box = sbox,
 	sounds = default.node_sound_stone_defaults(),
@@ -262,7 +260,7 @@ minetest.register_node('new_campfire:fireplace', {
 
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
 		local name = itemstack:get_name()
-		local a=add_stick(pos, itemstack)
+		local a = add_stick(pos, itemstack)
 		if a then
 			minetest.swap_node(pos, {name = "new_campfire:campfire"})
 		elseif name == "new_campfire:grille" then
@@ -294,7 +292,7 @@ minetest.register_node('new_campfire:campfire', {
 	walkable = false,
 	buildable_to = false,
 	sunlight_propagates = true,
-	groups = {dig_immediate=3, flammable=0},
+	groups = {dig_immediate = 3, flammable = 0},
 	is_ground_content = false,
 	paramtype = 'light',
 	selection_box = sbox,
@@ -312,16 +310,16 @@ minetest.register_node('new_campfire:campfire', {
 		if itemname == "fire:flint_and_steel" then
 			minetest.sound_play("fire_flint_and_steel",{pos = pos, gain = 0.5, max_hear_distance = 8})
 			minetest.set_node(pos, {name = 'new_campfire:campfire_active'})
-			local id = minetest.add_particle({
+			minetest.add_particle({
 				pos = {x = pos.x, y = pos.y, z = pos.z},
-				velocity = {x=0, y=0.1, z=0},
-				acceleration = {x=0, y=0, z=0},
+				velocity = {x = 0, y = 0.1, z = 0},
+				acceleration = {x = 0, y = 0, z = 0},
 				expirationtime = 2,
 				size = 4,
 				collisiondetection = true,
 				vertical = true,
 				texture = "new_campfire_anim_smoke.png",
-				animation = {type="vertical_frames", aspect_w=16, aspect_h=16, length = 2.5,},
+				animation = {type = "vertical_frames", aspect_w = 16, aspect_h = 16, length = 2.5},
 			})
 		elseif itemname == "new_campfire:grille" then
 			itemstack:take_item()
@@ -345,7 +343,7 @@ minetest.register_node('new_campfire:campfire_active', {
 	walkable = false,
 	buildable_to = false,
 	sunlight_propagates = true,
-	groups = {oddly_breakable_by_hand=3, flammable=0, not_in_creative_inventory=1, igniter=1},
+	groups = {oddly_breakable_by_hand = 3, flammable = 0, not_in_creative_inventory = 1, igniter = 1},
 	is_ground_content = false,
 	paramtype = 'none',
 	light_source = 13,
@@ -355,7 +353,7 @@ minetest.register_node('new_campfire:campfire_active', {
 	selection_box = sbox,
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
 		local name = itemstack:get_name()
-		local a=add_stick(pos, itemstack)
+		local a = add_stick(pos, itemstack)
 		if not a then
 			if name == "new_campfire:grille" then
 				itemstack:take_item()
@@ -392,9 +390,9 @@ minetest.register_node('new_campfire:fireplace_with_embers', {
 			name = "new_campfire_anim_embers.png",
 			animation = {
 				type="vertical_frames",
-				aspect_w=16,
-				aspect_h=16,
-				length=2
+				aspect_w = 16,
+				aspect_h = 16,
+				length = 2
 			}
 		}
 	},
@@ -404,7 +402,7 @@ minetest.register_node('new_campfire:fireplace_with_embers', {
 	sunlight_propagates = false,
 	paramtype = 'light',
 	light_source = 5,
-	groups = {dig_immediate=3, flammable=0, not_in_creative_inventory=1},
+	groups = {dig_immediate = 3, flammable = 0, not_in_creative_inventory = 1},
 	is_ground_content = false,
 	selection_box = sbox,
 	sounds = default.node_sound_stone_defaults(),
@@ -412,7 +410,7 @@ minetest.register_node('new_campfire:fireplace_with_embers', {
 
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
 		local name = itemstack:get_name()
-		local a=add_stick(pos, itemstack)
+		local a = add_stick(pos, itemstack)
 		if a then
 			minetest.swap_node(pos, {name = "new_campfire:campfire"})
 			minetest.after(new_campfire.flare_up, function()
@@ -446,9 +444,9 @@ minetest.register_node('new_campfire:fireplace_with_embers_with_grille', {
 			name = "new_campfire_anim_embers.png",
 			animation = {
 				type="vertical_frames",
-				aspect_w=16,
-				aspect_h=16,
-				length=2
+				aspect_w = 16,
+				aspect_h = 16,
+				length = 2
 			}
 		}
 	},
@@ -458,7 +456,7 @@ minetest.register_node('new_campfire:fireplace_with_embers_with_grille', {
 	sunlight_propagates = false,
 	paramtype = 'light',
 	light_source = 5,
-	groups = {dig_immediate=3, flammable=0, not_in_creative_inventory=1},
+	groups = {dig_immediate = 3, flammable = 0, not_in_creative_inventory = 1},
 	is_ground_content = false,
 	selection_box = grille_sbox,
 	node_box = grille_cbox,
@@ -473,13 +471,12 @@ minetest.register_node('new_campfire:fireplace_with_embers_with_grille', {
 		}
 	},
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
-		local name = itemstack:get_name()
-		local a=add_stick(pos, itemstack)
+		local a = add_stick(pos, itemstack)
 		if a then
 			minetest.swap_node(pos, {name = "new_campfire:campfire_with_grille"})
 			minetest.after(new_campfire.flare_up, function()
 				if minetest.get_meta(pos):get_int("it_val") > 0 then
-					minetest.swap_node(pos, {name="new_campfire:campfire_active_with_grille"})
+					minetest.swap_node(pos, {name = "new_campfire:campfire_active_with_grille"})
 				end
 			end)
 		end
@@ -507,7 +504,7 @@ minetest.register_node('new_campfire:fireplace_with_grille', {
 	buildable_to = false,
 	sunlight_propagates = false,
 	paramtype = 'light',
-	groups = {dig_immediate=3, flammable=0, not_in_creative_inventory=1},
+	groups = {dig_immediate = 3, flammable = 0, not_in_creative_inventory = 1},
 	is_ground_content = false,
 	selection_box = grille_sbox,
 	node_box = grille_cbox,
@@ -528,8 +525,7 @@ minetest.register_node('new_campfire:fireplace_with_grille', {
 		meta:set_string('infotext', S("Fireplace"));
 	end,
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
-		local name = itemstack:get_name()
-		local a=add_stick(pos, itemstack)
+		local a = add_stick(pos, itemstack)
 		if a then
 			minetest.swap_node(pos, {name = "new_campfire:campfire_with_grille"})
 		end
@@ -550,7 +546,7 @@ minetest.register_node('new_campfire:campfire_with_grille', {
 	inventory_image = "new_campfire_campfire.png",
 	buildable_to = false,
 	sunlight_propagates = true,
-	groups = {dig_immediate=3, flammable=0, not_in_creative_inventory=1},
+	groups = {dig_immediate = 3, flammable = 0, not_in_creative_inventory = 1},
 	is_ground_content = false,
 	paramtype = 'light',
 	selection_box = grille_sbox,
@@ -568,16 +564,16 @@ minetest.register_node('new_campfire:campfire_with_grille', {
 		if itemstack:get_name() == "fire:flint_and_steel" then
 			minetest.sound_play("fire_flint_and_steel",{pos = pos, gain = 0.5, max_hear_distance = 8})
 			minetest.set_node(pos, {name = 'new_campfire:campfire_active_with_grille'})
-			local id = minetest.add_particle({
+			minetest.add_particle({
 				pos = {x = pos.x, y = pos.y, z = pos.z},
-				velocity = {x=0, y=0.1, z=0},
-				acceleration = {x=0, y=0, z=0},
+				velocity = {x = 0, y = 0.1, z = 0},
+				acceleration = {x = 0, y = 0, z = 0},
 				expirationtime = 2,
 				size = 4,
 				collisiondetection = true,
 				vertical = true,
 				texture = "new_campfire_anim_smoke.png",
-				animation = {type="vertical_frames", aspect_w=16, aspect_h=16, length = 2.5,},
+				animation = {type = "vertical_frames", aspect_w = 16, aspect_h = 16, length = 2.5,},
 			})
 		end
 	end,
@@ -606,7 +602,7 @@ minetest.register_node('new_campfire:campfire_active_with_grille', {
 	inventory_image = "new_campfire_campfire.png",
 	buildable_to = false,
 	sunlight_propagates = true,
-	groups = {oddly_breakable_by_hand=3, flammable=0, not_in_creative_inventory=1, igniter=1},
+	groups = {oddly_breakable_by_hand = 3, flammable = 0, not_in_creative_inventory = 1, igniter = 1},
 	is_ground_content = false,
 	paramtype = 'none',
 	light_source = 13,
@@ -625,8 +621,7 @@ minetest.register_node('new_campfire:campfire_active_with_grille', {
 	node_box = grille_cbox,
 
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
-		local name = itemstack:get_name()
-		local a=add_stick(pos, itemstack)
+		local a = add_stick(pos, itemstack)
 		if not a then
 			return cooking(pos, itemstack)
 		end
@@ -649,7 +644,7 @@ minetest.register_node('new_campfire:campfire_active_with_grille', {
 
 	on_timer = function(pos) -- Every 6 seconds play sound fire_small
 		local meta = minetest.get_meta(pos)
-		local handle = minetest.sound_play("fire_small",{pos=pos, max_hear_distance = 18, loop=false, gain=0.1})
+		local handle = minetest.sound_play("fire_small", {pos = pos, max_hear_distance = 18, loop = false, gain = 0.1})
 		meta:set_int("handle", handle)
 		minetest.get_node_timer(pos):start(6)
 	end,
@@ -686,9 +681,9 @@ minetest.register_abm({
 	catch_up = false,
 
 	action = function(pos, node, active_object_count, active_object_count_wider)
-		local fpos, num = minetest.find_nodes_in_area(
-			{x=pos.x-1, y=pos.y, z=pos.z-1},
-			{x=pos.x+1, y=pos.y+1, z=pos.z+1},
+		local fpos = minetest.find_nodes_in_area(
+			{x = pos.x-1, y = pos.y, z = pos.z-1},
+			{x = pos.x+1, y = pos.y+1, z = pos.z+1},
 			{"group:water"}
 		)
 		if #fpos > 0 then

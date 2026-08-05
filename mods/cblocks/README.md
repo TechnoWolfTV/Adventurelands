@@ -13,5 +13,6 @@ Change log:
 - 0.4 - Glass stairs created with transparency if stairs redo active.
 - 0.5 - Add Mineclonia support.
 - 0.6 - Add coloured bricks, Add settings to disable blocks and stairs.
+- 0.7 - Add settings to disable stairs for each block type.
 
 Lucky Blocks: 5

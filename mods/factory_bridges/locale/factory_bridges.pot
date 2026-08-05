@@ -1,0 +1,193 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-30 18:18-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: items.lua:4
+msgid "Rebar"
+msgstr ""
+
+#: items.lua:10
+msgid "Handrail"
+msgstr ""
+
+#: items.lua:16
+msgid "Long handrail"
+msgstr ""
+
+#: nodes.lua:4
+msgid "Railing & pole (set 1)"
+msgstr ""
+
+#: nodes.lua:14
+msgid "Railing & pole (set 2)"
+msgstr ""
+
+#: nodes.lua:24
+msgid "Railing & pole (set 3)"
+msgstr ""
+
+#: nodes.lua:34
+msgid "Railing & pole (set 4)"
+msgstr ""
+
+#: nodes.lua:44
+msgid "Railing & pole (set 5)"
+msgstr ""
+
+#: nodes.lua:54
+msgid "Railing & pole (set 5) diagonal"
+msgstr ""
+
+#: nodes.lua:64
+msgid "Railing & pole (set 6)"
+msgstr ""
+
+#: nodes.lua:74
+msgid "Railing & pole (set 7)"
+msgstr ""
+
+#: nodes.lua:84
+msgid "Railing & pole (set 8)"
+msgstr ""
+
+#: nodes.lua:94
+msgid "Railing & pole (set 9)"
+msgstr ""
+
+#: nodes.lua:104
+msgid "Railing & pole (set 10)"
+msgstr ""
+
+#: nodes.lua:114
+msgid "Railing & pole (set 11)"
+msgstr ""
+
+#: nodes.lua:124
+msgid "Railing & pole (set 12)"
+msgstr ""
+
+#: nodes.lua:134
+msgid "Railing & pole (set 13)"
+msgstr ""
+
+#: nodes.lua:144
+msgid "Railing & pole (set 14)"
+msgstr ""
+
+#: nodes.lua:154
+msgid "Railing & pole (set 15)"
+msgstr ""
+
+#: nodes.lua:165
+msgid "Steel slab"
+msgstr ""
+
+#: nodes.lua:175
+msgid "Steel slab with railing (version 1)"
+msgstr ""
+
+#: nodes.lua:185
+msgid "Steel slab with railing (version 2)"
+msgstr ""
+
+#: nodes.lua:195
+msgid "Steel slab with railing (version 3)"
+msgstr ""
+
+#: nodes.lua:205
+msgid "Steel slab with railing (version 4)"
+msgstr ""
+
+#: nodes.lua:215
+msgid "Steel slab with railing (version 5)"
+msgstr ""
+
+#: nodes.lua:225
+msgid "Steel slab with railing (version 6)"
+msgstr ""
+
+#: nodes.lua:235
+msgid "Steel slab with railing (version 7)"
+msgstr ""
+
+#: nodes.lua:245
+msgid "Steel slab with railing (version 8)"
+msgstr ""
+
+#: nodes.lua:255
+msgid "Steel slab with railing (version 9)"
+msgstr ""
+
+#: nodes.lua:265
+msgid "Steel slab with railing (version 10)"
+msgstr ""
+
+#: nodes.lua:275
+msgid "Steel slab with railing (version 11)"
+msgstr ""
+
+#: nodes.lua:285
+msgid "Steel slab with railing (version 12)"
+msgstr ""
+
+#: nodes.lua:296
+msgid "Steel stair"
+msgstr ""
+
+#: nodes.lua:306
+msgid "Steel stair with left railing"
+msgstr ""
+
+#: nodes.lua:316
+msgid "Steel stair with right railing"
+msgstr ""
+
+#: nodes.lua:326
+msgid "Steel stair with double railing"
+msgstr ""
+
+#: nodes.lua:337
+msgid "Steel trapdoor"
+msgstr ""
+
+#: nodes.lua:350
+msgid "Steel trapdoor (open)"
+msgstr ""
+
+#: nodes.lua:365
+msgid "Steel ladder"
+msgstr ""
+
+#: nodes.lua:376
+msgid "Steel ladder with railing"
+msgstr ""
+
+#: nodes.lua:387
+msgid "Steel ladder with railing (exit)"
+msgstr ""
+
+#: nodes.lua:397
+msgid "Steel ladder with railing (right-exit)"
+msgstr ""
+
+#: nodes.lua:408
+msgid "Steel ladder with railing (left-exit)"
+msgstr ""
+
+#: nodes.lua:419
+msgid "Steel ladder with railing (double-exit)"
+msgstr ""

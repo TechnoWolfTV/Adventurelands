@@ -97,7 +97,7 @@ core.register_node("caverealms:mushroom_sapling", {
 })
 
 
-local add_tree = function (pos, ofx, ofy, ofz, schem)
+local function add_tree(pos, ofx, ofy, ofz, schem)
 
 	-- check for schematic
 	if not schem then
@@ -143,34 +143,18 @@ core.register_abm({
 	catch_up = false,
 	action = function(pos, node)
 
-		local light_level = core.get_node_light(pos)
+		local light_level = core.get_node_light(pos) or 0
 
-		-- light has to be between 3 and 10
-		if not light_level or light_level < 3 or light_level > 10 then
+		-- not too dark or bright
+		if light_level < 3 or light_level > 10 then
 			return
 		end
 
-		-- get node under sapling
-		local under =  core.get_node(
-				{x = pos.x, y = pos.y - 1, z = pos.z}).name
+		-- what is mushroom sapling growing on
+		local under =  core.get_node({x = pos.x, y = pos.y - 1, z = pos.z}).name
 
-		-- is it registered?
-		if not core.registered_nodes[node.name] then
-			return
-		end
-
-		-- ethereal sapling on lichen stone
-		if node.name == "ethereal:mushroom_sapling"
-		and under == "caverealms:stone_with_lichen"
-		and enough_height(pos, 10) then
-
-			grow_caverealms_mushroom(pos)
-
-		-- caverealms sapling on lichen stone
-		elseif node.name == "caverealms:mushroom_sapling"
-		and under == "caverealms:stone_with_lichen"
-		and enough_height(pos, 10) then
-
+		-- lichen stone lets us grow
+		if under == "caverealms:stone_with_lichen" and enough_height(pos, 10) then
 			grow_caverealms_mushroom(pos)
 		end
 	end

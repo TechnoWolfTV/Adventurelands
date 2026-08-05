@@ -1,430 +1,432 @@
-minetest.register_node(FB.NAME..":a01", {
-	description = FB.LOCAL("a01"),
+local S = core.get_translator(FB.NAME)
+
+core.register_node(FB.NAME .. ":a01", {
+	description = S("Railing & pole (set 1)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.A01},
+	tiles = { FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.A01 },
 })
-minetest.register_node(FB.NAME..":a02", {
-	description = FB.LOCAL("a02"),
+core.register_node(FB.NAME .. ":a02", {
+	description = S("Railing & pole (set 2)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.A02},
+	tiles = { FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.A02 },
 })
-minetest.register_node(FB.NAME..":a03", {
-	description = FB.LOCAL("a03"),
+core.register_node(FB.NAME .. ":a03", {
+	description = S("Railing & pole (set 3)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.A03},
+	tiles = { FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.A03 },
 })
-minetest.register_node(FB.NAME..":a04", {
-	description = FB.LOCAL("a04"),
+core.register_node(FB.NAME .. ":a04", {
+	description = S("Railing & pole (set 4)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.A04},
+	tiles = { FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.A04 },
 })
-minetest.register_node(FB.NAME..":a05", {
-	description = FB.LOCAL("a05"),
+core.register_node(FB.NAME .. ":a05", {
+	description = S("Railing & pole (set 5)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.A05},
+	tiles = { FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.A05 },
 })
-minetest.register_node(FB.NAME..":a05dia", {
-	description = FB.LOCAL("a05dia"),
+core.register_node(FB.NAME .. ":a05dia", {
+	description = S("Railing & pole (set 5) diagonal"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.A05DIA},
+	tiles = { FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.A05DIA },
 })
-minetest.register_node(FB.NAME..":a06", {
-	description = FB.LOCAL("a06"),
+core.register_node(FB.NAME .. ":a06", {
+	description = S("Railing & pole (set 6)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.A06},
+	tiles = { FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.A06 },
 })
-minetest.register_node(FB.NAME..":a07", {
-	description = FB.LOCAL("a07"),
+core.register_node(FB.NAME .. ":a07", {
+	description = S("Railing & pole (set 7)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.A07},
+	tiles = { FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.A07 },
 })
-minetest.register_node(FB.NAME..":a08", {
-	description = FB.LOCAL("a08"),
+core.register_node(FB.NAME .. ":a08", {
+	description = S("Railing & pole (set 8)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.A08},
+	tiles = { FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.A08 },
 })
-minetest.register_node(FB.NAME..":a09", {
-	description = FB.LOCAL("a09"),
+core.register_node(FB.NAME .. ":a09", {
+	description = S("Railing & pole (set 9)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.A09},
+	tiles = { FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.A09 },
 })
-minetest.register_node(FB.NAME..":a10", {
-	description = "Steel railing",
+core.register_node(FB.NAME .. ":a10", {
+	description = S("Railing & pole (set 10)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.A10},
+	tiles = { FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.A10 },
 })
-minetest.register_node(FB.NAME..":a11", {
-	description = FB.LOCAL("a11"),
+core.register_node(FB.NAME .. ":a11", {
+	description = S("Railing & pole (set 11)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.A11},
+	tiles = { FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.A11 },
 })
-minetest.register_node(FB.NAME..":a12", {
-	description = FB.LOCAL("a12"),
+core.register_node(FB.NAME .. ":a12", {
+	description = S("Railing & pole (set 12)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.A12},
+	tiles = { FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.A12 },
 })
-minetest.register_node(FB.NAME..":a13", {
-	description = FB.LOCAL("a13"),
+core.register_node(FB.NAME .. ":a13", {
+	description = S("Railing & pole (set 13)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.A13},
+	tiles = { FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.A13 },
 })
-minetest.register_node(FB.NAME..":a14", {
-	description = FB.LOCAL("a14"),
+core.register_node(FB.NAME .. ":a14", {
+	description = S("Railing & pole (set 14)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.A14},
+	tiles = { FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.A14 },
 })
-minetest.register_node(FB.NAME..":a15", {
-	description = FB.LOCAL("a15"),
+core.register_node(FB.NAME .. ":a15", {
+	description = S("Railing & pole (set 15)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.A15},
+	tiles = { FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.A15 },
 })
 
-minetest.register_node(FB.NAME..":b00", {
-	description = FB.LOCAL("b00"),
+core.register_node(FB.NAME .. ":b00", {
+	description = S("Steel slab"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_01.png", FB.NAME.."_01.png", FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.B00},
+	tiles = { FB.NAME .. "_01.png", FB.NAME .. "_01.png", FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.B00 },
 })
-minetest.register_node(FB.NAME..":b01", {
-	description = FB.LOCAL("b01"),
+core.register_node(FB.NAME .. ":b01", {
+	description = S("Steel slab with railing (version 1)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_01.png", FB.NAME.."_01.png", FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.B01},
+	tiles = { FB.NAME .. "_01.png", FB.NAME .. "_01.png", FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.B01 },
 })
-minetest.register_node(FB.NAME..":b02", {
-	description = FB.LOCAL("b02"),
+core.register_node(FB.NAME .. ":b02", {
+	description = S("Steel slab with railing (version 2)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_01.png", FB.NAME.."_01.png", FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.B02},
+	tiles = { FB.NAME .. "_01.png", FB.NAME .. "_01.png", FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.B02 },
 })
-minetest.register_node(FB.NAME..":b03", {
-	description = FB.LOCAL("b03"),
+core.register_node(FB.NAME .. ":b03", {
+	description = S("Steel slab with railing (version 3)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_01.png", FB.NAME.."_01.png", FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.B03},
+	tiles = { FB.NAME .. "_01.png", FB.NAME .. "_01.png", FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.B03 },
 })
-minetest.register_node(FB.NAME..":b04", {
-	description = FB.LOCAL("b04"),
+core.register_node(FB.NAME .. ":b04", {
+	description = S("Steel slab with railing (version 4)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_01.png", FB.NAME.."_01.png", FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.B04},
+	tiles = { FB.NAME .. "_01.png", FB.NAME .. "_01.png", FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.B04 },
 })
-minetest.register_node(FB.NAME..":b05", {
-	description = FB.LOCAL("b05"),
+core.register_node(FB.NAME .. ":b05", {
+	description = S("Steel slab with railing (version 5)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_01.png", FB.NAME.."_01.png", FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.B05},
+	tiles = { FB.NAME .. "_01.png", FB.NAME .. "_01.png", FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.B05 },
 })
-minetest.register_node(FB.NAME..":b06", {
-	description = FB.LOCAL("b06"),
+core.register_node(FB.NAME .. ":b06", {
+	description = S("Steel slab with railing (version 6)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_01.png", FB.NAME.."_01.png", FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.B06},
+	tiles = { FB.NAME .. "_01.png", FB.NAME .. "_01.png", FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.B06 },
 })
-minetest.register_node(FB.NAME..":b07", {
-	description = FB.LOCAL("b07"),
+core.register_node(FB.NAME .. ":b07", {
+	description = S("Steel slab with railing (version 7)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_01.png", FB.NAME.."_01.png", FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.B07},
+	tiles = { FB.NAME .. "_01.png", FB.NAME .. "_01.png", FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.B07 },
 })
-minetest.register_node(FB.NAME..":b08", {
-	description = FB.LOCAL("b08"),
+core.register_node(FB.NAME .. ":b08", {
+	description = S("Steel slab with railing (version 8)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_01.png", FB.NAME.."_01.png", FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.B08},
+	tiles = { FB.NAME .. "_01.png", FB.NAME .. "_01.png", FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.B08 },
 })
-minetest.register_node(FB.NAME..":b09", {
-	description = FB.LOCAL("b09"),
+core.register_node(FB.NAME .. ":b09", {
+	description = S("Steel slab with railing (version 9)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_01.png", FB.NAME.."_01.png", FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.B09},
+	tiles = { FB.NAME .. "_01.png", FB.NAME .. "_01.png", FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.B09 },
 })
-minetest.register_node(FB.NAME..":b10", {
-	description = FB.LOCAL("b10"),
+core.register_node(FB.NAME .. ":b10", {
+	description = S("Steel slab with railing (version 10)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_01.png", FB.NAME.."_01.png", FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.B10},
+	tiles = { FB.NAME .. "_01.png", FB.NAME .. "_01.png", FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.B10 },
 })
-minetest.register_node(FB.NAME..":b11", {
-	description = FB.LOCAL("b11"),
+core.register_node(FB.NAME .. ":b11", {
+	description = S("Steel slab with railing (version 11)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_01.png", FB.NAME.."_01.png", FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.B11},
+	tiles = { FB.NAME .. "_01.png", FB.NAME .. "_01.png", FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.B11 },
 })
-minetest.register_node(FB.NAME..":b12", {
-	description = FB.LOCAL("b12"),
+core.register_node(FB.NAME .. ":b12", {
+	description = S("Steel slab with railing (version 12)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_01.png", FB.NAME.."_01.png", FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.B12},
-})
-
-minetest.register_node(FB.NAME..":c00", {
-	description = FB.LOCAL("c00"),
-	drawtype = "nodebox",
-	paramtype = "light",
-	paramtype2 = "facedir",
-	groups = {cracky = 2},
-	is_ground_content = false,
-	tiles = {FB.NAME.."_02.png", FB.NAME.."_02.png", FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.C00},
-})
-minetest.register_node(FB.NAME..":c01", {
-	description = FB.LOCAL("c01"),
-	drawtype = "nodebox",
-	paramtype = "light",
-	paramtype2 = "facedir",
-	groups = {cracky = 2},
-	is_ground_content = false,
-	tiles = {FB.NAME.."_02.png", FB.NAME.."_02.png", FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.C01},
-})
-minetest.register_node(FB.NAME..":c02", {
-	description = FB.LOCAL("c02"),
-	drawtype = "nodebox",
-	paramtype = "light",
-	paramtype2 = "facedir",
-	groups = {cracky = 2},
-	is_ground_content = false,
-	tiles = {FB.NAME.."_02.png", FB.NAME.."_02.png", FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.C02},
-})
-minetest.register_node(FB.NAME..":c03", {
-	description = FB.LOCAL("c03"),
-	drawtype = "nodebox",
-	paramtype = "light",
-	paramtype2 = "facedir",
-	groups = {cracky = 2},
-	is_ground_content = false,
-	tiles = {FB.NAME.."_02.png", FB.NAME.."_02.png", FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.C03},
+	tiles = { FB.NAME .. "_01.png", FB.NAME .. "_01.png", FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.B12 },
 })
 
-minetest.register_node(FB.NAME..":d00", {
-	description = FB.LOCAL("d00"),
+core.register_node(FB.NAME .. ":c00", {
+	description = S("Steel stair"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_03.png", FB.NAME.."_03.png", FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.D00},
+	tiles = { FB.NAME .. "_02.png", FB.NAME .. "_02.png", FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.C00 },
+})
+core.register_node(FB.NAME .. ":c01", {
+	description = S("Steel stair with left railing"),
+	drawtype = "nodebox",
+	paramtype = "light",
+	paramtype2 = "facedir",
+	groups = { cracky = 2 },
+	is_ground_content = false,
+	tiles = { FB.NAME .. "_02.png", FB.NAME .. "_02.png", FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.C01 },
+})
+core.register_node(FB.NAME .. ":c02", {
+	description = S("Steel stair with right railing"),
+	drawtype = "nodebox",
+	paramtype = "light",
+	paramtype2 = "facedir",
+	groups = { cracky = 2 },
+	is_ground_content = false,
+	tiles = { FB.NAME .. "_02.png", FB.NAME .. "_02.png", FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.C02 },
+})
+core.register_node(FB.NAME .. ":c03", {
+	description = S("Steel stair with double railing"),
+	drawtype = "nodebox",
+	paramtype = "light",
+	paramtype2 = "facedir",
+	groups = { cracky = 2 },
+	is_ground_content = false,
+	tiles = { FB.NAME .. "_02.png", FB.NAME .. "_02.png", FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.C03 },
+})
+
+core.register_node(FB.NAME .. ":d00", {
+	description = S("Steel trapdoor"),
+	drawtype = "nodebox",
+	paramtype = "light",
+	paramtype2 = "facedir",
+	groups = { cracky = 2 },
+	is_ground_content = false,
+	tiles = { FB.NAME .. "_03.png", FB.NAME .. "_03.png", FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.D00 },
 	on_rightclick = function(pos, node)
-		minetest.set_node(pos, {name=FB.NAME..":d01", param2=node.param2})
+		core.set_node(pos, { name = FB.NAME .. ":d01", param2 = node.param2 })
 	end,
 })
-minetest.register_node(FB.NAME..":d01", {
-	description = FB.LOCAL("d01"),
+core.register_node(FB.NAME .. ":d01", {
+	description = S("Steel trapdoor (open)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky=2, not_in_creative_inventory = 1},
+	groups = { cracky = 2, not_in_creative_inventory = 1 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_03.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.D01},
+	tiles = { FB.NAME .. "_03.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.D01 },
 	on_rightclick = function(pos, node)
-		minetest.set_node(pos, {name=FB.NAME..":d00", param2=node.param2})
+		core.set_node(pos, { name = FB.NAME .. ":d00", param2 = node.param2 })
 	end,
-	drop = FB.NAME..":d00",
+	drop = FB.NAME .. ":d00",
 })
 
-minetest.register_node(FB.NAME..":s00", {
-	description = FB.LOCAL("s00"),
+core.register_node(FB.NAME .. ":s00", {
+	description = S("Steel ladder"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
 	climbable = true,
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.S00},
+	tiles = { FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.S00 },
 })
-minetest.register_node(FB.NAME..":s01", {
-	description = FB.LOCAL("s01"),
+core.register_node(FB.NAME .. ":s01", {
+	description = S("Steel ladder with railing"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
 	climbable = true,
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.S01},
+	tiles = { FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.S01 },
 })
-minetest.register_node(FB.NAME..":s02", {
-	description = FB.LOCAL("s02"),
+core.register_node(FB.NAME .. ":s02", {
+	description = S("Steel ladder with railing (exit)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.S02},
+	tiles = { FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.S02 },
 })
-minetest.register_node(FB.NAME..":s03", {
-	description = FB.LOCAL("s03"),
-	drawtype = "nodebox",
-	paramtype = "light",
-	paramtype2 = "facedir",
-	climbable = true,
-	groups = {cracky = 2},
-	is_ground_content = false,
-	tiles = {FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.S03},
-})
-minetest.register_node(FB.NAME..":s04", {
-	description = FB.LOCAL("s04"),
+core.register_node(FB.NAME .. ":s03", {
+	description = S("Steel ladder with railing (right-exit)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
 	climbable = true,
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.S04},
+	tiles = { FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.S03 },
 })
-minetest.register_node(FB.NAME..":s05", {
-	description = FB.LOCAL("s05"),
+core.register_node(FB.NAME .. ":s04", {
+	description = S("Steel ladder with railing (left-exit)"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
 	climbable = true,
-	groups = {cracky = 2},
+	groups = { cracky = 2 },
 	is_ground_content = false,
-	tiles = {FB.NAME.."_00.png"},
-	node_box = {type = "fixed", fixed = FB.MODELS.S05},
+	tiles = { FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.S04 },
+})
+core.register_node(FB.NAME .. ":s05", {
+	description = S("Steel ladder with railing (double-exit)"),
+	drawtype = "nodebox",
+	paramtype = "light",
+	paramtype2 = "facedir",
+	climbable = true,
+	groups = { cracky = 2 },
+	is_ground_content = false,
+	tiles = { FB.NAME .. "_00.png" },
+	node_box = { type = "fixed", fixed = FB.MODELS.S05 },
 })
 
--- переименование нодов из старой версии
-minetest.register_alias(FB.NAME..":a00", FB.NAME..":a01")
-minetest.register_alias(FB.NAME..":s06", FB.NAME..":c03")
+-- renaming nodes from old version
+core.register_alias(FB.NAME .. ":a00", FB.NAME .. ":a01")
+core.register_alias(FB.NAME .. ":s06", FB.NAME .. ":c03")

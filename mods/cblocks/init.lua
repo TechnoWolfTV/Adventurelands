@@ -14,6 +14,12 @@ local disable_stone = core.settings:get_bool("cblocks.disable_stone")
 local disable_brick = core.settings:get_bool("cblocks.disable_brick")
 local disable_glass = core.settings:get_bool("cblocks.disable_glass")
 local disable_wood = core.settings:get_bool("cblocks.disable_wood")
+
+local disable_stone_stairs = core.settings:get_bool("cblocks.disable_stone_stairs")
+local disable_brick_stairs = core.settings:get_bool("cblocks.disable_brick_stairs")
+local disable_glass_stairs = core.settings:get_bool("cblocks.disable_glass_stairs")
+local disable_wood_stairs = core.settings:get_bool("cblocks.disable_wood_stairs")
+
 local disable_stairs = core.settings:get_bool("cblocks.disable_stairs")
 
 -- make sure we are running either default or mcl_core
@@ -69,7 +75,7 @@ end
 
 -- main registration function
 
-local function cblocks_stairs(nodename, odef)
+local function cb_add(nodename, odef, no_stairs)
 
 	-- register node
 
@@ -77,7 +83,7 @@ local function cblocks_stairs(nodename, odef)
 
 	-- register stairs
 
-	if disable_stairs then return end
+	if disable_stairs or no_stairs then return end
 
 	if stairs_mod or stairsplus_mod or mod_mcl_stairs then
 
@@ -184,7 +190,7 @@ for i = 1, #colours do
 		stone_def.description = colours[i][2] .. " Stone Brick"
 		stone_def.use_texture_alpha = "opaque"
 
-		cblocks_stairs("cblocks:stonebrick_" .. colours[i][1], stone_def)
+		cb_add("cblocks:stonebrick_" .. colours[i][1], stone_def, disable_stone_stairs)
 
 		core.register_craft({
 			output = "cblocks:stonebrick_" .. colours[i][1] .. " 2",
@@ -206,7 +212,7 @@ for i = 1, #colours do
 		glass_def.description = colours[i][2] .. " Glass Brick"
 		glass_def.use_texture_alpha = "blend"
 
-		cblocks_stairs("cblocks:glass_" .. colours[i][1], glass_def)
+		cb_add("cblocks:glass_" .. colours[i][1], glass_def, disable_glass_stairs)
 
 		set_alias(colours[i][1], "glass")
 
@@ -236,9 +242,9 @@ for i = 1, #colours do
 			col = "yellow2"
 		end
 
-		cblocks_stairs("cblocks:wood_" .. col, wood_def)
+		cb_add("cblocks:wood_" .. col, wood_def, disable_wood_stairs)
 
-		set_alias(colours[i][1], "wood")
+		set_alias(colours[i][1], "wood") ; wood_nod = "group:wood"
 
 		core.register_craft({
 			output = "cblocks:wood_" .. col .. " 2",
@@ -263,7 +269,7 @@ for i = 1, #colours do
 				"default_brick.png" .. colorize}
 		brick_def.description = colours[i][2] .. " Brick Block"
 
-		cblocks_stairs("cblocks:brick_" .. colours[i][1], brick_def)
+		cb_add("cblocks:brick_" .. colours[i][1], brick_def, disable_brick_stairs)
 
 		core.register_craft({
 			output = "cblocks:brick_" .. colours[i][1] .. " 2",

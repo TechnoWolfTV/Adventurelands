@@ -1,0 +1,193 @@
+# Russian translations for factory_bridges.
+# Copyright (C) 2026 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the factory_bridges package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: factory_bridges\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-30 18:18-0500\n"
+"PO-Revision-Date: 2026-07-30 18:18+0000\n"
+"Last-Translator: Russian Translators\n"
+"Language-Team: Russian\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: items.lua:4
+msgid "Rebar"
+msgstr "Арматура"
+
+#: items.lua:10
+msgid "Handrail"
+msgstr "Поручень"
+
+#: items.lua:16
+msgid "Long handrail"
+msgstr "Длинный поручень"
+
+#: nodes.lua:4
+msgid "Railing & pole (set 1)"
+msgstr "Перила и стойки (комплект 1)"
+
+#: nodes.lua:14
+msgid "Railing & pole (set 2)"
+msgstr "Перила и стойки (комплект 2)"
+
+#: nodes.lua:24
+msgid "Railing & pole (set 3)"
+msgstr "Перила и стойки (комплект 3)"
+
+#: nodes.lua:34
+msgid "Railing & pole (set 4)"
+msgstr "Перила и стойки (комплект 4)"
+
+#: nodes.lua:44
+msgid "Railing & pole (set 5)"
+msgstr "Перила и стойки (комплект 5)"
+
+#: nodes.lua:54
+msgid "Railing & pole (set 5) diagonal"
+msgstr "Перила и стойки (комплект 5) диагональ"
+
+#: nodes.lua:64
+msgid "Railing & pole (set 6)"
+msgstr "Перила и стойки (комплект 6)"
+
+#: nodes.lua:74
+msgid "Railing & pole (set 7)"
+msgstr "Перила и стойки (комплект 7)"
+
+#: nodes.lua:84
+msgid "Railing & pole (set 8)"
+msgstr "Перила и стойки (комплект 8)"
+
+#: nodes.lua:94
+msgid "Railing & pole (set 9)"
+msgstr "Перила и стойки (комплект 9)"
+
+#: nodes.lua:104
+msgid "Railing & pole (set 10)"
+msgstr "Перила и стойки (комплект 10)"
+
+#: nodes.lua:114
+msgid "Railing & pole (set 11)"
+msgstr "Перила и стойки (комплект 11)"
+
+#: nodes.lua:124
+msgid "Railing & pole (set 12)"
+msgstr "Перила и стойки (комплект 12)"
+
+#: nodes.lua:134
+msgid "Railing & pole (set 13)"
+msgstr "Перила и стойки (комплект 13)"
+
+#: nodes.lua:144
+msgid "Railing & pole (set 14)"
+msgstr "Перила и стойки (комплект 14)"
+
+#: nodes.lua:154
+msgid "Railing & pole (set 15)"
+msgstr "Перила и стойки (комплект 15)"
+
+#: nodes.lua:165
+msgid "Steel slab"
+msgstr "Стальная площадка"
+
+#: nodes.lua:175
+msgid "Steel slab with railing (version 1)"
+msgstr "Площадка с перилами (вариант 1)"
+
+#: nodes.lua:185
+msgid "Steel slab with railing (version 2)"
+msgstr "Площадка с перилами (вариант 2)"
+
+#: nodes.lua:195
+msgid "Steel slab with railing (version 3)"
+msgstr "Площадка с перилами (вариант 3)"
+
+#: nodes.lua:205
+msgid "Steel slab with railing (version 4)"
+msgstr "Площадка с перилами (вариант 4)"
+
+#: nodes.lua:215
+msgid "Steel slab with railing (version 5)"
+msgstr "Площадка с перилами (вариант 5)"
+
+#: nodes.lua:225
+msgid "Steel slab with railing (version 6)"
+msgstr "Площадка с перилами (вариант 6)"
+
+#: nodes.lua:235
+msgid "Steel slab with railing (version 7)"
+msgstr "Площадка с перилами (вариант 7)"
+
+#: nodes.lua:245
+msgid "Steel slab with railing (version 8)"
+msgstr "Площадка с перилами (вариант 8)"
+
+#: nodes.lua:255
+msgid "Steel slab with railing (version 9)"
+msgstr "Площадка с перилами (вариант 9)"
+
+#: nodes.lua:265
+msgid "Steel slab with railing (version 10)"
+msgstr "Площадка с перилами (вариант 10)"
+
+#: nodes.lua:275
+msgid "Steel slab with railing (version 11)"
+msgstr "Площадка с перилами (вариант 11)"
+
+#: nodes.lua:285
+msgid "Steel slab with railing (version 12)"
+msgstr "Площадка с перилами (вариант 12)"
+
+#: nodes.lua:296
+msgid "Steel stair"
+msgstr "Стальные ступеньки"
+
+#: nodes.lua:306
+msgid "Steel stair with left railing"
+msgstr "Стальные ступеньки с левым поручнем"
+
+#: nodes.lua:316
+msgid "Steel stair with right railing"
+msgstr "Стальные ступеньки с правым поручнем"
+
+#: nodes.lua:326
+msgid "Steel stair with double railing"
+msgstr "Стальные ступеньки с двойным поручнем"
+
+#: nodes.lua:337
+msgid "Steel trapdoor"
+msgstr "Стальной люк"
+
+#: nodes.lua:350
+msgid "Steel trapdoor (open)"
+msgstr "Стальной люк (открытый)"
+
+#: nodes.lua:365
+msgid "Steel ladder"
+msgstr "Вертикальная лестница"
+
+#: nodes.lua:376
+msgid "Steel ladder with railing"
+msgstr "Закрытая вертикальная лестница"
+
+#: nodes.lua:387
+msgid "Steel ladder with railing (exit)"
+msgstr "Выход с лестницы"
+
+#: nodes.lua:397
+msgid "Steel ladder with railing (right-exit)"
+msgstr "Закрытая лестница с выходом направо"
+
+#: nodes.lua:408
+msgid "Steel ladder with railing (left-exit)"
+msgstr "Закрытая лестница с выходом налево"
+
+#: nodes.lua:419
+msgid "Steel ladder with railing (double-exit)"
+msgstr "Закрытая лестница с двусторонним выходом"
