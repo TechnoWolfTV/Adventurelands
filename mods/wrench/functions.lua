@@ -59,7 +59,15 @@ local function get_description(def, pos, meta, node, player)
 	end
 end
 
-local function save_data(stack, data, desc)
+local function get_short_description(def, pos, meta, node, player)
+	if type(def.short_description) == "string" then
+		return def.short_description
+	elseif type(def.short_description) == "function" then
+		return def.short_description(pos, meta, node, player)
+	end
+end
+
+local function save_data(stack, data, desc, short_desc)
 	local meta = stack:get_meta()
 	data = minetest.serialize(data)
 	if compress_data then
@@ -68,6 +76,9 @@ local function save_data(stack, data, desc)
 	end
 	meta:set_string("data", data)
 	meta:set_string("description", desc)
+	if short_desc then
+		meta:set_string("short_description", short_desc)
+	end
 	return stack
 end
 
@@ -159,7 +170,7 @@ function wrench.pickup_node(pos, player)
 				list[i] = ""
 			else
 				if wrench.blacklisted_items[stack:get_name()] then
-					local desc = stack:get_description()
+					local desc = stack:get_short_description()
 					return false, errors.bad_item(desc)
 				end
 				local sdata = get_data(stack, true)
@@ -192,7 +203,9 @@ function wrench.pickup_node(pos, player)
 		drop_node.name = def.drop
 	end
 	local stack = ItemStack(drop_node.name)
-	save_data(stack, data, get_description(def, pos, meta, drop_node, player))
+	local desc = get_description(def, pos, meta, drop_node, player)
+	local short_desc = get_short_description(def, pos, meta, drop_node, player)
+	save_data(stack, data, desc, short_desc)
 	if #stack:to_string() > 65000 then
 		return false, errors.metadata
 	end

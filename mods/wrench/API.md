@@ -56,6 +56,11 @@ Used by `wrench.register_node`.
 	-- * If `metas.text` is defined: node description` + " with text "<TEXT>""
 	-- * If `metas.channel` is defined: node description` + " with channel "<CHANNEL>""
 	-- * Otherwise: node description + " with configuration"
+	
+	short_description = "",
+	short_description = function(pos, meta, node, player),
+	-- The optional short description used for the picked up node.
+	-- Must be either a string or a function that returns a string.
 
 	drop = true,
 	drop = "",
