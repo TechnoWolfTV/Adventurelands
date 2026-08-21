@@ -472,6 +472,57 @@ end
 
 
 ---------------------------------------------------------------------------------------------
+-- Mapgen overgeneration guard.
+--
+-- Mapgen is allowed to manipulate the outermost shell of mapblocks adjacent to the chunk it
+-- is generating ("overgeneration"). A mapblock the Digtron occupies can therefore look loaded
+-- and generated, yet still be partially rewritten later when a neighbouring chunk generates.
+-- If that happens between imaging the machine and writing it one node over, node vs metadata
+-- desyncs and modules are blanked (issues #129/#57/#35).
+--
+-- Per SmallJoker's suggestion in #129: before moving, check for "ignore" out to a distance of
+-- one full mapblock (+16 nodes) in the movement direction, and refuse to advance while the
+-- machine would be entering or bordering a region that mapgen may still manipulate.
+--
+-- Returns true when the region ahead is generated and it is safe to move; false means "not
+-- ready yet" — the caller should wait/retry. If emerging is enabled, the region is emerged so
+-- an unattended machine eventually proceeds once generation completes.
+function digtron.DigtronLayout.mapgen_safe_to_move(self, dir)
+	local min_x, min_y, min_z = self.extents_min.x, self.extents_min.y, self.extents_min.z
+	local max_x, max_y, max_z = self.extents_max.x, self.extents_max.y, self.extents_max.z
+
+	if dir ~= nil then
+		-- extend the machine's bounding box one full mapblock in the movement direction
+		if dir.x > 0 then max_x = max_x + 16 elseif dir.x < 0 then min_x = min_x - 16 end
+		if dir.y > 0 then max_y = max_y + 16 elseif dir.y < 0 then min_y = min_y - 16 end
+		if dir.z > 0 then max_z = max_z + 16 elseif dir.z < 0 then min_z = min_z - 16 end
+	else
+		-- no direction known (e.g. pusher): be conservative and check all around
+		min_x = min_x - 16; min_y = min_y - 16; min_z = min_z - 16
+		max_x = max_x + 16; max_y = max_y + 16; max_z = max_z + 16
+	end
+
+	-- Test one point per mapblock covering the region; "ignore" (or an unloaded block) means
+	-- mapgen hasn't finished with it yet. Sampling at mapblock granularity is sufficient
+	-- because ungenerated regions are whole mapblocks.
+	local ready = true
+	for bx = math.floor(min_x/16)*16, math.floor(max_x/16)*16, 16 do
+	for by = math.floor(min_y/16)*16, math.floor(max_y/16)*16, 16 do
+	for bz = math.floor(min_z/16)*16, math.floor(max_z/16)*16, 16 do
+		local node = minetest.get_node_or_nil({x = bx, y = by, z = bz})
+		if node == nil or node.name == "ignore" then
+			ready = false
+			if digtron.config.emerge_unloaded_mapblocks then
+				minetest.emerge_area({x = bx, y = by, z = bz}, {x = bx+15, y = by+15, z = bz+15})
+			end
+		end
+	end
+	end
+	end
+	return ready
+end
+
+---------------------------------------------------------------------------------------------
 -- Serialization. Currently only serializes the data that is needed by the crate, upgrade this function if more is needed
 
 function digtron.DigtronLayout.serialize(self)

@@ -49,6 +49,14 @@ local function neighbour_test(layout, status_text, dir)
 		return S("Digtron is adjacent to unloaded nodes.") .. "\n" .. status_text, 1
 	end
 
+	-- Mapgen may still rewrite the outermost shell of mapblocks bordering an ungenerated chunk
+	-- ("overgeneration"), which can corrupt the machine mid-move. Refuse to advance while
+	-- "ignore" is within one mapblock (+16 nodes) in the movement direction; the guard emerges
+	-- the region (if emerging is enabled) and the controller retries once it has generated.
+	if digtron.config.wait_for_mapgen and not layout:mapgen_safe_to_move(dir) then
+		return S("Digtron is waiting for map generation ahead...") .. "\n" .. status_text, 1
+	end
+
 	if layout.water_touching == true then
 		minetest.sound_play("sploosh", {gain=1.0, pos=layout.controller})
 	end

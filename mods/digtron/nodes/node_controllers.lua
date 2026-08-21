@@ -125,10 +125,21 @@ if has_doc_mod then
 		"tooltip[help;" .. S("Show documentation about this block").. "]"
 end
 
-local function auto_cycle(pos)
+local function auto_cycle(pos, expected_token)
+	local meta = minetest.get_meta(pos)
+
+	-- Re-entrancy guard: minetest.after callbacks are not tied to the node and are
+	-- never cancelled, so a stale or duplicated callback can fire against a machine
+	-- that has already moved/stopped and stomp on its freshly written metadata.
+	-- Each run carries a token; a callback whose captured token no longer matches the
+	-- node's current token is stale and must not run.
+	local run_token = meta:get_int("run_token")
+	if expected_token ~= nil and expected_token ~= run_token then
+		return
+	end
+
 	local node = minetest.get_node(pos)
 	local controlling_coordinate = digtron.get_controlling_coordinate(pos, node.param2)
-	local meta = minetest.get_meta(pos)
 	local player = minetest.get_player_by_name(meta:get_string("triggering_player"))
 	if player == nil or meta:get_string("waiting") == "true" then
 		return
@@ -148,13 +159,13 @@ local function auto_cycle(pos)
 				if digtron.config.emerge_unloaded_mapblocks then
 					minetest.emerge_area(vector.add(pos, -80), vector.add(pos, 80))
 				end
-				minetest.after(meta:get_int("period"), auto_cycle, newpos)
+				minetest.after(meta:get_int("period"), auto_cycle, newpos, run_token)
 			else
 				meta:set_string("formspec", auto_formspec)
 			end
 		else
 			meta = minetest.get_meta(newpos)
-			minetest.after(meta:get_int("period"), auto_cycle, newpos)
+			minetest.after(meta:get_int("period"), auto_cycle, newpos, run_token)
 			meta:set_string("infotext", status)
 			meta:set_string("lateral_done", "true")
 		end
@@ -170,7 +181,7 @@ local function auto_cycle(pos)
 			if digtron.config.emerge_unloaded_mapblocks then
 				minetest.emerge_area(vector.add(pos, -80), vector.add(pos, 80))
 			end
-			minetest.after(meta:get_int("period"), auto_cycle, newpos)
+			minetest.after(meta:get_int("period"), auto_cycle, newpos, run_token)
 		else
 			meta:set_string("formspec", auto_formspec)
 		end
@@ -185,7 +196,7 @@ local function auto_cycle(pos)
 	meta:set_string("lateral_done", "")
 
 	if cycle > 0 then
-		minetest.after(meta:get_int("period"), auto_cycle, newpos)
+		minetest.after(meta:get_int("period"), auto_cycle, newpos, run_token)
 	else
 		meta:set_string("formspec", auto_formspec)
 	end
@@ -230,6 +241,7 @@ minetest.register_node("digtron:auto_controller", {
 		meta:set_int("offset", 0)
 		meta:set_int("cycles", 0)
 		meta:set_int("slope", 0)
+		meta:set_int("run_token", 0)
 
 		local inv = meta:get_inventory()
 		inv:set_size("stop", 1)
@@ -279,9 +291,13 @@ minetest.register_node("digtron:auto_controller", {
 			if sender:is_player() and cycles > 0 then
 				meta:set_string("triggering_player", sender:get_player_name())
 				if fields.execute then
+					-- Start a new run: bump the token so any auto_cycle callbacks still
+					-- pending from a previous (interrupted) run become stale and won't fire.
+					local run_token = meta:get_int("run_token") + 1
+					meta:set_int("run_token", run_token)
 					meta:set_string("waiting", "")
 					meta:set_string("formspec", "")
-					auto_cycle(pos)
+					auto_cycle(pos, run_token)
 				end
 			end
 		end
@@ -313,9 +329,18 @@ minetest.register_node("digtron:auto_controller", {
 
 	on_rightclick = function(pos)
 		local meta = minetest.get_meta(pos)
+		-- Invalidate any auto_cycle callback still pending from the current run.
+		meta:set_int("run_token", meta:get_int("run_token") + 1)
 		meta:set_string("infotext", meta:get_string("infotext") .. "\n" .. S("Interrupted!"))
 		meta:set_string("waiting", "true")
 		meta:set_string("formspec", auto_formspec)
+	end,
+
+	-- set_obstructed() (util_execute_cycle) starts a node timer and sets waiting="true"
+	-- on the controller. Without this handler the auto-controller could never clear that
+	-- flag on its own and would stay wedged after an obstruction.
+	on_timer = function(pos)
+		minetest.get_meta(pos):set_string("waiting", "")
 	end,
 })
 
