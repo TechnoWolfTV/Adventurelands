@@ -1,13 +1,14 @@
 
 -- global
 
-hopper = {version = "20260317"}
+hopper = {version = "20260815"}
 
 -- Translation, mod check and locals
 
 local S = core.get_translator("hopper")
 local mod_screwdriver = core.get_modpath("screwdriver")
 local get_node = core.get_node
+local registered_nodes = core.registered_nodes
 
 -- creative check
 
@@ -40,7 +41,7 @@ local containers = {
 local cb_default = true
 local cb_nodes = {}
 
-if cb_default == false then
+if not cb_default then
 
 	-- a whitelist follows
 	-- *_metadata_inventory_* or timer:start may be necessary to start processing
@@ -72,7 +73,7 @@ if cb_default == false then
 	--]]
 	}
 
-elseif cb_default == true then
+else -- true
 
 	-- a blacklist follows
 	-- *_metadata_inventory_* or timer:start is not needed to start processing
@@ -122,7 +123,7 @@ function hopper:add_container(list)
 		for _, p in pairs(cb_nodes) do
 
 			if cols[2]:find(p) then
-				cols[4] = not cb_nodes ; break
+				cols[4] = not cb_default ; break
 			end
 		end
 
@@ -231,11 +232,9 @@ end
 
 -- check where pointing and set normal or side-hopper
 
-local hopper_place = function(itemstack, placer, pointed_thing)
+local function hopper_place(itemstack, placer, pointed_thing)
 
 	local pos = pointed_thing.above
-	local x = pointed_thing.under.x - pos.x
-	local z = pointed_thing.under.z - pos.z
 	local name = placer:get_player_name() or ""
 
 	if core.is_protected(pos, name) then
@@ -244,7 +243,7 @@ local hopper_place = function(itemstack, placer, pointed_thing)
 
 	-- make sure we aren't replacing something we shouldnt
 	local node = get_node(pos)
-	local def = core.registered_nodes[node.name]
+	local def = registered_nodes[node.name]
 
 	if def and not def.buildable_to then return itemstack end
 
@@ -253,19 +252,14 @@ local hopper_place = function(itemstack, placer, pointed_thing)
 
 		local nn = get_node(pointed_thing.under).name
 
-		if core.registered_nodes[nn]
-		and core.registered_nodes[nn].on_rightclick then
+		if registered_nodes[nn]
+		and registered_nodes[nn].on_rightclick then
 			return core.item_place(itemstack, placer, pointed_thing)
 		end
 	end
 
-	local p2
-
-	if x == -1 then p2 = 0
-	elseif x == 1 then p2 = 2
-	elseif z == -1 then p2 = 3
-	elseif z == 1 then p2 = 1
-	end
+	local x, z = pointed_thing.under.x - pos.x, pointed_thing.under.z - pos.z
+	local p2 = (x == -1 and 0) or (x == 1 and 2) or (z == -1 and 3) or (z == 1 and 1)
 
 	if p2 then
 		core.set_node(pos, {name = "hopper:hopper_side", param2 = p2})
@@ -273,9 +267,7 @@ local hopper_place = function(itemstack, placer, pointed_thing)
 		core.set_node(pos, {name = "hopper:hopper"})
 	end
 
-	if not check_creative(placer:get_player_name()) then
-		itemstack:take_item()
-	end
+	if not check_creative(name) then itemstack:take_item() end
 
 	-- get and set metadata
 	local meta = core.get_meta(pos)
@@ -299,15 +291,12 @@ core.register_node("hopper:hopper", {
 		type = "fixed",
 		fixed = {
 			--funnel walls
-			{-0.5, 0.0, 0.4, 0.5, 0.5, 0.5},
-			{0.4, 0.0, -0.5, 0.5, 0.5, 0.5},
-			{-0.5, 0.0, -0.5, -0.4, 0.5, 0.5},
-			{-0.5, 0.0, -0.5, 0.5, 0.5, -0.4},
+			{-0.5, 0.0, 0.4, 0.5, 0.5, 0.5}, {0.4, 0.0, -0.5, 0.5, 0.5, 0.5},
+			{-0.5, 0.0, -0.5, -0.4, 0.5, 0.5}, {-0.5, 0.0, -0.5, 0.5, 0.5, -0.4},
 			--funnel base
 			{-0.5, 0.0, -0.5, 0.5, 0.1, 0.5},
 			--spout
-			{-0.3, -0.3, -0.3, 0.3, 0.0, 0.3},
-			{-0.15, -0.3, -0.15, 0.15, -0.5, 0.15}
+			{-0.3, -0.3, -0.3, 0.3, 0.0, 0.3}, {-0.15, -0.3, -0.15, 0.15, -0.5, 0.15}
 		}
 	},
 
@@ -366,15 +355,12 @@ core.register_node("hopper:hopper_side", {
 		type = "fixed",
 		fixed = {
 			--funnel walls
-			{-0.5, 0.0, 0.4, 0.5, 0.5, 0.5},
-			{0.4, 0.0, -0.5, 0.5, 0.5, 0.5},
-			{-0.5, 0.0, -0.5, -0.4, 0.5, 0.5},
-			{-0.5, 0.0, -0.5, 0.5, 0.5, -0.4},
+			{-0.5, 0.0, 0.4, 0.5, 0.5, 0.5}, {0.4, 0.0, -0.5, 0.5, 0.5, 0.5},
+			{-0.5, 0.0, -0.5, -0.4, 0.5, 0.5}, {-0.5, 0.0, -0.5, 0.5, 0.5, -0.4},
 			--funnel base
 			{-0.5, 0.0, -0.5, 0.5, 0.1, 0.5},
 			--spout
-			{-0.3, -0.3, -0.3, 0.3, 0.0, 0.3},
-			{-0.7, -0.3, -0.15, 0.15, 0.0, 0.15}
+			{-0.3, -0.3, -0.3, 0.3, 0.0, 0.3}, {-0.7, -0.3, -0.15, 0.15, 0.0, 0.15}
 		}
 	},
 
@@ -433,10 +419,8 @@ core.register_node("hopper:hopper_void", {
 		type = "fixed",
 		fixed = {
 			--funnel walls
-			{-0.5, 0.0, 0.4, 0.5, 0.5, 0.5},
-			{0.4, 0.0, -0.5, 0.5, 0.5, 0.5},
-			{-0.5, 0.0, -0.5, -0.4, 0.5, 0.5},
-			{-0.5, 0.0, -0.5, 0.5, 0.5, -0.4},
+			{-0.5, 0.0, 0.4, 0.5, 0.5, 0.5}, {0.4, 0.0, -0.5, 0.5, 0.5, 0.5},
+			{-0.5, 0.0, -0.5, -0.4, 0.5, 0.5}, {-0.5, 0.0, -0.5, 0.5, 0.5, -0.4},
 			--funnel base
 			{-0.5, 0.0, -0.5, 0.5, 0.1, 0.5}
 		}
@@ -493,8 +477,8 @@ core.register_node("hopper:hopper_void", {
 
 			local nn = get_node(pointed_thing.under).name
 
-			if core.registered_nodes[nn]
-			and core.registered_nodes[nn].on_rightclick then
+			if registered_nodes[nn]
+			and registered_nodes[nn].on_rightclick then
 				return core.item_place(itemstack, placer, pointed_thing)
 			end
 		end
@@ -511,7 +495,7 @@ core.register_node("hopper:hopper_void", {
 
 		-- make sure we aren't replacing something we shouldnt
 		local node = get_node(pos)
-		local def = core.registered_nodes[node.name]
+		local def = registered_nodes[node.name]
 		if def and not def.buildable_to then
 			return itemstack
 		end
@@ -570,7 +554,7 @@ core.register_node("hopper:hopper_void", {
 
 -- transfer function
 
-local transfer = function(src, srcpos, dst, dstpos, allowed, finished)
+local function transfer(src, srcpos, dst, dstpos, allowed, finished)
 
 	local srcinv = core.get_meta(srcpos):get_inventory()
 	local dstinv = core.get_meta(dstpos):get_inventory()
@@ -738,7 +722,7 @@ core.register_abm({
 			if src_inv then
 
 				-- run callbacks from source node or not
-				local src_def = src_cb and core.registered_nodes[src_name]
+				local src_def = src_cb and registered_nodes[src_name]
 				local allowed = function(i, stack)
 
 					return not src_def
@@ -774,7 +758,7 @@ core.register_abm({
 			if dst_inv then
 
 				-- run callbacks from destionation node or not
-				local dst_def = dst_cb and core.registered_nodes[dst_name]
+				local dst_def = dst_cb and registered_nodes[dst_name]
 				local allowed = function(i, stack)
 
 					return not dst_def
@@ -853,7 +837,8 @@ if core.get_modpath("lucky_block") then
 
 	lucky_block:add_blocks({
 		{"dro", {"hopper:hopper"}, 3},
-		{"nod", "default:lava_source", 1}
+		{"nod", "default:lava_source", 1},
+		{"dro", {"hopper:hopper_void"}, 1}
 	})
 end
 

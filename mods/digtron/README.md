@@ -9,6 +9,26 @@ This mod contains a set of blocks that can be used to construct highly customiza
 modular tunnel-boring machines, bridge-builders, road-pavers, wall-o-matics, and other
 such construction/destruction contraptions.
 
+## IMPORTANT NOTICE FOR MOD WRITERS
+
+Due to bugs in the implementation the internal `items_dropped` list appended to
+during a digtron cycle and passed to various node call backs and global digtron
+functions could potentially contain items in both `string` and `ItemStack` form,
+even though it was documented to contain item strings only.
+
+In order to fix the problems caused by this (without requiring bidirectional
+conversion multiple times), the implementation was changed to only add items as
+an `ItemStack`. Also `damage_creatures` callbacks are now called with an empty
+list and no longer have access to previously dug/dropped items.
+
+Compatibility code (logging deprecation warnings if exercised) has been added
+supporting mods that just add item names to the list of drops, but if a mod
+provides more complex functionality, it needs to be changed in order to continue
+working correctly. Even if a mod just adds item strings it is recommended to
+change it to add dropped items as `ItemStack` objects, too. To determine whether
+the running version of digtron contains this change, check
+`digtron.feature_dropped_items_are_stacks`.
+
 ## Basic functionality
 
 A digging machine's components must be connected to the control block via a path leading
@@ -69,51 +89,3 @@ See also: [LICENSE.txt](LICENSE.txt).
 * [awards](https://forum.luanti.org/viewtopic.php?t=4870) to add over 30 Digtron-specific achievements (progression) to the game.
 * [technic](https://forum.luanti.org/viewtopic.php?t=2538) to power Digtron with electricity (including batteries!).
 * [TechAge](https://forum.luanti.org/viewtopic.php?t=24619), a mod that adds technology stages where the player advances from the water mill and steam engine into future technology. It includes a rechargeable Digtron Battery.
-
----
-
-## Adventurelands patch notes (downstream modification)
-
-> This copy of Digtron is redistributed in the **Adventurelands** game with a local
-> bug-fix applied. The code remains under its original MIT license (see
-> [LICENSE.txt](LICENSE.txt), unchanged); this section only documents what was modified,
-> as required for redistribution and to keep the divergence from upstream transparent.
-
-**Modified by:** TechnoWolfTV (Adventurelands), 2026
-**Based on:** upstream `minetest-mods/digtron` `master`
-**Upstream issue:** [minetest-mods/digtron#129](https://github.com/minetest-mods/digtron/issues/129)
-
-### What was fixed
-
-An auto-controller left running unattended (with the player far away) while drilling into
-terrain that a mapgen mod — e.g. `dungeonsplus` — is still generating could have its own and
-its modules' metadata wiped mid-move: storage/battery boxes would no longer open and the
-control module's fields would go blank. Cause: mapgen is allowed to rewrite the outermost
-shell of mapblocks bordering the chunk it generates ("overgeneration"), so blocks the machine
-occupied could be partially rewritten mid-move, desyncing node vs metadata. (Mechanism
-identified by SmallJoker in the upstream issue.)
-
-### What changed
-
-* **`class_layout.lua`** — added `mapgen_safe_to_move(dir)`: before moving, the machine checks
-  for ungenerated (`ignore`) map out to one full mapblock (+16 nodes) in the movement
-  direction and refuses to advance while mapgen may still manipulate that region. Ungenerated
-  blocks are emerged (respecting the existing `digtron_emerge_unloaded_mapblocks` setting), so
-  an unattended machine waits briefly and proceeds once generation completes.
-* **`util_execute_cycle.lua`** — calls the check from `neighbour_test`; when unsafe, the cycle
-  retries with the status "Digtron is waiting for map generation ahead...".
-* **`config.lua`** — adds the setting `digtron_wait_for_mapgen` (default `true`; set `false`
-  in `minetest.conf` to disable).
-* **`nodes/node_controllers.lua`** — hardening for a separate path: a monotonic run-token so
-  stale/duplicate `minetest.after` cycle callbacks can't run twice against one machine, and a
-  missing `on_timer` on the auto-controller so it clears its own `waiting` flag after an
-  obstruction.
-
-### New setting
-
-* `digtron_wait_for_mapgen` (bool, default `true`) — before moving, require the map within one
-  mapblock (16 nodes) in the movement direction to be generated, so mapgen overgeneration
-  cannot corrupt the machine.
-
-These changes are offered upstream in the issue linked above; this local copy exists so
-Adventurelands players are covered until an official fix lands.

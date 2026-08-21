@@ -29,3 +29,6 @@ Sounds (Attribution 3.0):
 
 Sound (Creative Commons 0):
 - stamina_sip.2.ogg - https://freesound.org/people/SeanPorio/sounds/519268/
+
+
+screenshot.jpg created using https://www.textstudio.com/

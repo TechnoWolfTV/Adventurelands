@@ -590,7 +590,7 @@ end
 if damage_enabled and core.settings:get_bool("enable_stamina") ~= false then
 
 	-- override core.do_item_eat() so we can redirect hp_change to stamina
-	core.do_item_eat = function(hp_change, replace_with_item, itemstack, user, pointed_thing)
+	function core.do_item_eat(hp_change, replace_with_item, itemstack, user, pointed_thing)
 
 		if not is_player(user) then return end -- abort if called by fake player
 

@@ -10,14 +10,16 @@ local use_invisibility = core.get_modpath("invisibility")
 
 -- node check helper
 
+local registered_nodes = core.registered_nodes
+local registered_items = core.registered_items
 local function has(nodename)
-	return core.registered_nodes[nodename] and nodename
+	return registered_nodes[nodename] and nodename
 end
 
 -- global table
 
 mobs = {
-	mod = "redo", version = "20260805",
+	mod = "redo", version = "20260819",
 	spawning_mobs = {}, translate = S,
 	node_snow = has(core.registered_aliases["mapgen_snow"])
 			or has("mcl_core:snow") or has("default:snow") or "air",
@@ -42,6 +44,19 @@ local function atan(x)
 	if not x or x ~= x then return 0 else return atann(x) end
 end
 local table_copy, table_remove = table.copy, table.remove
+
+-- store connected players once every second
+
+local get_connected_players = core.get_connected_players
+local player_list = {}
+local ptimer = 1
+
+core.register_globalstep(function(dtime)
+
+	ptimer = ptimer + dtime ; if ptimer < 1 then return end ; ptimer = 0
+
+	player_list = get_connected_players()
+end)
 
 -- creative check
 
@@ -74,7 +89,7 @@ local mob_height_fix = settings:get_bool("mob_height_fix")
 local mob_log_spawn = settings:get_bool("mob_log_spawn") == true
 local active_mobs = 0
 local mob_infotext = settings:get_bool("mob_infotext") ~= false
-local gravity = tonumber(core.settings:get("movement_gravity")) or 9.81
+local gravity = tonumber(settings:get("movement_gravity")) or 9.81
 
 -- loop interval timers
 
@@ -83,7 +98,7 @@ local main_timer_interval = tonumber(settings:get("mob_main_timer_interval") or 
 
 -- pathfind settings
 
-local pathfinding_enable = settings:get_bool("mob_pathfinding_enable") or true
+local pathfinding_enable = settings:get_bool("mob_pathfinding_enable") ~= false
 local pathfinding_stuck_timeout = tonumber(
 		settings:get("mob_pathfinding_stuck_timeout")) or 3.0
 local pathfinding_stuck_path_timeout = tonumber(
@@ -290,7 +305,7 @@ local function check_for(look_for, look_inside)
 		if type(str) == "string" and str:sub(1, 6) == "group:" then
 
 			local group = str:sub(7)
-			local def = core.registered_items[look_for]
+			local def = registered_items[look_for]
 
 			if def and def.groups[group] and def.groups[group] ~= 0 then return true end
 		end
@@ -321,7 +336,7 @@ function mob_class:set_velocity(v)
 	local yaw = (self.object:get_yaw() or 0) + self.rotate
 
 	-- is mob standing in liquid?
-	local visc = min(core.registered_nodes[self.standing_in].liquid_viscosity or 0, 7)
+	local visc = min(registered_nodes[self.standing_in].liquid_viscosity or 0, 7)
 
 	-- only slow moving mobs when inside a viscous fluid they cannot swim in
 	-- e.g. fish in water, spiders in cobweb
@@ -440,9 +455,9 @@ local get_node = core.get_node
 
 if get_id then get_node = function(pos)
 
-		local id, p1, p2, pos_ok = get_id(pos.x, pos.y, pos.z)
+		local id, p1, p2, ok = get_id(pos.x, pos.y, pos.z)
 
-		return {name = get_id_name(id), param1 = p1, param2 = p2, loaded = pos_ok}
+		return ok and {name = get_id_name(id), param1 = p1, param2 = p2, loaded = ok}
 	end
 end
 
@@ -452,9 +467,11 @@ local function node_ok(pos, fallback)
 
 	local node = get_node(pos)
 
-	if core.registered_nodes[node.name] then return node end
+	if node and registered_nodes[node.name] then return node end
 
-	return core.registered_nodes[(fallback or mobs.fallback_node)]
+	local def = registered_nodes[fallback or mobs.fallback_node]
+
+	return {name = def.name, param1 = 0, param2 = 0, loaded = false}
 end
 
 function mobs:node_ok(pos, fallback)
@@ -472,7 +489,7 @@ function mob_class:line_of_sight(pos1, pos2)
 
 		if thing.type == "node" then
 
-			local nodedef = core.registered_items[get_node(thing.under).name]
+			local nodedef = registered_items[get_node(thing.under).name]
 
 			if nodedef and nodedef.walkable then return end
 		end
@@ -485,7 +502,7 @@ end
 
 function mob_class:flight_check()
 
-	local def = core.registered_nodes[self.standing_in] ; if not def then return end
+	local def = registered_nodes[self.standing_in] ; if not def then return end
 
 	-- are we standing inside what we should be to fly/swim ?
 	if check_for(self.standing_in, self.fly_in) then return true end
@@ -702,7 +719,7 @@ function mob_class:item_drop()
 
 		local wield_stack = self.cause_of_death.puncher:get_wielded_item()
 		local wield_stack_meta = wield_stack:get_meta()
-		local item_def = core.registered_items[wield_stack:get_name()]
+		local item_def = registered_items[wield_stack:get_name()]
 		local item_looting = item_def and item_def.tool_capabilities and
 				item_def.tool_capabilities.looting_level or 0
 
@@ -749,7 +766,7 @@ local function remove_mob(self, decrease)
 
 	self.object:remove()
 
-	if decrease and active_limit and active_limit > 1 then
+	if decrease and active_limit and active_limit > 0 then
 		active_mobs = active_mobs - 1
 --print("-- active mobs: " .. active_mobs .. " / " .. active_limit)
 	end
@@ -871,7 +888,7 @@ end
 
 local function is_node_dangerous(self, nodename)
 
-	local def = core.registered_nodes[nodename] ; if not def then return end
+	local def = registered_nodes[nodename] ; if not def then return end
 
 	if (self.water_damage > 0 and def.groups.water)
 	or (self.lava_damage > 0 and def.groups.lava)
@@ -907,7 +924,7 @@ function mob_class:is_at_cliff()
 	or self.disable_falling then return end -- 0 for no fear of heights
 
 	-- if path already blocked, dont check for cliff
-	if core.registered_nodes[self.looking_at].walkable or self.facing_fence then
+	if registered_nodes[self.looking_at].walkable or self.facing_fence then
 		return
 	end
 
@@ -920,8 +937,8 @@ function mob_class:is_at_cliff()
 	for i = 1, self.fear_height do -- check each node going down
 
 		local check_pos = {x = pos.x + dir_x, y = ypos - i, z = pos.z + dir_z}
-		local bnode = get_node(check_pos)
-		local def = core.registered_nodes[bnode.name]
+		local bnode = get_node(check_pos) or {name = "air"}
+		local def = registered_nodes[bnode.name]
 
 		if is_node_dangerous(self, bnode.name) then return true end
 
@@ -959,7 +976,7 @@ function mob_class:do_env_damage()
 	end
 
 	local py = {x = pos.x, y = pos.y + self.prop.collisionbox[5], z = pos.z}
-	local nodef = core.registered_nodes[self.standing_in]
+	local nodef = registered_nodes[self.standing_in]
 
 	-- water damage
 	if self.water_damage ~= 0 and nodef.groups.water then
@@ -1080,18 +1097,18 @@ function mob_class:do_jump()
 	if self.state == "stand" or self.order == "stand" or vel.y ~= 0
 	or self.fly or self.child or self.jump_height == 0 then return end
 
-	local ndef = core.registered_nodes[self.standing_on]
+	local ndef = registered_nodes[self.standing_on]
 
 	-- only jump on solid nodes that allow it
 	if not ndef.walkable or ndef.groups.disable_jump == 1 then return end
 
 	-- is there anything stopping us from jumping up onto a block?
-	local blocked = core.registered_nodes[self.looking_above].walkable or self.facing_fence
+	local blocked = registered_nodes[self.looking_above].walkable or self.facing_fence
 
 	-- if mob can leap then remove blockages and let them try
 	if self.can_leap then blocked = false end
 
-	ndef = core.registered_nodes[self.looking_at] -- what node are we looking at?
+	ndef = registered_nodes[self.looking_at] -- what node are we looking at?
 
 	-- jump if we have space above to, or are a jumping mob
 	if self.walk_chance == 0 or (not blocked
@@ -1418,10 +1435,11 @@ local function can_dig_drop(pos)
 	if core.is_protected(pos, "") then return end
 
 	local node = node_ok(pos, "air").name
-	local ndef = core.registered_nodes[node]
+	local ndef = registered_nodes[node]
 
-	if not ndef or node == "ignore" or ndef.drawtype == "airlike" or ndef.groups.level
-	or ndef.groups.unbreakable or ndef.groups.liquid then return end
+	if not ndef or not ndef.walkable or ndef.groups.level or ndef.groups.unbreakable then
+		return
+	end
 
 	local drops = core.get_node_drops(node)
 
@@ -1461,7 +1479,7 @@ function mob_class:apply_path(way, target_pos, add_jump, set_velocity)
 
 				if not core.is_protected(s, "") then -- build upwards
 
-					local ndef1 = core.registered_nodes[self.standing_in]
+					local ndef1 = registered_nodes[self.standing_in]
 
 					if ndef1 and (ndef1.buildable_to or ndef1.groups.liquid) then
 
@@ -1519,13 +1537,16 @@ end
 
 local function path_height_blocked(self)
 
-	local node
+	local node, pos
 
-	for _,pos in pairs(self.path.way) do
+	for i = 1, #self.path.way do
 
-		node = get_node({x = pos.x, y = pos.y + 1, z = pos.z}).name
+		pos = self.path.way[i]
 
-		if core.registered_nodes[node].walkable then return true end
+		node = get_node({x = pos.x, y = pos.y + 1, z = pos.z})
+				or {name = "mobs:fallback_node"}
+
+		if registered_nodes[node.name].walkable then return true end
 	end
 end
 
@@ -1600,7 +1621,9 @@ function mob_class:smart_mobs(s, p, dist, dtime)
 		-- show path length and particle trail
 		print("-- path length:" .. tonumber(#self.path.way))
 
-		for _,pos in pairs(self.path.way) do
+		for i = 1, #self.path.way do
+
+			local pos = self.path.way[i]
 
 			tpart(pos, 2)
 
@@ -1848,14 +1871,13 @@ function mob_class:follow_flop(dtime)
 	and self.state ~= "attack" and self.state ~= "runaway" then
 
 		local s = self.object:get_pos() ; if not s then return end
-		local players = core.get_connected_players()
 
-		for n = 1, #players do
+		for _, player in ipairs(player_list) do
 
-			if players[n] and not is_invisible(self, players[n]:get_player_name())
-			and get_distance(players[n]:get_pos(), s) < self.view_range then
+			if player and not is_invisible(self, player:get_player_name())
+			and get_distance(player:get_pos(), s) < self.view_range then
 
-				self.following = players[n] ; break
+				self.following = player ; break
 			end
 		end
 	end
@@ -2047,8 +2069,8 @@ function mob_class:do_states(dtime)
 			if self:flight_check() and self.animation
 			and self.animation.fly_start and self.animation.fly_end then
 
-				local on_ground = core.registered_nodes[self.standing_on].walkable
-				local in_water = core.registered_nodes[self.standing_in].groups.water
+				local on_ground = registered_nodes[self.standing_on].walkable
+				local in_water = registered_nodes[self.standing_in].groups.water
 
 				if on_ground and in_water then
 					self:set_animation("fly")
@@ -2408,9 +2430,9 @@ function mob_class:falling(pos)
 	local fall_speed = self.fall_speed
 
 	-- use liquid viscosity for float/sink speed when in water
-	if self.floats and core.registered_nodes[self.standing_in].groups.liquid then
+	if self.floats and registered_nodes[self.standing_in].groups.liquid then
 
-		local visc = min(core.registered_nodes[self.standing_in].liquid_viscosity, 7) + 1
+		local visc = min(registered_nodes[self.standing_in].liquid_viscosity, 7) + 1
 
 		self.object:set_velocity({x = v.x, y = 0.45, z = v.z}) -- slow ascent in water
 
@@ -2430,7 +2452,7 @@ function mob_class:falling(pos)
 			self.standing_on = node_ok(
 					{x = pos.x, y = pos.y + y_level - 0.25, z = pos.z}, "air").name
 
-			local def = core.registered_nodes[self.standing_on]
+			local def = registered_nodes[self.standing_on]
 			local add = def and def.groups.fall_damage_add_percent
 
 			if add and add ~= 0 then
@@ -2548,8 +2570,7 @@ function mob_class:on_punch(hitter, tflp, tool_caps, dir, damage)
 	end
 
 	-- custom punch function (if false returned, do not continue)
-	if self.do_punch and not self:do_punch(
-			hitter, tflp, tool_caps, dir, damage) == false then
+	if self.do_punch and self:do_punch(hitter, tflp, tool_caps, dir, damage) == false then
 		return true
 	end
 
@@ -2890,6 +2911,8 @@ function mob_class:mob_activate(staticdata, def, dtime)
 	self.textures = textures
 	self.standing_in = "air"
 	self.standing_on = "air"
+	self.looking_at = "air"
+	self.looking_above = "air"
 	self.state = self.state or "stand"
 
 	self:set_yaw((random(0, 360) - 180) / 180 * pi, 6) -- stand at random yaw
@@ -2937,9 +2960,9 @@ function mob_class:mob_expire(pos, dtime)
 	if self.lifetimer > 0 then return end
 
 	-- only despawn away from player
-	for _,player in pairs(core.get_connected_players()) do
+	for _, player in ipairs(player_list) do
 
-		if get_distance(player:get_pos(), pos) <= 15 then
+		if player and get_distance(player:get_pos(), pos) <= 15 then
 			self.lifetimer = 20 ; return
 		end
 	end
@@ -3351,7 +3374,7 @@ local function can_spawn(pos, name)
 		for x = min_x, max_x do
 			for z = min_z, max_z do
 
-				local def  = core.registered_nodes[node_ok(
+				local def  = registered_nodes[node_ok(
 						{x = pos.x + x, y = pos.y + y, z = pos.z + z}).name]
 
 				if def and def.walkable then
@@ -3432,7 +3455,7 @@ function mobs:add_mob(pos, def)
 			new_texture = ent.child_texture[1]
 		end
 
-		ent.child = true
+		ent.child = true ; mobs:scale_mob(ent, .5, .5)
 
 	elseif def.texture then -- if not child set new texture
 
@@ -3598,9 +3621,9 @@ function mobs:spawn_specific(name, nodes, neighbors, min_light, max_light, inter
 			end
 		end
 
-		for _,player in ipairs(core.get_connected_players()) do
+		for _, player in ipairs(player_list) do
 
-			if get_distance(player:get_pos(), pos) <= mob_nospawn_range then
+			if player and get_distance(player:get_pos(), pos) <= mob_nospawn_range then
 --print("--- player too close", name)
 				return
 			end
@@ -3615,7 +3638,7 @@ function mobs:spawn_specific(name, nodes, neighbors, min_light, max_light, inter
 
 				local pos2 = {x = pos.x, y = pos.y + n, z = pos.z}
 
-				if core.registered_nodes[node_ok(pos2).name].walkable then
+				if registered_nodes[node_ok(pos2).name].walkable then
 --print ("--- inside block", name, node_ok(pos2).name)
 					return
 				end
@@ -3775,7 +3798,9 @@ function mobs:register_arrow(name, def)
 
 				if def.type == "node" and self.hit_node then
 
-					local node = get_node(def.node_pos) ; self.node_pos = def.node_pos
+					local node = node_ok(def.node_pos)
+
+					self.node_pos = def.node_pos
 
 					self:hit_node(pos, node) ; --print("-- hit node", node.name)
 
@@ -3905,7 +3930,7 @@ function mobs:register_egg(mob, desc, background, addegg, no_creative, can_spawn
 
 				-- does existing on_rightclick function exist?
 				local under = get_node(pointed_thing.under)
-				local def = core.registered_nodes[under.name]
+				local def = under and registered_nodes[under.name]
 
 				if def and def.on_rightclick then
 
@@ -3962,7 +3987,7 @@ function mobs:register_egg(mob, desc, background, addegg, no_creative, can_spawn
 
 			-- does existing on_rightclick function exist?
 			local under = get_node(pointed_thing.under)
-			local def = core.registered_nodes[under.name]
+			local def = under and registered_nodes[under.name]
 
 			if def and def.on_rightclick then
 
@@ -4094,7 +4119,7 @@ function mobs:capture_mob(
 
 	-- add special mob egg with all mob information
 	-- unless 'replacewith' contains new item to use
-	if not replacewith and core.registered_items[mobname .. "_set"] then
+	if not replacewith and registered_items[mobname .. "_set"] then
 
 		new_stack = ItemStack(mobname .. "_set")
 
@@ -4329,7 +4354,7 @@ core.register_chatcommand("clear_mobs", {
 
 		local count = 0
 
-		for _, player in pairs(core.get_connected_players()) do
+		for _, player in ipairs(player_list) do
 
 			if player then
 
@@ -4436,7 +4461,8 @@ if settings:get_bool("mobs_can_hear") ~= false then
 
 			for n = 1, #ps do
 
-				local ndef = core.registered_nodes[get_node(ps[n]).name]
+				local nod = get_node(ps[n])
+				local ndef = nod and registered_nodes[nod.name]
 
 				if ndef and ndef.on_sound then
 

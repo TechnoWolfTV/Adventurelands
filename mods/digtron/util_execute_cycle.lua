@@ -49,14 +49,6 @@ local function neighbour_test(layout, status_text, dir)
 		return S("Digtron is adjacent to unloaded nodes.") .. "\n" .. status_text, 1
 	end
 
-	-- Mapgen may still rewrite the outermost shell of mapblocks bordering an ungenerated chunk
-	-- ("overgeneration"), which can corrupt the machine mid-move. Refuse to advance while
-	-- "ignore" is within one mapblock (+16 nodes) in the movement direction; the guard emerges
-	-- the region (if emerging is enabled) and the controller retries once it has generated.
-	if digtron.config.wait_for_mapgen and not layout:mapgen_safe_to_move(dir) then
-		return S("Digtron is waiting for map generation ahead...") .. "\n" .. status_text, 1
-	end
-
 	if layout.water_touching == true then
 		minetest.sound_play("sploosh", {gain=1.0, pos=layout.controller})
 	end
@@ -90,10 +82,10 @@ local node_inventory_table = {type="node"} -- a reusable parameter for get_inven
 local function test_stop_block(pos, items)
 	node_inventory_table.pos = pos
 	local inv = minetest.get_inventory(node_inventory_table)
-	local item_stack = inv:get_stack("stop", 1)
-	if not item_stack:is_empty() then
-		for _, item in pairs(items) do
-			if item == item_stack:get_name() then
+	local stop_stack = inv:get_stack("stop", 1)
+	if not stop_stack:is_empty() then
+		for _, drop_stack in pairs(items) do
+			if drop_stack:get_name() == stop_stack:get_name() then
 				return true
 			end
 		end
@@ -137,6 +129,18 @@ local function get_nodedef_callback_at(group_name, pos, callback_name)
 	return nil
 end
 
+local function to_itemstack(item, callback, node)
+	if not (type(item) == "userdata" and item.is_empty) then
+		core.log("warning",
+			("digtron: Callback '%s' %sadded non ItemStack %s to drops. This is deprecated.")
+			:format(callback, node and ("of node '" .. node.name .. "' ") or "", dump(item, ""))
+		)
+		item = ItemStack(item)
+	end
+
+	return item
+end
+
 local function do_execute_dig(layout, dir, controlling_axis, is_lateral_dig, clicker)
 	assert(type(controlling_axis) == "string")
 	assert(type(is_lateral_dig) == "boolean")
@@ -154,8 +158,9 @@ local function do_execute_dig(layout, dir, controlling_axis, is_lateral_dig, cli
 		if func then
 			local fuel_cost, dropped = func(location.pos, layout.protected, layout.nodes_dug, controlling_axis, is_lateral_dig, clicker)
 			if dropped ~= nil then
-				for _, itemname in pairs(dropped) do
-					table.insert(items_dropped, itemname)
+				for _, item in pairs(dropped) do
+					local itemstack = to_itemstack(item, "execute_dig", node)
+					table.insert(items_dropped, itemstack)
 				end
 				if digtron.config.particle_effects then
 					table.insert(particle_systems, dig_dust(vector.add(location.pos, dir), node.param2))
@@ -180,9 +185,14 @@ local function move_layout_digging(layout, pos, dir,
 	-- damage the weak flesh
 	if digtron.config.damage_hp > 0 and layout.diggers ~= nil then
 		for _, location in pairs(layout.diggers) do
+			local dropped = {}
 			local func = get_nodedef_callback_at(nil, location.pos, "damage_creatures")
 			if func then
-				func(clicker, location.pos, controlling_axis, items_dropped)
+				func(clicker, location.pos, controlling_axis, dropped)
+			end
+			for _, item in pairs(dropped) do
+				local itemstack = to_itemstack(item, "damage_creatures", core.get_node(location.pos))
+				table.insert(items_dropped, itemstack)
 			end
 		end
 	end
@@ -198,8 +208,8 @@ local function move_layout_digging(layout, pos, dir,
 	end
 
 	-- store or drop the products of the digger heads
-	for _, itemname in pairs(items_dropped) do
-		digtron.place_in_inventory(itemname, layout.inventories, pos)
+	for _, itemstack in pairs(items_dropped) do
+		digtron.place_in_inventory(itemstack, layout.inventories, pos)
 	end
 	digtron.award_item_dug(items_dropped, clicker) -- Achievements mod hook
 
@@ -298,7 +308,7 @@ digtron.execute_dig_cycle = function(pos, clicker)
 
 	----------------------------------------------------------------------------------------------------------------------
 
-	local items_dropped -- { itemname, ... }
+	local items_dropped -- { itemstack, ... }
 	local digging_fuel_cost -- number
 	local particle_systems -- { particlespawner def, ... }
 
@@ -569,7 +579,7 @@ digtron.execute_downward_dig_cycle = function(pos, clicker)
 
 	----------------------------------------------------------------------------------------------------------------------
 
-	local items_dropped -- { itemname, ... }
+	local items_dropped -- { itemstack, ... }
 	local digging_fuel_cost -- number
 	local particle_systems -- { particlespawner def, ... }
 
