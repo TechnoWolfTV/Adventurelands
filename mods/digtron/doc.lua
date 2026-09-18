@@ -43,7 +43,7 @@ digtron.doc.builder_usagehelp = S("A builder head is the most complex component 
 .."@n@n"..
 "When the \"Save & Show\" button is clicked the properties for period and offset will be saved, and markers will briefly be shown to indicate where the nearest spots corresponding to those values are. The builder will build its output at those locations provided it is moving along the matching axis."
 .."@n@n"..
-"There is also an \"Extrusion\" setting. This allows your builder to extrude a line of identical blocks from the builder output, in the direction the output side is facing, until it reaches an obstruction or until it reaches the extrusion limit. This can be useful for placing columns below a bridge, or for filling a large volume with a uniform block type without requiring a large number of builder heads."
+"There is also an \"Extrusion\" setting. This allows your builder to extrude a line of identical blocks from the builder output, in the direction the output side is facing, until it reaches an obstruction or until it reaches the extrusion limit. This can be useful for placing columns below a bridge, or for filling a large volume with a uniform block type without requiring a large number of builder heads. Setting \"Extrusion\" to 0 indicates that the builder should only build into a node that was dug this same cycle. This is useful to replace falling blocks with something more permanent in a tunnel roof, but not build a roof if there is air above."
 .."@n@n"..
 "The \"output\" side of a builder is the side with a black crosshair on it."
 .."@n@n"..
@@ -177,7 +177,7 @@ digtron.doc.pusher_usagehelp = S("Aka the \"can you rebuild it six inches to the
 "Since movement alone does not require fuel, a pusher module has no internal furnace. Pushers also don't require traction, since their primary purpose is repositioning Digtrons let's say they have a built-in crane or something.")
 
 digtron.doc.axle_longdesc = S("A device that allows one to rotate their Digtron into new orientations")
-digtron.doc.axle_usagehelp = S("This magical module can rotate a Digtron array in place around itself. Right-clicking on it will rotate the Digtron 90 degrees in the direction the orange arrows on its sides indicate (widdershins around the Y axis by default, use the screwdriver to change this) assuming there's space for the Digtron in its new orientation. Builders and diggers will not trigger on rotation.")
+digtron.doc.axle_usagehelp = S("This magical module can rotate a Digtron array in place around itself. Right-clicking on it will rotate the Digtron 90 degrees in the direction the orange arrows on its sides indicate (widdershins around the Y axis by default, use the screwdriver to change this) assuming there's space for the Digtron in its new orientation. Builders and diggers will not trigger on rotation, but the \"facing\" setting of builders will be updated consequently, unless the \"Aux1\" key (default: \"E\") is held when Right-clicking the axle. ")
 
 ---------------------------------------------------------------------
 

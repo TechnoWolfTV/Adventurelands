@@ -247,7 +247,7 @@ local rotate_pos = function(axis, direction, pos)
 	return pos
 end
 
-local rotate_node_image = function(node_image, origin, axis, direction, old_pos_pointset)
+local rotate_node_image = function(node_image, origin, axis, direction, old_pos_pointset, skip_build_items)
 	-- Facings
 	if node_image.paramtype2 == "wallmounted" then
 		node_image.node.param2 = wallmounted_rotate[axis][direction][node_image.node.param2]
@@ -255,10 +255,12 @@ local rotate_node_image = function(node_image, origin, axis, direction, old_pos_
 		node_image.node.param2 = facedir_rotate[axis][direction][node_image.node.param2]
 	end
 
-	if node_image.build_item_paramtype2 == "wallmounted" then
-		node_image.meta.fields.build_facing = wallmounted_rotate[axis][direction][tonumber(node_image.meta.fields.build_facing)]
-	elseif node_image.build_item_paramtype2 == "facedir" then
-		node_image.meta.fields.build_facing = facedir_rotate[axis][direction][tonumber(node_image.meta.fields.build_facing)]
+	if not skip_build_items then
+		if node_image.build_item_paramtype2 == "wallmounted" then
+			node_image.meta.fields.build_facing = wallmounted_rotate[axis][direction][tonumber(node_image.meta.fields.build_facing)]
+		elseif node_image.build_item_paramtype2 == "facedir" then
+			node_image.meta.fields.build_facing = facedir_rotate[axis][direction][tonumber(node_image.meta.fields.build_facing)]
+		end
 	end
 
 	node_image.meta.fields.waiting = nil -- If we're rotating a controller that's in the "waiting" state, clear it. Otherwise it may stick like that.
@@ -287,7 +289,7 @@ local FACEDIR_AXIS_DIRECTION_LUT = {
 	{axis="y", dir=1},
 }
 -- Rotates 90 degrees widdershins around the axis defined by facedir (which in this case is pointing out the front of the node, so it needs to be converted into an upward-pointing axis internally)
-function digtron.DigtronLayout.rotate_layout_image(self, facedir)
+function digtron.DigtronLayout.rotate_layout_image(self, facedir, skip_build_items)
 
 	if self == nil or self.all == nil or self.controller == nil or self.old_pos_pointset == nil then
 		-- this should not be possible, but if it is then abort.
@@ -305,7 +307,7 @@ function digtron.DigtronLayout.rotate_layout_image(self, facedir)
 	local params = FACEDIR_AXIS_DIRECTION_LUT[math.floor(facedir/4)]
 
 	for _, node_image in pairs(self.all) do
-		rotate_node_image(node_image, self.controller, params.axis, params.dir, self.old_pos_pointset)
+		rotate_node_image(node_image, self.controller, params.axis, params.dir, self.old_pos_pointset, skip_build_items)
 	end
 	return self
 end
@@ -367,16 +369,20 @@ local node_callbacks = function(player)
 			local old_node = dug_node[i]
 			local old_meta = dug_node_meta[i]
 
-			for _, callback in ipairs(minetest.registered_on_dignodes) do
-				-- Copy pos and node because callback can modify them
-				local pos_copy = vector.copy(old_pos)
-				local oldnode_copy = {name=old_node.name, param1=old_node.param1, param2=old_node.param2}
-				callback(pos_copy, oldnode_copy, digtron.fake_player)
-			end
-
 			local old_def = minetest.registered_nodes[old_node.name]
 			if old_def ~= nil and old_def.after_dig_node ~= nil then
-				old_def.after_dig_node(old_pos, old_node, old_meta, player)
+				-- Copy pos and node because callback can modify them
+				-- (copying meta isn't necessary, since it's only used in this call)
+				local old_pos_copy = vector.copy(old_pos)
+				local old_node_copy = {name=old_node.name, param1=old_node.param1, param2=old_node.param2}
+				old_def.after_dig_node(old_pos_copy, old_node_copy, old_meta, player)
+			end
+
+			for _, callback in ipairs(minetest.registered_on_dignodes) do
+				-- Copy pos and node because callback can modify them
+				local old_pos_copy = vector.copy(old_pos)
+				local old_node_copy = {name=old_node.name, param1=old_node.param1, param2=old_node.param2}
+				callback(old_pos_copy, old_node_copy, digtron.fake_player)
 			end
 		end
 	end
@@ -387,17 +393,19 @@ local node_callbacks = function(player)
 			local new_node = placed_new_node[i]
 			local old_node = placed_old_node[i]
 
-			for _, callback in ipairs(minetest.registered_on_placenodes) do
-				-- Copy pos and node because callback can modify them
-				local pos_copy = vector.copy(new_pos)
-				local oldnode_copy = {name=old_node.name, param1=old_node.param1, param2=old_node.param2}
-				local newnode_copy = {name=new_node.name, param1=new_node.param1, param2=new_node.param2}
-				callback(pos_copy, newnode_copy, digtron.fake_player, oldnode_copy)
-			end
-
 			local new_def = minetest.registered_nodes[new_node.name]
 			if new_def ~= nil and new_def.after_place_node ~= nil then
-				new_def.after_place_node(new_pos, player)
+				-- Copy pos because callback can modify it
+				local new_pos_copy = vector.copy(new_pos)
+				new_def.after_place_node(new_pos_copy, player)
+			end
+
+			for _, callback in ipairs(minetest.registered_on_placenodes) do
+				-- Copy pos and node because callback can modify them
+				local new_pos_copy = vector.copy(new_pos)
+				local old_node_copy = {name=old_node.name, param1=old_node.param1, param2=old_node.param2}
+				local new_node_copy = {name=new_node.name, param1=new_node.param1, param2=new_node.param2}
+				callback(new_pos_copy, new_node_copy, digtron.fake_player, old_node_copy)
 			end
 		end
 	end
@@ -425,6 +433,8 @@ end
 
 local air_node = {name="air"}
 function digtron.DigtronLayout.write_layout_image(self, player)
+	dug_nodes_count = 0
+	placed_nodes_count = 0
 	-- destroy the old digtron
 	local oldpos, _ = self.old_pos_pointset:pop()
 	while oldpos ~= nil do
@@ -465,8 +475,6 @@ function digtron.DigtronLayout.write_layout_image(self, player)
 	digtron.fake_player:set_pos(self.controller)
 	-- note that the actual player is still passed to the per-node after_place_node and after_dig_node, should they exist.
 	node_callbacks(player)
-	dug_nodes_count = 0
-	placed_nodes_count = 0
 	return true
 end
 
@@ -485,7 +493,7 @@ end
 -- machine would be entering or bordering a region that mapgen may still manipulate.
 --
 -- Returns true when the region ahead is generated and it is safe to move; false means "not
--- ready yet" — the caller should wait/retry. If emerging is enabled, the region is emerged so
+-- ready yet" -- the caller should wait/retry. If emerging is enabled, the region is emerged so
 -- an unattended machine eventually proceeds once generation completes.
 function digtron.DigtronLayout.mapgen_safe_to_move(self, dir)
 	local min_x, min_y, min_z = self.extents_min.x, self.extents_min.y, self.extents_min.z

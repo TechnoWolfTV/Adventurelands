@@ -100,9 +100,10 @@ See also: [LICENSE.txt](LICENSE.txt).
 > as required for redistribution and to keep the divergence from upstream transparent.
 
 **Modified by:** TechnoWolfTV (Adventurelands), 2026
-**Based on:** upstream `minetest-mods/digtron` `master` (including the August 2026
-preserve_metadata and chest-inventory hotfixes)
+**Based on:** upstream `minetest-mods/digtron` `master` as of late August 2026 (including the
+extrusion mode, TOCTOU damage fix, falling-node loop fix, and preserve_metadata/chest fixes)
 **Upstream issue:** [minetest-mods/digtron#129](https://github.com/minetest-mods/digtron/issues/129)
+(still open; an official implementation has been indicated but not yet released)
 
 ### What was fixed
 
@@ -120,10 +121,11 @@ identified by SmallJoker in the upstream issue.)
   for ungenerated (`ignore`) map out to one full mapblock (+16 nodes) in the movement
   direction and refuses to advance while mapgen may still manipulate that region. Ungenerated
   blocks are emerged (respecting the existing `digtron_emerge_unloaded_mapblocks` setting), so
-  an unattended machine waits briefly and proceeds once generation completes.
+  an unattended machine waits briefly and proceeds once generation completes. (Re-applied on
+  top of the late-August upstream version of this file.)
 * **`util_execute_cycle.lua`** — calls the check from `neighbour_test`; when unsafe, the cycle
   retries with the status "Digtron is waiting for map generation ahead...". (Re-applied on top
-  of the upstream August 2026 version, so the upstream preserve_metadata fixes are retained.)
+  of the late-August upstream version, retaining its fixes.)
 * **`config.lua`** — adds the setting `digtron_wait_for_mapgen` (default `true`; set `false`
   in `minetest.conf` to disable).
 * **`nodes/node_controllers.lua`** — hardening for a separate path: a monotonic run-token so
