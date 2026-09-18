@@ -1,5 +1,9 @@
 # New Campfire
 
+[![ContentDB](https://content.luanti.org/packages/mt-mods/new_campfire/shields/downloads/)](https://content.luanti.org/packages/mt-mods/new_campfire/)
+[![Luacheck](https://github.com/mt-mods/new_campfire/actions/workflows/luacheck.yml/badge.svg)](https://github.com/mt-mods/new_campfire/actions/workflows/luacheck.yml)
+[![Translation status](https://translate.luanti.ch/widget/mt-mods/new_campfire/svg-badge.svg?capitalize=1)](https://translate.luanti.ch/engage/mt-mods/)
+
 You can craft and use better campfire.
 
 ## Usage
@@ -18,7 +22,7 @@ ________________________________________________________________
 
 ## Dependencies
 
-- Luanti/Minetest v5.0
+- Luanti/Minetest v5.10
 - MTG mods `default` and `fire`
 
 ## Links

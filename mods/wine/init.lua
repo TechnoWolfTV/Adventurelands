@@ -387,7 +387,7 @@ core.register_node("wine:wine_barrel", {
 
 			local meta = core.get_meta(pos)
 			local inv = meta:get_inventory()
-			local is_bucket = inv:get_stack("src_b", 1):get_name()
+			local is_bucket = stack:get_name()
 			local is_water = water_check(is_bucket)
 
 			if is_water then
@@ -592,13 +592,16 @@ core.register_node("wine:wine_barrel", {
 		-- fermenting (change status)
 		if status < 100 then
 
+			status = status + 5
+
 			txt = S("Fermenting Barrel") .. " " .. S("(@1% Done)", status)
 
 			meta:set_string("infotext", txt)
-			meta:set_float("status", status + 5)
+			meta:set_float("status", status)
 
 			local d1 = recipe[2]:split(" ")[1]
-			local desc = core.registered_items[d1].description or ""
+			local d1def = core.registered_items[d1]
+			local desc = d1def and d1def.description or ""
 
 			txt = S("Brewing: @1", desc) .. " " .. S("(@1% Done)", status)
 

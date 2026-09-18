@@ -38,11 +38,7 @@ bows.register_bow("bow_wood",{
 	}
 })
 
-core.register_craft({
-	type = "fuel",
-	recipe = "bows:bow_wood",
-	burntime = 3
-})
+core.register_craft({ type = "fuel", recipe = "bows:bow_wood", burntime = 3 })
 
 -- steel bow
 
@@ -92,9 +88,7 @@ bows.register_arrow("arrow",{
 	damage = 2,
 	craft_count = 4,
 	drop_chance = 10,
-	craft = {
-		{"default:flint", "group:stick", feather}
-	},
+	craft = { {"default:flint", "group:stick", feather} },
 	on_hit_sound = "bows_arrow_hit",
 --[[
 	on_hit_node = function(self, pos, user, arrow_pos)
@@ -112,11 +106,7 @@ bows.register_arrow("arrow",{
 	end]]
 })
 
-core.register_craft({
-	type = "fuel",
-	recipe = "bows:arrow",
-	burntime = 1
-})
+core.register_craft({ type = "fuel", recipe = "bows:arrow", burntime = 1 })
 
 -- steel arrow
 
@@ -126,9 +116,7 @@ bows.register_arrow("arrow_steel",{
 	damage = 6,
 	craft_count = 4,
 	drop_chance = 9,
-	craft = {
-		{"default:steel_ingot", "group:stick", feather}
-	},
+	craft = { {"default:steel_ingot", "group:stick", feather} },
 	on_hit_sound = "bows_arrow_hit",
 --[[
 	on_hit_object = function(self, target, hp, user, lastpos)
@@ -139,8 +127,6 @@ bows.register_arrow("arrow_steel",{
 			print ("--- aww da horsey!!!")
 		end
 	end,]]
-	on_hit_node = function(self, pos, user, arrow_pos)
-	end
 })
 
 -- mese arrow (enables node mesecons when hit)
@@ -151,10 +137,9 @@ bows.register_arrow("arrow_mese",{
 	damage = 7,
 	craft_count = 4,
 	drop_chance = 8,
-	craft = {
-		{"default:mese_crystal", "group:stick", feather}
-	},
+	craft = { {"default:mese_crystal", "group:stick", feather} },
 	on_hit_sound = "bows_arrow_hit",
+
 	on_hit_node = function(self, pos, user, arrow_pos)
 
 		if self.node.name == "mesecons_switch:mesecon_switch_on"
@@ -178,15 +163,20 @@ bows.register_arrow("arrow_diamond",{
 	damage = 8,
 	craft_count = 4,
 	drop_chance = 7,
-	craft = {
-		{"default:diamond", "group:stick", feather}
-	},
+	craft = { {"default:diamond", "group:stick", feather} },
 	on_hit_sound = "bows_arrow_hit",
+
 	on_hit_node = function(self, pos, user, arrow_pos)
+
 		local node = self.node.name
-		if (node == "default:glass" or node == "stairs:slab_glass" or node == "stairs:stair_glass"
-		or node == "stairs:stair_outer_glass" or node == "stairs:stair_inner_glass")
-		and not core.is_protected(pos, user:get_player_name()) then
+		local name = user and user:is_player() and user:get_player_name() or ""
+
+		if core.is_protected(pos, name) then return end
+
+		if node == "default:glass" or node == "stairs:slab_glass"
+		or node == "stairs:stair_glass" or node == "stairs:stair_outer_glass"
+		or node == "stairs:stair_inner_glass" then
+
 			core.sound_play("default_break_glass", {pos = pos, max_hear_distance = 10}, true)
 			core.remove_node(pos)
 			core.add_item(pos, "vessels:glass_fragments")
@@ -197,6 +187,7 @@ bows.register_arrow("arrow_diamond",{
 -- tnt arrow
 
 local enable_tnt = core.settings:get_bool("enable_tnt")
+
 if enable_tnt == nil then
 	enable_tnt = core.is_singleplayer()
 end
@@ -209,19 +200,32 @@ if core.get_modpath("tnt") and enable_tnt then
 		damage = 6,
 		craft_count = 1,
 		drop_chance = 1000,
-		craft = {
-			{"tnt:tnt", "group:stick", feather},
-		},
+		craft = { {"tnt:tnt", "group:stick", feather} },
 		on_hit_sound = "bows_arrow_hit",
+
 		on_hit_node = function(self, pos, user, arrow_pos)
+
 			if not core.is_protected(pos, user:get_player_name()) then
 				tnt.boom(pos, {radius = 2})
 			end
 		end,
+
 		on_hit_object = function(self, target, hp, user, lastpos)
-			if not core.is_protected(lastpos, user:get_player_name()) then
+
+			local name = user and user:is_player() and user:get_player_name() or ""
+
+			if not core.is_protected(lastpos, name) then
 				tnt.boom(lastpos, {radius = 1})
 			end
+		end,
+
+		do_custom = function(self, dtime, moveresult)
+
+			local pos = self.object:get_pos() ; if not pos then return end
+
+			core.add_particle({pos = pos, texture = "fire_basic_flame.png", glow = 11,
+					expirationtime = 0.1, size = 1, collisiondetection = false,
+					vertical = false})
 		end
 	})
 end

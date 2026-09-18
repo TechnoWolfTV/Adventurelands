@@ -6,7 +6,8 @@ local math_random = math.random
 local function on_hit_remove(self)
 
 	-- chance of dropping arrow
-	local chance = core.registered_items[self.name].drop_chance or 10
+	local def = core.registered_items[self.name]
+	local chance = def and def.drop_chance or 10
 	local pos = self.object:get_pos()
 
 	core.sound_play(bows.registered_arrows[self.name].on_hit_sound,
@@ -28,15 +29,17 @@ end
 
 local function on_hit_object(self, target, hp, user, lastpos)
 
-	target:punch(user, 1.0, {
-		--full_punch_interval = 1.0,
-		damage_groups = {fleshy = hp},
-	}, nil)
+	if target:get_pos() then
+
+		target:punch(user, 1.0, {
+			--full_punch_interval = 1.0,
+			damage_groups = {fleshy = hp},
+		}, nil)
+	end
 
 	if bows.registered_arrows[self.name].on_hit_object then
 
-		bows.registered_arrows[self.name].on_hit_object(
-				self, target, hp, user, lastpos)
+		bows.registered_arrows[self.name].on_hit_object(self, target, hp, user, lastpos)
 	end
 
 	on_hit_remove(self)
@@ -66,14 +69,17 @@ core.register_entity("bows:arrow",{
 			self.object:remove() ; return
 		end
 
-		if bows.tmp and bows.tmp.arrow ~= nil then
+		local data = bows.players[(staticdata or "")]
 
-			self.arrow = bows.tmp.arrow
-			self.user = bows.tmp.user
-			self.name = bows.tmp.name
+		if data and data.arrow then
+
+			self.arrow = data.arrow
+			self.user = data.user
+			self.name = data.name
 			self.dmg = bows.registered_arrows[self.name].damage
+			self.do_custom = bows.registered_arrows[self.name].do_custom
 
-			bows.tmp = nil
+			data = nil
 
 			self.object:set_properties({textures = {self.arrow}})
 		else
@@ -81,12 +87,16 @@ core.register_entity("bows:arrow",{
 		end
 	end,
 
-	on_step = function(self, dtime, ...)
+	on_step = function(self, dtime, moveresult)
 
 		self.timer = self.timer - dtime
 
 		if self.timer < 0 then
 			self.object:remove() ; return
+		end
+
+		if self.do_custom and self:do_custom(dtime, moveresult) == false then
+			return
 		end
 
 		local pos = self.object:get_pos() ; self.oldpos = self.oldpos or pos
@@ -106,8 +116,7 @@ core.register_entity("bows:arrow",{
 				end
 
 				-- check if dropped item or yourself
-				if thing.name == "__builtin:item"
-				or (not thing.name
+				if thing.name == "__builtin:item" or (not thing.name
 				and thing.ref:get_player_name() == self.user:get_player_name()) then
 					ok = false
 				end

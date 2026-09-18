@@ -483,7 +483,7 @@ core.register_entity(":__builtin:item", {
 
 			local entity = obj:get_luaentity()
 
-			if entity and entity.name == "__builtin:item" and not entity.is_falling then
+			if entity and entity.name == "__builtin:item" and not entity.falling_state then
 
 				if self:try_merge_with(own_stack, obj, entity) then
 

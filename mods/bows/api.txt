@@ -46,4 +46,9 @@ bows.register_arrow("arrow_steel",{
 			minetest.add_item(pos, "vessels:glass_fragments")
 		end
 	end,
+
+	-- custom function running while arrow alive (return false to cancel default on_step)
+	do_custom = function(self, dtime, moveresult)
+		-- particle effect.
+	end,
 })

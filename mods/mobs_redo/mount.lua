@@ -273,7 +273,7 @@ function mobs.drive(entity, moving_anim, stand_anim, can_fly, dtime)
 	-- Stop!
 	local s = get_sign(entity.v)
 
-	entity.v = entity.v - (0.02 * s)
+	entity.v = entity.v - (s * dtime)
 
 	if s ~= get_sign(entity.v) then
 
@@ -306,6 +306,8 @@ end
 
 function mobs.fly(entity, dtime, speed, shoots, arrow, moving_anim, stand_anim)
 
+	if not entity.driver then return end -- player check
+
 	local ctrl = entity.driver:get_player_control() ; if not ctrl then return end
 	local velo = entity.object:get_velocity() ; if not velo then return end
 	local dir = entity.driver:get_look_dir()
@@ -322,8 +324,7 @@ function mobs.fly(entity, dtime, speed, shoots, arrow, moving_anim, stand_anim)
 
 		entity.object:set_velocity(
 				{x = -dir.x * speed, y =  dir.y * speed + 2, z = -dir.z * speed})
-
-	elseif not ctrl.down or ctrl.up or ctrl.jump then
+	else
 		entity.object:set_velocity({x = 0, y = -2, z = 0})
 	end
 

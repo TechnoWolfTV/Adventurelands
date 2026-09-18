@@ -53,7 +53,7 @@ local colours = {
 
 if mod_mcl_core then
 
-	local colors = {
+	colors = {
 		{"white",     "White",       "#abababc0"},
 		{"orange",    "Orange",      "#F9801D"},
 		{"magenta",   "Magenta",     "#C74EBD"},
@@ -101,7 +101,7 @@ local function cb_add(nodename, odef, no_stairs)
 			and groupname ~="snappy" and groupname ~= "swordy"
 			and groupname ~= "oddly_breakable_by_hand" and groupname ~= "handy"
 			and groupname ~="flammable" then
-				def.groups.groupname = nil
+				def.groups[groupname] = nil
 			end
 		end
 

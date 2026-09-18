@@ -94,13 +94,12 @@ end
 
 function stamina.get_saturation(player)
 
-	-- are we a real player?
-	if not is_player(player) then return end
+	if not is_player(player) then return 0 end
 
 	local meta = player:get_meta()
 	local level = meta and meta:get_string("stamina:level")
 
-	if level then return tonumber(level) end
+	return tonumber(level) or stamina.VISUAL_MAX
 end
 
 -- is player stamina & damage enabled
@@ -124,15 +123,18 @@ function stamina.update_saturation(player, level)
 
 	local meta = player and player:get_meta() ; if not meta then return end
 
+	level = clamp(level, 0, stamina.VISUAL_MAX)
+
 	meta:set_string("stamina:level", level)
 
-	player:hud_change(stamina.players[player:get_player_name()].hud_id,
-			"number", math_min(stamina.VISUAL_MAX, level))
+	player:hud_change(stamina.players[player:get_player_name()].hud_id, "number", level)
 end
 
 -- global function for mods to amend stamina level
 
 function stamina.change_saturation(player, change)
+
+	if not is_player(player) then return end
 
 	local name = player:get_player_name()
 
@@ -173,7 +175,7 @@ end
 
 function stamina.exhaust_player(player, v)
 
-	if not is_player(player) or not player.set_attribute then return end
+	if not is_player(player) or not player.set_attribute or not v then return end
 
 	local name = player:get_player_name()
 	local data = stamina.players[name] ; if not data then return end
@@ -219,7 +221,7 @@ function stamina.set_sprinting(player, sprinting)
 	if not player or is_attached(player) then return end
 
 	local name = player:get_player_name()
-	local data = stamina.players[name]
+	local data = stamina.players[name] ; if not data then return end
 	local def = player:get_physics_override() -- get player physics
 
 --print ("---", def.speed, def.jump)
@@ -322,36 +324,35 @@ end
 
 local function drunk_tick(player, name, data)
 
-	if data.drunk then
+	if not data.drunk then return end
 
-		-- play burp sound every 20 seconds when drunk
-		local num = data.drunk
+	-- play burp sound every 20 seconds when drunk
+	local num = data.drunk
 
-		if num and num > 0 and math_floor(num / 20) == num / 20 then
+	if num and num > 0 and math_floor(num / 20) == num / 20 then
 
-			head_particle(player, "bubble.png")
+		head_particle(player, "bubble.png")
 
-			core.sound_play("stamina_burp", {to_player = name, gain = 0.7}, true)
+		core.sound_play("stamina_burp", {to_player = name, gain = 0.7}, true)
+	end
+
+	data.drunk = data.drunk - stamina.DRUNK_TICK
+
+	if data.drunk < 1 then
+
+		data.drunk = nil ; data.units = 0
+
+		if not data.poisoned then
+			player:hud_change(data.hud_id, "text", "stamina_hud_fg.png")
 		end
+	end
 
-		data.drunk = data.drunk - stamina.DRUNK_TICK
+	-- effect only works when not riding boat/cart/horse etc.
+	if not player:get_attach() then
 
-		if data.drunk < 1 then
+		local yaw = player:get_look_horizontal() + math_random(-0.5, 0.5)
 
-			data.drunk = nil ; data.units = 0
-
-			if not data.poisoned then
-				player:hud_change(data.hud_id, "text", "stamina_hud_fg.png")
-			end
-		end
-
-		-- effect only works when not riding boat/cart/horse etc.
-		if not player:get_attach() then
-
-			local yaw = player:get_look_horizontal() + math_random(-0.5, 0.5)
-
-			player:set_look_horizontal(yaw)
-		end
+		player:set_look_horizontal(yaw)
 	end
 end
 
@@ -366,20 +367,25 @@ local function health_tick(player, name, data)
 	-- if wearing hunger charm increase saturation by 1
 	if mod_armor then
 
-		local level = math_min(armor.def[name].hunger, 4)
+		local adef = armor.def and armor.def[name]
+		local level = adef and adef.hunger or 0
+
+		level = math_min(level, 4) -- charm level cannot exceed 4
+
+		h = h + level
 
 		if level > 0 then
-			stamina.update_saturation(player, h + level)
+			stamina.update_saturation(player, h)
 		end
 	end
 
 	-- damage player by 1 hp if saturation is < 2
-	if h and h < stamina.STARVE_LVL and hp > 0 then
+	if h < stamina.STARVE_LVL and hp > 0 then
 		player:set_hp(hp - stamina.STARVE, {hunger = true})
 	end
 
 	-- don't heal if drowning or dead or poisoned
-	if h and h >= stamina.HEAL_LVL and h >= hp and hp > 0 and air > 0
+	if h >= stamina.HEAL_LVL and h >= hp and hp > 0 and air > 0
 	and not data.poisoned then
 
 		player:set_hp(hp + stamina.HEAL)
@@ -420,7 +426,7 @@ local function action_tick(player, name, data)
 
 				local pos = player:get_pos()
 				local node = get_node({x = pos.x, y = pos.y - 1, z = pos.z})
-				local def = minetest.registered_nodes[node.name] or {}
+				local def = core.registered_nodes[node.name] or {}
 
 				if def.drawtype ~= "airlike" and def.drawtype ~= "liquid"
 				and def.drawtype ~= "flowingliquid" then
@@ -515,9 +521,11 @@ local function check_for_double_tap(controls, data)
 	and not controls.sneak and not data.sprint then
 
 		local current_time = core.get_us_time() / 1e6
+
 		if (current_time - (data.last_key_time or 0)) < stamina.double_tap_time then
-			return true
+			data.last_key_time = 0 ; return true
 		end
+
 		data.double_tap = false
 		data.last_key_time = current_time
 	end
@@ -620,7 +628,7 @@ if damage_enabled and core.settings:get_bool("enable_stamina") ~= false then
 		if level >= stamina.VISUAL_MAX then return itemstack end
 
 		local name = user:get_player_name()
-		local data = stamina.players[name]
+		local data = stamina.players[name] ; if not data then return itemstack end
 
 		if hp_change > 0 then
 
@@ -739,8 +747,8 @@ if damage_enabled and core.settings:get_bool("enable_stamina") ~= false then
 
 	core.register_on_respawnplayer(function(player)
 
-		local name = player and player:get_player_name() ; if not name then return end
-		local data = stamina.players[name]
+		local name = player and player:get_player_name()
+		local data = name and stamina.players[name] ; if not data then return end
 
 		if data.poisoned or data.drunk then
 			player:hud_change(data.hud_id, "text", "stamina_hud_fg.png")
@@ -780,6 +788,7 @@ else -- create player table on join
 	core.register_on_joinplayer(function(player)
 
 		if player then
+
 			stamina.players[player:get_player_name()] = {
 				poisoned = nil, sprint = nil, drunk = nil, exhaustion = 0}
 		end

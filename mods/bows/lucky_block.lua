@@ -5,20 +5,13 @@ local S = core.get_translator("bows")
 
 local function arrow_to_knee(pos, player)
 
-	local ppos = player:get_pos()
+	player:punch(player, 1.0,
+			{full_punch_interval = 1.0, damage_groups = {fleshy = 6} }, nil)
 
-	player:punch(player, 1.0, {
-		full_punch_interval = 1.0,
-		damage_groups = {fleshy = 6}
-	}, nil)
+	lucky_block:msg(player,
+			lucky_block.green .. S("You took an arrow to the knee!"), "player_damage")
 
-	core.sound_play("player_damage",
-			{pos = ppos, gain = 1.0, max_hear_distance = 10}, true)
-
-	core.chat_send_player(player:get_player_name(),
-			lucky_block.green .. S("You took an arrow to the knee!"))
-
-	core.add_item(ppos, "bows:arrow_steel")
+	core.add_item(player:get_pos(), "bows:arrow_steel")
 end
 
 -- add lucky blocks

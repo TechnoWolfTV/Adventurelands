@@ -29,3 +29,6 @@ The following are textures based on default_wood.png
   bees_hive_artificial.png
   bees_frame_empty.png
   bees_frame_full.png
+
+
+screenshot.jpg created using https://www.textstudio.com/

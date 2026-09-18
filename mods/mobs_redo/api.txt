@@ -538,6 +538,8 @@ default setting and can be omitted:
     'on_map_load'         when true mobs will have a chance of spawning only
                           when new areas of map are loaded, interval will not be
                           used.
+    'biomes'              a table containing a list of biomes the mob can spawn
+                          in, leave as nil to disable check.
 
 The older spawn functions are still active and working but have no defaults like
 the mobs:spawn, so it is recommended to use the above instead.

@@ -621,7 +621,6 @@ core.register_node("bees:hive_artificial", {
 
 		if listname == "queen" or listname == "frames" then
 
-			meta:set_string("queen", stack:get_name())
 			meta:set_string("infotext", S("Queen inserted, now for the empty frames"))
 
 			if inv:contains_item("frames", "bees:frame_empty") then
@@ -1216,7 +1215,6 @@ if core.get_modpath("pipeworks") then
 
 			if listname == "queen" or listname == "frames" then
 
-				meta:set_string("queen", stack:get_name())
 				meta:set_string("infotext", S("Queen inserted, now for the empty frames"))
 
 				if inv:contains_item("frames", "bees:frame_empty") then

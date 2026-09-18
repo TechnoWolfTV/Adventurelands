@@ -4,7 +4,8 @@
 bows = {
 	pvp = core.settings:get_bool("enable_pvp"),
 	registered_arrows = {},
-	registered_bows = {}
+	registered_bows = {},
+	players = {}
 }
 
 -- creative check
@@ -58,7 +59,7 @@ function bows.register_bow(name, def)
 
 	def.replace = "bows:" .. name .. "_loaded"
 	def.name = "bows:" .. name
-	def.uses = def.uses - 1 or 49
+	def.uses = (def.uses or 50) - 1
 
 	bows.registered_bows[def.replace] = def
 
@@ -94,9 +95,9 @@ function bows.load(itemstack, user, pointed_thing)
 	end
 
 	local item = itemstack:to_table()
-	local meta = core.deserialize(item.metadata)
+	local meta = core.deserialize(item.metadata) ; meta = meta or {}
 
-	meta = {arrow = arrow:get_name()}
+	meta.arrow = arrow:get_name()
 
 	item.metadata = core.serialize(meta)
 	item.name = item.name .. "_loaded"
@@ -104,8 +105,12 @@ function bows.load(itemstack, user, pointed_thing)
 	itemstack:replace(item)
 
 	if not bows.is_creative(user:get_player_name()) then
-		inv:set_stack("main", index,
-				ItemStack(arrow:get_name() .. " " .. (arrow:get_count() - 1)))
+
+		local new_arrow = ItemStack(arrow:get_name())
+
+		new_arrow:set_count(arrow:get_count() - 1)
+
+		inv:set_stack("main", index, new_arrow)
 	end
 
 	return itemstack
@@ -128,8 +133,9 @@ function bows.shoot(itemstack, user, pointed_thing)
 	local ar = bows.registered_bows[name].uses
 	local wear = bows.registered_bows[name].uses
 	local level = 19 + bows.registered_bows[name].level
+	local pname = user:get_player_name()
 
-	bows.tmp = {arrow = meta.arrow, user = user, name = meta.arrow}
+	bows.players[pname] = {arrow = meta.arrow, user = user, name = meta.arrow}
 
 	item.arrow = ""
 	item.metadata = core.serialize(meta)
@@ -150,7 +156,9 @@ function bows.shoot(itemstack, user, pointed_thing)
 		pos.y = pos.y + height
 	end
 
-	local e = core.add_entity({x = pos.x, y = pos.y, z = pos.z}, "bows:arrow")
+	local e = core.add_entity({x = pos.x, y = pos.y, z = pos.z}, "bows:arrow", pname)
+
+	if not e then return itemstack end
 
 	e:set_velocity({x = dir.x * level, y = dir.y * level, z = dir.z * level})
 	e:set_acceleration({x = dir.x * -3, y = -10, z = dir.z * -3})
