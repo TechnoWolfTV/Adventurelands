@@ -152,40 +152,47 @@ core.register_abm({
 	action = function(pos, node)
 
 		local ndef = core.registered_nodes[node.name]
-		if not ndef or not ndef.soil or not ndef.soil.wet
-		or not ndef.soil.base or not ndef.soil.dry then return end
+		local soil = ndef and ndef.soil
+
+		if not soil or not soil.wet or not soil.base or not soil.dry then return end
 
 		local nn = get_node({x = pos.x, y = pos.y + 1, z = pos.z}).name
+		local nndef = core.registered_nodes[nn]
+
+		local plant = core.get_item_group(nn, "plant") ~= 0
+		local growing = core.get_item_group(nn, "growing") ~= 0
 
 		-- what's on top of soil, if solid/not plant change soil to dirt
-		if core.registered_nodes[nn]
-		and core.registered_nodes[nn].walkable
-		and core.get_item_group(nn, "plant") == 0
-		and core.get_item_group(nn, "growing") == 0 then
+		if nndef and nndef.walkable and not plant and not growing then
 
-			core.set_node(pos, {name = ndef.soil.base}) ; return
+			if node.name ~= soil.base then
+				core.set_node(pos, {name = ndef.soil.base})
+			end
+
+			return
 		end
 
 		-- check if water is within 3 nodes
 		if core.find_node_near(pos, 3, {"group:water"}) then
 
 			-- only change if it's not already wet soil
-			if node.name ~= ndef.soil.wet then
+			if node.name ~= soil.wet then
 				core.set_node(pos, {name = ndef.soil.wet})
 			end
 
-		-- only dry out soil if no unloaded blocks nearby, just incase
-		elseif not core.find_node_near(pos, 3, {"ignore"}) then
+			return
+		end
 
-			if node.name == ndef.soil.wet then
-				core.set_node(pos, {name = ndef.soil.dry})
+		-- dont change soil near unloaded areas (possible chance of water)
+		if core.find_node_near(pos, 3, {"ignore"}) then return end
 
-			-- if crop or seed found don't turn into base soil
-			elseif node.name == ndef.soil.dry
-			and core.get_item_group(nn, "plant") == 0
-			and core.get_item_group(nn, "growing") == 0 then
-				core.set_node(pos, {name = ndef.soil.base})
-			end
+		if node.name == soil.wet then
+
+			core.set_node(pos, {name = soil.dry})
+
+		-- if crop or seed found don't turn into base soil
+		elseif node.name == soil.dry and not plant and not growing then
+			core.set_node(pos, {name = soil.base})
 		end
 	end
 })
@@ -194,7 +201,7 @@ core.register_abm({
 
 if core.settings:get_bool("farming_disable_weeds") ~= true then
 
-	local chance = tonumber(core.settings:get("farming_weeds_chance") or 70)
+	local chance = tonumber(core.settings:get("farming_weeds_chance")) or 70
 
 	core.register_abm({
 		nodenames = {"group:field"},

@@ -4,15 +4,21 @@ local S = core.get_translator("mobs_monster")
 -- Oerkki by PilzAdam
 
 mobs:register_mob("mobs_monster:oerkki", {
+
+	-- basic settings
 	description = S("Oerkki"),
 	type = "monster",
 	passive = false,
-	attack_type = "dogfight",
-	reach = 2,
-	damage = 4,
 	hp_min = 8,
 	hp_max = 34,
 	armor = 100,
+	reach = 2,
+
+	-- attacks
+	attack_type = "dogfight",
+	damage = 4,
+
+	-- model and textures
 	collisionbox = {-0.35, -1, -0.35, 0.35, 0.85, 0.35},
 	visual = "mesh",
 	mesh = "mobs_oerkki.b3d", glow = 4,
@@ -22,24 +28,45 @@ mobs:register_mob("mobs_monster:oerkki", {
 		{"mobs_oerkki3.png"},
 		{"mobs_oerkki4.png"}
 	},
+
+	-- sounds
 	makes_footstep_sound = false,
-	sounds = {random = "mobs_oerkki"},
+	sounds = {
+		random = "mobs_oerkki"
+	},
+
+	-- movement
 	walk_velocity = 1,
 	run_velocity = 3,
 	view_range = 10,
 	fall_speed = -8,
+
+	-- item drops
 	drops = {
 		{name = "default:obsidian", chance = 3, min = 0, max = 2},
 		{name = "default:gold_lump", chance = 2, min = 0, max = 2}
 	},
---	drops = function(pos)
---		print("--- Oerkki died at", pos)
---		return { {name = "default:wood", chance = 1, min = 0, max = 3} }
---	end,
+
+	--[[ custom drops function used to return specific items
+	drops = function(self, pos)
+		print("--- Oerkki died at", pos)
+		return { {name = "default:wood", chance = 1, min = 0, max = 3} }
+	end,
+	]]--
+
+	-- damage
 	water_damage = 2,
 	lava_damage = 4,
 	light_damage = 1,
 	fear_height = 4,
+
+	-- items on list deal different damage on use
+	immune_to = {
+		{"default:sword_wood", 0}, -- no damage
+		{"default:gold_lump", -10} -- heals by 10 points
+	},
+
+	-- animations
 	animation = {
 		stand_start = 0, stand_end = 23,
 		walk_start = 24, walk_end = 36,
@@ -47,14 +74,12 @@ mobs:register_mob("mobs_monster:oerkki", {
 		punch_start = 37, punch_end = 49,
 		speed_normal = 15, speed_run = 15
 	},
+
+	-- remove torches nearby
 	replace_rate = 5,
-	replace_what = {"default:torch"},
+	replace_what = {"group:torch"},
 	replace_with = "air",
 	replace_offset = -1,
-	immune_to = {
-		{"default:sword_wood", 0}, -- no damage
-		{"default:gold_lump", -10} -- heals by 10 points
-	},
 })
 
 -- where to spawn

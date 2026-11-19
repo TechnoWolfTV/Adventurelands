@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-24 08:27-0500\n"
+"POT-Creation-Date: 2026-09-30 12:36-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,15 +25,15 @@ msgstr ""
 msgid "Cooking"
 msgstr ""
 
-#: init.lua:236 init.lua:269 init.lua:518
+#: init.lua:236 init.lua:269 init.lua:526
 msgid "Fireplace"
 msgstr ""
 
-#: init.lua:276 init.lua:300 init.lua:553
+#: init.lua:276 init.lua:300 init.lua:568
 msgid "Campfire"
 msgstr ""
 
-#: init.lua:377 init.lua:426 init.lua:483
+#: init.lua:377 init.lua:426 init.lua:491
 msgid "Fireplace with embers"
 msgstr ""
 
@@ -41,22 +41,22 @@ msgstr ""
 msgid "Fireplace with embers and grille"
 msgstr ""
 
-#: init.lua:488
+#: init.lua:496
 msgid "Fireplace with grille"
 msgstr ""
 
-#: init.lua:529
+#: init.lua:544
 msgid "Campfire with grille"
 msgstr ""
 
-#: init.lua:584
+#: init.lua:606
 msgid "Active campfire with grille"
 msgstr ""
 
-#: init.lua:747
+#: init.lua:776
 msgid "Metal Grille"
 msgstr ""
 
-#: init.lua:752
+#: init.lua:781
 msgid "Ash"
 msgstr ""

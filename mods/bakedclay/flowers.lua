@@ -40,11 +40,13 @@ add_flower("thistle", S("Thistle"), {color_magenta = 1})
 add_flower("lazarus", S("Lazarus Bell"), {color_pink = 1})
 add_flower("mannagrass", S("Reed Mannagrass"), {color_dark_green = 1})
 
--- add new flowers to mapgen
+-- add new flowers to mapgen unless Ethereal mod is active
+
+if not core.get_modpath("ethereal") then
 
 core.register_decoration({
 	deco_type = "simple",
-	place_on = {"default:dirt_with_grass"},
+	place_on = {"default:dirt_with_grass", "ethereal:prairie_dirt", "ethereal:grove_dirt"},
 	sidelen = 16,
 	noise_params = {
 		offset = 0,
@@ -60,7 +62,10 @@ core.register_decoration({
 
 core.register_decoration({
 	deco_type = "simple",
-	place_on = {"default:dirt_with_grass", "default:dirt_with_dry_grass"},
+	place_on = {
+		"default:dirt_with_grass", "default:dirt_with_dry_grass",
+		"ethereal:grove_dirt", "ethereal:bamboo_dirt"
+	},
 	sidelen = 16,
 	noise_params = {
 		offset = 0,
@@ -107,3 +112,4 @@ core.register_decoration({
 	decoration = "bakedclay:mannagrass",
 	spawn_by = "group:water", num_spawn_by = 1
 })
+end

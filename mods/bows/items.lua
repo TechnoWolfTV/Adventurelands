@@ -115,7 +115,7 @@ bows.register_arrow("arrow_steel",{
 	texture = "bows_arrow_wood.png^[colorize:#FFFFFFcc",
 	damage = 6,
 	craft_count = 4,
-	drop_chance = 9,
+	drop_chance = 10,
 	craft = { {"default:steel_ingot", "group:stick", feather} },
 	on_hit_sound = "bows_arrow_hit",
 --[[
@@ -136,7 +136,7 @@ bows.register_arrow("arrow_mese",{
 	texture = "bows_arrow_wood.png^[colorize:#e3ff00cc",
 	damage = 7,
 	craft_count = 4,
-	drop_chance = 8,
+	drop_chance = 10,
 	craft = { {"default:mese_crystal", "group:stick", feather} },
 	on_hit_sound = "bows_arrow_hit",
 
@@ -162,7 +162,7 @@ bows.register_arrow("arrow_diamond",{
 	texture = "bows_arrow_wood.png^[colorize:#15d7c2cc",
 	damage = 8,
 	craft_count = 4,
-	drop_chance = 7,
+	drop_chance = 10,
 	craft = { {"default:diamond", "group:stick", feather} },
 	on_hit_sound = "bows_arrow_hit",
 
@@ -183,6 +183,85 @@ bows.register_arrow("arrow_diamond",{
 		end
 	end
 })
+
+-- crystal arrow
+
+if core.get_modpath("ethereal") then
+
+	local math_cos, math_sin, math_random = math.cos, math.sin, math.random
+
+	local function crystal_effect(pos)
+
+		local tex = "bows_crystal_particle.png"
+
+		for i = 1, 20 do -- central flash
+
+			local angle = math_random() * math.pi * 2
+			local speed = math_random(2, 5)
+
+			core.add_particle({
+				pos = {x = pos.x, y = pos.y, z = pos.z},
+				velocity = {
+					x = math_cos(angle) * speed,
+					y = math_random(1, 4),
+					z = math_sin(angle) * speed
+				},
+				acceleration = {x = 0, y = 0, z = 0},
+				expirationtime = 1.2,
+				size = math_random(2, 4),
+				collisiondetection = false,
+				vertical = false,
+				texture = tex,
+				glow = 14
+			})
+		end
+
+		for ring = 1, 3 do -- expanding rings
+
+			local radius = ring * 1.5
+
+			for i = 1, 32 do
+
+				local angle = (i / 32) * math.pi * 2
+				local x, z = math_cos(angle), math_sin(angle)
+
+				core.add_particle({
+					pos = {
+						x = pos.x + x * radius * 0.25,
+						y = pos.y + 0.3,
+						z = pos.z + z * radius * 0.25
+					},
+					velocity = {
+						x = x * (2 + ring),
+						y = 0.15,
+						z = z * (2 + ring)
+					},
+					acceleration = {x = 0, y = 0, z = 0},
+					expirationtime = 0.8,
+					size = 2.5,
+					collisiondetection = false,
+					vertical = false,
+					texture = tex,
+					glow = 11
+				})
+			end
+		end
+	end
+
+	bows.register_arrow("arrow_crystal",{
+		description = S("Crystal arrow"),
+		texture = "bows_arrow_wood.png^[colorize:#4682b4dd",
+		damage = 9,
+		craft_count = 4,
+		drop_chance = 10,
+		craft = { {"ethereal:crystal_ingot", "group:stick", feather} },
+		on_hit_sound = "default_glass_footstep",--"bows_arrow_hit",
+
+		on_hit_node = function(self, pos, user, arrow_pos)
+			crystal_effect(arrow_pos)
+		end
+	})
+end
 
 -- tnt arrow
 

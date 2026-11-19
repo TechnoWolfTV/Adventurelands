@@ -7,10 +7,16 @@ local random = math.random
 -- should sheep eat grass blocks and mess up the environment?
 
 local eat_gb = core.settings:get_bool("mobs_animal.eat_grass_block")
-local replace_what = { {"group:grass", "air", -1} }
+local replace_what = { {{"group:grass", "group:dry_grass"}, "air", -1} }
 
 if eat_gb then
-	table.insert(replace_what, {"default:dirt_with_grass", "default:dirt", -2})
+
+	local dirt_nodes = {
+		"default:dirt_with_grass", "ethereal:bamboo_dirt", "ethereal:grove_dirt",
+		"ethereal:cold_dirt", "ethereal:prairie_dirt", "ethereal:tawny_dirt",
+		"default:dirt_with_dry_grass"}
+
+	table.insert(replace_what, {dirt_nodes, "default:dirt", -2})
 end
 
 -- sheep colour table
@@ -80,14 +86,17 @@ for _, col in ipairs(all_colours) do
 	end
 
 	mobs:register_mob("mobs_animal:sheep_" .. col[1], {
+
+		-- basic settings
 		description = S("@1 Sheep", col[2]),
-		stay_near = {"farming:straw", 10},
 		stepheight = 0.6,
 		type = "animal",
 		passive = true,
 		hp_min = 8,
 		hp_max = 12,
 		armor = 100,
+
+		-- model and textures
 		collisionbox = {-0.5, -1, -0.5, 0.5, 0.3, 0.5},
 		visual = "mesh",
 		mesh = "mobs_sheep.b3d",
@@ -95,35 +104,52 @@ for _, col in ipairs(all_colours) do
 			{"mobs_sheep_base.png^(mobs_sheep_wool.png^[multiply:" .. col[3] .. ")"}
 		},
 		gotten_texture = {"mobs_sheep_base.png^mobs_sheep_shaved.png"},
+
+		-- sounds
 		makes_footstep_sound = true,
 		sounds = {
 			random = "mobs_sheep",
 			replace = "default_dig_crumbly"
 		},
+
+		-- movement
 		walk_velocity = 1,
-		run_velocity = 2,
+		run_velocity = 3,
 		runaway = true,
 		jump_height = 5,
 		pushable = true,
+
+		-- item drops
 		drops = drops_normal,
+
+		-- damage
 		water_damage = 0.01,
 		lava_damage = 5,
 		light_damage = 0,
+
+		-- animations
 		animation = {
-			speed_normal = 15, speed_run = 15,
+			speed_normal = 15,
 			stand_start = 0, stand_end = 80,
 			walk_start = 81, walk_end = 100,
-			run_start = 81, run_end = 100, run_speed = 40,
+			run_start = 81, run_end = 100, run_speed = 30,
 			-- no death animation so we'll re-use 2 standing frames at a speed of 1 fps
 			-- and have mob rotate while dying.
 			die_start = 1, die_end = 2, die_speed = 1,
 			die_loop = false, die_rotate = true
 		},
+
+		-- nodes to stay nearby
+		stay_near = {"farming:straw", 10},
+
+		-- items to follow/eat from player
 		follow = {
 			"farming:wheat", "default:grass_1", "farming:barley",
 			"farming:oat", "farming:rye"
 		},
 		view_range = 8,
+
+		-- detection and eating with custom function
 		replace_rate = 10,
 		replace_what = replace_what,
 		fear_height = 3,
@@ -133,7 +159,7 @@ for _, col in ipairs(all_colours) do
 			self.food = (self.food or 0) + 1
 
 			-- if sheep replaces 8x grass then it regrows wool
-			if self.food >= 8 then
+			if self.gotten and self.food >= 8 then
 
 				self.food = 0
 				self.gotten = false
@@ -149,6 +175,7 @@ for _, col in ipairs(all_colours) do
 			end
 		end,
 
+		-- breeding function
 		on_breed = function(parent1, parent2)
 
 			-- simple truth table P1/P2 horns/no_horns
@@ -196,7 +223,7 @@ for _, col in ipairs(all_colours) do
 			return false
 		end,
 
-		-- fix any issue with horns by re-checking
+		-- once spawned into world, fix any issue with horns by re-checking
 		on_spawn = function(self)
 
 			if self.child then return end -- baby sheep dont have horns
@@ -207,6 +234,7 @@ for _, col in ipairs(all_colours) do
 			self.base_texture = {textures}
 		end,
 
+		-- once child sheep grown up, check for horns and apply
 		on_grown = function(self)
 
 			-- add the horns if we have horns when fully grown
@@ -226,6 +254,7 @@ for _, col in ipairs(all_colours) do
 			self.object:set_velocity({x = 0, y = 2, z = 0 })
 		end,
 
+		-- player interaction
 		on_rightclick = function(self, clicker)
 
 			-- are we feeding?
@@ -240,9 +269,9 @@ for _, col in ipairs(all_colours) do
 				end
 
 				--if fed 7 times then sheep regrows wool
-				if self.food and self.food > 6 then
+				if self.gotten and self.food and self.food > 6 then
 
-					self.gotten = false
+					self.gotten = nil ; self.food = 0
 					self.drops = drops_normal
 
 					local textures = horn_texture_sel(self.attribute_horns, self.gotten)
@@ -378,7 +407,7 @@ if not mobs.custom_spawn_animal then
 	mobs:spawn({
 		name = "mobs_animal:sheep_white",
 		nodes = spawn_on,
-		neighbors = {"group:grass"},
+		neighbors = {"group:flora"},
 		min_light = 14,
 		interval = 60,
 		chance = spawn_chance,

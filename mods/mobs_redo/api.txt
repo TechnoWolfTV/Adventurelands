@@ -62,6 +62,8 @@ functions needed for the mob to work properly which contains the following:
    'fly_in'        holds the node name that the mob flies (or swims) around
                    in e.g. "air" or "default:water_source".
    'keep_flying'   when true mobs like birds no longer stop and stand.
+   'circle_flight' when true will have flying mobs move in circular flight patterns.
+   'circle_radius' orbital radius for above (default: 6).
    'stay_near'     when set allows mobs the chance to stay around certain nodes.
       'nodes'      string or table of nodes to stay nearby e.g. "farming:straw"
       'chance'     chance of searching for above node(s), default is 10.
@@ -179,6 +181,8 @@ functions needed for the mob to work properly which contains the following:
                          works with dogfight attack and when 'mobs_griefing'
                          in minetest.conf is not false). Adding {unbreakable=1}
                          to node groups stops them being broken by mobs.
+   'ai_enabled'          when set to False only physics and env damage is enabled,
+                         movement and attacks etc. are turned off.
    'immune_to'           is a table that holds specific damage when being hit by
                          certain items e.g.
       {"default:sword_wood",  0} -- causes no damage.
@@ -213,7 +217,7 @@ functions needed for the mob to work properly which contains the following:
       'max'    maximum number of items dropped.
    Note: If weapon has {fire=1} damage group set then cooked items will drop.
    Note2: A function can now be passed which can also return drops table, e.g.
-      drops = function(pos)
+      drops = function(self, pos)
          -- do something
          return { {name = "farming:bread"}, {name = "default:dirt", chance = 2} }
       end
@@ -232,6 +236,7 @@ functions needed for the mob to work properly which contains the following:
                        could use multiple lists inside another table for random
                        selection e.g. { {"texture1.png"}, {"texture2.png"} }
    'child_texture'     holds the texture table for when baby mobs are used.
+   'child_mesh'        the object used for child mobs.
    'gotten_texture'    holds the texture table for when self.gotten value is
                        true, used for milking cows or shearing sheep.
    'texture_mods'      holds a string which overlays a texture on top of the
@@ -258,6 +263,9 @@ functions needed for the mob to work properly which contains the following:
       'fly_start'    when a mob is flying.
       'fly_end'
       'fly_speed'
+      'glide_start'  Used for flying mobs not touching the ground instead of walk/stand
+      'glide_end'
+      'glide_speed'
       'jump_start'   when a mob is jumping
       'jump_end'
       'jump_speed'
@@ -273,12 +281,23 @@ functions needed for the mob to work properly which contains the following:
       'injured_start' when hit or damaged > 1 hp (if not set then 'walk' is used)
       'injured_end'
       'injured_speed'
+      'falling_start' falling animation when mob is plummeting
+      'falling_end'
+      'falling_speed'
+      'flop_start'    when flying/swimming mob out of their respective nodess.
+      'flop_end'
+      'flop_speed'
       'die_start'    death animation
       'die_end'
       'die_speed'
       'die_loop'     when set to false stops the animation looping.
       'die_rotate'   if true mob spins during death animation.
 
+      Using '_locked = <n>' will lock the animation until complete for n seconds.
+      Using '_priority = <num>' will allow animations to override above lock if
+                                value is higher e.g. defaults are:
+                                stand = 0, walk,run,fly,glide,eat = 1,
+                                jump,falling = 2, punch,shoot,injured = 3, die = 4
       Using '_loop = false' setting will stop any of the above animations from
       looping.
 
@@ -304,7 +323,7 @@ eating.
                        {"default:dirt_with_grass", "default:dirt", -1, 0}
                     }
    'replace_with'   replace with what e.g. "air" or in chickens case "mobs:egg"
-   'replace_rate'   how random should the replace rate be (typically 10)
+   'replace_rate'   how many seconds before next replace check (typically 10)
    'replace_offset' +/- y offset value to check specific node to replace
    'reach'          horizontal reach around mob for replace, default is 0
 
@@ -316,9 +335,6 @@ eating.
       'newnode' What the node will become after replacing
 
        If false is returned, the mob will not replace the node.
-
-       By default, replacing sets self.gotten to true and resets the object
-       properties. (DEPRECATED, use on_replace to make changes).
 
 
 Pickup Items
@@ -468,6 +484,7 @@ mob:class_set_pitch(pitch) -- change mob pitch in radians
 mob:class_set_roll(roll) -- change mob roll in radians
 mob_class:yaw_to_pos(pos, delay) -- rotates mod to look at position and returns new yaw
 mob_class:set_animation(animation, force) -- set mob animation
+mob_class:ground_animation(anim1, anim2) -- uses anim1 when touching ground or anim2
 mob_class:line_of_sight(pos1, pos2) -- internal line of sight function
 mob_class:attempt_flight_correction(override) -- check for stuck flying mobs and fix
 mob_class:update_tag(newname) -- update nametag or give new name
@@ -523,7 +540,7 @@ default setting and can be omitted:
                           spawn on top of (defaults to {"group:dirt", "group:stone"}
     'neighbors'           is a list of nodenames on that the animal/monster will
                           spawn beside (default is {"air"})
-    'interval'            is same as in register_abm() (default is 30)
+    'interval'            is same as in register_abm() (default is 45)
     'chance'              is same as in register_abm() (default is 5000)
     'min_light'           is the minimum light level (default is 0)
     'max_light'           is the maximum light (default is 15)
@@ -625,8 +642,8 @@ This function registers a arrow for mobs with the attack type shoot.
        'hit_node'     a function that is called when the arrow hits a node, the
                       parameters are (self, pos, node), pos is the arrow position
                       and self.node_pos is the node position it hit.
-       'tail'         when set to 1 adds a trail or tail to mob arrows
-       'tail_texture' texture string used for above effect
+       'tail'         when set to 1 adds a trail or tail to mob arrows [DEPRECATED]
+       'tail_texture' If texture string given, a tail is added to arrows
        'tail_size'    has size for above texture (defaults to between 5 and 10)
        'expire'       contains float value for how long tail appears for
                       (defaults to 0.25)
@@ -970,3 +987,4 @@ mobs:line_of_sight(self, pos1, pos2)
 mobs:set_animation(self, animation)
 mobs:yaw(self, yaw, rotation_steps)
 mobs:scale_mob(self, width, height, permanent) -- scale by w,h
+mobs:set_ai(self, enabled) -- can turn on/off mob ai and keep physics/env damage enabled

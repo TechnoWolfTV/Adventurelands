@@ -49,17 +49,24 @@ local spider_types = {
 -- Spider by AspireMint (CC-BY-SA 3.0 license)
 
 mobs:register_mob("mobs_monster:spider", {
+
+	-- basic settings
 	description = S("Spider"),
-	--docile_by_day = true,
-	group_attack = true,
 	type = "monster",
 	passive = false,
-	attack_type = "dogfight",
-	reach = 2,
-	damage = 3,
 	hp_min = 10,
 	hp_max = 30,
 	armor = 100,
+	reach = 2,
+	--docile_by_day = true,
+
+	-- attacks
+	group_attack = true,
+	attack_type = "dogfight",
+	damage = 3,
+	view_range = 15,
+
+	-- model and textures
 	collisionbox = {-0.7, -0.5, -0.7, 0.7, 0, 0.7},
 	visual_size = {x = 1, y = 1},
 	visual = "mesh",
@@ -72,25 +79,34 @@ mobs:register_mob("mobs_monster:spider", {
 		{"mobs_spider_crystal.png"},
 		{"mobs_spider_dark.png"},
 	},
+
+	-- sounds
 	makes_footstep_sound = false,
 	sounds = {
 		random = "mobs_spider",
 		attack = "mobs_spider"
 	},
+
+	-- movement
 	walk_velocity = 1,
 	run_velocity = 3,
-	view_range = 15,
-	floats = 0,
-	fly_in = "mobs:cobweb",
+	floats = false,
+	fly_in = "mobs:cobweb", -- used to remove viscocity of web when moving through them
+
+	-- item drops
 	drops = {
 		{name = "farming:string", chance = 1, min = 0, max = 2}
 	},
+
+	-- damage
 	water_damage = 5,
 	lava_damage = 5,
 	light_damage = 0,
 	fall_damage = false,
 	fear_height = 8,
 --	node_damage = false, -- disable damage_per_second node damage
+
+	-- animations
 	animation = {
 		speed_normal = 15,
 		stand_start = 0, stand_end = 0,
@@ -125,7 +141,7 @@ mobs:register_mob("mobs_monster:spider", {
 					self.dogshoot_count_max = 12
 					self.dogshoot_count2_max = 5
 					self.shoot_interval = 2
-					self.shoot_offset = 2
+					self.shoot_offset = 0.1
 				end
 
 				local props = {textures = tmp.skins}
@@ -146,9 +162,9 @@ mobs:register_mob("mobs_monster:spider", {
 	do_custom = function(self, dtime)
 
 		-- quarter second timer
-		self.spider_timer = (self.spider_timer or 0) + dtime
-		if self.spider_timer < 0.25 then return end
-		self.spider_timer = 0
+		self.temp.spider_timer = (self.temp.spider_timer or 0) + dtime
+		if self.temp.spider_timer < 0.25 then return end
+		self.temp.spider_timer = 0
 
 --print ("----", self.looking_at, self.looking_above, self.disable_falling, dtime)
 
@@ -172,9 +188,9 @@ mobs:register_mob("mobs_monster:spider", {
 	-- make spiders jump at you on attack
 	custom_attack = function(self, pos)
 
-		self.cus_attack_timer = (self.cus_attack_timer or 0) + 1
-		if self.cus_attack_timer < 3 then return true end -- do normal attack
-		self.cus_attack_timer = 0
+		self.temp.cus_attack_timer = (self.temp.cus_attack_timer or 0) + 1
+		if self.temp.cus_attack_timer < 3 then return true end -- do normal attack
+		self.temp.cus_attack_timer = 0
 
 		-- do jump attack
 
@@ -267,7 +283,7 @@ core.register_craft({
 	}
 })
 
--- cobweb place function
+-- cobweb place function (starts timer to remove web after 20 seconds)
 
 local function web_place(pos)
 

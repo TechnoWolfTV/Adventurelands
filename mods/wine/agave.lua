@@ -128,12 +128,11 @@ core.register_decoration({
 	fill_ratio = 0.001,
 	biomes = {"desert"},
 	decoration = {"wine:blue_agave"},
-	y_min = 15,
+	y_min = 10,
 	y_max = 50,
 	spawn_by = sand,
 	num_spawn_by = 6
 })
-
 
 -- add lbm to start agave timers
 core.register_lbm({

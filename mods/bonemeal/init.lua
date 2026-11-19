@@ -234,7 +234,7 @@ local function check_soil(pos, nodename, strength)
 			local def = core.registered_nodes[nod]
 			local p2 = (def and def.place_param2) or 0
 
-			core.set_node(p, {name = nod, param2 = p2})
+			if def then core.set_node(p, {name = nod, param2 = p2}) end
 
 			particle_effect(p)
 		end
@@ -596,6 +596,10 @@ end
 -- add support for mods
 
 dofile(path .. "/mods.lua")
+
+-- bone blocks
+
+dofile(path .. "/nodes.lua")
 
 -- lucky block support
 

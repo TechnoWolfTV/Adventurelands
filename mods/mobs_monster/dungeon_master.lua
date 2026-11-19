@@ -16,22 +16,29 @@ local master_types = {
 -- Dungeon Master by PilzAdam
 
 mobs:register_mob("mobs_monster:dungeon_master", {
+
+	-- basic settings
 	description = S("Dungeon Master"),
 	type = "monster",
 	passive = false,
+	hp_min = 42,
+	hp_max = 75,
+	armor = 60,
+	reach = 3,
+
+	-- attacks
 	damage = 6,
 	attack_type = "dogshoot",
 	dogshoot_switch = 1,
 	dogshoot_count_max = 10, -- shoot for 10 seconds
 	dogshoot_count2_max = 5, -- dogfight for 5 seconds
-	reach = 3,
 	shoot_interval = 2.2,
 	arrow = "mobs_monster:fireball",
 	friendly_fire = false,
-	shoot_offset = 1.4,
-	hp_min = 42,
-	hp_max = 75,
-	armor = 60,
+	shoot_offset = 0.4,
+	view_range = 15,
+
+	-- model and textures
 	collisionbox = {-0.5, -1, -0.5, 0.5, 1.6, 0.5},
 	visual = "mesh",
 	mesh = "mobs_dungeon_master.b3d", glow = 1,
@@ -41,14 +48,19 @@ mobs:register_mob("mobs_monster:dungeon_master", {
 		{"mobs_dungeon_master3.png"},
 		{"mobs_dungeon_master4.png"}
 	},
+
+	-- sounds
 	makes_footstep_sound = true,
 	sounds = {
 		random = "mobs_dungeonmaster",
 		shoot_attack = "mobs_fireball"
 	},
+
+	-- movement
 	walk_velocity = 1,
 	run_velocity = 3,
-	view_range = 15,
+
+	-- item drops
 	drops = {
 		{name = "default:mese_crystal_fragment", chance = 1, min = 0, max = 2},
 		{name = "mobs:leather", chance = 2, min = 0, max = 2},
@@ -56,10 +68,14 @@ mobs:register_mob("mobs_monster:dungeon_master", {
 		{name = "default:diamond", chance = 4, min = 0, max = 1},
 		{name = "default:diamondblock", chance = 30, min = 0, max = 1}
 	},
+
+	-- damage
 	water_damage = 1,
 	lava_damage = 1,
 	light_damage = 0,
 	fear_height = 3,
+
+	-- animations
 	animation = {
 		stand_start = 0, stand_end = 19,
 		walk_start = 20, walk_end = 35,

@@ -4,17 +4,23 @@ local S = core.get_translator("mobs_monster")
 -- Lava Flan by Zeg9 (additional textures by JurajVajda)
 
 mobs:register_mob("mobs_monster:lava_flan", {
+
+	-- basic settings
 	description = S("Lava Flan"),
 	type = "monster",
 	passive = false,
-	attack_type = "dogfight",
-	reach = 2.5,
-	damage = 3,
 	hp_min = 20,
 	hp_max = 35,
 	armor = 80,
+
+	-- attacks
+	attack_type = "dogfight",
+	reach = 2.5,
+	damage = 3,
+
+	-- model and textures
 	collisionbox = {-0.5, -0.5, -0.5, 0.5, 1.2, 0.5},
-	visual = "mesh",
+	visual = "mesh", glow = 10,
 	mesh = "zmobs_lava_flan.b3d",
 	textures = {
 		{"zmobs_lava_flan.png"},
@@ -22,29 +28,43 @@ mobs:register_mob("mobs_monster:lava_flan", {
 		{"zmobs_lava_flan3.png"}
 	},
 	blood_texture = "fire_basic_flame.png",
+
+	-- sounds
 	makes_footstep_sound = false,
 	sounds = {
 		random = "mobs_lavaflan",
 		war_cry = "mobs_lavaflan"
 	},
+
+	-- movement
 	walk_velocity = 0.5,
 	run_velocity = 2,
 	view_range = 10,
-	floats = 1,
+	floats = true,
+
+	-- item drops
 	drops = {
 		{name = "mobs:lava_orb", chance = 15, min = 1, max = 1}
 	},
+
+	-- damage
 	water_damage = 8,
 	lava_damage = -1,
 	fire_damage = 0,
 	light_damage = 0,
+
+	-- items on list are used to heal mob
 	immune_to = {
 		{"mobs:pick_lava", -2}, -- lava pick heals 2 health
 		{"default:lava_source", 0}, -- so that damage per second doesnt affect mob
 		{"default:lava_flowing", 0},
 		{"nether:lava_source", 0},
 	},
+
+	-- flight (not used to fly but stop liquid viscocity affecting mob)
 	fly_in = {"default:lava_source", "default:lava_flowing", "nether:lava_source"},
+
+	-- animations
 	animation = {
 		speed_normal = 15,
 		stand_start = 0, stand_end = 8,
@@ -52,9 +72,8 @@ mobs:register_mob("mobs_monster:lava_flan", {
 		run_start = 20, run_end = 28, speed_run = 15,
 		punch_start = 20, punch_end = 28
 	},
-	glow = 10,
 
-	-- custom death function
+	-- custom death function, if mob dies in water a chance of obsidian flan spawning
 	on_die = function(self, pos)
 
 		local cod = self.cause_of_death or {}
@@ -221,39 +240,60 @@ end
 -- obsidian flan
 
 mobs:register_mob("mobs_monster:obsidian_flan", {
+
+	-- basic settings
 	description = S("Obsidian Flan"),
 	type = "monster",
 	passive = false,
-	attack_type = "shoot",
-	shoot_interval = 0.5,
-	shoot_offset = 1.5,
-	arrow = "mobs_monster:obsidian_arrow",
-	reach = 2,
-	damage = 3,
 	hp_min = 20,
 	hp_max = 35,
 	armor = 30,
+	reach = 2,
+
+	-- attacks
+	attack_type = "shoot",
+	shoot_interval = 0.5,
+	shoot_offset = 0.5,
+	friendly_fire = false,
+	arrow = "mobs_monster:obsidian_arrow",
+	damage = 3,
+
+	-- model and textures
 	visual_size = {x = 0.6, y = 0.6},
 	collisionbox = {-0.3, -0.3, -0.3, 0.3, 0.8, 0.3},
 	visual = "mesh",
 	mesh = "zmobs_lava_flan.b3d",
-	textures = {{"mobs_obsidian_flan.png"}},
+	textures = {
+		{"mobs_obsidian_flan.png"}
+	},
 	blood_texture = "default_obsidian.png",
+
+	-- sounds
 	makes_footstep_sound = true,
-	sounds = {random = "mobs_lavaflan"},
+	sounds = {
+		random = "mobs_lavaflan"
+	},
+
+	-- movement
 	walk_velocity = 0.1,
 	run_velocity = 0.5,
 	jump_height = 0,
 	view_range = 10,
-	floats = 0,
+	floats = false,
+
+	-- item drops
 	drops = {
 		{name = "default:obsidian_shard", chance = 1, min = 1, max = 5},
 		{name = "default:obsidian", chance = 3, min = 0, max = 2}
 	},
+
+	-- damage
 	water_damage = 0,
 	lava_damage = 8,
 	fire_damage = 0,
 	light_damage = 0,
+
+	-- animations
 	animation = {
 		speed_normal = 15, speed_run = 15,
 		stand_start = 0, stand_end = 8,
@@ -294,6 +334,10 @@ mobs:register_arrow("mobs_monster:obsidian_arrow", {
 		pos = self.node_pos or pos -- use stored node position instead of arrow
 
 		if mobs_griefing == false or core.is_protected(pos, "") then return end
+
+		-- check for meta (containers)
+		local meta = core.find_nodes_with_meta(pos, pos)
+		if #meta > 0 then return end
 
 		local radius = 1
 		local def = node and core.registered_nodes[node.name] ; if not def then return end

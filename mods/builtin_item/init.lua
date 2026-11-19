@@ -1,3 +1,4 @@
+
 -- Minetest: builtin/item_entity.lua
 
 function core.spawn_item(pos, item)
@@ -10,7 +11,6 @@ function core.spawn_item(pos, item)
 
 	return obj
 end
-
 
 -- If item_entity_ttl is not set, entity will have default life time
 -- Setting it to -1 disables the feature
@@ -103,12 +103,12 @@ end
 
 -- default friction settings
 
-local water_force = tonumber(core.settings:get("builtin_item.waterflow_force") or 1.6)
-local water_drag = tonumber(core.settings:get("builtin_item.waterflow_drag") or 0.8)
-local dry_friction = tonumber(core.settings:get("builtin_item.friction_dry") or 2.6)
-local air_drag = tonumber(core.settings:get("builtin_item.air_drag") or 0.4)
-local items_collect_on_slippery = tonumber(
-		core.settings:get("builtin_item.items_collect_on_slippery") or 1) ~= 0
+local water_force = tonumber(core.settings:get("builtin_item.waterflow_force")) or 1.6
+local water_drag = tonumber(core.settings:get("builtin_item.waterflow_drag")) or 0.8
+local dry_friction = tonumber(core.settings:get("builtin_item.friction_dry")) or 2.6
+local air_drag = tonumber(core.settings:get("builtin_item.air_drag")) or 0.4
+local items_collect_on_slippery =
+		core.settings:get_bool("builtin_item.items_collect_on_slippery") ~= false
 
 -- entity
 
@@ -214,7 +214,7 @@ core.register_entity(":__builtin:item", {
 
 	try_merge_with = function(self, own_stack, object, entity)
 
-		if self.age == entity.age then return end -- Can not merge with itself
+		if object == self.object then return end -- cannot merge with itself
 
 		local stack = ItemStack(entity.itemstring)
 		local name = stack:get_name()
@@ -358,7 +358,8 @@ core.register_entity(":__builtin:item", {
 		end
 
 		if self.def_under and self.def_under.walkable then
-			self.slippery_state = self.def_under.groups.slippery
+			local groups = self.def_under.groups or {}
+			self.slippery_state = (groups.slippery or 0) > 0
 		end
 	end,
 
@@ -543,7 +544,8 @@ core.register_entity(":__builtin:item", {
 
 			-- Call on_pickup callback in item definition.
 			local itemstack = ItemStack(self.itemstring)
-			local callback = itemstack:get_definition().on_pickup
+			local def = itemstack:get_definition()
+			local callback = def and def.on_pickup ; if not callback then return end
 			local ret = callback(itemstack, hitter,
 					{type = "object", ref = self.object}, ...)
 

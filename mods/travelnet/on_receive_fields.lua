@@ -1,4 +1,4 @@
-local S = minetest.get_translator("travelnet")
+local S = core.get_translator("travelnet")
 
 local player_formspec_data = travelnet.player_formspec_data
 
@@ -10,7 +10,7 @@ local function validate_travelnet(pos, meta)
 	-- if there is something wrong with the data
 	if not owner_name or not station_network or not station_name then
 		print(
-			"ERROR: The travelnet at " .. minetest.pos_to_string(pos) .. " has a problem: " ..
+			"ERROR: The travelnet at " .. core.pos_to_string(pos) .. " has a problem: " ..
 			" DATA: owner: " .. (owner_name or "?") ..
 			" station_name: " .. (station_name or "?") ..
 			" station_network: " .. (station_network or "?") .. "."
@@ -70,14 +70,18 @@ local function decide_action(fields, props)
 		return travelnet.actions.edit_station
 	end
 
-	-- if the box has not been configured yet
-	if travelnet.is_falsey_string(props.station_network) then
-		return travelnet.actions.add_station
+	-- save pressed after editing (button or Enter key in any field)
+	if fields.station_set or fields.key_enter_field then
+		-- if the box has not been configured yet, add station instead of update
+		if travelnet.is_falsey_string(props.station_network) then
+			return travelnet.actions.add_station
+		end
+		return travelnet.actions.update_station
 	end
 
-	-- save pressed after editing
-	if fields.station_set then
-		return travelnet.actions.update_station
+	-- if the box has not been configured yet (fallback without explicit save)
+	if travelnet.is_falsey_string(props.station_network) then
+		return travelnet.actions.add_station
 	end
 
 	-- pressed the "open door" button
@@ -126,10 +130,10 @@ function travelnet.on_receive_fields(pos, _, fields, player)
 		return
 	end
 
-	local node = minetest.get_node(pos)
+	local node = core.get_node(pos)
 	action_args.node = node
 
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 	action_args.meta = meta
 
 	if not fields then
@@ -141,7 +145,7 @@ function travelnet.on_receive_fields(pos, _, fields, player)
 	-- Validate node's meta data
 	local valid, props = validate_travelnet(pos, meta)
 	if not valid then
-		minetest.chat_send_player(name, props)
+		core.chat_send_player(name, props)
 		travelnet.actions.end_input(action_args, fields, player)
 		travelnet.show_formspec(name, false)
 		return

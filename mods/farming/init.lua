@@ -12,7 +12,7 @@ local S = core.get_translator("farming")
 
 farming = {
 	mod = "redo",
-	version = "20260907",
+	version = "20261019",
 	path = core.get_modpath("farming"),
 	select = {type = "fixed", fixed = {-0.5, -0.5, -0.5, 0.5, -5/16, 0.5}},
 	select_final = {type = "fixed", fixed = {-0.5, -0.5, -0.5, 0.5, -2.5/16, 0.5}},
@@ -63,6 +63,8 @@ local random, floor = math.random, math.floor
 local time_speed = tonumber(core.settings:get("time_speed")) or 72
 local SECS_PER_CYCLE = (time_speed > 0 and (24 * 60 * 60) / time_speed) or 0
 local function clamp(x, min, max) return (x < min and min) or (x > max and max) or x end
+local get_node, get_node_timer = core.get_node, core.get_node_timer
+local registered_nodes = core.registered_nodes
 
 -- return amount of day or night that has elapsed
 -- dt is time elapsed, count_day if true counts day, otherwise night
@@ -114,7 +116,7 @@ local STAGE_LENGTH_DEV = STAGE_LENGTH_AVG / 6
 
 function farming.start_seed_timer(pos)
 
-	local timer = core.get_node_timer(pos)
+	local timer = get_node_timer(pos)
 	local grow_time = floor(random(STAGE_LENGTH_DEV, STAGE_LENGTH_AVG))
 
 	timer:start(grow_time)
@@ -130,7 +132,7 @@ local function plant_name_stage(node)
 
 		if node.name then name = node.name
 		elseif node.x and node.y and node.z then
-			node = core.get_node_or_nil(node)
+			node = get_node(node)
 			name = node and node.name
 		end
 	else
@@ -170,7 +172,7 @@ farming.plant_stages = plant_stages
 local function reg_plant_stages(plant_name, stage, force_last)
 
 	local node_name = plant_name and plant_name .. "_" .. stage
-	local node_def = node_name and core.registered_nodes[node_name]
+	local node_def = node_name and registered_nodes[node_name]
 
 	if not node_def or plant_stages[node_name] then
 		return plant_stages[node_name] -- no node or already in table
@@ -199,7 +201,7 @@ local function reg_plant_stages(plant_name, stage, force_last)
 
 		core.override_item(node_name, {
 
-			next_plant = core.registered_nodes[next_name] and next_name,
+			next_plant = registered_nodes[next_name] and next_name,
 
 			on_construct = function(pos)
 
@@ -210,7 +212,7 @@ local function reg_plant_stages(plant_name, stage, force_last)
 
 			on_destruct = function(pos)
 
-				core.get_node_timer(pos):stop()
+				get_node_timer(pos):stop()
 
 				if old_destr then old_destr(pos) end
 			end,
@@ -246,7 +248,7 @@ local function set_growing(pos, stages_left)
 
 	if not stages_left then return end
 
-	local timer = core.get_node_timer(pos)
+	local timer = get_node_timer(pos)
 
 	if stages_left > 0 then
 
@@ -284,19 +286,21 @@ local floodable = core.settings:get_bool("farming_floodable_crops")
 
 core.after(0, function()
 
-	for node, node_def in pairs(core.registered_nodes) do
+	local dig_node = core.dig_node
+
+	for node, node_def in pairs(registered_nodes) do
 
 		register_plant_node(node_def)
 
-		if floodable then
+		if floodable and not node:find("mcl_", 1, true) then
 
-			if core.get_item_group(node, "plant") >= 1
-			or core.get_item_group(node, "seed") >= 1 and not node_def.on_flood then
+			if core.get_item_group(node, "plant") > 0
+			or core.get_item_group(node, "seed") > 0 and not node_def.on_flood then
 
 				core.override_item(node, {
 					floodable = true,
 					on_flood = function(pos, oldnode, newnode)
-						core.dig_node(pos)
+						dig_node(pos)
 					end
 				})
 			end
@@ -315,7 +319,7 @@ core.register_lbm({
 
 	action = function(pos, node, dtime_s)
 
-		if core.get_node_timer(pos):is_started() then return end
+		if get_node_timer(pos):is_started() then return end
 
 		farming.start_seed_timer(pos)
 	end
@@ -325,7 +329,7 @@ core.register_lbm({
 
 farming.can_grow = function(pos)
 
-	local below = core.get_node({x = pos.x, y = pos.y -1, z = pos.z})
+	local below = get_node({x = pos.x, y = pos.y -1, z = pos.z})
 
 	return core.get_item_group(below.name, "soil") >= 3
 end
@@ -334,16 +338,12 @@ end
 
 function farming.plant_growth_timer(pos, elapsed, node_name)
 
-	local stages = plant_stages[node_name]
+	local stages = plant_stages[node_name] ; if not stages then return false end
 
-	if not stages then return false end
+	local max_growth = #stages.stages_left ; if max_growth <= 0 then return false end
 
-	local max_growth = #stages.stages_left
-
-	if max_growth <= 0 then return false end
-
-	local chk1 = core.registered_nodes[node_name].growth_check -- old
-	local chk2 = core.registered_nodes[node_name].can_grow -- new
+	local chk1 = registered_nodes[node_name].growth_check -- old
+	local chk2 = registered_nodes[node_name].can_grow -- new
 
 	if chk1 then -- custom farming redo growth_check function
 
@@ -362,8 +362,8 @@ function farming.plant_growth_timer(pos, elapsed, node_name)
 
 	if lambda < 0.1 then return true end
 
-	local MIN_LIGHT = core.registered_nodes[node_name].minlight or farming.min_light
-	local MAX_LIGHT = core.registered_nodes[node_name].maxlight or farming.max_light
+	local MIN_LIGHT = registered_nodes[node_name].minlight or farming.min_light
+	local MAX_LIGHT = registered_nodes[node_name].maxlight or farming.max_light
 
 	if max_growth == 1 or lambda < 2.0 then
 
@@ -394,9 +394,9 @@ function farming.plant_growth_timer(pos, elapsed, node_name)
 		if growth < 1 then return true end
 	end
 
-	if core.registered_nodes[stages.stages_left[growth]] then
+	if registered_nodes[stages.stages_left[growth]] then
 
-		local p2 = core.registered_nodes[stages.stages_left[growth] ].place_param2 or 1
+		local p2 = registered_nodes[stages.stages_left[growth] ].place_param2 or 1
 
 		core.set_node(pos, {name = stages.stages_left[growth], param2 = p2})
 	else
@@ -410,8 +410,8 @@ end
 
 function farming.grow_plant(pos, elapsed)
 
-	local node = core.get_node(pos)
-	local def = core.registered_nodes[node.name] ; if not def then return end
+	local node = get_node(pos)
+	local def = registered_nodes[node.name] ; if not def then return end
 
 	elapsed = elapsed or STAGE_LENGTH_AVG
 
@@ -449,8 +449,8 @@ function farming.place_seed(itemstack, placer, pointed_thing, plantname)
 	-- check if pointing at a node
 	if not itemstack or not pt or pt.type ~= "node" then return end
 
-	local under = core.get_node(pt.under)
-	local under_def = core.registered_nodes[under.name]
+	local under = get_node(pt.under)
+	local under_def = registered_nodes[under.name]
 
 	-- am I right-clicking on something that has a custom on_place set?
 	-- thanks to Krock for helping with this issue :)
@@ -461,8 +461,8 @@ function farming.place_seed(itemstack, placer, pointed_thing, plantname)
 	-- check if pointing at the top of the node
 	if pt.above.y ~= pt.under.y + 1 then return end
 
-	local above = core.get_node(pt.above)
-	local above_def = core.registered_nodes[above.name]
+	local above = get_node(pt.above)
+	local above_def = registered_nodes[above.name]
 
 	-- return if any of the nodes arent registered
 	if not under_def or not above_def then return end
@@ -478,7 +478,7 @@ function farming.place_seed(itemstack, placer, pointed_thing, plantname)
 	-- if not protected then add node and remove 1 item from the itemstack
 	if not core.is_protected(pt.above, name) then
 
-		local p2 = core.registered_nodes[plantname].place_param2 or 1
+		local p2 = registered_nodes[plantname].place_param2 or 1
 		local item_name = itemstack:get_name()
 
 		core.set_node(pt.above, {name = plantname, param2 = p2})
@@ -548,7 +548,7 @@ function farming.register_plant(name, def)
 
 		on_timer = function(pos, elapsed)
 
-			local def = core.registered_nodes[mname .. ":" .. pname .. "_1"]
+			local def = registered_nodes[mname .. ":" .. pname .. "_1"]
 
 			if def then
 				core.set_node(pos, {name = def.name, param2 = def.place_param2})

@@ -78,7 +78,9 @@ stamina = {
 	-- double tap time
 	double_tap_time = tonumber(core.settings:get("stamina_double_tap_time") or 0.4),
 	-- do we disable aux1 to sprint
-	can_use_aux1 = core.settings:get_bool("stamina_disable_aux1") ~= true
+	can_use_aux1 = core.settings:get_bool("stamina_disable_aux1") ~= true,
+	-- is eating and drinking sfx enabled
+	no_eat_sfx = core.settings:get_bool("stamina_disable_eat_sfx") == true
 }
 
 -- are we a real player ?
@@ -297,7 +299,7 @@ end
 
 -- particle effect when eating
 
-local function head_particle(player, texture)
+local function head_particle(player, texture, node)
 
 	local prop = player and player:get_properties() ; if not prop then return end
 	local pos = player:get_pos() ; pos.y = pos.y + (prop.eye_height or 1.23)
@@ -316,7 +318,8 @@ local function head_particle(player, texture)
 		maxexptime = 1,
 		minsize = 1,
 		maxsize = 2,
-		texture = texture
+		texture = texture,
+		node = node
 	})
 end
 
@@ -645,15 +648,18 @@ if damage_enabled and core.settings:get_bool("enable_stamina") ~= false then
 		local snd, gain = "stamina_eat", 0.7
 		local item_name = itemstack:get_name() or ""
 		local item_def = core.registered_items[item_name] or {groups = {}}
+		local is_nod = core.registered_nodes[item_name] and {name = item_name}
 
 		if item_def.groups.drink == 1 or item_def.groups.food == 3 then
 			snd = "stamina_sip" ; gain = 1.0
 		end
 
-		core.sound_play(snd, {to_player = name, gain = gain}, true)
+		if not stamina.no_eat_sfx then
+			core.sound_play(snd, {to_player = name, gain = gain}, true)
+		end
 
 		-- particle effect when eating
-		head_particle(user, (item_def.inventory_image or item_def.wield_image))
+		head_particle(user, (item_def.inventory_image or item_def.wield_image), is_nod)
 
 		-- if player drinks any milk food groups they stop being poisoned or drunk
 		if item_def.groups.food_milk == 1 or item_def.groups.food_milk_glass == 1 then

@@ -135,57 +135,81 @@ local mese_monster_types = {
 -- Mese Monster by SirrobZeroone
 
 mobs:register_mob("mobs_monster:mese_monster", {
+
+	-- basic settings
 	description = S("Mese Monster"),
+	stepheight = 2.1,
 	type = "monster",
-	visual_size = {x = 10, y = 10},  -- Got scale wrong in blender by factor of 10 - S01
 	passive = false,
+	hp_min = 10,
+	hp_max = 25,
+	armor = 80,
+	reach = 4,
+
+	-- model and textures
+	visual_size = {x = 10, y = 10},  -- Got scale wrong in blender by factor of 10 - S01
+	collisionbox = {-0.6, -0.5, -0.6, 0.6, 1.8, 0.6},
+	visual = "mesh",
+	mesh = "mobs_mese_monster.b3d",
+	textures = {
+		{"mobs_mese_monster_purple.png"}
+	},
+	blood_texture = "default_mese_crystal_fragment.png",
+
+	-- attacks
 	attack_type = "dogshoot",
 	dogshoot_switch = 1,
 	dogshoot_count_max = 5, -- shoot for 5 seconds
 	dogshoot_count2_max = 5, -- dogfight for 5 seconds
 	damage = 4,
-	reach = 4,
 	shoot_interval = 0.5,
 	arrow = "mobs_monster:mese_arrow",
 	shoot_offset = 0.75,
---	arrow_override = function(self)
---		self.velocity = 20
---	end,
 	knock_back = true,
-	hp_min = 10,
-	hp_max = 25,
-	armor = 80,
-	collisionbox = {-0.6, -0.5, -0.6, 0.6, 1.8, 0.6},
-	visual = "mesh",
-	mesh = "mobs_mese_monster.b3d",
-	textures = {{"mobs_mese_monster_purple.png"}},
-	blood_texture = "default_mese_crystal_fragment.png",
+
+	--[[ custom arrow override function run once shot
+	arrow_override = function(self)
+		self.velocity = 20
+	end,
+	]]--
+
+	-- sounds
 	makes_footstep_sound = false,
 	sounds = {
 		random = "mobs_mesemonster",
 		damage = "default_glass_footstep"
 	},
+
+	-- movement
 	view_range = 10,
 	walk_velocity = 1,
 	run_velocity = 3,
 	jump_height = 8,
 	can_leap = true,
-	fall_damage = 0,
+
+	-- item drops
+	drops = {
+		{name = "default:mese_crystal", chance = 9, min = 0, max = 2},
+		{name = "default:mese_crystal_fragment", chance = 1, min = 0, max = 2},
+	},
+
+	-- damage
+	water_damage = 1,
+	lava_damage = 1,
+	light_damage = 0,
+	fear_height = 5,
+	fall_damage = false,
 	fall_speed = -6,
-	stepheight = 2.1,
+
+	-- items on table deal no damage to mob
 	immune_to = {
 		{"default:pick_wood", 0},
 		{"default:shovel_wood", 0},
 		{"default:axe_wood", 0},
 		{"default:sword_wood", 0}
 	},
-	drops = {
-		{name = "default:mese_crystal", chance = 9, min = 0, max = 2},
-		{name = "default:mese_crystal_fragment", chance = 1, min = 0, max = 2},
-	},
-	water_damage = 1,
-	lava_damage = 1,
-	light_damage = 0,
+
+	-- animations
 	animation = {
 		speed_normal = 18, speed_run = 18,
 		walk_start = 10, walk_end = 41, walk_speed = 20,
@@ -197,6 +221,7 @@ mobs:register_mob("mobs_monster:mese_monster", {
 		punch_start = 175, punch_end = 189
 	},
 
+	-- custom function to remove older style mobs using wrong texture
 	after_activate = function(self, staticdata, def, dtime)
 
 		local tex = self and self.textures and self.textures[1]
@@ -204,6 +229,7 @@ mobs:register_mob("mobs_monster:mese_monster", {
 		if tex == "zmobs_mese_monster.png" then self.object:remove() end
 	end,
 
+	-- check surroundings and spawn specific mese monster
 	on_spawn = function(self)
 
 		local pos = self.object:get_pos()
@@ -236,35 +262,7 @@ mobs:register_mob("mobs_monster:mese_monster", {
 				return true
 			end
 		end
---[[
-		-- player using egg
-		-- direction sets type N = red, E = green, S = blue, W = purple
-		-- Just for fun - S01
 
-		local objects = core.get_objects_inside_radius(pos, 10)
-
-		for i, obj in ipairs(objects) do
-
-			if core.is_player(obj)
-			and obj:get_wielded_item():get_name() == "mobs_monster:mese_monster" then
-
-				local degree = (360 + math.deg(obj:get_look_horizontal())) % 360
-				local compass_sel
-
-				if degree > 45 and degree <= 135      then compass_sel = 4
-				elseif degree > 135 and degree <= 225 then compass_sel = 3
-				elseif degree > 225 and degree <= 315 then compass_sel = 2
-				else  							 	       compass_sel = 1
-				end
-
-				local def = mese_monster_types[compass_sel]
-
-				update(self, def)
-
-				return true
-			end
-		end
-]]
 		-- catch case if all else fails random it
 		update(self, mese_monster_types[math.random(4)])
 
@@ -334,5 +332,5 @@ local f = "default:mese_crystal_fragment"
 
 core.register_craft({
 	output = "default:mese_crystal",
-	recipe = {{f, f, f}, {f, f, f}, {f, f, f}}
+	recipe = { {f, f, f}, {f, f, f}, {f, f, f} }
 })

@@ -465,6 +465,13 @@ core.register_node("new_campfire:fireplace_with_embers_with_grille", {
 		},
 	},
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
+		-- Clean Empty Hand Grille Extraction (Forces instant hand slot sync)
+		if itemstack:is_empty() then
+			core.swap_node(pos, { name = "new_campfire:fireplace_with_embers" })
+			player:set_wielded_item(ItemStack("new_campfire:grille 1"))
+			return player:get_wielded_item()
+		end
+
 		local a = add_stick(pos, itemstack)
 		if a then
 			core.swap_node(pos, { name = "new_campfire:campfire_with_grille" })
@@ -474,6 +481,7 @@ core.register_node("new_campfire:fireplace_with_embers_with_grille", {
 				end
 			end)
 		end
+		return itemstack
 	end,
 
 	on_construct = function(pos)
@@ -518,10 +526,17 @@ core.register_node("new_campfire:fireplace_with_grille", {
 		meta:set_string("infotext", S("Fireplace"))
 	end,
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
+		if itemstack:is_empty() then
+			core.swap_node(pos, { name = "new_campfire:fireplace" })
+			player:set_wielded_item(ItemStack("new_campfire:grille 1"))
+			return player:get_wielded_item()
+		end
+
 		local a = add_stick(pos, itemstack)
 		if a then
 			core.swap_node(pos, { name = "new_campfire:campfire_with_grille" })
 		end
+		return itemstack
 	end,
 })
 
@@ -554,6 +569,12 @@ core.register_node("new_campfire:campfire_with_grille", {
 	end,
 
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
+		if itemstack:is_empty() then
+			core.swap_node(pos, { name = "new_campfire:campfire" })
+			player:set_wielded_item(ItemStack("new_campfire:grille 1"))
+			return player:get_wielded_item()
+		end
+
 		if itemstack:get_name() == "fire:flint_and_steel" then
 			core.sound_play("fire_flint_and_steel", { pos = pos, gain = 0.5, max_hear_distance = 8 })
 			core.set_node(pos, { name = "new_campfire:campfire_active_with_grille" })
@@ -569,6 +590,7 @@ core.register_node("new_campfire:campfire_with_grille", {
 				animation = { type = "vertical_frames", aspect_w = 16, aspect_h = 16, length = 2.5 },
 			})
 		end
+		return itemstack
 	end,
 	drop = {
 		max_items = 4,
@@ -612,10 +634,17 @@ core.register_node("new_campfire:campfire_active_with_grille", {
 	node_box = grille_cbox,
 
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
+		if itemstack:is_empty() then
+			core.swap_node(pos, { name = "new_campfire:campfire_active" })
+			player:set_wielded_item(ItemStack("new_campfire:grille 1"))
+			return player:get_wielded_item()
+		end
+
 		local a = add_stick(pos, itemstack)
 		if not a then
 			return cooking(pos, itemstack)
 		end
+		return itemstack
 	end,
 
 	on_construct = function(pos)

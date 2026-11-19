@@ -25,6 +25,7 @@ lucky_block:add_blocks({
 	{"dro", {"bows:arrow_steel"}, 8},
 	{"dro", {"bows:arrow_mese"}, 7},
 	{"dro", {"bows:arrow_diamond"}, 6},
+	{"dro", {"bows:arrow_crystal"}, 5},
 	{"dro", {"bows:arrow_tnt"}, 2},
 	{"nod", "default:chest", 0, {
 		{name = "default:stick", max = 5},

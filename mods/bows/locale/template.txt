@@ -8,4 +8,6 @@ Wooden arrow=
 Steel arrow=
 Mese arrow=
 Diamond arrow=
-You took an arrow to the knee!
+Crystal arrow=
+TNT arrow=
+You took an arrow to the knee!=

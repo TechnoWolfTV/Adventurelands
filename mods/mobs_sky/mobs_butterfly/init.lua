@@ -1,8 +1,4 @@
 
--- mod check and settings
-
-local butterfly_mod = core.get_modpath("butterflies")
-
 local l_skins = {
 	{"bf1.png^bf2.png^bf3.png^bf4.png^bf5.png"},
 	{	"(bf1.png^[colorize:orange)"
@@ -35,9 +31,6 @@ local l_skins = {
 	}
 }
 
-local l_spawnnear	= {"group:flower"}
-local l_spawnchance	= 20000
-
 -- Butterfly definition
 
 mobs:register_mob("mobs_butterfly:butterfly", {
@@ -65,39 +58,27 @@ mobs:register_mob("mobs_butterfly:butterfly", {
 		walk_start = 0, walk_end = 90,
 		fly_start = 0, fly_end = 90
 	},
---[[
-	after_activate = function(self, staticdata, def, dtime)
 
-		if butterfly_mod then
-
-			local pos = self.object:get_pos()
-			local butter = {"white", "red", "violet"}
-			local replace = "butterflies:butterfly_" .. butter[math.random(#butter)]
-
-			core.set_node(pos, {name = replace})
-
-			self.object:remove()
-		end
-	end,
-]]
 	on_rightclick = function(self, clicker)
 
---		if not butterfly_mod then
-			mobs:capture_mob(self, clicker, 10, 80, 0, true, "mobs_butterfly:butterfly")
---		end
+		mobs:capture_mob(self, clicker, 10, 80, 0, true, "mobs_butterfly:butterfly")
 	end
 })
 
---if not butterfly_mod then
+-- spawn in world
 
-	-- spawn in world
+mobs:spawn({
+	name = "mobs_butterfly:butterfly",
+	nodes = {"group:flower"},
+	min_light = 5,
+	chance = 6000,
+	active_object_count = 1,
+	day_toggle = true -- only spawn in day
+})
 
-	mobs:spawn_specific("mobs_butterfly:butterfly", {"air"},
-			l_spawnnear, 5, 20, 30, l_spawnchance, 1, 0, 31000)
+-- spawn egg
 
-	-- spawn egg
+mobs:register_egg("mobs_butterfly:butterfly", "Butterfly", "default_cloud.png", 1)
 
-	mobs:register_egg("mobs_butterfly:butterfly", "Butterfly", "default_cloud.png", 1)
---end
 
-print("[MOD] Mobs Redo Butterfly loaded")
+print("[MOD] Mobs Butterfly loaded")

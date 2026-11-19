@@ -33,16 +33,23 @@ local guard_types = {
 -- Land Guard
 
 mobs:register_mob("mobs_monster:land_guard", {
+
+	-- basic settings
 	description = S("Land Guard"),
 	type = "monster",
 	passive = false,
-	attack_type = "dogfight",
-	group_attack = true,
-	reach = 3,
-	damage = 12,
 	hp_min = 30,
 	hp_max = 65,
 	armor = 50,
+	reach = 3,
+
+	-- attacks
+	attack_type = "dogfight",
+	group_attack = true,
+	damage = 12,
+	view_range = 15,
+
+	-- model and textures
 	collisionbox = {-0.5, -1.01, -0.5, 0.5, 1.6, 0.5},
 	visual_size = {x = 1, y = 1},
 	visual = "mesh",
@@ -52,22 +59,33 @@ mobs:register_mob("mobs_monster:land_guard", {
 		{"mobs_land_guard2.png"},
 		{"mobs_land_guard3.png"}
 	},
+
+	-- sounds
 	makes_footstep_sound = true,
-	sounds = {random = "mobs_dungeonmaster"},
+	sounds = {
+		random = "mobs_dungeonmaster"
+	},
+
+	-- movement
 	walk_velocity = 1.5,
 	run_velocity = 3.4,
 	jump_height = 2,
-	floats = 0,
-	view_range = 15,
+	floats = false,
+
+	-- item drops
 	drops = {
 		{name = "mobs:leather", chance = 2, min = 0, max = 2},
 		{name = "default:mese_crystal", chance = 3, min = 0, max = 2},
 		{name = "default:diamond", chance = 4, min = 0, max = 1},
 	},
+
+	-- damage
 	water_damage = 0,
 	lava_damage = 6,
 	light_damage = 0,
 	fear_height = 8,
+
+	-- animations
 	animation = {
 		stand_start = 0, stand_end = 19,
 		walk_start = 20, walk_end = 35,

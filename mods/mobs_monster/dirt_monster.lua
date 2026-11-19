@@ -17,16 +17,23 @@ local dirt_types = {
 -- Dirt Monster by PilzAdam
 
 mobs:register_mob("mobs_monster:dirt_monster", {
+
+	-- basic settings
 	description = S("Dirt Monster"),
 	type = "monster",
 	passive = false,
-	attack_type = "dogfight",
-	pathfinding = true,
-	reach = 2,
-	damage = 2,
 	hp_min = 3,
 	hp_max = 27,
 	armor = 100,
+	reach = 2,
+
+	-- attacks
+	attack_type = "dogfight",
+	pathfinding = true,
+	damage = 2,
+	view_range = 15,
+
+	-- model and textures
 	collisionbox = {-0.3, -1, -0.3, 0.3, 0.7, 0.3},
 	visual = "mesh",
 	mesh = "mobs_stone_monster.b3d",
@@ -35,19 +42,30 @@ mobs:register_mob("mobs_monster:dirt_monster", {
 		{"mobs_dirt_monster2.png"}
 	},
 	blood_texture = "default_dirt.png",
+
+	-- sounds
 	makes_footstep_sound = true,
-	sounds = {random = "mobs_dirtmonster"},
-	view_range = 15,
+	sounds = {
+		random = "mobs_dirtmonster"
+	},
+
+	-- movement
 	walk_velocity = 1,
 	run_velocity = 3,
+
+	-- item drops
 	drops = {
 		{name = "default:dirt", chance = 1, min = 0, max = 2},
 		{name = "default:clay_lump", chance = 2, min = 0, max = 1}
 	},
+
+	-- damage
 	water_damage = 1,
 	lava_damage = 5,
 	light_damage = 3,
 	fear_height = 4,
+
+	-- animations
 	animation = {
 		speed_normal = 15, speed_run = 15,
 		stand_start = 0, stand_end = 14,
@@ -56,7 +74,7 @@ mobs:register_mob("mobs_monster:dirt_monster", {
 		punch_start = 40, punch_end = 63
 	},
 
-	-- check surrounding nodes and spawn a specific monster
+	-- check spawn position for specific nodes and select mob texture
 	on_spawn = function(self)
 
 		local pos = self.object:get_pos() ; pos.y = pos.y - 1
