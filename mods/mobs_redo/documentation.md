@@ -1501,7 +1501,7 @@ The texture form can only update the mob if the mob still exists and the player 
 
 ### Mob Repellent
 
-The Mob Repellent is crafted from obsidian, red dye and a Mob Protection Rune. Its description states that it stops mobs spawning within a 8-block radius.
+The Mob Repellent is crafted from obsidian, red dye and a Mob Protection Rune. Its description states that it stops mobs spawning within a 16-block radius.
 
 If the optional `vizlib` mod is installed, punching the node with an empty hand can display a visual cube showing the repellent area.
 

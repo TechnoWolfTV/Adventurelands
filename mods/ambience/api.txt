@@ -17,19 +17,23 @@ Adding Sound Set
 ambience.add_set(set_name, def)
   'set_name' contains the name of the sound set to add
   'def' contains the following:
-     'background' contains a table of sounds that play in the background when
-                  sound_check conditions are met.
-     'music'      contains a table of music that has a chance to play when
-                  the music interval is reached.
-                  sound_check conditions are met.
+     'nodes' contains a table of nodes needed for checks.
      'frequency' how often a sound in the set is played (1 to 1000) higher is more
                  frequent.
-     'nodes' contains a table of nodes needed for checks
+     'background' contains a table of sounds that play in the background when
+                  sound_check conditions are met.
+     'background_check' function to check conditions so that the background sound
+                        can be played, returns True when conditions met.
+     'music'      contains a table of music that has a chance to play when
+                  the music interval is reached.
+     'music_check' function to check environmental conditions so that music from
+                   the set can be played, returns True when conditions met.
+                  sound_check conditions are met.
      'sounds' contains a table of sounds that play on top of any background
               sounds that can stop when conditions are not met, or can be
               ephemeral for shorter sounds.
      'sound_check(def)' function to check conditions so that sounds can be played,
-                        def contains:
+                        returns "set_name", additional gain when True. def contains:
         'player' player userdata
         'pos' position of player
         'tod' time of day

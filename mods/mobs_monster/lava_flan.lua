@@ -19,7 +19,7 @@ mobs:register_mob("mobs_monster:lava_flan", {
 	damage = 3,
 
 	-- model and textures
-	collisionbox = {-0.5, -0.5, -0.5, 0.5, 1.2, 0.5},
+	collisionbox = {-0.5, -0.5, -0.5, 0.5, 1.5, 0.5},
 	visual = "mesh", glow = 10,
 	mesh = "zmobs_lava_flan.b3d",
 	textures = {

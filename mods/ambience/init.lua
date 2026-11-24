@@ -45,6 +45,8 @@ function ambience.add_set(set_name, def)
 		music = def.music or {},
 		sounds = def.sounds or {},
 		sound_check = def.sound_check,
+		music_check = def.music_check,
+		bg_check = def.bg_check,
 		nodes = def.nodes
 	}
 
@@ -179,9 +181,34 @@ local function background_music(p, pname)
 --print("-- music timer", p.music .. "/" .. MUSICINTERVAL)
 end
 
--- select sound set
+-- data table to save recreating it each time
 
-local data = {} -- save recreating table for each time
+local data = {}
+
+-- find the first set whose check returns true.
+
+local function get_checked_set(check_name, data)
+
+	local has_check = false
+
+	for n = 1, #sound_set_order do
+
+		local set = sound_sets[sound_set_order[n]]
+
+		if set and set[check_name] then
+
+			has_check = true
+
+			if set[check_name](data) then
+				return sound_set_order[n], has_check
+			end
+		end
+	end
+
+	return nil, has_check
+end
+
+-- select sound set
 
 local function get_ambience(player, tod, pname)
 
@@ -213,6 +240,8 @@ local function get_ambience(player, tod, pname)
 	data.feet_node = get_node({x = pos.x, y = pos.y + 0.2, z = pos.z}).name
 	data.biome = bdata and core.get_biome_name(bdata.biome) or ""
 
+	local set_name, gain
+
 	-- loop through sets in order and choose first that has its conditions met
 	for n = 1, #sound_set_order do
 
@@ -221,12 +250,24 @@ local function get_ambience(player, tod, pname)
 		if set and set.sound_check then
 
 			-- pass data to set function for condition check
-			local set_name, gain = set.sound_check(data)
+			local found_name, found_gain = set.sound_check(data)
 
 			-- if conditions met return set name and gain value
-			if set_name then return set_name, gain end
+			if found_name then
+				set_name, gain = found_name, found_gain ; break
+			end
 		end
 	end
+
+	-- check for music and background from different sets
+	local music_set, has_music_check = get_checked_set("music_check", data)
+	local bg_set, has_bg_check = get_checked_set("bg_check", data)
+
+	-- if none found from different sets, fallback to original sound set for compatibility
+	if not has_music_check then music_set = set_name end
+	if not has_bg_check then bg_set = set_name end
+
+	return set_name, gain, music_set, bg_set
 end
 
 -- players routine
@@ -273,20 +314,24 @@ core.register_globalstep(function(dtime)
 		-- one second timer actions
 		if timer1sec and p then
 
-			local set_name, MORE_GAIN = get_ambience(player, tod, pname)
+			local set_name, MORE_GAIN, music_set_name, bg_set_name = get_ambience(
+					player, tod, pname)
 			local set_def = sound_sets[set_name]
+			local music_set_def = sound_sets[music_set_name]
+			local bg_set_def = sound_sets[bg_set_name]
 
 			-- store any set music found for later use
-			p.music_list = set_def and set_def.music
+			p.music_list = music_set_def and music_set_def.music or {}
 
 			-- are we playing any available background sounds?
-			if not p.bg and set_def and #set_def.background > 0 then
+			if not p.bg and bg_set_def
+			and bg_set_def.background and #bg_set_def.background > 0 then
 
 				-- only play if set differs from last one played
-				if set_name ~= p.bg_set then
+				if bg_set_name ~= p.bg_set then
 
 					-- choose a random sound from the background set
-					local bg_amb = set_def.background[random(#set_def.background)]
+					local bg_amb = bg_set_def.background[random(#bg_set_def.background)]
 
 					p.bg = core.sound_play(bg_amb.name, {
 						to_player = pname,
@@ -296,10 +341,11 @@ core.register_globalstep(function(dtime)
 
 --print("-- bg start", p.bg, set_name)
 
-					p.bg_set = set_name
+					p.bg_set = bg_set_name
 				end
 
-			elseif p.bg and set_name ~= p.bg_set then
+			elseif p.bg and (bg_set_name ~= p.bg_set
+				or not bg_set_def or #bg_set_def.background == 0) then
 
 --print("-- bg stop", p.bg, set_name, p.bg_set)
 
@@ -326,7 +372,7 @@ core.register_globalstep(function(dtime)
 				local chance = random(1000)
 
 				-- if chance is lower than frequency then use set
-				if chance < set_def.frequency
+				if set_def and chance < set_def.frequency
 				and set_def.sounds and #set_def.sounds > 0 then
 
 					-- choose random sound
@@ -364,7 +410,11 @@ core.register_chatcommand("svol", {
 
 	func = function(name, param)
 
-		local svol = tonumber(param) or playing[name].svol
+		local p = playing[name]
+
+		if not p then return false, S("Player data unavailable") end
+
+		local svol = tonumber(param) or p.svol
 
 		if svol < 0.1 then svol = 0.1 end
 		if svol > 1.0 then svol = 1.0 end
@@ -389,8 +439,11 @@ core.register_chatcommand("mvol", {
 
 	func = function(name, param)
 
-		local mvol = tonumber(param) or playing[name].mvol
 		local p = playing[name]
+
+		if not p then return false, S("Player data unavailable") end
+
+		local mvol = tonumber(param) or p.mvol
 
 		-- stop music currently playing by setting volume to 0
 		if mvol == 0 and p.music_handler then
@@ -410,7 +463,7 @@ core.register_chatcommand("mvol", {
 
 		meta:set_string("ambience.mvol", mvol)
 
-		p.mvol = mvol
+		playing[name].mvol = mvol
 
 		return true, S("Music volume set to @1", mvol)
 	end

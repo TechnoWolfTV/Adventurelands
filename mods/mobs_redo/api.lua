@@ -18,7 +18,7 @@ local function has(nodename) return registered_nodes[nodename] and nodename end
 -- global table
 
 mobs = {
-	mod = "redo", version = "20261117",
+	mod = "redo", version = "20261120",
 	spawning_mobs = {}, translate = S,
 	node_snow = has(core.registered_aliases["mapgen_snow"])
 			or has("mcl_core:snow") or has("default:snow") or "air",
@@ -39,6 +39,7 @@ local sin, cos, rad, deg = math.sin, math.cos, math.rad, math.deg
 local floor, ceil, vdirection = math.floor, math.ceil, vector.direction
 local settings, atann = core.settings, math.atan
 local function atan(x) if not x or x ~= x then return 0 end return atann(x) end
+local function random_float(lo, hi) return lo + random() * (hi - lo) end
 local table_copy, table_remove = table.copy, table.remove
 local get_objects_inside_radius = core.get_objects_inside_radius
 
@@ -792,7 +793,10 @@ function mob_class:item_drop()
 	if not mobs_drop_items or self.child then return end
 
 	local cb = self.prop.collisionbox
-	local pos = self.object:get_pos() ; pos.y = pos.y + (cb[2] + cb[5]) / 2
+	local pos = self.object:get_pos() ; if not pos then return end
+
+	pos.y = pos.y + (cb[2] + cb[5]) / 2
+
 	local drops = self.drops
 	local cause = self.cause_of_death or {}
 
@@ -824,7 +828,12 @@ function mob_class:item_drop()
 
 		if random(drops[n].chance or 1) == 1 then
 
-			local num = random(drops[n].min or 1, drops[n].max or 1) + looting
+			local min_count = drops[n].min or 1
+			local max_count = drops[n].max or 1
+
+			if min_count == 0 then min_count = 1 end -- for rare items
+
+			local num = random(min_count, max_count) + looting
 			local item = drops[n].name
 
 			if cause.hot then -- cook items if mob had a Hot death
@@ -928,7 +937,7 @@ function mob_class:check_for_death(cmi_cause)
 	self.following = nil
 	self.v_start = false ; self.temp.blinktimer = 0
 	self.state = "die"
-	self.object:set_acceleration({x = 0, y = -9.5, z = 0})
+	self.object:set_acceleration({x = 0, y = -gravity, z = 0})
 
 	local pos = self.object:get_pos() ; if not pos then return end
 
@@ -1350,7 +1359,7 @@ function mob_class:breed()
 				local entname = ent.name:split(":")
 				local selfname = self.name:split(":")
 
-				if entname[1] == selfname[1] then
+				if entname[1] == selfname[1] and entname[2] and selfname[2] then
 
 					entname = entname[2]:split("_")
 					selfname = selfname[2]:split("_")
@@ -1519,7 +1528,7 @@ function mob_class:check_item_pickup(pos)
 					if res and res.is_empty then
 
 						if res:is_empty() then
-							obj:remove()
+							obj:remove() ; break
 						else
 							ent.itemstring = res:to_string()
 						end
@@ -1850,7 +1859,7 @@ function mob_class:general_attack()
 		local dist_sq = get_distance_sq(p, s)
 
 		-- choose closest entity to attack while looking higher for better sights
-		if dist_sq > 0 and dist_sq < min_dist
+		if p and dist_sq > 0 and dist_sq < min_dist
 		and self:line_of_sight(from, {x = p.x, y = p.y + 0.5, z = p.z}) then
 
 			min_dist = dist_sq
@@ -1875,6 +1884,8 @@ function mob_class:do_runaway_from()
 	local objs = get_objects_inside_radius(s, self.view_range)
 
 	for n = 1, #objs do -- loop through entities surrounding mob
+
+		target, name = nil, "" -- reset
 
 		if is_player(objs[n]) then
 
@@ -1978,8 +1989,8 @@ end
 function mob_class:follow_flop(dtime)
 
 	-- find player to follow
-	if (self.follow ~= "" or self.order == "follow") and not self.following
-	and self.state ~= "attack" and self.state ~= "runaway" then
+	if ((self.follow and self.follow ~= "") or self.order == "follow")
+	and not self.following and self.state ~= "attack" and self.state ~= "runaway" then
 
 		local s = self.object:get_pos() ; if not s then return end
 		local range_sq = self.view_range * self.view_range
@@ -2382,7 +2393,8 @@ function mob_class:do_states(dtime)
 				if not next_pos then
 					self.path.following = false
 				else
-					if abs(next_pos.x - s.x) + abs(next_pos.z - s.z) < 0.6 then
+					if abs(next_pos.x - s.x) + abs(next_pos.z - s.z) < 0.6
+					and abs(next_pos.y - s.y) < 0.75 then
 
 						table_remove(self.path.way, 1) -- remove waypoint once reached
 
@@ -2450,7 +2462,8 @@ function mob_class:do_states(dtime)
 		-- no custom attack or custom attack returns true to continue
 		if self.custom_attack and not self:custom_attack(self, p) then return end
 
-		local p2, s2 = p, s
+		local p2 = {x = p.x, y = p.y, z = p.z}
+		local s2 = {x = s.x, y = s.y, z = s.z}
 
 		-- approximate mob eye level
 		local cbox = self.prop.collisionbox
@@ -2586,19 +2599,21 @@ function mob_class:falling(pos)
 				damage = damage + damage * (add / 100)
 			end
 
-			if damage < 1 then return end
+			if damage >= 1 then
 
-			if def and def.sounds and def.sounds.footstep and def.sounds.footstep.name then
+				if def and def.sounds and def.sounds.footstep
+				and def.sounds.footstep.name then
 
-				core.sound_play(def.sounds.footstep.name,
-						{pos = pos, gain = 2.0, max_hear_distance = 12}, true)
+					core.sound_play(def.sounds.footstep.name,
+							{pos = pos, gain = 2.0, max_hear_distance = 12}, true)
+				end
+
+				self.health = self.health - ceil(damage)
+
+				effect(pos, 5, "mobs_tnt_smoke.png", 1, 2, 2, nil)
+
+				if self:check_for_death({type = "fall"}) then return true end
 			end
-
-			self.health = self.health - ceil(damage)
-
-			effect(pos, 5, "mobs_tnt_smoke.png", 1, 2, 2, nil)
-
-			if self:check_for_death({type = "fall"}) then return true end
 		end
 	end
 
@@ -2644,8 +2659,8 @@ function mob_class:on_punch(hitter, tflp, tool_caps, dir, _damage)
 		end
 	end
 
-	-- weapon info
-	local weapon = hitter:get_wielded_item()
+	-- weapon info (only players have weapons, use empty stack for mobs)
+	local weapon = is_hitter_player and hitter:get_wielded_item() or ItemStack()
 	local weapon_def = weapon:get_definition() or {}
 	local damage_groups = tool_caps.damage_groups or {}
 
@@ -2724,23 +2739,25 @@ function mob_class:on_punch(hitter, tflp, tool_caps, dir, _damage)
 		return true
 	end
 
-	-- toolrank support
-	local wear = floor((punch_interval / 75) * 9000)
+	if is_hitter_player then -- toolrank support
 
-	-- check for punch_attack_uses being 0 to negate wear
-	if tool_caps.punch_attack_uses == 0 then
-		wear = 0
-	elseif mobs.is_creative(hitter_name) then
-		wear = use_tr and 1 or 0
+		local wear = floor((punch_interval / 75) * 9000)
+
+		-- check for punch_attack_uses being 0 to negate wear
+		if tool_caps.punch_attack_uses == 0 then
+			wear = 0
+		elseif mobs.is_creative(hitter_name) then
+			wear = use_tr and 1 or 0
+		end
+
+		if use_tr and weapon_def.original_description then
+			toolranks.new_afteruse(weapon, hitter, nil, {wear = wear})
+		else
+			weapon:add_wear(wear)
+		end
+
+		hitter:set_wielded_item(weapon)
 	end
-
-	if use_tr and weapon_def.original_description then
-		toolranks.new_afteruse(weapon, hitter, nil, {wear = wear})
-	else
-		weapon:add_wear(wear)
-	end
-
-	hitter:set_wielded_item(weapon)
 
 	if not self.friendly_fire and not is_hitter_player then -- check for friendly fire
 
@@ -2749,8 +2766,7 @@ function mob_class:on_punch(hitter, tflp, tool_caps, dir, _damage)
 		if entity and entity.name == self.arrow then return end
 	end
 
-	-- only play hit sound and show blood effects if damage is 1 or over
-	if damage >= 1 then
+	if damage >= 1 then -- only play sound and show blood effects if damage is >= 1
 
 		-- select tool use sound if found, or fallback to default
 		local snd = weapon_def.sound and weapon_def.sound.use or "mobs_punch"
@@ -2777,8 +2793,6 @@ function mob_class:on_punch(hitter, tflp, tool_caps, dir, _damage)
 		-- add healthy afterglow when hit (can cause lag with larger textures)
 		if mob_hit_effect then
 
-			self.old_texture_mods = self.texture_mods
-
 			self.object:set_texture_mod(self.texture_mods
 					.. self.prop.damage_texture_modifier)
 
@@ -2786,8 +2800,6 @@ function mob_class:on_punch(hitter, tflp, tool_caps, dir, _damage)
 
 				if self and self.object and self.object:get_pos() then
 
-					self.texture_mods = self.old_texture_mods
-					self.old_texture_mods = nil
 					self.object:set_texture_mod(self.texture_mods)
 				end
 			end)
@@ -2830,7 +2842,7 @@ function mob_class:on_punch(hitter, tflp, tool_caps, dir, _damage)
 			self.object:set_velocity({x = dir.x * kb, y = up, z = dir.z * kb})
 
 			-- turn mob on knockback
-			self:set_yaw((self.object:get_yaw() or 0) - random(-0.9, 0.9), 6)
+			self:set_yaw((self.object:get_yaw() or 0) - random_float(-0.9, 0.9), 6)
 
 			if self.animation and self.animation.injured_end and damage >= 1 then
 				self:set_animation("injured")
@@ -2889,16 +2901,23 @@ end
 
 -- helper to clean mob staticdata
 
+local skip = {
+	temp = true, object = true, _cmi_components = true, prop = true, path = true,
+	standing_in = true, standing_on = true, looking_at = true, looking_above = true,
+	medium_above = true, medium_below = true
+}
+
 local function clean_staticdata(self)
 
 	local res, t = {}
 
-	for _, val in pairs(self) do
+	for key , val in pairs(self) do
 
 		t = type(val)
 
-		if  t ~= "function" and t ~= "nil" and t ~= "userdata" and _ ~= "temp"
-		and _ ~= "object" and _ ~= "_cmi_components" then res[_] = val end
+		if  t ~= "function" and t ~= "nil" and t ~= "userdata" and not skip[key] then
+			res[key] = val
+		end
 	end
 
 	return res
@@ -3185,7 +3204,7 @@ function mob_class:on_step(dtime, moveresult)
 
 			local yaw = self.object:get_yaw()
 
-			self:set_yaw(yaw + random(-0.1, 0.1), 4)
+			self:set_yaw(yaw + random_float(-0.2, 0.2), 4)
 		end
 	end
 
@@ -3540,7 +3559,7 @@ end
 local function count_mobs(pos, mob_name)
 
 	local total = 0
-	local objs = get_objects_inside_radius(pos, aoc_range * 2)
+	local objs = get_objects_inside_radius(pos, aoc_range)
 	local ent, players_nearby
 
 	for n = 1, #objs do
@@ -3549,7 +3568,7 @@ local function count_mobs(pos, mob_name)
 		else
 			ent = objs[n]:get_luaentity()
 
-			if ent and ent.name and ent.name == mob_name then total = total + 1 end
+			if ent and ent.name == mob_name then total = total + 1 end
 		end
 	end
 
@@ -3571,8 +3590,8 @@ end
 
 local function can_spawn(pos, name)
 
-	local ent = core.registered_entities[name] ; if not ent then return end
-	local box = ent.base_colbox ; if not box then return end
+	local ent = core.registered_entities[name]
+	local box = ent and ent.base_colbox ; if not box then return end
 
 	local width_x = max(1, ceil(box[4] - box[1]))
 	local width_z = max(1, ceil(box[6] - box[3]))
@@ -3723,12 +3742,12 @@ function mobs:spawn_specific(name, nodes, neighbors, min_light, max_light, inter
 			return
 		end
 
+		if at_limit() then return end
+
 		if map_load and (random(max(1, (chance * mob_chance_multiplier))) > 1
 		or not core.find_node_near(pos, 1, neighbors)) then
 			return
 		end
-
-		if at_limit() then return end
 
 		-- custom checks for mob spawning
 		if mobs:spawn_abm_check(pos, node, name) then return end
@@ -3765,13 +3784,16 @@ function mobs:spawn_specific(name, nodes, neighbors, min_light, max_light, inter
 			end
 		end
 
-		local light = core.get_node_light(pos)
+		if min_light > 0 or max_light < 15 then -- do we really need a light check
 
-		if not light or light > max_light or light < min_light then return end
+			local light = core.get_node_light(pos)
+
+			if not light or light > max_light or light < min_light then return end
+		end
 
 		if #core.find_nodes_in_area(
-				{x = pos.x - 8, y = pos.y - 8, z = pos.z - 8},
-				{x = pos.x + 8, y = pos.y + 8, z = pos.z + 8},
+				{x = pos.x - 16, y = pos.y - 16, z = pos.z - 16},
+				{x = pos.x + 16, y = pos.y + 16, z = pos.z + 16},
 				{"mobs:mob_repellent"}) > 0 then return end
 
 		-- check if mob/monster can be spawned inside protected areas
